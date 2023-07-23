@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(TwizDbContext))]
-    [Migration("20230723133457_initialmigration")]
+    [Migration("20230723134952_initialmigration")]
     partial class initialmigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -108,7 +108,7 @@ namespace API.Migrations
                     b.HasIndex("AccountGuid", "RoleGuid")
                         .IsUnique();
 
-                    b.ToTable("pmtr_accountroles");
+                    b.ToTable("pmtr_account_roles");
                 });
 
             modelBuilder.Entity("API.Models.Bank", b =>

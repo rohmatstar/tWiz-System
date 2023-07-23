@@ -2,7 +2,7 @@
 
 namespace API.Models;
 
-[Table("pmtr_accountroles")]
+[Table("pmtr_account_roles")]
 public class AccountRole : BaseEntity
 {
     [Column ("account_guid")]
