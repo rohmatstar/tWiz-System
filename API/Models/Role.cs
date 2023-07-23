@@ -2,7 +2,7 @@
 
 namespace API.Models;
 
-[Table("PMDT_ROLES")]
+[Table("pmdt_roles")]
 public class Role : BaseEntity
 {
     [Column("name", TypeName ="nvarchar(50)")]

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace API.Models;
 
 
-[Table ("PMDT_EVENTS")]
+[Table ("pmdt_events")]
 public class Event : BaseEntity
 {
     [Column ("name", TypeName = "nvarchar(max)")]

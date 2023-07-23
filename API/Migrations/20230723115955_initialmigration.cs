@@ -10,22 +10,22 @@ namespace API.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "PMDT_BANKS",
+                name: "pmdt_banks",
                 columns: table => new
                 {
                     guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     code = table.Column<string>(type: "nvarchar(10)", nullable: false),
-                    name = table.Column<string>(type: "nvarchar(20", nullable: false),
+                    name = table.Column<string>(type: "nvarchar(20)", nullable: false),
                     created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     modified_date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PMDT_BANKS", x => x.guid);
+                    table.PrimaryKey("PK_pmdt_banks", x => x.guid);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PMDT_ROLES",
+                name: "pmdt_roles",
                 columns: table => new
                 {
                     guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -35,11 +35,11 @@ namespace API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PMDT_ROLES", x => x.guid);
+                    table.PrimaryKey("PK_pmdt_roles", x => x.guid);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PMDT_ACCOUNTS",
+                name: "pmdt_accounts",
                 columns: table => new
                 {
                     guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -56,11 +56,11 @@ namespace API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PMDT_ACCOUNTS", x => x.guid);
+                    table.PrimaryKey("PK_pmdt_accounts", x => x.guid);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PMDT_COMPANIES",
+                name: "pmdt_companies",
                 columns: table => new
                 {
                     guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -73,17 +73,17 @@ namespace API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PMDT_COMPANIES", x => x.guid);
+                    table.PrimaryKey("PK_pmdt_companies", x => x.guid);
                     table.ForeignKey(
-                        name: "FK_PMDT_COMPANIES_PMDT_ACCOUNTS_account_guid",
+                        name: "FK_pmdt_companies_pmdt_accounts_account_guid",
                         column: x => x.account_guid,
-                        principalTable: "PMDT_ACCOUNTS",
+                        principalTable: "pmdt_accounts",
                         principalColumn: "guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PMTR_ACCOUNT_ROLES",
+                name: "pmtr_accountroles",
                 columns: table => new
                 {
                     guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -94,23 +94,23 @@ namespace API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PMTR_ACCOUNT_ROLES", x => x.guid);
+                    table.PrimaryKey("PK_pmtr_accountroles", x => x.guid);
                     table.ForeignKey(
-                        name: "FK_PMTR_ACCOUNT_ROLES_PMDT_ACCOUNTS_account_guid",
+                        name: "FK_pmtr_accountroles_pmdt_accounts_account_guid",
                         column: x => x.account_guid,
-                        principalTable: "PMDT_ACCOUNTS",
+                        principalTable: "pmdt_accounts",
                         principalColumn: "guid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PMTR_ACCOUNT_ROLES_PMDT_ROLES_role_guid",
+                        name: "FK_pmtr_accountroles_pmdt_roles_role_guid",
                         column: x => x.role_guid,
-                        principalTable: "PMDT_ROLES",
+                        principalTable: "pmdt_roles",
                         principalColumn: "guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PMDT_EMPLOYEES",
+                name: "pmdt_employees",
                 columns: table => new
                 {
                     guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -127,23 +127,22 @@ namespace API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PMDT_EMPLOYEES", x => x.guid);
+                    table.PrimaryKey("PK_pmdt_employees", x => x.guid);
                     table.ForeignKey(
-                        name: "FK_PMDT_EMPLOYEES_PMDT_ACCOUNTS_account_guid",
+                        name: "FK_pmdt_employees_pmdt_accounts_account_guid",
                         column: x => x.account_guid,
-                        principalTable: "PMDT_ACCOUNTS",
+                        principalTable: "pmdt_accounts",
                         principalColumn: "guid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PMDT_EMPLOYEES_PMDT_COMPANIES_company_guid",
+                        name: "FK_pmdt_employees_pmdt_companies_company_guid",
                         column: x => x.company_guid,
-                        principalTable: "PMDT_COMPANIES",
-                        principalColumn: "guid",
-                        onDelete: ReferentialAction.Cascade);
+                        principalTable: "pmdt_companies",
+                        principalColumn: "guid");
                 });
 
             migrationBuilder.CreateTable(
-                name: "PMDT_EVENTS",
+                name: "pmdt_events",
                 columns: table => new
                 {
                     guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -166,16 +165,16 @@ namespace API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PMDT_EVENTS", x => x.guid);
+                    table.PrimaryKey("PK_pmdt_events", x => x.guid);
                     table.ForeignKey(
-                        name: "FK_PMDT_EVENTS_PMDT_COMPANIES_CompanyGuid",
+                        name: "FK_pmdt_events_pmdt_companies_CompanyGuid",
                         column: x => x.CompanyGuid,
-                        principalTable: "PMDT_COMPANIES",
+                        principalTable: "pmdt_companies",
                         principalColumn: "guid");
                 });
 
             migrationBuilder.CreateTable(
-                name: "PMDT_REGISTER_PAYMENTS",
+                name: "pmdt_register_payments",
                 columns: table => new
                 {
                     guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -190,23 +189,23 @@ namespace API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PMDT_REGISTER_PAYMENTS", x => x.guid);
+                    table.PrimaryKey("PK_pmdt_register_payments", x => x.guid);
                     table.ForeignKey(
-                        name: "FK_PMDT_REGISTER_PAYMENTS_PMDT_BANKS_bank_guid",
+                        name: "FK_pmdt_register_payments_pmdt_banks_bank_guid",
                         column: x => x.bank_guid,
-                        principalTable: "PMDT_BANKS",
+                        principalTable: "pmdt_banks",
                         principalColumn: "guid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PMDT_REGISTER_PAYMENTS_PMDT_COMPANIES_company_guid",
+                        name: "FK_pmdt_register_payments_pmdt_companies_company_guid",
                         column: x => x.company_guid,
-                        principalTable: "PMDT_COMPANIES",
+                        principalTable: "pmdt_companies",
                         principalColumn: "guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PMDT_EVENT_PAYMENTS",
+                name: "pmdt_event_payments",
                 columns: table => new
                 {
                     guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -221,29 +220,29 @@ namespace API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PMDT_EVENT_PAYMENTS", x => x.guid);
+                    table.PrimaryKey("PK_pmdt_event_payments", x => x.guid);
                     table.ForeignKey(
-                        name: "FK_PMDT_EVENT_PAYMENTS_PMDT_ACCOUNTS_account_guid",
+                        name: "FK_pmdt_event_payments_pmdt_accounts_account_guid",
                         column: x => x.account_guid,
-                        principalTable: "PMDT_ACCOUNTS",
+                        principalTable: "pmdt_accounts",
                         principalColumn: "guid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PMDT_EVENT_PAYMENTS_PMDT_BANKS_bank_guid",
+                        name: "FK_pmdt_event_payments_pmdt_banks_bank_guid",
                         column: x => x.bank_guid,
-                        principalTable: "PMDT_BANKS",
+                        principalTable: "pmdt_banks",
                         principalColumn: "guid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PMDT_EVENT_PAYMENTS_PMDT_EVENTS_event_guid",
+                        name: "FK_pmdt_event_payments_pmdt_events_event_guid",
                         column: x => x.event_guid,
-                        principalTable: "PMDT_EVENTS",
+                        principalTable: "pmdt_events",
                         principalColumn: "guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PMTR_COMPANY_PARTICIPANTS",
+                name: "pmtr_company_participants",
                 columns: table => new
                 {
                     guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -256,23 +255,23 @@ namespace API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PMTR_COMPANY_PARTICIPANTS", x => x.guid);
+                    table.PrimaryKey("PK_pmtr_company_participants", x => x.guid);
                     table.ForeignKey(
-                        name: "FK_PMTR_COMPANY_PARTICIPANTS_PMDT_COMPANIES_company_guid",
+                        name: "FK_pmtr_company_participants_pmdt_companies_company_guid",
                         column: x => x.company_guid,
-                        principalTable: "PMDT_COMPANIES",
+                        principalTable: "pmdt_companies",
                         principalColumn: "guid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PMTR_COMPANY_PARTICIPANTS_PMDT_EVENTS_event_guid",
+                        name: "FK_pmtr_company_participants_pmdt_events_event_guid",
                         column: x => x.event_guid,
-                        principalTable: "PMDT_EVENTS",
+                        principalTable: "pmdt_events",
                         principalColumn: "guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PMTR_EMPLOYEE_PARTICIPANTS",
+                name: "pmtr_employee_participants",
                 columns: table => new
                 {
                     guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -285,23 +284,23 @@ namespace API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PMTR_EMPLOYEE_PARTICIPANTS", x => x.guid);
+                    table.PrimaryKey("PK_pmtr_employee_participants", x => x.guid);
                     table.ForeignKey(
-                        name: "FK_PMTR_EMPLOYEE_PARTICIPANTS_PMDT_EMPLOYEES_employee_guid",
+                        name: "FK_pmtr_employee_participants_pmdt_employees_employee_guid",
                         column: x => x.employee_guid,
-                        principalTable: "PMDT_EMPLOYEES",
+                        principalTable: "pmdt_employees",
                         principalColumn: "guid",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PMTR_EMPLOYEE_PARTICIPANTS_PMDT_EVENTS_event_guid",
+                        name: "FK_pmtr_employee_participants_pmdt_events_event_guid",
                         column: x => x.event_guid,
-                        principalTable: "PMDT_EVENTS",
+                        principalTable: "pmdt_events",
                         principalColumn: "guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PMTR_EVENT_DOCS",
+                name: "pmtr_event_docs",
                 columns: table => new
                 {
                     guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -312,192 +311,192 @@ namespace API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PMTR_EVENT_DOCS", x => x.guid);
+                    table.PrimaryKey("PK_pmtr_event_docs", x => x.guid);
                     table.ForeignKey(
-                        name: "FK_PMTR_EVENT_DOCS_PMDT_EVENTS_event_guid",
+                        name: "FK_pmtr_event_docs_pmdt_events_event_guid",
                         column: x => x.event_guid,
-                        principalTable: "PMDT_EVENTS",
+                        principalTable: "pmdt_events",
                         principalColumn: "guid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMDT_ACCOUNTS_email_token",
-                table: "PMDT_ACCOUNTS",
+                name: "IX_pmdt_accounts_email_token",
+                table: "pmdt_accounts",
                 columns: new[] { "email", "token" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMDT_ACCOUNTS_RegisterPaymentGuid",
-                table: "PMDT_ACCOUNTS",
+                name: "IX_pmdt_accounts_RegisterPaymentGuid",
+                table: "pmdt_accounts",
                 column: "RegisterPaymentGuid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMDT_BANKS_code_name",
-                table: "PMDT_BANKS",
+                name: "IX_pmdt_banks_code_name",
+                table: "pmdt_banks",
                 columns: new[] { "code", "name" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMDT_COMPANIES_account_guid",
-                table: "PMDT_COMPANIES",
+                name: "IX_pmdt_companies_account_guid",
+                table: "pmdt_companies",
                 column: "account_guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMDT_EMPLOYEES_account_guid",
-                table: "PMDT_EMPLOYEES",
+                name: "IX_pmdt_employees_account_guid",
+                table: "pmdt_employees",
                 column: "account_guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMDT_EMPLOYEES_company_guid",
-                table: "PMDT_EMPLOYEES",
+                name: "IX_pmdt_employees_company_guid",
+                table: "pmdt_employees",
                 column: "company_guid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMDT_EMPLOYEES_nik_account_guid_phone_number",
-                table: "PMDT_EMPLOYEES",
+                name: "IX_pmdt_employees_nik_account_guid_phone_number",
+                table: "pmdt_employees",
                 columns: new[] { "nik", "account_guid", "phone_number" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMDT_EVENT_PAYMENTS_account_guid",
-                table: "PMDT_EVENT_PAYMENTS",
+                name: "IX_pmdt_event_payments_account_guid",
+                table: "pmdt_event_payments",
                 column: "account_guid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMDT_EVENT_PAYMENTS_bank_guid",
-                table: "PMDT_EVENT_PAYMENTS",
+                name: "IX_pmdt_event_payments_bank_guid",
+                table: "pmdt_event_payments",
                 column: "bank_guid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMDT_EVENT_PAYMENTS_event_guid",
-                table: "PMDT_EVENT_PAYMENTS",
+                name: "IX_pmdt_event_payments_event_guid",
+                table: "pmdt_event_payments",
                 column: "event_guid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMDT_EVENT_PAYMENTS_va_number",
-                table: "PMDT_EVENT_PAYMENTS",
+                name: "IX_pmdt_event_payments_va_number",
+                table: "pmdt_event_payments",
                 column: "va_number",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMDT_EVENTS_CompanyGuid",
-                table: "PMDT_EVENTS",
+                name: "IX_pmdt_events_CompanyGuid",
+                table: "pmdt_events",
                 column: "CompanyGuid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMDT_REGISTER_PAYMENTS_bank_guid",
-                table: "PMDT_REGISTER_PAYMENTS",
+                name: "IX_pmdt_register_payments_bank_guid",
+                table: "pmdt_register_payments",
                 column: "bank_guid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMDT_REGISTER_PAYMENTS_company_guid",
-                table: "PMDT_REGISTER_PAYMENTS",
+                name: "IX_pmdt_register_payments_company_guid",
+                table: "pmdt_register_payments",
                 column: "company_guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMDT_REGISTER_PAYMENTS_va_number_company_guid",
-                table: "PMDT_REGISTER_PAYMENTS",
+                name: "IX_pmdt_register_payments_va_number_company_guid",
+                table: "pmdt_register_payments",
                 columns: new[] { "va_number", "company_guid" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMDT_ROLES_name",
-                table: "PMDT_ROLES",
+                name: "IX_pmdt_roles_name",
+                table: "pmdt_roles",
                 column: "name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMTR_ACCOUNT_ROLES_account_guid_role_guid",
-                table: "PMTR_ACCOUNT_ROLES",
+                name: "IX_pmtr_accountroles_account_guid_role_guid",
+                table: "pmtr_accountroles",
                 columns: new[] { "account_guid", "role_guid" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMTR_ACCOUNT_ROLES_role_guid",
-                table: "PMTR_ACCOUNT_ROLES",
+                name: "IX_pmtr_accountroles_role_guid",
+                table: "pmtr_accountroles",
                 column: "role_guid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMTR_COMPANY_PARTICIPANTS_company_guid",
-                table: "PMTR_COMPANY_PARTICIPANTS",
+                name: "IX_pmtr_company_participants_company_guid",
+                table: "pmtr_company_participants",
                 column: "company_guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMTR_COMPANY_PARTICIPANTS_event_guid",
-                table: "PMTR_COMPANY_PARTICIPANTS",
+                name: "IX_pmtr_company_participants_event_guid",
+                table: "pmtr_company_participants",
                 column: "event_guid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMTR_EMPLOYEE_PARTICIPANTS_employee_guid",
-                table: "PMTR_EMPLOYEE_PARTICIPANTS",
+                name: "IX_pmtr_employee_participants_employee_guid",
+                table: "pmtr_employee_participants",
                 column: "employee_guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMTR_EMPLOYEE_PARTICIPANTS_event_guid",
-                table: "PMTR_EMPLOYEE_PARTICIPANTS",
+                name: "IX_pmtr_employee_participants_event_guid",
+                table: "pmtr_employee_participants",
                 column: "event_guid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PMTR_EVENT_DOCS_event_guid",
-                table: "PMTR_EVENT_DOCS",
+                name: "IX_pmtr_event_docs_event_guid",
+                table: "pmtr_event_docs",
                 column: "event_guid",
                 unique: true);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_PMDT_ACCOUNTS_PMDT_REGISTER_PAYMENTS_RegisterPaymentGuid",
-                table: "PMDT_ACCOUNTS",
+                name: "FK_pmdt_accounts_pmdt_register_payments_RegisterPaymentGuid",
+                table: "pmdt_accounts",
                 column: "RegisterPaymentGuid",
-                principalTable: "PMDT_REGISTER_PAYMENTS",
+                principalTable: "pmdt_register_payments",
                 principalColumn: "guid");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_PMDT_ACCOUNTS_PMDT_REGISTER_PAYMENTS_RegisterPaymentGuid",
-                table: "PMDT_ACCOUNTS");
+                name: "FK_pmdt_accounts_pmdt_register_payments_RegisterPaymentGuid",
+                table: "pmdt_accounts");
 
             migrationBuilder.DropTable(
-                name: "PMDT_EVENT_PAYMENTS");
+                name: "pmdt_event_payments");
 
             migrationBuilder.DropTable(
-                name: "PMTR_ACCOUNT_ROLES");
+                name: "pmtr_accountroles");
 
             migrationBuilder.DropTable(
-                name: "PMTR_COMPANY_PARTICIPANTS");
+                name: "pmtr_company_participants");
 
             migrationBuilder.DropTable(
-                name: "PMTR_EMPLOYEE_PARTICIPANTS");
+                name: "pmtr_employee_participants");
 
             migrationBuilder.DropTable(
-                name: "PMTR_EVENT_DOCS");
+                name: "pmtr_event_docs");
 
             migrationBuilder.DropTable(
-                name: "PMDT_ROLES");
+                name: "pmdt_roles");
 
             migrationBuilder.DropTable(
-                name: "PMDT_EMPLOYEES");
+                name: "pmdt_employees");
 
             migrationBuilder.DropTable(
-                name: "PMDT_EVENTS");
+                name: "pmdt_events");
 
             migrationBuilder.DropTable(
-                name: "PMDT_REGISTER_PAYMENTS");
+                name: "pmdt_register_payments");
 
             migrationBuilder.DropTable(
-                name: "PMDT_BANKS");
+                name: "pmdt_banks");
 
             migrationBuilder.DropTable(
-                name: "PMDT_COMPANIES");
+                name: "pmdt_companies");
 
             migrationBuilder.DropTable(
-                name: "PMDT_ACCOUNTS");
+                name: "pmdt_accounts");
         }
     }
 }

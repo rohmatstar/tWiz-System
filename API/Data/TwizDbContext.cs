@@ -138,10 +138,15 @@ public class TwizDbContext : DbContext
             .HasMany (b => b.RegisterPayments)
             .WithOne(rp => rp.Bank);
 
-        //Comapny - RegisterPayment (One to One)
+        //Company - RegisterPayment (One to One)
         modelBuilder.Entity<Company>()
             .HasOne(c => c.RegisterPayment)
             .WithOne(rp => rp.Company);
+
+        //Company - Employee (One to Many)
+        modelBuilder.Entity<Company>()
+            .HasMany(e => e.Employees)
+            .WithOne(c => c.Company).OnDelete(DeleteBehavior.NoAction);
     }
 
 }

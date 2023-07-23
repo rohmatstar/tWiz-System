@@ -3,7 +3,7 @@
 namespace API.Models;
 
 
-[Table ("PMDT_EVENT_PAYMENTS")]
+[Table ("pmdt_event_payments")]
 public class EventPayment : BaseEntity
 {
     [Column ("account_guid")]

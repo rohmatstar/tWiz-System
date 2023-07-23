@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace API.Models;
 
 
-[Table("PMDT_REGISTER_PAYMENTS")]
+[Table("pmdt_register_payments")]
 public class RegisterPayment : BaseEntity
 {
     [Column("company_guid")]

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(TwizDbContext))]
-    [Migration("20230723105942_initialmigration")]
+    [Migration("20230723115955_initialmigration")]
     partial class initialmigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -79,7 +79,7 @@ namespace API.Migrations
                     b.HasIndex("Email", "Token")
                         .IsUnique();
 
-                    b.ToTable("PMDT_ACCOUNTS");
+                    b.ToTable("pmdt_accounts");
                 });
 
             modelBuilder.Entity("API.Models.AccountRole", b =>
@@ -112,7 +112,7 @@ namespace API.Migrations
                     b.HasIndex("AccountGuid", "RoleGuid")
                         .IsUnique();
 
-                    b.ToTable("PMTR_ACCOUNT_ROLES");
+                    b.ToTable("pmtr_accountroles");
                 });
 
             modelBuilder.Entity("API.Models.Bank", b =>
@@ -137,7 +137,7 @@ namespace API.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(20")
+                        .HasColumnType("nvarchar(20)")
                         .HasColumnName("name");
 
                     b.HasKey("Guid");
@@ -145,7 +145,7 @@ namespace API.Migrations
                     b.HasIndex("Code", "Name")
                         .IsUnique();
 
-                    b.ToTable("PMDT_BANKS");
+                    b.ToTable("pmdt_banks");
                 });
 
             modelBuilder.Entity("API.Models.Company", b =>
@@ -187,7 +187,7 @@ namespace API.Migrations
                     b.HasIndex("AccountGuid")
                         .IsUnique();
 
-                    b.ToTable("PMDT_COMPANIES");
+                    b.ToTable("pmdt_companies");
                 });
 
             modelBuilder.Entity("API.Models.CompanyParticipant", b =>
@@ -228,7 +228,7 @@ namespace API.Migrations
 
                     b.HasIndex("EventGuid");
 
-                    b.ToTable("PMTR_COMPANY_PARTICIPANTS");
+                    b.ToTable("pmtr_company_participants");
                 });
 
             modelBuilder.Entity("API.Models.Employee", b =>
@@ -291,7 +291,7 @@ namespace API.Migrations
                     b.HasIndex("Nik", "AccountGuid", "PhoneNumber")
                         .IsUnique();
 
-                    b.ToTable("PMDT_EMPLOYEES");
+                    b.ToTable("pmdt_employees");
                 });
 
             modelBuilder.Entity("API.Models.EmployeeParticipant", b =>
@@ -332,7 +332,7 @@ namespace API.Migrations
 
                     b.HasIndex("EventGuid");
 
-                    b.ToTable("PMTR_EMPLOYEE_PARTICIPANTS");
+                    b.ToTable("pmtr_employee_participants");
                 });
 
             modelBuilder.Entity("API.Models.Event", b =>
@@ -414,7 +414,7 @@ namespace API.Migrations
 
                     b.HasIndex("CompanyGuid");
 
-                    b.ToTable("PMDT_EVENTS");
+                    b.ToTable("pmdt_events");
                 });
 
             modelBuilder.Entity("API.Models.EventDoc", b =>
@@ -446,7 +446,7 @@ namespace API.Migrations
                     b.HasIndex("EventGuid")
                         .IsUnique();
 
-                    b.ToTable("PMTR_EVENT_DOCS");
+                    b.ToTable("pmtr_event_docs");
                 });
 
             modelBuilder.Entity("API.Models.EventPayment", b =>
@@ -500,7 +500,7 @@ namespace API.Migrations
                     b.HasIndex("VaNumber")
                         .IsUnique();
 
-                    b.ToTable("PMDT_EVENT_PAYMENTS");
+                    b.ToTable("pmdt_event_payments");
                 });
 
             modelBuilder.Entity("API.Models.RegisterPayment", b =>
@@ -554,7 +554,7 @@ namespace API.Migrations
                     b.HasIndex("VaNumber", "CompanyGuid")
                         .IsUnique();
 
-                    b.ToTable("PMDT_REGISTER_PAYMENTS");
+                    b.ToTable("pmdt_register_payments");
                 });
 
             modelBuilder.Entity("API.Models.Role", b =>
@@ -582,7 +582,7 @@ namespace API.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("PMDT_ROLES");
+                    b.ToTable("pmdt_roles");
                 });
 
             modelBuilder.Entity("API.Models.Account", b =>
@@ -654,7 +654,7 @@ namespace API.Migrations
                     b.HasOne("API.Models.Company", "Company")
                         .WithMany("Employees")
                         .HasForeignKey("CompanyGUid")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Account");

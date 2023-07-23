@@ -3,7 +3,7 @@
 namespace API.Models;
 
 
-[Table("PMDT_ACCOUNTS")]
+[Table("pmdt_accounts")]
 public class Account : BaseEntity
 {
     [Column ("email", TypeName = "varchar(100)")]

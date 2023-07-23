@@ -2,7 +2,7 @@
 
 namespace API.Models;
 
-[Table ("PMTR_EVENT_DOCS")]
+[Table ("pmtr_event_docs")]
 public class EventDoc : BaseEntity
 {
     [Column ("event_guid")]

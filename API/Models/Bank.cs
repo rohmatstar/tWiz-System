@@ -2,13 +2,13 @@
 
 namespace API.Models;
 
-[Table("PMDT_BANKS")]
+[Table("pmdt_banks")]
 public class Bank : BaseEntity
 {
     [Column ("code", TypeName = "nvarchar(10)")]
     public string Code { get; set; }
 
-    [Column ("name", TypeName = "nvarchar(20")]
+    [Column ("name", TypeName = "nvarchar(20)")]
     public string Name { get; set; }
 
     // Cardinality

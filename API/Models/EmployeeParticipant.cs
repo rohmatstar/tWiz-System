@@ -2,7 +2,7 @@
 
 namespace API.Models;
 
-[Table ("PMTR_EMPLOYEE_PARTICIPANTS")]
+[Table ("pmtr_employee_participants")]
 public class EmployeeParticipant : BaseEntity
 {
     [Column ("event_guid")]
