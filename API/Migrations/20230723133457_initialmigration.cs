@@ -49,7 +49,6 @@ namespace API.Migrations
                     token = table.Column<int>(type: "int", nullable: false),
                     token_is_used = table.Column<bool>(type: "bit", nullable: false),
                     token_expiration = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    expired_time = table.Column<DateTime>(type: "datetime2", nullable: true),
                     RegisterPaymentGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     modified_date = table.Column<DateTime>(type: "datetime2", nullable: false)

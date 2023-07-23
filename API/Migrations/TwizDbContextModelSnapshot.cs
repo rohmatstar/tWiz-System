@@ -38,10 +38,6 @@ namespace API.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("email");
 
-                    b.Property<DateTime?>("ExpiredTime")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("expired_time");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit")
                         .HasColumnName("is_active");

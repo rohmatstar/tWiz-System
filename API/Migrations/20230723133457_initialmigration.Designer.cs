@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(TwizDbContext))]
-    [Migration("20230723115955_initialmigration")]
+    [Migration("20230723133457_initialmigration")]
     partial class initialmigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,10 +39,6 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(100)")
                         .HasColumnName("email");
-
-                    b.Property<DateTime?>("ExpiredTime")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("expired_time");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit")

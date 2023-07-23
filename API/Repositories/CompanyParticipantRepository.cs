@@ -1,6 +1,13 @@
-﻿namespace API.Repositories
+﻿using API.Contracts;
+using API.Data;
+using API.Models;
+
+namespace API.Repositories
 {
-    public class CompanyParticipantRepository
+    public class CompanyParticipantRepository : GeneralRepository<CompanyParticipant>, ICompanyParticipantRepository
     {
+        public CompanyParticipantRepository(TwizDbContext context) : base(context)
+        {
+        }
     }
 }

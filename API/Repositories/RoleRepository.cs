@@ -1,6 +1,12 @@
-﻿namespace API.Repositories
+﻿using API.Contracts;
+using API.Data;
+using API.Models;
+
+namespace API.Repositories;
+
+public class RoleRepository : GeneralRepository<Role>, IRoleRepository
 {
-    public class RoleRepository
+    public RoleRepository(TwizDbContext context) : base(context)
     {
     }
 }

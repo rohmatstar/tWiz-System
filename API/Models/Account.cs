@@ -23,9 +23,6 @@ public class Account : BaseEntity
     [Column ("token_expiration")]
     public DateTime? TokenExpiration { get; set; }
 
-    [Column("expired_time")]
-    public DateTime? ExpiredTime { get; set; }
-
 
     // Cardinality
 

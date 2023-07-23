@@ -1,6 +1,12 @@
-﻿namespace API.Repositories
+﻿using API.Contracts;
+using API.Data;
+using API.Models;
+
+namespace API.Repositories;
+
+public class EventDocRepository : GeneralRepository<EventDoc>, IEventDocRepository
 {
-    public class EventDocRepository
+    public EventDocRepository(TwizDbContext context) : base(context)
     {
     }
 }

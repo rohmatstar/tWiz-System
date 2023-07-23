@@ -1,6 +1,12 @@
-﻿namespace API.Repositories
+﻿using API.Contracts;
+using API.Data;
+using API.Models;
+
+namespace API.Repositories;
+
+public class RegisterPaymentRepository : GeneralRepository<RegisterPayment>, IRegisterPaymentRepository
 {
-    public class RegisterPaymentRepository
+    public RegisterPaymentRepository(TwizDbContext context) : base(context)
     {
     }
 }
