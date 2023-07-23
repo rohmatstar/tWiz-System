@@ -1,6 +1,7 @@
-﻿namespace API.Contracts
+﻿using API.Models;
+
+namespace API.Contracts;
+
+public interface IEventPaymentRepository : IGeneralRepository<EventPayment>
 {
-    public interface IEventPaymentRepository
-    {
-    }
 }

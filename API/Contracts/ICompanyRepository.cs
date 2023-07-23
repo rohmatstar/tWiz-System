@@ -1,6 +1,7 @@
-﻿namespace API.Contracts
+﻿using API.Models;
+
+namespace API.Contracts;
+
+public interface ICompanyRepository : IGeneralRepository<Company>
 {
-    public interface ICompanyRepository
-    {
-    }
 }
