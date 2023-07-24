@@ -1,7 +1,9 @@
 ﻿using API.Models;
+using API.DTOs.Events;
 
 namespace API.Contracts;
 
 public interface IEventRepository : IGeneralRepository<Event>
 {
+    
 }
