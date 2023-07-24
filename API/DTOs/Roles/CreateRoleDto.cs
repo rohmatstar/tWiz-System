@@ -2,7 +2,7 @@
 
 namespace API.DTOs.Roles
 {
-    public class NewRoleDto
+    public class CreateRoleDto
     {
         [Required]
         public string Name { get; set; }
