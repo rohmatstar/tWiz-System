@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace API.DTOs.Accounts
 {
-    public class NewAccountDto
+    public class CreateAccountDto
     {
         [Required]
         public string Email { get; set; }
