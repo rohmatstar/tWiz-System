@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace API.Migrations
 {
-    public partial class initialmigration : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,8 +14,8 @@ namespace API.Migrations
                 columns: table => new
                 {
                     guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    code = table.Column<string>(type: "nvarchar(10)", nullable: false),
-                    name = table.Column<string>(type: "nvarchar(20)", nullable: false),
+                    code = table.Column<string>(type: "nvarchar(20)", nullable: false),
+                    name = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     modified_date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -46,8 +46,8 @@ namespace API.Migrations
                     email = table.Column<string>(type: "varchar(100)", nullable: false),
                     password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     is_active = table.Column<bool>(type: "bit", nullable: false),
-                    token = table.Column<int>(type: "int", nullable: false),
-                    token_is_used = table.Column<bool>(type: "bit", nullable: false),
+                    token = table.Column<int>(type: "int", nullable: true),
+                    token_is_used = table.Column<bool>(type: "bit", nullable: true),
                     token_expiration = table.Column<DateTime>(type: "datetime2", nullable: true),
                     RegisterPaymentGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -323,7 +323,8 @@ namespace API.Migrations
                 name: "IX_pmdt_accounts_email_token",
                 table: "pmdt_accounts",
                 columns: new[] { "email", "token" },
-                unique: true);
+                unique: true,
+                filter: "[token] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_pmdt_accounts_RegisterPaymentGuid",
