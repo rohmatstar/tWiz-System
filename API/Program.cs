@@ -17,10 +17,14 @@ builder.Services.AddDbContext<TwizDbContext>(options => options.UseSqlServer(con
 // Add Repository to container
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IEventPaymentRepository, EventPaymentRepository>();
+builder.Services.AddScoped<IRegisterPaymentRepository, RegisterPaymentRepository>();
 
 // Add Service to container
 builder.Services.AddScoped<CompanyService>();
 builder.Services.AddScoped<EmployeeService>();
+builder.Services.AddScoped<EventPaymentService>();
+builder.Services.AddScoped<RegisterPaymentService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

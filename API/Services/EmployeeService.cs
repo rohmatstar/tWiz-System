@@ -14,7 +14,7 @@ public class EmployeeService
         _employeeRepository = employeeRepository;
     }
 
-    public IEnumerable<GetEmployeeDto> GetEmployee()
+    public IEnumerable<GetEmployeeDto> GetEmployees()
     {
         var employees = _employeeRepository.GetAll();
         if (!employees.Any())
@@ -73,7 +73,9 @@ public class EmployeeService
             HiringDate = newEmployeeDto.HiringDate,
             PhoneNumber = newEmployeeDto.PhoneNumber,
             AccountGuid = newEmployeeDto.AccountGuid,
-            CompanyGuid = newEmployeeDto.CompanyGuid
+            CompanyGuid = newEmployeeDto.CompanyGuid,
+            CreatedDate = DateTime.Now,
+            ModifiedDate = DateTime.Now
         };
 
         var createdEmployee = _employeeRepository.Create(employee);
@@ -118,7 +120,9 @@ public class EmployeeService
             HiringDate = UpdateEmployeeDto.HiringDate,
             PhoneNumber = UpdateEmployeeDto.PhoneNumber,
             AccountGuid = UpdateEmployeeDto.AccountGuid,
-            CompanyGuid = UpdateEmployeeDto.CompanyGuid
+            CompanyGuid = UpdateEmployeeDto.CompanyGuid,
+            ModifiedDate = DateTime.Now,
+            CreatedDate = getEmployee!.CreatedDate
         };
 
         var isUpdate = _employeeRepository.Update(employee);
@@ -135,16 +139,16 @@ public class EmployeeService
         var isExist = _employeeRepository.IsExist(guid);
         if (!isExist)
         {
-            return -1; // Company Not Found
+            return -1; // Employee Not Found
         }
 
         var employee = _employeeRepository.GetByGuid(guid);
         var isDelete = _employeeRepository.Delete(employee);
         if (!isDelete)
         {
-            return 0; // Company Not Deleted
+            return 0; // Employee Not Deleted
         }
 
-        return 1; // Company Deleted
+        return 1; // Employee Deleted
     }
 }

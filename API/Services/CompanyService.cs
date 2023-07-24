@@ -13,7 +13,7 @@ public class CompanyService
         _companyRepository = companyRepository;
     }
 
-    public IEnumerable<GetCompanyDto> GetCompany()
+    public IEnumerable<GetCompanyDto> GetCompanies()
     {
         var companies = _companyRepository.GetAll();
         if(!companies.Any())
@@ -60,6 +60,8 @@ public class CompanyService
             PhoneNumber = newCompanyDto.PhoneNumber,
             Address = newCompanyDto.Address,
             AccountGuid = newCompanyDto.AccountGuid,
+            CreatedDate = DateTime.Now,
+            ModifiedDate = DateTime.Now
         };
 
         var createdCompanies = _companyRepository.Create(companies);
@@ -73,7 +75,8 @@ public class CompanyService
             Guid = createdCompanies.Guid, 
             Name = createdCompanies.Name, 
             PhoneNumber = createdCompanies.PhoneNumber, 
-            Address = createdCompanies.Address 
+            Address = createdCompanies.Address
+
         };
 
         return toDto; // Company Created
@@ -96,6 +99,8 @@ public class CompanyService
             PhoneNumber = UpdateCompanyDto.PhoneNumber,
             Address = UpdateCompanyDto.Address,
             AccountGuid = UpdateCompanyDto.AccountGuid,
+            ModifiedDate = DateTime.Now,
+            CreatedDate = getCompany!.CreatedDate
         };
 
         var isUpdate = _companyRepository.Update(company);

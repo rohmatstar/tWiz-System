@@ -16,9 +16,9 @@ public class Account : BaseEntity
     public bool IsActive { get; set; }
 
     [Column("token")]
-    public int Token { get; set; }
+    public int? Token { get; set; }
     [Column ("token_is_used")]
-    public bool TokenIsUSed { get; set; }
+    public bool? TokenIsUSed { get; set; }
 
     [Column ("token_expiration")]
     public DateTime? TokenExpiration { get; set; }

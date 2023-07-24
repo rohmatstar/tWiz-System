@@ -11,17 +11,17 @@ namespace API.Controllers;
 [Route("api/companies")]
 public class CompanyController : ControllerBase
 {
-    private readonly CompanyService _companyService;
+    private readonly CompanyService _service;
 
     public CompanyController(CompanyService companyService)
     {
-        _companyService = companyService;
+        _service = companyService;
     }
 
     [HttpGet]
     public IActionResult GetAll()
     {
-        var entities = _companyService.GetCompany();
+        var entities = _service.GetCompanies();
 
         if (entities == null)
         {
@@ -46,8 +46,8 @@ public class CompanyController : ControllerBase
         [AllowAnonymous]
         public IActionResult GetByGuid(Guid guid)
         {
-            var education = _companyService.GetCompany(guid);
-            if (education is null)
+            var company = _service.GetCompany(guid);
+            if (company is null)
             {
                 return NotFound(new ResponseHandler<GetCompanyDto>
                 {
@@ -62,15 +62,15 @@ public class CompanyController : ControllerBase
                 Code = StatusCodes.Status200OK,
                 Status = HttpStatusCode.OK.ToString(),
                 Message = "Data found",
-                Data = education
+                Data = company
             });
         }
 
         [HttpPost]
         public IActionResult Create(CreateCompanyDto newCompanyDto)
         {
-            var createEducation = _companyService.CreateCompany(newCompanyDto);
-            if (createEducation is null)
+            var createCompany = _service.CreateCompany(newCompanyDto);
+            if (createCompany is null)
             {
                 return BadRequest(new ResponseHandler<GetCompanyDto>
                 {
@@ -85,14 +85,14 @@ public class CompanyController : ControllerBase
                 Code = StatusCodes.Status200OK,
                 Status = HttpStatusCode.OK.ToString(),
                 Message = "Successfully created",
-                Data = createEducation
+                Data = createCompany
             });
         }
 
         [HttpPut]
         public IActionResult Update(UpdateCompanyDto updateCompanyDto)
         {
-            var update = _companyService.UpdateCompany(updateCompanyDto);
+            var update = _service.UpdateCompany(updateCompanyDto);
             if (update is -1)
             {
                 return NotFound(new ResponseHandler<UpdateCompanyDto>
@@ -122,7 +122,7 @@ public class CompanyController : ControllerBase
         [HttpDelete]
         public IActionResult Delete(Guid guid)
         {
-            var delete = _companyService.DeleteCompany(guid);
+            var delete = _service.DeleteCompany(guid);
 
             if (delete is -1)
             {

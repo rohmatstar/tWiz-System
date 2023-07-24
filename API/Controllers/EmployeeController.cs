@@ -23,7 +23,7 @@ public class EmployeeController : ControllerBase
     [HttpGet]
     public IActionResult GetAll()
     {
-        var entities = _service.GetEmployee();
+        var entities = _service.GetEmployees();
 
         if (entities == null)
         {
@@ -48,8 +48,8 @@ public class EmployeeController : ControllerBase
     [AllowAnonymous]
     public IActionResult GetByGuid(Guid guid)
     {
-        var education = _service.GetEmployee(guid);
-        if (education is null)
+        var employee = _service.GetEmployee(guid);
+        if (employee is null)
         {
             return NotFound(new ResponseHandler<GetEmployeeDto>
             {
@@ -64,15 +64,15 @@ public class EmployeeController : ControllerBase
             Code = StatusCodes.Status200OK,
             Status = HttpStatusCode.OK.ToString(),
             Message = "Data found",
-            Data = education
+            Data = employee
         });
     }
 
     [HttpPost]
     public IActionResult Create(CreateEmployeeDto newEmployeeDto)
     {
-        var createEducation = _service.CreateEmployee(newEmployeeDto);
-        if (createEducation is null)
+        var createEmployee = _service.CreateEmployee(newEmployeeDto);
+        if (createEmployee is null)
         {
             return BadRequest(new ResponseHandler<GetEmployeeDto>
             {
@@ -87,7 +87,7 @@ public class EmployeeController : ControllerBase
             Code = StatusCodes.Status200OK,
             Status = HttpStatusCode.OK.ToString(),
             Message = "Successfully created",
-            Data = createEducation
+            Data = createEmployee
         });
     }
 
