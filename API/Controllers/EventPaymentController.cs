@@ -123,7 +123,7 @@ public class EventPaymentController : ControllerBase
     [HttpDelete]
     public IActionResult Delete(Guid guid)
     {
-        var delete = _service.DeleteEmployee(guid);
+        var delete = _service.DeleteEventPayment(guid);
 
         if (delete is -1)
         {

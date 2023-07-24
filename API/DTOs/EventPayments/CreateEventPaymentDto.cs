@@ -3,6 +3,7 @@
 public class CreateEventPaymentDto
 {
     public Guid AccountGuid { get; set; }
+    public Guid EventGuid { get; set; }
     public int VaNumber { get; set; }
     public string PaymentImage { get; set; }
     public bool IsValid { get; set; }

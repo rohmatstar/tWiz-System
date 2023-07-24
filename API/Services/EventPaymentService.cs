@@ -25,6 +25,7 @@ public class EventPaymentService
         {
             Guid = eventPayments.Guid,
             AccountGuid = eventPayments.AccountGuid,
+            EventGuid = eventPayments.EventGuid,
             VaNumber = eventPayments.VaNumber,
             PaymentImage = eventPayments.PaymentImage,
             IsValid = eventPayments.IsValid,
@@ -46,6 +47,7 @@ public class EventPaymentService
         {
             Guid = eventPayments.Guid,
             AccountGuid = eventPayments.AccountGuid,
+            EventGuid = eventPayments.EventGuid,
             VaNumber = eventPayments.VaNumber,
             PaymentImage = eventPayments.PaymentImage,
             IsValid = eventPayments.IsValid,
@@ -61,6 +63,7 @@ public class EventPaymentService
         {
             Guid = new Guid(),
             AccountGuid = newEventPaymentDto.AccountGuid,
+            EventGuid = newEventPaymentDto.EventGuid,
             VaNumber = newEventPaymentDto.VaNumber,
             PaymentImage = newEventPaymentDto.PaymentImage,
             IsValid = newEventPaymentDto.IsValid,
@@ -79,6 +82,7 @@ public class EventPaymentService
         {
             Guid = createdEventPayment.Guid,
             AccountGuid = createdEventPayment.AccountGuid,
+            EventGuid = createdEventPayment.EventGuid,
             VaNumber = createdEventPayment.VaNumber,
             PaymentImage = createdEventPayment.PaymentImage,
             IsValid = createdEventPayment.IsValid,
@@ -102,6 +106,7 @@ public class EventPaymentService
         {
             Guid = UpdateEventPaymentDto.Guid,
             AccountGuid = UpdateEventPaymentDto.AccountGuid,
+            EventGuid = UpdateEventPaymentDto.EventGuid,
             VaNumber = UpdateEventPaymentDto.VaNumber,
             PaymentImage = UpdateEventPaymentDto.PaymentImage,
             IsValid = UpdateEventPaymentDto.IsValid,
@@ -119,7 +124,7 @@ public class EventPaymentService
     }
 
 
-    public int DeleteEmployee(Guid guid)
+    public int DeleteEventPayment(Guid guid)
     {
         var isExist = _eventPaymentRepository.IsExist(guid);
         if (!isExist)
@@ -127,8 +132,8 @@ public class EventPaymentService
             return -1; // EventPayment Not Found
         }
 
-        var employee = _eventPaymentRepository.GetByGuid(guid);
-        var isDelete = _eventPaymentRepository.Delete(employee);
+        var eventpayment = _eventPaymentRepository.GetByGuid(guid);
+        var isDelete = _eventPaymentRepository.Delete(eventpayment);
         if (!isDelete)
         {
             return 0; // EventPayment Not Deleted
