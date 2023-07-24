@@ -18,7 +18,7 @@ public class RegisterPayment : BaseEntity
     public decimal Price { get; set; }
 
     [Column("payment_image", TypeName = "nvarchar(max)")]
-    public string payment_image { get; set; }
+    public string PaymentImage { get; set; }
 
     [Column("is_valid")]
     public bool IsValid { get; set; }
