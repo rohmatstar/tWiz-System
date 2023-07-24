@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using API.DTOs.Events;
 using API.Utilities.Handlers;
+using API.Services;
 
 namespace API.Controllers
 {
@@ -10,25 +11,25 @@ namespace API.Controllers
     [Route("api/events")]
     public class EventController : ControllerBase
     {
-        private readonly IEventRepository _eventRepository;
+        private readonly EventService _eventService;
 
-        public EventController(IEventRepository eventRepository)
+        public EventController(EventService eventService)
         {
-            _eventRepository = eventRepository;
+            _eventService = eventService;
         }
 
         [HttpGet]
         public IActionResult GetEvents()
         {
-            var data = _eventRepository.GetAll();
-            if (data != null && data.Any())
+            var eventsData = _eventService.GetAll();
+            if (eventsData != null)
             {
                 return Ok(new ResponseHandler<IEnumerable<EventsDto>>
                 {
                     Code = StatusCodes.Status200OK,
                     Status = HttpStatusCode.OK.ToString(),
                     Message = "Success",
-                    Data = data
+                    Data = eventsData
                 });
             }
 
@@ -44,15 +45,15 @@ namespace API.Controllers
         [HttpGet("{guid}")]
         public IActionResult GetEvent(Guid guid)
         {
-            var data = _eventRepository.GetSingle(guid);
-            if (data != null && data.Any())
+            var eventsData = _eventService.GetSingle(guid);
+            if (eventsData != null)
             {
-                return Ok(new ResponseHandler<IEnumerable<EventsDto>>
+                return Ok(new ResponseHandler<EventsDto>
                 {
                     Code = StatusCodes.Status200OK,
                     Status = HttpStatusCode.OK.ToString(),
                     Message = "Success",
-                    Data = data
+                    Data = eventsData
                 });
             }
 
@@ -68,7 +69,7 @@ namespace API.Controllers
         [HttpPost]
         public IActionResult Create(CreateEventDto createEventsDto)
         {
-            var created = _eventRepository.CreateEvent(createEventsDto);
+            var created = _eventService.CreateEvent(createEventsDto);
             if (created is not null)
             {
                 return Ok(new ResponseHandler<EventsDto>
@@ -92,15 +93,15 @@ namespace API.Controllers
         [HttpPut]
         public IActionResult Update(EventsDto eventsDto)
         {
-            var created = _eventRepository.UpdateEvent(eventsDto);
-            if (created is not null)
+            var updated = _eventService.UpdateEvent(eventsDto);
+            if (updated is not null)
             {
                 return Ok(new ResponseHandler<EventsDto>
                 {
                     Code = StatusCodes.Status200OK,
                     Status = HttpStatusCode.OK.ToString(),
                     Message = "Success",
-                    Data = created
+                    Data = updated
                 });
             }
 
@@ -108,7 +109,7 @@ namespace API.Controllers
             {
                 Code = StatusCodes.Status404NotFound,
                 Status = HttpStatusCode.NotFound.ToString(),
-                Message = "Not Found",
+                Message = "Failed to Update",
                 Data = null
             });
         }
@@ -116,7 +117,7 @@ namespace API.Controllers
         [HttpDelete]
         public IActionResult DeleteEvent(Guid guid)
         {
-            var deleted = _eventRepository.DeleteEvent(guid);
+            var deleted = _eventService.DeleteEvent(guid);
             if (deleted is not null)
             {
                 return Ok(new ResponseHandler<EventsDto>
@@ -132,7 +133,7 @@ namespace API.Controllers
             {
                 Code = StatusCodes.Status404NotFound,
                 Status = HttpStatusCode.NotFound.ToString(),
-                Message = "Not Found",
+                Message = "Failed to Delete",
                 Data = null
             });
         }

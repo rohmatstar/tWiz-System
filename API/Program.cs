@@ -1,6 +1,7 @@
 using API.Contracts;
 using API.Data;
 using API.Repositories;
+using API.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -16,6 +17,12 @@ builder.Services.AddSwaggerGen();
 //Add DbContext
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<TwizDbContext>(options => options.UseSqlServer(connectionString));
+
+// Repositories
+builder.Services.AddScoped<IEventRepository, EventRepository>();
+
+// Services
+builder.Services.AddScoped<EventService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
