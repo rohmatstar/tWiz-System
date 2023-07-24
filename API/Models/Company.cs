@@ -23,7 +23,7 @@ public class Company : BaseEntity
     public RegisterPayment? RegisterPayment { get; set; }
     public Account? Account { get; set; }
 
-    public CompanyParticipant? CompanyParticipant { get; set; }
+    public ICollection<CompanyParticipant>? CompanyParticipants { get; set; }
 
     public ICollection<Event>? Events { get; set; }
 

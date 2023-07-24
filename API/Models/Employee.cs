@@ -33,7 +33,7 @@ public class Employee : BaseEntity
 
     // Cardinality
 
-    public EmployeeParticipant? EmployeeParticipant { get; set; }
+    public ICollection<EmployeeParticipant>? EmployeeParticipants { get; set; }
 
     public Company? Company { get; set; }
 

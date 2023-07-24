@@ -23,7 +23,7 @@ public class Event : BaseEntity
     [Column("is_paid")]
     public bool IsPaid { get; set; }
 
-    [Precision(18, 2)]
+    [Precision(10, 2)]
     [Column("price")]
     public decimal Price { get; set; }
 

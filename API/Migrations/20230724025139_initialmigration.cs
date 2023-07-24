@@ -150,7 +150,7 @@ namespace API.Migrations
                     description = table.Column<string>(type: "text", nullable: false),
                     is_published = table.Column<bool>(type: "bit", nullable: false),
                     is_paid = table.Column<bool>(type: "bit", nullable: false),
-                    price = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    price = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
                     category = table.Column<string>(type: "nvarchar(30)", nullable: false),
                     status = table.Column<int>(type: "int", nullable: false),
                     start_date = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -179,7 +179,7 @@ namespace API.Migrations
                     guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     company_guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     va_number = table.Column<int>(type: "int", nullable: false),
-                    price = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    price = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
                     payment_image = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     is_valid = table.Column<bool>(type: "bit", nullable: false),
                     bank_guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -422,8 +422,7 @@ namespace API.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_pmtr_company_participants_company_guid",
                 table: "pmtr_company_participants",
-                column: "company_guid",
-                unique: true);
+                column: "company_guid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_pmtr_company_participants_event_guid",
@@ -433,8 +432,7 @@ namespace API.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_pmtr_employee_participants_employee_guid",
                 table: "pmtr_employee_participants",
-                column: "employee_guid",
-                unique: true);
+                column: "employee_guid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_pmtr_employee_participants_event_guid",

@@ -217,8 +217,7 @@ namespace API.Migrations
 
                     b.HasKey("Guid");
 
-                    b.HasIndex("CompanyGuid")
-                        .IsUnique();
+                    b.HasIndex("CompanyGuid");
 
                     b.HasIndex("EventGuid");
 
@@ -321,8 +320,7 @@ namespace API.Migrations
 
                     b.HasKey("Guid");
 
-                    b.HasIndex("EmployeeGuid")
-                        .IsUnique();
+                    b.HasIndex("EmployeeGuid");
 
                     b.HasIndex("EventGuid");
 
@@ -384,8 +382,8 @@ namespace API.Migrations
                         .HasColumnName("place");
 
                     b.Property<decimal>("Price")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)")
                         .HasColumnName("price");
 
                     b.Property<int>("Quota")
@@ -525,8 +523,8 @@ namespace API.Migrations
                         .HasColumnName("modified_date");
 
                     b.Property<decimal>("Price")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)")
                         .HasColumnName("price");
 
                     b.Property<int>("VaNumber")
@@ -621,8 +619,8 @@ namespace API.Migrations
             modelBuilder.Entity("API.Models.CompanyParticipant", b =>
                 {
                     b.HasOne("API.Models.Company", "Company")
-                        .WithOne("CompanyParticipant")
-                        .HasForeignKey("API.Models.CompanyParticipant", "CompanyGuid")
+                        .WithMany("CompanyParticipants")
+                        .HasForeignKey("CompanyGuid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -659,8 +657,8 @@ namespace API.Migrations
             modelBuilder.Entity("API.Models.EmployeeParticipant", b =>
                 {
                     b.HasOne("API.Models.Employee", "Employee")
-                        .WithOne("EmployeeParticipant")
-                        .HasForeignKey("API.Models.EmployeeParticipant", "EmployeeGuid")
+                        .WithMany("EmployeeParticipants")
+                        .HasForeignKey("EmployeeGuid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -761,7 +759,7 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Models.Company", b =>
                 {
-                    b.Navigation("CompanyParticipant");
+                    b.Navigation("CompanyParticipants");
 
                     b.Navigation("Employees");
 
@@ -772,7 +770,7 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Models.Employee", b =>
                 {
-                    b.Navigation("EmployeeParticipant");
+                    b.Navigation("EmployeeParticipants");
                 });
 
             modelBuilder.Entity("API.Models.Event", b =>

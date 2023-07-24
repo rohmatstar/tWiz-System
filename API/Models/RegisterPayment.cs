@@ -13,7 +13,7 @@ public class RegisterPayment : BaseEntity
     [Column("va_number")]
     public int VaNumber { get; set; }
 
-    [Precision(18, 2)]
+    [Precision(10, 2)]
     [Column("price")]
     public decimal Price { get; set; }
 

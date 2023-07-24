@@ -147,6 +147,16 @@ public class TwizDbContext : DbContext
         modelBuilder.Entity<Company>()
             .HasMany(e => e.Employees)
             .WithOne(c => c.Company).OnDelete(DeleteBehavior.NoAction);
+
+        //Company - CompanyParticipants
+        modelBuilder.Entity<Company>()
+            .HasMany(c => c.CompanyParticipants)
+            .WithOne(cp => cp.Company);
+        
+        //Employee - EmployeeParticipants
+        modelBuilder.Entity<Employee>()
+          .HasMany(e => e.EmployeeParticipants)
+          .WithOne(ep => ep.Employee);
     }
 
 }
