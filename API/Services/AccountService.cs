@@ -59,14 +59,14 @@ public class AccountService
         return toDto; // accounts found
     }
 
-    public GetAccountDto? CreateAccount(CreateAccountDto newAccountDto)
+    public CreatedAccountDto? CreateAccount(CreateAccountDto createAccountDto)
     {
         var account = new Account
         {
-            Guid = Guid.NewGuid(),
-            Email = newAccountDto.Email,
-            Password = HashingHandler.HashPassword(newAccountDto.Password),
-            IsActive = newAccountDto.IsActive,
+            Guid = new Guid(),
+            Email = createAccountDto.Email,
+            Password = HashingHandler.HashPassword(createAccountDto.Password),
+            IsActive = createAccountDto.IsActive,
             Token = null,
             TokenIsUsed = null,
             TokenExpiration = null,
@@ -80,7 +80,7 @@ public class AccountService
             return null; // Account not created
         }
 
-        var toDto = new GetAccountDto
+        var toDto = new CreatedAccountDto
         {
             Guid = createdAccount.Guid,
             Email = createdAccount.Email,

@@ -7,6 +7,7 @@ namespace API.DTOs.Accounts
         public Guid Guid { get; set; }
 
         [Required]
+        [EmailAddress]
         public string Email { get; set; }
         public string? Password { get; set; }
 

@@ -9,6 +9,7 @@ public class UpdateAccountDto
     public Guid Guid { get; set; }
 
     [Required]
+    [EmailAddress]
     [EmailDuplicateProperty("Guid", "Email")]
     public string Email { get; set; }
 

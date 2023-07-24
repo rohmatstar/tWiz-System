@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(TwizDbContext))]
-    [Migration("20230724025139_initialmigration")]
-    partial class initialmigration
+    [Migration("20230724063147_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -56,7 +56,7 @@ namespace API.Migrations
                     b.Property<Guid?>("RegisterPaymentGuid")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Token")
+                    b.Property<int?>("Token")
                         .HasColumnType("int")
                         .HasColumnName("token");
 
@@ -64,7 +64,7 @@ namespace API.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("token_expiration");
 
-                    b.Property<bool>("TokenIsUSed")
+                    b.Property<bool?>("TokenIsUsed")
                         .HasColumnType("bit")
                         .HasColumnName("token_is_used");
 
@@ -73,7 +73,8 @@ namespace API.Migrations
                     b.HasIndex("RegisterPaymentGuid");
 
                     b.HasIndex("Email", "Token")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[token] IS NOT NULL");
 
                     b.ToTable("pmdt_accounts");
                 });
@@ -241,7 +242,7 @@ namespace API.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("birthdate");
 
-                    b.Property<Guid>("CompanyGUid")
+                    b.Property<Guid>("CompanyGuid")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("company_guid");
 
@@ -281,7 +282,7 @@ namespace API.Migrations
                     b.HasIndex("AccountGuid")
                         .IsUnique();
 
-                    b.HasIndex("CompanyGUid");
+                    b.HasIndex("CompanyGuid");
 
                     b.HasIndex("Nik", "AccountGuid", "PhoneNumber")
                         .IsUnique();
@@ -647,7 +648,7 @@ namespace API.Migrations
 
                     b.HasOne("API.Models.Company", "Company")
                         .WithMany("Employees")
-                        .HasForeignKey("CompanyGUid")
+                        .HasForeignKey("CompanyGuid")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
