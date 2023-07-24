@@ -17,6 +17,30 @@ public class EventRepository : GeneralRepository<Event>, IEventRepository
     {
         var events = _context.Events.Select(e => new EventsDto
         {
+            Guid = e.Guid,
+            Name = e.Name,
+            Thumbnail = e.Thumbnail,
+            Description = e.Description,
+            IsPublished = e.IsPublished,
+            IsPaid = e.IsPaid,
+            Price = e.Price,
+            Category = e.Category,
+            Status = e.Status,
+            StartDate = e.StartDate,
+            EndDate = e.EndDate,
+            Quota = e.Quota,
+            Place = e.Place,
+            CreatedBy = e.CreatedBy
+        }).ToList();
+
+        return events;
+    }
+
+    public IEnumerable<EventsDto>? GetSingle(Guid guid)
+    {
+        var events = _context.Events.Where(e => e.Guid == guid).Select(e => new EventsDto
+        {
+            Guid = e.Guid,
             Name = e.Name,
             Thumbnail = e.Thumbnail,
             Description = e.Description,

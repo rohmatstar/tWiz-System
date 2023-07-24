@@ -40,5 +40,29 @@ namespace API.Controllers
                 Data = null
             });
         }
+
+        [HttpGet("{guid}")]
+        public IActionResult GetEvent(Guid guid)
+        {
+            var data = _eventRepository.GetSingle(guid);
+            if (data != null && data.Any())
+            {
+                return Ok(new ResponseHandler<IEnumerable<EventsDto>>
+                {
+                    Code = StatusCodes.Status200OK,
+                    Status = HttpStatusCode.OK.ToString(),
+                    Message = "Success",
+                    Data = data
+                });
+            }
+
+            return NotFound(new ResponseHandler<EventsDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Not Found",
+                Data = null
+            });
+        }
     }
 }

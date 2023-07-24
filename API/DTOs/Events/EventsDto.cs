@@ -4,6 +4,7 @@ namespace API.DTOs.Events
 {
     public class EventsDto
     {
+        public Guid Guid { get; set; }
         public string? Name { get; set; }
         public string? Thumbnail { get; set; }
         public string? Description { get; set; }
