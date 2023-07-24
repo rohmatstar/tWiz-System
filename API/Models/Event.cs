@@ -31,7 +31,7 @@ public class Event : BaseEntity
     public string Category { get; set; }
 
     [Column ("status")]
-    public StatusLevel Status { get; set; }
+    public EventStatus Status { get; set; }
 
     [Column("start_date")]
     public DateTime StartDate { get; set; }
