@@ -6,7 +6,7 @@ namespace API.Models;
 [Table("pmdt_accounts")]
 public class Account : BaseEntity
 {
-    [Column ("email", TypeName = "varchar(100)")]
+    [Column("email", TypeName = "varchar(100)")]
     public string Email { get; set; }
 
     [Column("password", TypeName = "nvarchar(max)")]
@@ -16,11 +16,11 @@ public class Account : BaseEntity
     public bool IsActive { get; set; }
 
     [Column("token")]
-    public int Token { get; set; }
-    [Column ("token_is_used")]
-    public bool TokenIsUSed { get; set; }
+    public int? Token { get; set; }
+    [Column("token_is_used")]
+    public bool? TokenIsUsed { get; set; }
 
-    [Column ("token_expiration")]
+    [Column("token_expiration")]
     public DateTime? TokenExpiration { get; set; }
 
 
