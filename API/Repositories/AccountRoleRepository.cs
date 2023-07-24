@@ -8,5 +8,11 @@ public class AccountRoleRepository : GeneralRepository<AccountRole>, IAccountRol
 {
     public AccountRoleRepository(TwizDbContext context) : base(context)
     {
+
+    }
+
+    public IEnumerable<AccountRole> GetAccountRolesByAccountGuid(Guid guid)
+    {
+        return _context.Set<AccountRole>().Where(ar => ar.AccountGuid == guid);
     }
 }
