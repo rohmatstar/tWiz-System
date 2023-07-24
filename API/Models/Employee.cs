@@ -26,7 +26,7 @@ public class Employee : BaseEntity
     public string PhoneNumber { get; set; }
 
     [Column("company_guid")]
-    public Guid CompanyGUid { get; set; }
+    public Guid CompanyGuid { get; set; }
 
     [Column("account_guid")]
     public Guid AccountGuid { get; set; }
