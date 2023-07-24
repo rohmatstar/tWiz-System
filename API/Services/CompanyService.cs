@@ -74,8 +74,9 @@ public class CompanyService
         { 
             Guid = createdCompanies.Guid, 
             Name = createdCompanies.Name, 
-            PhoneNumber = createdCompanies.PhoneNumber, 
-            Address = createdCompanies.Address
+            PhoneNumber = createdCompanies.PhoneNumber,
+            Address = createdCompanies.Address,
+            AccountGuid = createdCompanies.AccountGuid
 
         };
 
