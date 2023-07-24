@@ -38,8 +38,8 @@ builder.Services.AddSwaggerGen(x => {
     x.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
-        Title = "MCC 78 NET Core API",
-        Description = "ASP.NET Core API 6.0"
+        Title = "tWiz",
+        Description = "Corporate Event Arrangement System"
     });
     x.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
