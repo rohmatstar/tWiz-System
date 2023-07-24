@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using API.Utilities.Enums;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace API.Models;
@@ -25,6 +26,9 @@ public class RegisterPayment : BaseEntity
 
     [Column("bank_guid")]
     public Guid BankGuid { get; set; }
+
+    [Column("status_payment")]
+    public StatusPayment StatusPayment { get; set; }
 
     // Cardinality
 

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using API.Utilities.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace API.Models;
 
@@ -23,6 +24,9 @@ public class EventPayment : BaseEntity
 
     [Column("bank_guid")]
     public Guid BankGuid { get; set; }
+
+    [Column("status_payment")]
+    public StatusPayment StatusPayment { get; set; }
 
     // Cardinality
 
