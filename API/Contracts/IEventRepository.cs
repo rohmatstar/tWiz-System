@@ -9,4 +9,5 @@ public interface IEventRepository : IGeneralRepository<Event>
     IEnumerable<EventsDto>? GetSingle(Guid guid);
     EventsDto? CreateEvent(CreateEventDto createEventDto);
     EventsDto? UpdateEvent(EventsDto eventsDto);
+    EventsDto? DeleteEvent(Guid guid);
 }

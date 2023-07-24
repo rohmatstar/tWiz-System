@@ -112,5 +112,29 @@ namespace API.Controllers
                 Data = null
             });
         }
+
+        [HttpDelete]
+        public IActionResult DeleteEvent(Guid guid)
+        {
+            var deleted = _eventRepository.DeleteEvent(guid);
+            if (deleted is not null)
+            {
+                return Ok(new ResponseHandler<EventsDto>
+                {
+                    Code = StatusCodes.Status200OK,
+                    Status = HttpStatusCode.OK.ToString(),
+                    Message = "Success",
+                    Data = deleted
+                });
+            }
+
+            return NotFound(new ResponseHandler<EventsDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Not Found",
+                Data = null
+            });
+        }
     }
 }

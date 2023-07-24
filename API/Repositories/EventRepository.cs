@@ -148,4 +148,36 @@ public class EventRepository : GeneralRepository<Event>, IEventRepository
 
         return updatedEvent;
     }
+
+    public EventsDto? DeleteEvent(Guid guid)
+    {
+        var singleEvent = _context.Events.Find(guid);
+        if (singleEvent == null)
+        {
+            return null;
+        }
+
+        var deletedEvent = new EventsDto
+        {
+            Guid = singleEvent.Guid,
+            Name = singleEvent.Name!,
+            Thumbnail = singleEvent.Thumbnail,
+            Description = singleEvent.Description!,
+            IsPublished = (bool)singleEvent.IsPublished!,
+            IsPaid = (bool)singleEvent.IsPaid!,
+            Price = singleEvent.Price,
+            Category = singleEvent.Category!,
+            Status = singleEvent.Status,
+            StartDate = singleEvent.StartDate,
+            EndDate = singleEvent.EndDate,
+            Quota = (int)singleEvent.Quota!,
+            Place = singleEvent.Place!,
+            CreatedBy = singleEvent.CreatedBy
+        };
+
+        _context.Events.Remove(singleEvent);
+        _context.SaveChanges();
+
+        return deletedEvent;
+    }
 }
