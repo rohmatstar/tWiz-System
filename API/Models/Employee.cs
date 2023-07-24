@@ -4,10 +4,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace API.Models;
 
 
-[Table ("pmdt_employees")]
+[Table("pmdt_employees")]
 public class Employee : BaseEntity
 {
-    [Column ("nik", TypeName = "nchar(12)")]
+    [Column("nik", TypeName = "nchar(12)")]
     public string Nik { get; set; }
 
     [Column("full_name", TypeName = "nvarchar(100)")]
@@ -26,7 +26,7 @@ public class Employee : BaseEntity
     public string PhoneNumber { get; set; }
 
     [Column("company_guid")]
-    public Guid CompanyGUid { get; set; }
+    public Guid CompanyGuid { get; set; }
 
     [Column("account_guid")]
     public Guid AccountGuid { get; set; }
