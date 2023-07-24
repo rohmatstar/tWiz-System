@@ -6,41 +6,30 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
 builder.Services.AddControllers();
-
-// Add Repository to the container
-builder.Services.AddScoped<IAccountRepository, AccountRepository>();
-builder.Services.AddScoped<IAccountRoleRepository, AccountRoleRepository>();
-builder.Services.AddScoped<IRoleRepository, RoleRepository>();
-builder.Services.AddScoped<IBankRepository, BankRepository>();
-
-// Add Service to the container
-builder.Services.AddScoped<RoleService>();
-builder.Services.AddScoped<AccountService>();
-builder.Services.AddScoped<AccountRoleService>();
-builder.Services.AddScoped<BankService>();
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 //Add DbContext
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<TwizDbContext>(options => options.UseSqlServer(connectionString));
 
-// Repositories
+// =================================================== Repositories ==================================================== //
 builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IAccountRoleRepository, AccountRoleRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IBankRepository, BankRepository>();
+// ================================================= End Repositories ==================================================== //
 
-// Services
+// ===================================================== Services ==================================================== //
 builder.Services.AddScoped<EventService>();
+builder.Services.AddScoped<RoleService>();
+builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<AccountRoleService>();
+builder.Services.AddScoped<BankService>();
+// ==================================================== End Services ==================================================== //
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IEventRepository, EventRepository>();
+
 
 // CORS
 builder.Services.AddCors(options =>
@@ -54,6 +43,7 @@ builder.Services.AddCors(options =>
 });
 
 // Swager Configuration
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(x => {
     x.SwaggerDoc("v1", new OpenApiInfo
     {
@@ -88,6 +78,14 @@ builder.Services.AddSwaggerGen(x => {
 
 var app = builder.Build();
 
+// CORS
+app.UseCors(options =>
+{
+    options.AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+});
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -96,8 +94,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-app.UseCors();
 
 app.UseAuthorization();
 
