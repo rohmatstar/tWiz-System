@@ -69,6 +69,7 @@ namespace API.Services
             var toDto = new GetBankDto
             {
                 Guid = bank.Guid,
+                Code = bank.Code,
                 Name = bank.Name
             };
 
@@ -88,6 +89,7 @@ namespace API.Services
             var bank = new Bank
             {
                 Guid = updateBankDto.Guid,
+                Code = updateBankDto.Code,
                 Name = updateBankDto.Name,
                 ModifiedDate = DateTime.Now,
                 CreatedDate = getBank!.CreatedDate

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(TwizDbContext))]
-    [Migration("20230724063147_InitialMigration")]
+    [Migration("20230724072816_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -121,7 +121,7 @@ namespace API.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("nvarchar(10)")
+                        .HasColumnType("nvarchar(20)")
                         .HasColumnName("code");
 
                     b.Property<DateTime>("CreatedDate")
@@ -134,7 +134,7 @@ namespace API.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(20)")
+                        .HasColumnType("nvarchar(50)")
                         .HasColumnName("name");
 
                     b.HasKey("Guid");
@@ -525,6 +525,11 @@ namespace API.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("modified_date");
 
+                    b.Property<string>("PaymentImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("payment_image");
+
                     b.Property<decimal>("Price")
                         .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)")
@@ -533,11 +538,6 @@ namespace API.Migrations
                     b.Property<int>("VaNumber")
                         .HasColumnType("int")
                         .HasColumnName("va_number");
-
-                    b.Property<string>("payment_image")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("payment_image");
 
                     b.HasKey("Guid");
 

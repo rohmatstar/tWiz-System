@@ -14,11 +14,13 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountRoleRepository, AccountRoleRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IBankRepository, BankRepository>();
 
 // Add Service to the container
 builder.Services.AddScoped<RoleService>();
 builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<AccountRoleService>();
+builder.Services.AddScoped<BankService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
