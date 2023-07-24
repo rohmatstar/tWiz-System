@@ -18,6 +18,10 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountRoleRepository, AccountRoleRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IBankRepository, BankRepository>();
+builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IRegisterPaymentRepository, RegisterPaymentRepository>();
+builder.Services.AddScoped<IEventPaymentRepository, EventPaymentRepository>();
 // ================================================= End Repositories ==================================================== //
 
 // ===================================================== Services ==================================================== //
@@ -26,6 +30,10 @@ builder.Services.AddScoped<RoleService>();
 builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<AccountRoleService>();
 builder.Services.AddScoped<BankService>();
+builder.Services.AddScoped<CompanyService>();
+builder.Services.AddScoped<EmployeeService>();
+builder.Services.AddScoped<RegisterPaymentService>();
+builder.Services.AddScoped<EventPaymentService>();
 // ==================================================== End Services ==================================================== //
 
 
