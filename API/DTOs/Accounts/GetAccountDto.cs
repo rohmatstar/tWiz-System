@@ -8,9 +8,9 @@ namespace API.DTOs.Accounts
 
         [Required]
         public string Email { get; set; }
+        public string? Password { get; set; }
 
         [Required]
-        public string Password { get; set; }
         public bool IsActive { get; set; }
         public int? Token { get; set; }
         public bool? TokenIsUsed { get; set; }
