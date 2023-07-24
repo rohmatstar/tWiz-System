@@ -7,4 +7,3 @@ public class ResponseHandler<TEntity>
     public string Message { get; set; }
     public TEntity? Data { get; set; }
 }
-

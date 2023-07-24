@@ -1,38 +1,39 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using API.DTOs.Events;
-using API.Utilities.Handlers;
+﻿using API.DTOs.CompanyParticipants;
 using API.Services;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using API.Utilities.Handlers;
+using API.DTOs.EmployeeParticipants;
 
 namespace API.Controllers
 {
     [ApiController]
-    [Route("api/events")]
-    public class EventController : ControllerBase
+    [Route("api/events/participants/companies")]
+    public class CompanyParticipantController : ControllerBase
     {
-        private readonly EventService _eventService;
+        private readonly CompanyParticipantService _service;
 
-        public EventController(EventService eventService)
+        public CompanyParticipantController(CompanyParticipantService service)
         {
-            _eventService = eventService;
+            _service = service;
         }
 
         [HttpGet]
-        public IActionResult GetEvents()
+        public IActionResult GetAll()
         {
-            var eventsData = _eventService.GetAll();
-            if (eventsData != null)
+            var data = _service.GetAll();
+            if (data != null)
             {
-                return Ok(new ResponseHandler<IEnumerable<EventsDto>>
+                return Ok(new ResponseHandler<IEnumerable<CompanyParticipantsDto>>
                 {
                     Code = StatusCodes.Status200OK,
                     Status = HttpStatusCode.OK.ToString(),
                     Message = "Success",
-                    Data = eventsData
+                    Data = data
                 });
             }
 
-            return NotFound(new ResponseHandler<EventsDto>
+            return NotFound(new ResponseHandler<CompanyParticipantsDto>
             {
                 Code = StatusCodes.Status404NotFound,
                 Status = HttpStatusCode.NotFound.ToString(),
@@ -42,21 +43,21 @@ namespace API.Controllers
         }
 
         [HttpGet("{guid}")]
-        public IActionResult GetEvent(Guid guid)
+        public IActionResult GetSingle(Guid guid)
         {
-            var eventsData = _eventService.GetSingle(guid);
-            if (eventsData != null)
+            var data = _service.GetSingle(guid);
+            if (data != null)
             {
-                return Ok(new ResponseHandler<EventsDto>
+                return Ok(new ResponseHandler<CompanyParticipantsDto>
                 {
                     Code = StatusCodes.Status200OK,
                     Status = HttpStatusCode.OK.ToString(),
                     Message = "Success",
-                    Data = eventsData
+                    Data = data
                 });
             }
 
-            return NotFound(new ResponseHandler<EventsDto>
+            return NotFound(new ResponseHandler<CompanyParticipantsDto>
             {
                 Code = StatusCodes.Status404NotFound,
                 Status = HttpStatusCode.NotFound.ToString(),
@@ -66,12 +67,12 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(CreateEventDto createEventsDto)
+        public IActionResult Create(CreateCompanyParticipantDto create)
         {
-            var created = _eventService.CreateEvent(createEventsDto);
+            var created = _service.Create(create);
             if (created is not null)
             {
-                return Ok(new ResponseHandler<EventsDto>
+                return Ok(new ResponseHandler<CompanyParticipantsDto>
                 {
                     Code = StatusCodes.Status200OK,
                     Status = HttpStatusCode.OK.ToString(),
@@ -80,7 +81,7 @@ namespace API.Controllers
                 });
             }
 
-            return NotFound(new ResponseHandler<EventsDto>
+            return NotFound(new ResponseHandler<CompanyParticipantsDto>
             {
                 Code = StatusCodes.Status404NotFound,
                 Status = HttpStatusCode.NotFound.ToString(),
@@ -88,14 +89,13 @@ namespace API.Controllers
                 Data = null
             });
         }
-
         [HttpPut]
-        public IActionResult Update(EventsDto eventsDto)
+        public IActionResult Update(CompanyParticipantsDto update)
         {
-            var updated = _eventService.UpdateEvent(eventsDto);
+            var updated = _service.Update(update);
             if (updated is not null)
             {
-                return Ok(new ResponseHandler<EventsDto>
+                return Ok(new ResponseHandler<CompanyParticipantsDto>
                 {
                     Code = StatusCodes.Status200OK,
                     Status = HttpStatusCode.OK.ToString(),
@@ -104,7 +104,7 @@ namespace API.Controllers
                 });
             }
 
-            return NotFound(new ResponseHandler<EventsDto>
+            return NotFound(new ResponseHandler<CompanyParticipantsDto>
             {
                 Code = StatusCodes.Status404NotFound,
                 Status = HttpStatusCode.NotFound.ToString(),
@@ -114,12 +114,12 @@ namespace API.Controllers
         }
 
         [HttpDelete]
-        public IActionResult DeleteEvent(Guid guid)
+        public IActionResult Delete(Guid guid)
         {
-            var deleted = _eventService.DeleteEvent(guid);
+            var deleted = _service.Delete(guid);
             if (deleted is not null)
             {
-                return Ok(new ResponseHandler<EventsDto>
+                return Ok(new ResponseHandler<CompanyParticipantsDto>
                 {
                     Code = StatusCodes.Status200OK,
                     Status = HttpStatusCode.OK.ToString(),
@@ -128,7 +128,7 @@ namespace API.Controllers
                 });
             }
 
-            return NotFound(new ResponseHandler<EventsDto>
+            return NotFound(new ResponseHandler<CompanyParticipantsDto>
             {
                 Code = StatusCodes.Status404NotFound,
                 Status = HttpStatusCode.NotFound.ToString(),

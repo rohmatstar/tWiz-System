@@ -1,29 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using API.DTOs.Events;
-using API.Utilities.Handlers;
+﻿using API.DTOs.EventDocs;
 using API.Services;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using API.Utilities.Handlers;
 
 namespace API.Controllers
 {
     [ApiController]
-    [Route("api/events")]
-    public class EventController : ControllerBase
+    [Route("api/event-documentations")]
+    public class EventDocController : ControllerBase
     {
-        private readonly EventService _eventService;
+        private readonly EventDocService _eventDocService;
 
-        public EventController(EventService eventService)
+        public EventDocController(EventDocService eventDocService)
         {
-            _eventService = eventService;
+            _eventDocService = eventDocService;
         }
 
         [HttpGet]
         public IActionResult GetEvents()
         {
-            var eventsData = _eventService.GetAll();
-            if (eventsData != null)
+            var eventsData = _eventDocService.GetAll();
+            if (eventsData != null || eventsData!.Any() || eventsData!.Count() > 0)
             {
-                return Ok(new ResponseHandler<IEnumerable<EventsDto>>
+                return Ok(new ResponseHandler<IEnumerable<EventDocsDto>>
                 {
                     Code = StatusCodes.Status200OK,
                     Status = HttpStatusCode.OK.ToString(),
@@ -32,7 +32,7 @@ namespace API.Controllers
                 });
             }
 
-            return NotFound(new ResponseHandler<EventsDto>
+            return NotFound(new ResponseHandler<EventDocsDto>
             {
                 Code = StatusCodes.Status404NotFound,
                 Status = HttpStatusCode.NotFound.ToString(),
@@ -44,10 +44,10 @@ namespace API.Controllers
         [HttpGet("{guid}")]
         public IActionResult GetEvent(Guid guid)
         {
-            var eventsData = _eventService.GetSingle(guid);
+            var eventsData = _eventDocService.GetSingle(guid);
             if (eventsData != null)
             {
-                return Ok(new ResponseHandler<EventsDto>
+                return Ok(new ResponseHandler<EventDocsDto>
                 {
                     Code = StatusCodes.Status200OK,
                     Status = HttpStatusCode.OK.ToString(),
@@ -56,7 +56,7 @@ namespace API.Controllers
                 });
             }
 
-            return NotFound(new ResponseHandler<EventsDto>
+            return NotFound(new ResponseHandler<EventDocsDto>
             {
                 Code = StatusCodes.Status404NotFound,
                 Status = HttpStatusCode.NotFound.ToString(),
@@ -66,12 +66,12 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(CreateEventDto createEventsDto)
+        public IActionResult Create(CreateEventDocDto createEventDocDto)
         {
-            var created = _eventService.CreateEvent(createEventsDto);
+            var created = _eventDocService.CreateEventDoc(createEventDocDto);
             if (created is not null)
             {
-                return Ok(new ResponseHandler<EventsDto>
+                return Ok(new ResponseHandler<EventDocsDto>
                 {
                     Code = StatusCodes.Status200OK,
                     Status = HttpStatusCode.OK.ToString(),
@@ -80,7 +80,7 @@ namespace API.Controllers
                 });
             }
 
-            return NotFound(new ResponseHandler<EventsDto>
+            return NotFound(new ResponseHandler<EventDocsDto>
             {
                 Code = StatusCodes.Status404NotFound,
                 Status = HttpStatusCode.NotFound.ToString(),
@@ -90,12 +90,12 @@ namespace API.Controllers
         }
 
         [HttpPut]
-        public IActionResult Update(EventsDto eventsDto)
+        public IActionResult Update(EventDocsDto eventDocsDto)
         {
-            var updated = _eventService.UpdateEvent(eventsDto);
+            var updated = _eventDocService.UpdateEventDoc(eventDocsDto);
             if (updated is not null)
             {
-                return Ok(new ResponseHandler<EventsDto>
+                return Ok(new ResponseHandler<EventDocsDto>
                 {
                     Code = StatusCodes.Status200OK,
                     Status = HttpStatusCode.OK.ToString(),
@@ -104,7 +104,7 @@ namespace API.Controllers
                 });
             }
 
-            return NotFound(new ResponseHandler<EventsDto>
+            return NotFound(new ResponseHandler<EventDocsDto>
             {
                 Code = StatusCodes.Status404NotFound,
                 Status = HttpStatusCode.NotFound.ToString(),
@@ -116,10 +116,10 @@ namespace API.Controllers
         [HttpDelete]
         public IActionResult DeleteEvent(Guid guid)
         {
-            var deleted = _eventService.DeleteEvent(guid);
+            var deleted = _eventDocService.DeleteEventDoc(guid);
             if (deleted is not null)
             {
-                return Ok(new ResponseHandler<EventsDto>
+                return Ok(new ResponseHandler<EventDocsDto>
                 {
                     Code = StatusCodes.Status200OK,
                     Status = HttpStatusCode.OK.ToString(),
@@ -128,7 +128,7 @@ namespace API.Controllers
                 });
             }
 
-            return NotFound(new ResponseHandler<EventsDto>
+            return NotFound(new ResponseHandler<EventDocsDto>
             {
                 Code = StatusCodes.Status404NotFound,
                 Status = HttpStatusCode.NotFound.ToString(),
