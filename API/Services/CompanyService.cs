@@ -21,12 +21,12 @@ public class CompanyService
         _roleRepository = roleRepository;
     }
 
-    public IEnumerable<GetCompanyDto> GetCompanies()
+    public IEnumerable<GetCompanyDto>? GetCompanies()
     {
         var companies = _companyRepository.GetAll();
-        if(!companies.Any())
+        if (companies is null)
         {
-            return null; // No Company Found
+            return null;
         }
         var toDto = companies.Select(company => new GetCompanyDto
         {
@@ -78,10 +78,10 @@ public class CompanyService
             return null; // Company Not Created
         }
 
-        var toDto = new GetCompanyDto 
-        { 
-            Guid = createdCompanies.Guid, 
-            Name = createdCompanies.Name, 
+        var toDto = new GetCompanyDto
+        {
+            Guid = createdCompanies.Guid,
+            Name = createdCompanies.Name,
             PhoneNumber = createdCompanies.PhoneNumber,
             Address = createdCompanies.Address,
             AccountGuid = createdCompanies.AccountGuid
@@ -94,7 +94,7 @@ public class CompanyService
     public int UpdateCompany(UpdateCompanyDto UpdateCompanyDto)
     {
         var isExist = _companyRepository.IsExist(UpdateCompanyDto.Guid);
-        if (!isExist) 
+        if (!isExist)
         {
             return -1; // Company Not Found
         }
@@ -125,7 +125,7 @@ public class CompanyService
     public int DeleteCompany(Guid guid)
     {
         var isExist = _companyRepository.IsExist(guid);
-        if(!isExist)
+        if (!isExist)
         {
             return -1; // Company Not Found
         }

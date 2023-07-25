@@ -18,9 +18,9 @@ public class AccountService
     public IEnumerable<GetAccountDto>? GetAccounts()
     {
         var accounts = _accountRepository.GetAll();
-        if (!accounts.Any())
+        if (accounts is null)
         {
-            return null; // No Account  found
+            return null;
         }
 
         var toDto = accounts.Select(account =>

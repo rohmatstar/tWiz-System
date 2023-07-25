@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(TwizDbContext))]
-    [Migration("20230724072816_InitialMigration")]
+    [Migration("20230725012252_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -70,9 +70,12 @@ namespace API.Migrations
 
                     b.HasKey("Guid");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.HasIndex("RegisterPaymentGuid");
 
-                    b.HasIndex("Email", "Token")
+                    b.HasIndex("Token")
                         .IsUnique()
                         .HasFilter("[token] IS NOT NULL");
 
@@ -139,7 +142,10 @@ namespace API.Migrations
 
                     b.HasKey("Guid");
 
-                    b.HasIndex("Code", "Name")
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.HasIndex("Name")
                         .IsUnique();
 
                     b.ToTable("pmdt_banks");
@@ -182,6 +188,9 @@ namespace API.Migrations
                     b.HasKey("Guid");
 
                     b.HasIndex("AccountGuid")
+                        .IsUnique();
+
+                    b.HasIndex("PhoneNumber")
                         .IsUnique();
 
                     b.ToTable("pmdt_companies");
@@ -284,7 +293,10 @@ namespace API.Migrations
 
                     b.HasIndex("CompanyGuid");
 
-                    b.HasIndex("Nik", "AccountGuid", "PhoneNumber")
+                    b.HasIndex("Nik")
+                        .IsUnique();
+
+                    b.HasIndex("PhoneNumber")
                         .IsUnique();
 
                     b.ToTable("pmdt_employees");
@@ -480,6 +492,10 @@ namespace API.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("payment_image");
 
+                    b.Property<int>("StatusPayment")
+                        .HasColumnType("int")
+                        .HasColumnName("status_payment");
+
                     b.Property<int>("VaNumber")
                         .HasColumnType("int")
                         .HasColumnName("va_number");
@@ -535,6 +551,10 @@ namespace API.Migrations
                         .HasColumnType("decimal(10,2)")
                         .HasColumnName("price");
 
+                    b.Property<int>("StatusPayment")
+                        .HasColumnType("int")
+                        .HasColumnName("status_payment");
+
                     b.Property<int>("VaNumber")
                         .HasColumnType("int")
                         .HasColumnName("va_number");
@@ -546,7 +566,7 @@ namespace API.Migrations
                     b.HasIndex("CompanyGuid")
                         .IsUnique();
 
-                    b.HasIndex("VaNumber", "CompanyGuid")
+                    b.HasIndex("VaNumber")
                         .IsUnique();
 
                     b.ToTable("pmdt_register_payments");

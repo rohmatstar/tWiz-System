@@ -30,7 +30,12 @@ public class TwizDbContext : DbContext
         modelBuilder.Entity<Account>()
             .HasIndex(a => new
             {
-                a.Email,
+                a.Email
+            }).IsUnique();
+
+        modelBuilder.Entity<Account>()
+            .HasIndex(a => new
+            {
                 a.Token
             }).IsUnique();
 
@@ -40,50 +45,71 @@ public class TwizDbContext : DbContext
                 ar.AccountGuid,
                 ar.RoleGuid
             }).IsUnique();
+
         modelBuilder.Entity<Role>()
             .HasIndex(r => new
             {
                 r.Name,
-
             }).IsUnique();
-
 
         modelBuilder.Entity<Employee>()
             .HasIndex(e => new
             {
-                e.Nik,
-                e.AccountGuid,
-                e.PhoneNumber
+                e.Nik
             }).IsUnique();
+
+        modelBuilder.Entity<Employee>()
+            .HasIndex(e => new
+            {
+                e.AccountGuid
+            }).IsUnique();
+
+        modelBuilder.Entity<Employee>()
+           .HasIndex(e => new
+           {
+               e.PhoneNumber
+           }).IsUnique();
 
         modelBuilder.Entity<Company>()
             .HasIndex(c => new
             {
                 c.AccountGuid
+            }).IsUnique();
 
+        modelBuilder.Entity<Company>()
+            .HasIndex(c => new
+            {
+                c.PhoneNumber
             }).IsUnique();
 
         modelBuilder.Entity<Bank>()
             .HasIndex(b => new
             {
-                b.Code,
-                b.Name,
+                b.Code
+            }).IsUnique();
 
+        modelBuilder.Entity<Bank>()
+            .HasIndex(b => new
+            {
+                b.Name,
             }).IsUnique();
 
         modelBuilder.Entity<RegisterPayment>()
             .HasIndex(rp => new
             {
                 rp.VaNumber,
-                rp.CompanyGuid
+            }).IsUnique();
 
+        modelBuilder.Entity<RegisterPayment>()
+            .HasIndex(rp => new
+            {
+                rp.CompanyGuid
             }).IsUnique();
 
         modelBuilder.Entity<EventPayment>()
             .HasIndex(ep => new
             {
                 ep.VaNumber
-
             }).IsUnique();
 
         //Account - Account Roles (One to Many)
@@ -112,7 +138,7 @@ public class TwizDbContext : DbContext
         modelBuilder.Entity<Event>()
             .HasMany(ev => ev.EmployeeParticipants)
             .WithOne(ep => ep.Event);
-            
+
         //Event - CompanyParticipant (One to Many)
         modelBuilder.Entity<Event>()
             .HasMany(ev => ev.CompanyParticipants)
@@ -135,7 +161,7 @@ public class TwizDbContext : DbContext
 
         //Bank - RegisterPayment (One to Many)
         modelBuilder.Entity<Bank>()
-            .HasMany (b => b.RegisterPayments)
+            .HasMany(b => b.RegisterPayments)
             .WithOne(rp => rp.Bank);
 
         //Company - RegisterPayment (One to One)
@@ -152,7 +178,7 @@ public class TwizDbContext : DbContext
         modelBuilder.Entity<Company>()
             .HasMany(c => c.CompanyParticipants)
             .WithOne(cp => cp.Company);
-        
+
         //Employee - EmployeeParticipants
         modelBuilder.Entity<Employee>()
           .HasMany(e => e.EmployeeParticipants)

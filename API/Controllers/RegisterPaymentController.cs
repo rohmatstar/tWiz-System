@@ -1,6 +1,6 @@
 ﻿using API.DTOs.RegisterPayments;
 using API.Services;
-using API.Utilities.Enums;
+using API.Utilities.Handlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -13,7 +13,7 @@ namespace API.Controllers;
 public class RegisterPaymentController : ControllerBase
 {
     private readonly RegisterPaymentService _service;
-    
+
     public RegisterPaymentController(RegisterPaymentService service)
     {
         _service = service;

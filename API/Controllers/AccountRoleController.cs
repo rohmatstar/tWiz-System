@@ -20,7 +20,7 @@ namespace API.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var entities = _service.GetAccountRole();
+            var entities = _service.GetAccountRoles();
 
             if (entities == null)
             {

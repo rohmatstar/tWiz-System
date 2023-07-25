@@ -21,10 +21,10 @@ public class RegisterPaymentService
         _emailHandler = emailHandler;
     }
 
-    public IEnumerable<GetRegisterPaymentDto> GetRegisterPayments()
+    public IEnumerable<GetRegisterPaymentDto>? GetRegisterPayments()
     {
         var registerPayments = _registerPaymentRepository.GetAll();
-        if (!registerPayments.Any())
+        if (registerPayments is null)
         {
             return null; // No RegisterPayment Found
         }
