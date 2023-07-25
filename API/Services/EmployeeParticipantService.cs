@@ -1,8 +1,6 @@
 ﻿using API.Contracts;
 using API.DTOs.EmployeeParticipants;
-using API.DTOs.Events;
 using API.Models;
-using API.Repositories;
 
 namespace API.Services
 {
@@ -19,7 +17,7 @@ namespace API.Services
         {
             var model = _repository.GetAll();
 
-            if (!model.Any())
+            if (model is null)
             {
                 return null;
             }

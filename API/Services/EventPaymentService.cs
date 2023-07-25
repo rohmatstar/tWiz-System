@@ -1,7 +1,6 @@
 ﻿using API.Contracts;
 using API.DTOs.EventPayments;
 using API.Models;
-using API.Repositories;
 
 namespace API.Services;
 
@@ -14,10 +13,10 @@ public class EventPaymentService
         _eventPaymentRepository = eventPaymentRepository;
     }
 
-    public IEnumerable<GetEventPaymentDto> GetEventPayments()
+    public IEnumerable<GetEventPaymentDto>? GetEventPayments()
     {
         var eventPayments = _eventPaymentRepository.GetAll();
-        if (!eventPayments.Any())
+        if (eventPayments is null)
         {
             return null; // No EventPayment Found
         }
