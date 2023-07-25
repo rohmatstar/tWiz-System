@@ -146,43 +146,42 @@ public class AuthService
         }
     }
 
-   /* public string Login(LoginDto login)
+   public string Login(LoginDto loginDto)
     {
-        var emailEmp = _employeeRepository.GetByEmail(login.Email);
+        /*var emailEmp = _employeeRepository.GetByEmail(login.Email);
         if (emailEmp == null)
+        {
+            return "0";
+        }*/
+
+        var account = _accountRepository.GetByEmail(loginDto.Email);
+        if (account is null)
         {
             return "0";
         }
 
-        var pass = _accountRepository.GetByGuid(emailEmp.Guid);
-        if (pass == null)
-        {
-            return "0";
-        }
-        var isPasswordValid = Hashing.ValidatePassword(login.Password, pass.Password);
+        var isPasswordValid = HashingHandler.ValidatePassword(loginDto.Password, account.Password);
         if (!isPasswordValid)
         {
             return "-1";
         }
 
-
         var claims = new List<Claim>()
-            {
-                new Claim("Nik", emailEmp.Nik),
-                new Claim("FullName", $"{emailEmp.FirstName} {emailEmp.LastName}"),
-                new Claim("Email", login.Email)
-            };
+        {
+            new Claim("Guid", account.Guid.ToString()),
+            new Claim("IsActive", account.IsActive.ToString())
+        };
 
-        var getAccountRole = _accountRoleRepository.GetByGuidEmployee(emailEmp.Guid);
+        /*var getAccountRole = _accountRoleRepository.GetByGuidEmployee(emailEmp.Guid);
         var getRoleNameByAccountRole = from ar in getAccountRole
                                        join r in _roleRepository.GetAll() on ar.RoleGuid equals r.Guid
                                        select r.Name;
 
-        claims.AddRange(getRoleNameByAccountRole.Select(role => new Claim(ClaimTypes.Role, role)));
+        claims.AddRange(getRoleNameByAccountRole.Select(role => new Claim(ClaimTypes.Role, role)));*/
         try
         {
-            var getToken = _tokenHandler.GenerateToken(claims);
-            return getToken;
+            var token = _tokenHandler.GenerateToken(claims);
+            return token;
         }
         catch
         {
@@ -190,7 +189,7 @@ public class AuthService
         }
     }
 
-    public int ChangePassword(ChangePasswordDto changePasswordDto)
+    /*public int ChangePassword(ChangePasswordDto changePasswordDto)
     {
         var isExist = _employeeRepository.CheckEmail(changePasswordDto.Email);
         if (isExist is null)

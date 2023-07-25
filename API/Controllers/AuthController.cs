@@ -1,9 +1,13 @@
 ﻿using API.DTOs.Auths;
 using API.DTOs.Companies;
 using API.Services;
-using API.Utilities.Enums;
+using API.Utilities.Handlers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+using System.Security.Claims;
+using System.Text;
 
 namespace API.Controllers;
 
@@ -20,7 +24,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-        public ActionResult Register(RegisterDto registerDto)
+    public ActionResult Register(RegisterDto registerDto)
     {
         var createRegister = _authService.Register(registerDto);
         if (createRegister is null)
@@ -41,5 +45,38 @@ public class AuthController : ControllerBase
             Data = createRegister
         });
     }
+
+	[HttpPost("login")]
+	public ActionResult Login(LoginDto loginDto)
+	{
+		var result = _authService.Login(loginDto);
+		if (result == "0")
+		{
+			return BadRequest(new ResponseHandler<LoginDto>
+			{
+				Code = StatusCodes.Status400BadRequest,
+				Status = HttpStatusCode.BadRequest.ToString(),
+				Message = "No Account Found"
+			});
+		}
+		if (result == "-1")
+		{
+			return BadRequest(new ResponseHandler<LoginDto>
+			{
+				Code = StatusCodes.Status400BadRequest,
+				Status = HttpStatusCode.BadRequest.ToString(),
+				Message = "Wrong Password"
+			});
+		}
+
+
+		return Ok(new
+		{
+			Code = StatusCodes.Status400BadRequest,
+			Status = HttpStatusCode.BadRequest.ToString(),
+			Message = "Login Success!",
+			Data = result
+		});
+	}
 
 }
