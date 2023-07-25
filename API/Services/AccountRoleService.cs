@@ -13,7 +13,7 @@ namespace API.Services
             _accountRoleRepository = accountRoleRepository;
         }
 
-        public IEnumerable<GetAccountRoleDto>? GetAccountRole()
+        public IEnumerable<GetAccountRoleDto>? GetAccountRoles()
         {
             var accountRoles = _accountRoleRepository.GetAll();
             if (!accountRoles.Any())
