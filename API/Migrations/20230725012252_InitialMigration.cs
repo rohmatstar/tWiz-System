@@ -183,6 +183,7 @@ namespace API.Migrations
                     payment_image = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     is_valid = table.Column<bool>(type: "bit", nullable: false),
                     bank_guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    status_payment = table.Column<int>(type: "int", nullable: false),
                     created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     modified_date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -214,6 +215,7 @@ namespace API.Migrations
                     payment_image = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     is_valid = table.Column<bool>(type: "bit", nullable: false),
                     bank_guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    status_payment = table.Column<int>(type: "int", nullable: false),
                     created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     modified_date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -320,11 +322,10 @@ namespace API.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_pmdt_accounts_email_token",
+                name: "IX_pmdt_accounts_email",
                 table: "pmdt_accounts",
-                columns: new[] { "email", "token" },
-                unique: true,
-                filter: "[token] IS NOT NULL");
+                column: "email",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_pmdt_accounts_RegisterPaymentGuid",
@@ -332,15 +333,34 @@ namespace API.Migrations
                 column: "RegisterPaymentGuid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_pmdt_banks_code_name",
+                name: "IX_pmdt_accounts_token",
+                table: "pmdt_accounts",
+                column: "token",
+                unique: true,
+                filter: "[token] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_pmdt_banks_code",
                 table: "pmdt_banks",
-                columns: new[] { "code", "name" },
+                column: "code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_pmdt_banks_name",
+                table: "pmdt_banks",
+                column: "name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_pmdt_companies_account_guid",
                 table: "pmdt_companies",
                 column: "account_guid",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_pmdt_companies_phone_number",
+                table: "pmdt_companies",
+                column: "phone_number",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -355,9 +375,15 @@ namespace API.Migrations
                 column: "company_guid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_pmdt_employees_nik_account_guid_phone_number",
+                name: "IX_pmdt_employees_nik",
                 table: "pmdt_employees",
-                columns: new[] { "nik", "account_guid", "phone_number" },
+                column: "nik",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_pmdt_employees_phone_number",
+                table: "pmdt_employees",
+                column: "phone_number",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -398,9 +424,9 @@ namespace API.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_pmdt_register_payments_va_number_company_guid",
+                name: "IX_pmdt_register_payments_va_number",
                 table: "pmdt_register_payments",
-                columns: new[] { "va_number", "company_guid" },
+                column: "va_number",
                 unique: true);
 
             migrationBuilder.CreateIndex(
