@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace API.DTOs.CompanyParticipants;
 
@@ -14,10 +13,8 @@ public class CompanyParticipantsDto
     [Required]
     public Guid CompanyGuid { get; set; }
 
-    [DefaultValue(false)]
     public bool IsJoin { get; set; }
 
-    [DefaultValue(false)]
     public bool IsPresent { get; set; }
 }
 

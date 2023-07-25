@@ -6,6 +6,7 @@ namespace API.DTOs.Roles
     {
         [Required]
         public Guid Guid { get; set; }
+
         [Required]
         public string Name { get; set; }
     }
