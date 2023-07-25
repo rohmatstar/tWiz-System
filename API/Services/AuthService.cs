@@ -132,7 +132,8 @@ public class AuthService
                 Email = createdAccount.Email,
                 PhoneNumber = createdCompany.PhoneNumber,
                 Password = createdAccount.Password,
-                Address = createdCompany.Address
+                Address = createdCompany.Address,
+                ConfirmPassword = createdAccount.Password
             };
 
             transaction.Commit();
