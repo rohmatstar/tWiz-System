@@ -1,9 +1,8 @@
 ﻿using API.DTOs.CompanyParticipants;
 using API.Services;
+using API.Utilities.Handlers;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using API.Utilities.Handlers;
-using API.DTOs.EmployeeParticipants;
 
 namespace API.Controllers
 {
@@ -21,7 +20,7 @@ namespace API.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var data = _service.GetAll();
+            var data = _service.GetCompanyParticipants();
             if (data != null)
             {
                 return Ok(new ResponseHandler<IEnumerable<CompanyParticipantsDto>>
@@ -45,7 +44,7 @@ namespace API.Controllers
         [HttpGet("{guid}")]
         public IActionResult GetSingle(Guid guid)
         {
-            var data = _service.GetSingle(guid);
+            var data = _service.GetCompanyParticipant(guid);
             if (data != null)
             {
                 return Ok(new ResponseHandler<CompanyParticipantsDto>
@@ -69,7 +68,7 @@ namespace API.Controllers
         [HttpPost]
         public IActionResult Create(CreateCompanyParticipantDto create)
         {
-            var created = _service.Create(create);
+            var created = _service.CreateCompanyParticipant(create);
             if (created is not null)
             {
                 return Ok(new ResponseHandler<CompanyParticipantsDto>
@@ -92,7 +91,7 @@ namespace API.Controllers
         [HttpPut]
         public IActionResult Update(CompanyParticipantsDto update)
         {
-            var updated = _service.Update(update);
+            var updated = _service.UpdateCompanyParticipant(update);
             if (updated is not null)
             {
                 return Ok(new ResponseHandler<CompanyParticipantsDto>
@@ -116,7 +115,7 @@ namespace API.Controllers
         [HttpDelete]
         public IActionResult Delete(Guid guid)
         {
-            var deleted = _service.Delete(guid);
+            var deleted = _service.DeleteCompanyParticipant(guid);
             if (deleted is not null)
             {
                 return Ok(new ResponseHandler<CompanyParticipantsDto>

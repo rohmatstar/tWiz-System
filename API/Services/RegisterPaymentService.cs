@@ -1,23 +1,22 @@
 ﻿using API.Contracts;
 using API.DTOs.RegisterPayments;
 using API.Models;
-using API.Repositories;
 
 namespace API.Services;
 
 public class RegisterPaymentService
 {
     private readonly IRegisterPaymentRepository _registerPaymentRepository;
-    
+
     public RegisterPaymentService(IRegisterPaymentRepository registerPaymentRepository)
     {
         _registerPaymentRepository = registerPaymentRepository;
     }
 
-    public IEnumerable<GetRegisterPaymentDto> GetRegisterPayments()
+    public IEnumerable<GetRegisterPaymentDto>? GetRegisterPayments()
     {
         var registerPayments = _registerPaymentRepository.GetAll();
-        if (!registerPayments.Any())
+        if (registerPayments is null)
         {
             return null; // No RegisterPayment Found
         }

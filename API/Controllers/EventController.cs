@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using API.DTOs.Events;
-using API.Utilities.Handlers;
+﻿using API.DTOs.Events;
 using API.Services;
+using API.Utilities.Handlers;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace API.Controllers
 {
@@ -20,7 +20,7 @@ namespace API.Controllers
         [HttpGet]
         public IActionResult GetEvents()
         {
-            var eventsData = _eventService.GetAll();
+            var eventsData = _eventService.GetEvents();
             if (eventsData != null)
             {
                 return Ok(new ResponseHandler<IEnumerable<EventsDto>>
@@ -44,7 +44,7 @@ namespace API.Controllers
         [HttpGet("{guid}")]
         public IActionResult GetEvent(Guid guid)
         {
-            var eventsData = _eventService.GetSingle(guid);
+            var eventsData = _eventService.GetEvent(guid);
             if (eventsData != null)
             {
                 return Ok(new ResponseHandler<EventsDto>

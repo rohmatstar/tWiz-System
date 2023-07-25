@@ -1,6 +1,5 @@
 ﻿using API.Contracts;
 using API.DTOs.CompanyParticipants;
-using API.DTOs.EmployeeParticipants;
 using API.Models;
 
 namespace API.Services
@@ -14,7 +13,7 @@ namespace API.Services
             _repository = repository;
         }
 
-        public IEnumerable<CompanyParticipantsDto>? GetAll()
+        public IEnumerable<CompanyParticipantsDto>? GetCompanyParticipants()
         {
             var model = _repository.GetAll();
 
@@ -35,7 +34,7 @@ namespace API.Services
             return data;
         }
 
-        public CompanyParticipantsDto? GetSingle(Guid guid)
+        public CompanyParticipantsDto? GetCompanyParticipant(Guid guid)
         {
             var model = _repository.GetByGuid(guid);
 
@@ -58,7 +57,7 @@ namespace API.Services
             return data;
         }
 
-        public CompanyParticipantsDto? Create(CreateCompanyParticipantDto create)
+        public CompanyParticipantsDto? CreateCompanyParticipant(CreateCompanyParticipantDto create)
         {
             var model = new CompanyParticipant
             {
@@ -88,7 +87,7 @@ namespace API.Services
             return data;
         }
 
-        public CompanyParticipantsDto? Update(CompanyParticipantsDto update)
+        public CompanyParticipantsDto? UpdateCompanyParticipant(CompanyParticipantsDto update)
         {
             var single = _repository.GetByGuid(update.Guid);
             if (single == null)
@@ -123,7 +122,7 @@ namespace API.Services
             return data;
         }
 
-        public CompanyParticipantsDto? Delete(Guid guid)
+        public CompanyParticipantsDto? DeleteCompanyParticipant(Guid guid)
         {
             var model = _repository.GetByGuid(guid);
             if (model == null)
