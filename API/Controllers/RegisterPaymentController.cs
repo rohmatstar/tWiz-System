@@ -153,7 +153,8 @@ public class RegisterPaymentController : ControllerBase
         });
     }
 
-    [HttpPost("payment")]
+    // Testing
+   /* [HttpPost("payment")]
     [AllowAnonymous]
     public IActionResult Payment(string email)
     {
@@ -175,5 +176,5 @@ public class RegisterPaymentController : ControllerBase
             Message = "Virtual Number Is Generated",
             Data = generateOtp
         });
-    }
+    }*/
 }

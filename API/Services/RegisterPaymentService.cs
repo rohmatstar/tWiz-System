@@ -149,7 +149,8 @@ public class RegisterPaymentService
         return 1; // RegisterPayment Deleted
     }
 
-    public PaymentDto Payment(string email)
+    //Testing Mail Service
+   /* public PaymentDto Payment(string email)
     {
         var company = _accountRepository.GetAll().SingleOrDefault(account => account.Email == email);
         if (company is null)
@@ -180,5 +181,5 @@ public class RegisterPaymentService
                        $"Your Virtual Account Number is {toDto.VaNumber}");
 
         return toDto;
-    }
+    }*/
 }

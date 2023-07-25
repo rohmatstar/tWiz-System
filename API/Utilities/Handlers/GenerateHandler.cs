@@ -1,8 +1,8 @@
-﻿namespace API.Utilities
+﻿namespace API.Utilities.Handlers
 {
-    public class GenerateVA
+    public static class GenerateHandler
     {
-        public static int GenerateRandomVA()
+        public static int RandomVa()
         {
             Random random = new Random();
             HashSet<int> uniqueDigits = new HashSet<int>();

@@ -2,8 +2,11 @@ using API.Contracts;
 using API.Data;
 using API.Repositories;
 using API.Services;
+using API.Utilities;
 using API.Utilities.Handlers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,8 +21,8 @@ builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IEventDocRepository, EventDocRepository>();
 builder.Services.AddScoped<IEmployeeParticipantRepository, EmployeeParticipantRepository>();
 builder.Services.AddScoped<ICompanyParticipantRepository, CompanyParticipantRepository>();
-
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<ITokenHandlers, TokenHandlers>();
 builder.Services.AddScoped<IAccountRoleRepository, AccountRoleRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IBankRepository, BankRepository>();
@@ -35,6 +38,8 @@ builder.Services.AddScoped<EventDocService>();
 builder.Services.AddScoped<EmployeeParticipantService>();
 builder.Services.AddScoped<CompanyParticipantService>();
 
+
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<RoleService>();
 builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<AccountRoleService>();
@@ -43,6 +48,7 @@ builder.Services.AddScoped<CompanyService>();
 builder.Services.AddScoped<EmployeeService>();
 builder.Services.AddScoped<RegisterPaymentService>();
 builder.Services.AddScoped<EventPaymentService>();
+
 
 
 

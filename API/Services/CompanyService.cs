@@ -6,11 +6,19 @@ namespace API.Services;
 
 public class CompanyService
 {
+    private readonly IEmployeeRepository _employeeRepository;
     private readonly ICompanyRepository _companyRepository;
+    private readonly IAccountRepository _accountRepository;
+    private readonly IAccountRoleRepository _accountRoleRepository;
+    private readonly IRoleRepository _roleRepository;
 
-    public CompanyService(ICompanyRepository companyRepository)
+   public CompanyService(IEmployeeRepository employeeRepository, ICompanyRepository companyRepository, IAccountRepository accountRepository, IAccountRoleRepository accountRoleRepository, IRoleRepository roleRepository)
     {
+        _employeeRepository = employeeRepository;
         _companyRepository = companyRepository;
+        _accountRepository = accountRepository;
+        _accountRoleRepository = accountRoleRepository;
+        _roleRepository = roleRepository;
     }
 
     public IEnumerable<GetCompanyDto> GetCompanies()
