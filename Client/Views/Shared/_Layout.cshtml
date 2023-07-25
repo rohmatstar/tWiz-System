@@ -3,44 +3,88 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Client</title>
+    <title>tWiz - Corporate Events Arrangement</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Client.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <link rel="shortcut icon" href="~/img/tWiz-Logo.png"/>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Client</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+    <div id="bg"></div>
+    <header class="bg-1" style="position: fixed; top: auto; left: 0; width: 100%">
+        <nav class="navbar navbar-expand-sm navbar-light text-white">
+            <div class="container d-flex justify-content-between align-items-center">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/img/tWiz-Logo-white.png" alt="" height="40" class="d-inline-block align-text-top animate__animated animate__jackInTheBox" />
+                </a>
+                <div class="navbar-collapse collapse justify-content-end me-3">
+                    <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-white" href="#">Get Started</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-white" href="#">Our Services</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#">Pricing</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#">Testimonials</a>
                         </li>
                     </ul>
                 </div>
+                <a class="position-relative nav-link text-white btn rounded-pill px-3 border-0 bg-3" asp-controller="Admin" asp-action="Register" style="padding-right: 30px !important">
+                    Register Now
+                    <div class="d-inline-block position-absolute animate__animated animate__jackInTheBox animate__infinite" style="top: 5px; right: 10px;">
+                        <img src="~/img/exclamation.png" height="20" style="transform: rotate(15deg)" />
+                    </div>
+                </a>
             </div>
         </nav>
+
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+    <div class="content pt-5">
+        @RenderBody()
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - Client - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <div class="bg-white border-top text-muted">
+        <div class="container py-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="mb-0">What are you waiting for? Come join us!</h6>
+                </div>
+                <div class="col-md-6 text-end">
+                    <a class="text-white btn rounded-pill px-3 border-0 bg-3" asp-controller="Admin" asp-action="Register">Register Now!</a>
+                </div>
+            </div>
         </div>
-    </footer>
+
+        <div class="container mb-4 d-none">
+            <div class="row">
+                <div class="col-md-3">
+                    Logo
+                </div>
+                <div class="col-auto">
+                    Logo
+                </div>
+                <div class="col">
+                    Logo
+                </div>
+                <div class="col-md-3">
+                    Logo
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-2">
+            <div class="container py-2 text-center text-white">
+                &copy; 2023 tWiz - All Rights Reserved
+            </div>
+        </div>
+    </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

@@ -10,5 +10,19 @@ public static class GenerateHandler
             .Select(s => s[random.Next(s.Length)])
             .ToArray());
     }
-}
 
+    public static int RandomVa()
+    {
+        Random random = new Random();
+        HashSet<int> uniqueDigits = new HashSet<int>();
+        while (uniqueDigits.Count < 6)
+        {
+            int digit = random.Next(0, 9);
+            uniqueDigits.Add(digit);
+        }
+
+        int generatedOtp = uniqueDigits.Aggregate(0, (acc, digit) => acc * 10 + digit);
+
+        return generatedOtp;
+    }
+}

@@ -10,10 +10,15 @@ namespace API.Services;
 public class RegisterPaymentService
 {
     private readonly IRegisterPaymentRepository _registerPaymentRepository;
-
-    public RegisterPaymentService(IRegisterPaymentRepository registerPaymentRepository)
+    private readonly ICompanyRepository _companyRepository;
+    private readonly IAccountRepository _accountRepository;
+    private readonly IEmailHandler _emailHandler;
+    public RegisterPaymentService(IRegisterPaymentRepository registerPaymentRepository, ICompanyRepository companyRepository, IAccountRepository accountRepository, IEmailHandler emailHandler)
     {
         _registerPaymentRepository = registerPaymentRepository;
+        _companyRepository = companyRepository;
+        _accountRepository = accountRepository;
+        _emailHandler = emailHandler;
     }
 
     public IEnumerable<GetRegisterPaymentDto>? GetRegisterPayments()
@@ -110,7 +115,7 @@ public class RegisterPaymentService
             CompanyGuid = UpdateRegisterPaymentDto.CompanyGuid,
             VaNumber = UpdateRegisterPaymentDto.VaNumber,
             Price = UpdateRegisterPaymentDto.Price,
-            PaymentImage = UpdateRegisterPaymentDto.PaymentImage,
+            PaymentImage = UpdateRegisterPaymentDto.PaymentImage ?? "",
             IsValid = UpdateRegisterPaymentDto.IsValid,
             BankGuid = UpdateRegisterPaymentDto.BankGuid,
             ModifiedDate = DateTime.Now,
@@ -135,7 +140,7 @@ public class RegisterPaymentService
         }
 
         var registerpayment = _registerPaymentRepository.GetByGuid(guid);
-        var isDelete = _registerPaymentRepository.Delete(registerpayment);
+        var isDelete = _registerPaymentRepository.Delete(registerpayment!);
         if (!isDelete)
         {
             return 0; // RegisterPayment Not Deleted
@@ -241,4 +246,38 @@ public class RegisterPaymentService
 
         return 1;
     }
+
+    //Testing Mail Service
+    /* public PaymentDto Payment(string email)
+     {
+         var company = _accountRepository.GetAll().SingleOrDefault(account => account.Email == email);
+         if (company is null)
+         {
+             return null;
+         }
+
+         var toDto = new PaymentDto
+         {
+             Email = company.Email,
+             VaNumber = GenerateVA.GenerateRandomVA(),
+         };
+
+         var relatedAccount = _accountRepository.GetByGuid(company.Guid);
+
+         var update = new RegisterPayment
+         {
+             Guid = relatedAccount.Guid,
+             VaNumber = toDto.VaNumber,
+
+
+         };
+
+         var updateResult = _registerPaymentRepository.Update(update);
+
+         _emailHandler.SendEmail(toDto.Email,
+                        "Register Payment",
+                        $"Your Virtual Account Number is {toDto.VaNumber}");
+
+         return toDto;
+     }*/
 }

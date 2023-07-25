@@ -219,4 +219,29 @@ public class RegisterPaymentController : ControllerBase
         });
 
     }
+
+    // Testing
+    /* [HttpPost("payment")]
+     [AllowAnonymous]
+     public IActionResult Payment(string email)
+     {
+         var generateOtp = _service.Payment(email);
+         if (generateOtp is null)
+         {
+             return BadRequest(new ResponseHandler<PaymentDto>
+             {
+                 Code = StatusCodes.Status400BadRequest,
+                 Status = HttpStatusCode.BadRequest.ToString(),
+                 Message = "Email Not Found"
+             });
+         }
+
+         return Ok(new ResponseHandler<PaymentDto>
+         {
+             Code = StatusCodes.Status200OK,
+             Status = HttpStatusCode.OK.ToString(),
+             Message = "Virtual Number Is Generated",
+             Data = generateOtp
+         });
+     }*/
 }

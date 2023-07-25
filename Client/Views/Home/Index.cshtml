@@ -1,8 +1,164 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿<div class="container">
+    <div class="row align-items-center text-white py-3">
+        <div class="col-md-5">
+            <div class="h3">Get Service &<br />Control Your Corporate Events</div>
+            <p class="small">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+            tempor incididunt ut labore et dolore magna aliqua.</p>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+            <a class="text-white btn rounded-pill px-3 border-0 bg-3" asp-controller="Admin" asp-action="Login">
+                <i class="bi bi-key me-2"></i>
+                Access account
+            </a>
+        </div>
+        <div class="col text-end">
+            <img src="~/img/illustration.png" class="d-inline-block" width="500">
+        </div>
+    </div>
+</div>
+
+<div class="bg-artefact text-dark text-center" style="padding-top: 120px">
+    <div class="bg-white">
+        <h4>Our Services</h4>
+        <p class="small">Duis aute irure dolor in reprehenderit in<br/>voluptate velit esse
+        cillum dolore eu fugiat nulla pariatur</p>
+
+        <div class="container py-5">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="card border-0 bg-danger bg-opacity-10">
+                        <div class="card-body border-0 text-center">
+                            <i class="bi bi-tv text-danger fs-2"></i>
+                            <div class="h5">Event Management</div>
+                            <p class="small">
+                                Create and Manage All Your Events with some clicks
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card border-0 bg-success bg-opacity-10">
+                        <div class="card-body border-0 text-center">
+                            <i class="bi bi-envelope-check text-success fs-2"></i>
+                            <div class="h5">Emailing</div>
+                            <p class="small">
+                                All the information and notification turn into your email
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card border-0 bg-warning bg-opacity-10">
+                        <div class="card-body border-0 text-center">
+                            <i class="bi bi-file-earmark-spreadsheet text-warning fs-2"></i>
+                            <div class="h5">Reporting</div>
+                            <p class="small">
+                                No worry, in one click you got the event report and statistics
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card border-0 bg-info bg-opacity-10">
+                        <div class="card-body border-0 text-center">
+                            <i class="bi bi-wallet text-info fs-2"></i>
+                            <div class="h5">Easy Payments</div>
+                            <p class="small">
+                                With various bank, you got the tWiz account
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card border-0 bg-secondary bg-opacity-10">
+                        <div class="card-body border-0 text-center">
+                            <i class="bi bi-arrows-expand text-secondary fs-2"></i>
+                            <div class="h5">Import & Export</div>
+                            <p class="small">
+                                Upload your sheets file, relax and drink coffee
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card border-0 bg-primary bg-opacity-10">
+                        <div class="card-body border-0 text-center">
+                            <i class="bi bi-bell-slash text-primary fs-2"></i>
+                            <div class="h5">No Subscription</div>
+                            <p class="small">
+                                Pay once and you got lifetime account
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-white">
+    <div class="container py-3">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="h4">
+                    You know about our digital agencies
+                </div>
+
+                <p>Believe it or not, all these groundbreaking features come at an unbelievable price! For a limited time, you can get access to our revolutionary app for just <b>$100 USD</b>. This unbeatable offer ensures that businesses of all sizes can take advantage of the opportunities it brings.</p>
+
+                <a class="text-white btn rounded-pill px-3 border-0 bg-3 mt-2" asp-controller="Home" asp-action="Register">Register Now!</a>
+            </div>
+
+            <div class="col-md text-center">
+                <img src="~/img/event-illustration.png" class="d-inline-block w-100">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-white pb-5">
+    <div class="container py-3 text-center">
+        <h3>Testimonials</h3>
+        <p class="small">What they says and what we do</p>
+
+        <div class="row align-items-center justify-content-center">
+            <div class="col-md-4">
+                <div class="card border-0">
+                    <div class="card-body border rounded-3 border-color-secondary border-opacity-10 p-3 text-center">
+                        <img src="~/img/man.png" class="d-inline-block" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; object-position: center; margin-bottom: 15px;">
+                        <div class="h6">William Johnson</div>
+                        <p class="small">As someone who has been in the event planning business for decades, I can confidently say that this event management application is a game-changer! It has made my life so much easier by automating tedious tasks and streamlining the entire planning process</p>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="col-md-4">
+                <div class="card border-0">
+                    <div class="card-body border rounded-3 border-color-secondary border-opacity-10 p-3 text-center">
+                        <img src="~/img/girl.png" class="d-inline-block" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; object-position: center; margin-bottom: 15px;">
+                        <div class="h6">Emily Adams</div>
+                        <p class="small">Being a busy event organizer and a mom, time is precious to me. This event management application has been a lifesaver! From creating event schedules to handling registrations and ticketing, it simplifies everything</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-4">
+                <div class="card border-0">
+                    <div class="card-body border rounded-3 border-color-secondary border-opacity-10 p-3 text-center">
+                        <img src="~/img/boy.png" class="d-inline-block" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; object-position: center; margin-bottom: 15px;">
+                        <div class="h6">Jason Lee</div>
+                        <p class="small">Wow, this event management app is a game-changer! As a young event enthusiast, I'm always on the lookout for tools that can enhance my event planning skills. This app does it all! From its modern and sleek design to its powerful features, it's perfect for my generation</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
