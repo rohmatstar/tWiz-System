@@ -15,4 +15,9 @@ public class AccountRoleRepository : GeneralRepository<AccountRole>, IAccountRol
     {
         return _context.Set<AccountRole>().Where(ar => ar.AccountGuid == guid);
     }
+
+    public IEnumerable<AccountRole> GetByGuidCompany(Guid companyGuid)
+    {
+        return _context.Set<AccountRole>().Where(ar => ar.AccountGuid == companyGuid);
+    }
 }

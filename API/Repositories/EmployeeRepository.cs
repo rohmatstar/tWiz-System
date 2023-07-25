@@ -9,4 +9,10 @@ public class EmployeeRepository : GeneralRepository<Employee>, IEmployeeReposito
     public EmployeeRepository(TwizDbContext context) : base(context)
     {
     }
+
+    public IEnumerable<Employee> GetByFirstName(string name)
+    {
+        return _context.Set<Employee>().Where(employee => employee.FullName.Contains(name));
+    }
+
 }

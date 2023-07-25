@@ -2,6 +2,7 @@
 using API.Data;
 using API.DTOs.Auths;
 using API.Models;
+using API.Repositories;
 using API.Utilities.Enums;
 using API.Utilities.Handlers;
 using System.Security.Claims;
@@ -21,14 +22,14 @@ public class AuthService
     private readonly IEmailHandler _emailHandler;
     private readonly IBankRepository _bankRepository;
 
-    public AuthService(IAccountRepository accountRepository, 
-        ICompanyRepository companyRepository, 
-        IEmployeeRepository employeeRepository, 
-        IRegisterPaymentRepository registerPaymentRepository, 
-        IAccountRoleRepository accountRoleRepository, 
-        IRoleRepository roleRepository, 
-        ITokenHandlers tokenHandler, 
-        TwizDbContext twizDbContext, 
+    public AuthService(IAccountRepository accountRepository,
+        ICompanyRepository companyRepository,
+        IEmployeeRepository employeeRepository,
+        IRegisterPaymentRepository registerPaymentRepository,
+        IAccountRoleRepository accountRoleRepository,
+        IRoleRepository roleRepository,
+        ITokenHandlers tokenHandler,
+        TwizDbContext twizDbContext,
         IEmailHandler emailHandler,
         IBankRepository bankRepository)
     {
@@ -91,7 +92,7 @@ public class AuthService
             {
                 return null;
             }
-            var accountRole =_accountRoleRepository.Create(new AccountRole
+            var accountRole = _accountRoleRepository.Create(new AccountRole
             {
                 AccountGuid = account.Guid,
                 RoleGuid = getRoleUser.Guid
@@ -108,7 +109,7 @@ public class AuthService
                 return null;
             }
 
-            RegisterPayment registerPayment = new RegisterPayment 
+            RegisterPayment registerPayment = new RegisterPayment
             {
                 CompanyGuid = createdCompany.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
@@ -146,7 +147,7 @@ public class AuthService
         }
     }
 
-   public string Login(LoginDto loginDto)
+    public string Login(LoginDto loginDto)
     {
         /*var emailEmp = _employeeRepository.GetByEmail(login.Email);
         if (emailEmp == null)
@@ -169,15 +170,17 @@ public class AuthService
         var claims = new List<Claim>()
         {
             new Claim("Guid", account.Guid.ToString()),
-            new Claim("IsActive", account.IsActive.ToString())
+            new Claim("IsActive", account.IsActive.ToString()),
+            new Claim("Email", loginDto.Email)
         };
 
-        /*var getAccountRole = _accountRoleRepository.GetByGuidEmployee(emailEmp.Guid);
+        var getAccountRole = _accountRoleRepository.GetByGuidCompany(account.Guid);
+
         var getRoleNameByAccountRole = from ar in getAccountRole
                                        join r in _roleRepository.GetAll() on ar.RoleGuid equals r.Guid
                                        select r.Name;
 
-        claims.AddRange(getRoleNameByAccountRole.Select(role => new Claim(ClaimTypes.Role, role)));*/
+        claims.AddRange(getRoleNameByAccountRole.Select(role => new Claim(ClaimTypes.Role, role)));
         try
         {
             var token = _tokenHandler.GenerateToken(claims);
@@ -189,25 +192,25 @@ public class AuthService
         }
     }
 
-    /*public int ChangePassword(ChangePasswordDto changePasswordDto)
+    public int ChangePassword(ChangePasswordDto changePasswordDto)
     {
-        var isExist = _employeeRepository.CheckEmail(changePasswordDto.Email);
+        var isExist = _accountRepository.CheckEmail(changePasswordDto.Email);
         if (isExist is null)
         {
             return -1; //Account Not Found
         }
 
         var getAccount = _accountRepository.GetByGuid(isExist.Guid);
-        if (getAccount.Otp != changePasswordDto.Otp)
+        if (getAccount.Token != changePasswordDto.Token)
         {
             return 0;
         }
 
-        if (getAccount.IsUsed == true)
+        if (getAccount.TokenIsUsed == true)
         {
             return 1;
         }
-        if (getAccount.ExpiredTime < DateTime.Now)
+        if (getAccount.TokenExpiration < DateTime.Now)
         {
             return 2;
         }
@@ -215,13 +218,14 @@ public class AuthService
         var account = new Account
         {
             Guid = getAccount.Guid,
-            IsUsed = getAccount.IsUsed,
-            IsDeleted = getAccount.IsDeleted,
+            Email = getAccount.Email,
+            IsActive = getAccount.IsActive,
             ModifiedDate = getAccount.ModifiedDate,
             CreatedDate = getAccount.CreatedDate,
-            Otp = getAccount.Otp,
-            ExpiredTime = getAccount.ExpiredTime,
-            Password = Hashing.HashPassword(changePasswordDto.NewPassword)
+            Token = getAccount.Token,
+            TokenExpiration = getAccount.TokenExpiration,
+            TokenIsUsed = getAccount.TokenIsUsed,
+            Password = HashingHandler.HashPassword(changePasswordDto.NewPassword)
         };
 
         var isUpdate = _accountRepository.Update(account);
@@ -232,40 +236,47 @@ public class AuthService
 
         return 3;
     }
+
     public ForgotPasswordDto ForgotPassword(string email)
     {
-        var employee = _employeeRepository.GetAll().SingleOrDefault(account => account.Email == email);
-        if (employee is null)
+        var account = _accountRepository.GetByEmail(email);
+        if (account is null)
         {
             return null;
         }
 
         var toDto = new ForgotPasswordDto
         {
-            Email = employee.Email,
-            Otp = GenerateOTP.GenerateRandomOTP(),
-            ExpiredTime = DateTime.Now.AddMinutes(5)
+            Email = account.Email,
+            Token = GenerateHandler.RandomVa(),
+            TokenExpiration = DateTime.Now.AddMinutes(5)
         };
 
-        var relatedAccount = _accountRepository.GetByGuid(employee.Guid);
+        var relatedAccount = _accountRepository.GetByGuid(account.Guid);
 
         var update = new Account
         {
             Guid = relatedAccount.Guid,
+            Email = relatedAccount.Email,
             Password = relatedAccount.Password,
-            IsDeleted = relatedAccount.IsDeleted,
-            Otp = toDto.Otp,
-            IsUsed = false,
-            ExpiredTime = DateTime.Now.AddMinutes(5)
+            Token = toDto.Token,
+            IsActive = relatedAccount.IsActive,
+            TokenIsUsed = relatedAccount.TokenIsUsed,
+            TokenExpiration = DateTime.Now.AddMinutes(5)
 
         };
 
         var updateResult = _accountRepository.Update(update);
 
+        if(!updateResult)
+        {
+            return null;
+        }
+
         _emailHandler.SendEmail(toDto.Email,
-                       "Forgot Password",
-                       $"Your OTP is {toDto.Otp}");
+                       "Register Payment",
+                       $"Your Virtual Account Number is {toDto.Token}");
 
         return toDto;
-    }*/
+    }
 }
