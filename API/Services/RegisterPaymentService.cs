@@ -1,6 +1,9 @@
 ﻿using API.Contracts;
 using API.DTOs.RegisterPayments;
 using API.Models;
+using API.Utilities.Enums;
+using API.Utilities.Handlers;
+using API.Utilities.Validations;
 
 namespace API.Services;
 
@@ -29,7 +32,7 @@ public class RegisterPaymentService
             PaymentImage = registerPayments.PaymentImage,
             IsValid = registerPayments.IsValid,
             BankGuid = registerPayments.BankGuid,
-
+            StatusPayment = registerPayments.StatusPayment
         }).ToList();
 
         return toDto;
@@ -139,5 +142,103 @@ public class RegisterPaymentService
         }
 
         return 1; // RegisterPayment Deleted
+    }
+
+    public async Task<int> UploadPaymentSubmission(PaymentSubmissionDto paymentSubmissionDto)
+    {
+        var folderPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\register_payments");
+
+
+
+        if (!Directory.Exists(folderPath))
+        {
+            try
+            {
+                Directory.CreateDirectory(folderPath);
+                Console.WriteLine("Folder created successfully!");
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine("Failed to create folder: " + ex.Message);
+                return -1;
+            }
+        }
+        else
+        {
+            Console.WriteLine("Folder already exists.");
+        }
+
+        var size = paymentSubmissionDto.PaymentImage.Length;
+
+        // jika ukuran gambar lebih dari 2mb
+        if (size > 2000000)
+        {
+            return -2;
+        }
+
+        bool isImage = FileValidation.IsValidImageExtension(paymentSubmissionDto.PaymentImage);
+
+        if (!isImage)
+        {
+            return -3;
+        }
+
+
+        var paymentRegisterByGuid = _registerPaymentRepository.GetByGuid(paymentSubmissionDto.Guid);
+        var oldImageUrl = "";
+
+        if (paymentRegisterByGuid != null)
+        {
+            oldImageUrl = paymentRegisterByGuid.PaymentImage;
+        }
+        else
+        {
+            return -4;
+        }
+
+
+        var randomName = GenerateHandler.GenerateRandomString();
+        var fileName = randomName + paymentSubmissionDto.PaymentImage.FileName;
+        var urlImage = $"images/register_payments/{fileName}";
+
+        var filePath = $"{folderPath}\\{fileName}";
+
+        try
+        {
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await paymentSubmissionDto.PaymentImage.CopyToAsync(stream);
+            }
+
+            paymentSubmissionDto.PaymentImageUrl = urlImage;
+
+            // update payment image
+            bool paymentImageUpdated = _registerPaymentRepository.UpdatePaymentImage(paymentSubmissionDto);
+            if (!paymentImageUpdated)
+            {
+                File.Delete(filePath);
+                return -4;
+            }
+
+            // update status payment
+            bool statusPaymentUpdated = _registerPaymentRepository.ChangeStatusRegisterPayment(paymentSubmissionDto.Guid, StatusPayment.Checking);
+
+            if (!statusPaymentUpdated)
+            {
+                File.Delete(filePath);
+                return -5;
+            }
+
+            // hapus foto lama
+            File.Delete(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", oldImageUrl.Replace("/", "\\")));
+        }
+        catch
+        {
+            File.Delete(filePath);
+            return -4;
+        }
+
+        return 1;
     }
 }

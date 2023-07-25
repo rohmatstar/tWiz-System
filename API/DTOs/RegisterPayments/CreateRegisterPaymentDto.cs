@@ -19,7 +19,7 @@ public class CreateRegisterPaymentDto
     [DefaultValue(false)]
     public bool IsValid { get; set; }
 
-    [DefaultValue(StatusPayment.pending)]
+    [DefaultValue(StatusPayment.Pending)]
     public StatusPayment StatusPayment { get; set; }
 
     [Required]

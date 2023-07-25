@@ -152,4 +152,71 @@ public class RegisterPaymentController : ControllerBase
             Message = "Successfully deleted"
         });
     }
+
+
+
+    [HttpPost("payment-submission")]
+    public async Task<IActionResult> PaymentSubmission([FromForm] PaymentSubmissionDto paymentSubmissionDto)
+    {
+
+        var paymentSubmissionStatus = await _service.UploadPaymentSubmission(paymentSubmissionDto);
+
+        if (paymentSubmissionStatus is -1)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Failed create folder image"
+            });
+        }
+
+        if (paymentSubmissionStatus is -2)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "File size cannot be more than 2mb"
+            });
+        }
+
+        if (paymentSubmissionStatus is -3)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "your uploaded file is not image file"
+            });
+        }
+
+        if (paymentSubmissionStatus is -4)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Failed to update image data"
+            });
+        }
+
+        if (paymentSubmissionStatus is -5)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Failed to update status data"
+            });
+        }
+
+        return Ok(new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Successfully update data"
+        });
+
+    }
 }
