@@ -1,16 +1,24 @@
 ﻿using API.Contracts;
 using API.DTOs.RegisterPayments;
 using API.Models;
+using API.Repositories;
+using API.Utilities;
+using API.Utilities.Handlers;
 
 namespace API.Services;
 
 public class RegisterPaymentService
 {
     private readonly IRegisterPaymentRepository _registerPaymentRepository;
-
-    public RegisterPaymentService(IRegisterPaymentRepository registerPaymentRepository)
+    private readonly ICompanyRepository _companyRepository;
+    private readonly IAccountRepository _accountRepository;
+    private readonly IEmailHandler _emailHandler;
+    public RegisterPaymentService(IRegisterPaymentRepository registerPaymentRepository, ICompanyRepository companyRepository, IAccountRepository accountRepository, IEmailHandler emailHandler)
     {
         _registerPaymentRepository = registerPaymentRepository;
+        _companyRepository = companyRepository;
+        _accountRepository = accountRepository;
+        _emailHandler = emailHandler;
     }
 
     public IEnumerable<GetRegisterPaymentDto>? GetRegisterPayments()
@@ -140,4 +148,38 @@ public class RegisterPaymentService
 
         return 1; // RegisterPayment Deleted
     }
+
+    //Testing Mail Service
+   /* public PaymentDto Payment(string email)
+    {
+        var company = _accountRepository.GetAll().SingleOrDefault(account => account.Email == email);
+        if (company is null)
+        {
+            return null;
+        }
+
+        var toDto = new PaymentDto
+        {
+            Email = company.Email,
+            VaNumber = GenerateVA.GenerateRandomVA(),
+        };
+
+        var relatedAccount = _accountRepository.GetByGuid(company.Guid);
+
+        var update = new RegisterPayment
+        {
+            Guid = relatedAccount.Guid,
+            VaNumber = toDto.VaNumber,
+
+
+        };
+
+        var updateResult = _registerPaymentRepository.Update(update);
+
+        _emailHandler.SendEmail(toDto.Email,
+                       "Register Payment",
+                       $"Your Virtual Account Number is {toDto.VaNumber}");
+
+        return toDto;
+    }*/
 }

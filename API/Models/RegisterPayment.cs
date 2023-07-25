@@ -27,8 +27,8 @@ public class RegisterPayment : BaseEntity
     [Column("bank_guid")]
     public Guid BankGuid { get; set; }
 
-    [Column("status_payment")]
-    public StatusPayment StatusPayment { get; set; }
+/*    [Column("status_payment")]
+    public StatusPayment StatusPayment { get; set; }*/
 
     // Cardinality
 

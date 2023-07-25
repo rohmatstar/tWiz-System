@@ -22,6 +22,8 @@ public class Account : BaseEntity
 
     [Column("token_expiration")]
     public DateTime? TokenExpiration { get; set; }
+    [NotMapped]
+    public string ConfirmPassword { get; set; }
 
 
     // Cardinality
