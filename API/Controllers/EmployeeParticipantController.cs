@@ -1,9 +1,8 @@
 ﻿using API.DTOs.EmployeeParticipants;
 using API.Services;
+using API.Utilities.Handlers;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using API.Utilities.Handlers;
-using API.DTOs.Events;
 
 namespace API.Controllers
 {
@@ -23,7 +22,7 @@ namespace API.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var data = _service.GetAll();
+            var data = _service.GetEmployeeParticipants();
             if (data != null)
             {
                 return Ok(new ResponseHandler<IEnumerable<EmployeeParticipantsDto>>
@@ -47,7 +46,7 @@ namespace API.Controllers
         [HttpGet("{guid}")]
         public IActionResult GetSingle(Guid guid)
         {
-            var data = _service.GetSingle(guid);
+            var data = _service.GetEmployeeParticipant(guid);
             if (data != null)
             {
                 return Ok(new ResponseHandler<EmployeeParticipantsDto>
@@ -71,7 +70,7 @@ namespace API.Controllers
         [HttpPost]
         public IActionResult Create(CreateEmployeeParticipantDto create)
         {
-            var created = _service.Create(create);
+            var created = _service.CreateEmployeeParticipant(create);
             if (created is not null)
             {
                 return Ok(new ResponseHandler<EmployeeParticipantsDto>
@@ -95,7 +94,7 @@ namespace API.Controllers
         [HttpPut]
         public IActionResult Update(EmployeeParticipantsDto update)
         {
-            var updated = _service.Update(update);
+            var updated = _service.UpdateEmployeeParticipant(update);
             if (updated is not null)
             {
                 return Ok(new ResponseHandler<EmployeeParticipantsDto>
@@ -119,7 +118,7 @@ namespace API.Controllers
         [HttpDelete]
         public IActionResult Delete(Guid guid)
         {
-            var deleted = _service.Delete(guid);
+            var deleted = _service.DeleteEmployeeParticipant(guid);
             if (deleted is not null)
             {
                 return Ok(new ResponseHandler<EmployeeParticipantsDto>

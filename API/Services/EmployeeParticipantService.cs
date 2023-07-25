@@ -13,7 +13,7 @@ namespace API.Services
             _repository = repository;
         }
 
-        public IEnumerable<EmployeeParticipantsDto>? GetAll()
+        public IEnumerable<EmployeeParticipantsDto>? GetEmployeeParticipants()
         {
             var model = _repository.GetAll();
 
@@ -34,7 +34,7 @@ namespace API.Services
             return data;
         }
 
-        public EmployeeParticipantsDto? GetSingle(Guid guid)
+        public EmployeeParticipantsDto? GetEmployeeParticipant(Guid guid)
         {
             var model = _repository.GetByGuid(guid);
 
@@ -57,7 +57,7 @@ namespace API.Services
             return data;
         }
 
-        public EmployeeParticipantsDto? Create(CreateEmployeeParticipantDto create)
+        public EmployeeParticipantsDto? CreateEmployeeParticipant(CreateEmployeeParticipantDto create)
         {
             var model = new EmployeeParticipant
             {
@@ -89,7 +89,7 @@ namespace API.Services
             return data;
         }
 
-        public EmployeeParticipantsDto? Update(EmployeeParticipantsDto update)
+        public EmployeeParticipantsDto? UpdateEmployeeParticipant(EmployeeParticipantsDto update)
         {
             var single = _repository.GetByGuid(update.Guid);
             if (single == null)
@@ -124,7 +124,7 @@ namespace API.Services
             return data;
         }
 
-        public EmployeeParticipantsDto? Delete(Guid guid)
+        public EmployeeParticipantsDto? DeleteEmployeeParticipant(Guid guid)
         {
             var model = _repository.GetByGuid(guid);
             if (model == null)
