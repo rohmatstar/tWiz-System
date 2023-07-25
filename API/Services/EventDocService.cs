@@ -1,8 +1,6 @@
 ﻿using API.Contracts;
 using API.DTOs.EventDocs;
-using API.DTOs.Events;
 using API.Models;
-using API.Repositories;
 
 namespace API.Services
 {
@@ -15,7 +13,7 @@ namespace API.Services
             _eventDocRepository = eventDocRepository;
         }
 
-        public IEnumerable<EventDocsDto>? GetAll()
+        public IEnumerable<EventDocsDto>? GetEventDocs()
         {
             var eventsModel = _eventDocRepository.GetAll();
 
@@ -34,7 +32,7 @@ namespace API.Services
             return events;
         }
 
-        public EventDocsDto? GetSingle(Guid guid)
+        public EventDocsDto? GetEventDoc(Guid guid)
         {
             var singleEvent = _eventDocRepository.GetByGuid(guid);
             if (singleEvent == null)

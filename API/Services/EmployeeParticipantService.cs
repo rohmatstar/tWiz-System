@@ -1,8 +1,6 @@
 ﻿using API.Contracts;
 using API.DTOs.EmployeeParticipants;
-using API.DTOs.Events;
 using API.Models;
-using API.Repositories;
 
 namespace API.Services
 {
@@ -15,11 +13,11 @@ namespace API.Services
             _repository = repository;
         }
 
-        public IEnumerable<EmployeeParticipantsDto>? GetAll()
+        public IEnumerable<EmployeeParticipantsDto>? GetEmployeeParticipants()
         {
             var model = _repository.GetAll();
 
-            if (!model.Any())
+            if (model is null)
             {
                 return null;
             }
@@ -36,7 +34,7 @@ namespace API.Services
             return data;
         }
 
-        public EmployeeParticipantsDto? GetSingle(Guid guid)
+        public EmployeeParticipantsDto? GetEmployeeParticipant(Guid guid)
         {
             var model = _repository.GetByGuid(guid);
 
@@ -59,7 +57,7 @@ namespace API.Services
             return data;
         }
 
-        public EmployeeParticipantsDto? Create(CreateEmployeeParticipantDto create)
+        public EmployeeParticipantsDto? CreateEmployeeParticipant(CreateEmployeeParticipantDto create)
         {
             var model = new EmployeeParticipant
             {
@@ -91,7 +89,7 @@ namespace API.Services
             return data;
         }
 
-        public EmployeeParticipantsDto? Update(EmployeeParticipantsDto update)
+        public EmployeeParticipantsDto? UpdateEmployeeParticipant(EmployeeParticipantsDto update)
         {
             var single = _repository.GetByGuid(update.Guid);
             if (single == null)
@@ -126,7 +124,7 @@ namespace API.Services
             return data;
         }
 
-        public EmployeeParticipantsDto? Delete(Guid guid)
+        public EmployeeParticipantsDto? DeleteEmployeeParticipant(Guid guid)
         {
             var model = _repository.GetByGuid(guid);
             if (model == null)

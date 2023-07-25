@@ -13,10 +13,10 @@ namespace API.Services
             _accountRoleRepository = accountRoleRepository;
         }
 
-        public IEnumerable<GetAccountRoleDto>? GetAccountRole()
+        public IEnumerable<GetAccountRoleDto>? GetAccountRoles()
         {
             var accountRoles = _accountRoleRepository.GetAll();
-            if (!accountRoles.Any())
+            if (accountRoles is null)
             {
                 return null; // No Account Role found
             }
@@ -37,7 +37,7 @@ namespace API.Services
             var accountRole = _accountRoleRepository.GetByGuid(guid);
             if (accountRole is null)
             {
-                return null; // accountRole not found
+                return null;
             }
 
             var toDto = new GetAccountRoleDto

@@ -20,7 +20,7 @@ public class RoleController : ControllerBase
     [HttpGet]
     public IActionResult GetAll()
     {
-        var entities = _service.GetRole();
+        var entities = _service.GetRoles();
 
         if (entities == null)
         {

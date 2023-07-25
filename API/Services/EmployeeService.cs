@@ -1,7 +1,6 @@
 ﻿using API.Contracts;
 using API.DTOs.Employees;
 using API.Models;
-using API.Repositories;
 
 namespace API.Services;
 
@@ -14,10 +13,10 @@ public class EmployeeService
         _employeeRepository = employeeRepository;
     }
 
-    public IEnumerable<GetEmployeeDto> GetEmployees()
+    public IEnumerable<GetEmployeeDto>? GetEmployees()
     {
         var employees = _employeeRepository.GetAll();
-        if (!employees.Any())
+        if (employees is null)
         {
             return null; // No Employee Found
         }

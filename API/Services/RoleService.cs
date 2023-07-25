@@ -12,12 +12,12 @@ namespace API.Services
             _roleRepository = roleRepository;
         }
 
-        public IEnumerable<GetRoleDto>? GetRole()
+        public IEnumerable<GetRoleDto>? GetRoles()
         {
             var roles = _roleRepository.GetAll();
-            if (!roles.Any())
+            if (roles is null)
             {
-                return null; // No role found
+                return null;
             }
 
             var toDto = roles.Select(role =>

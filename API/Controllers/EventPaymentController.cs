@@ -1,6 +1,6 @@
 ﻿using API.DTOs.EventPayments;
 using API.Services;
-using API.Utilities.Enums;
+using API.Utilities.Handlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
