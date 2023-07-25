@@ -8,10 +8,11 @@ namespace API.Services;
 public class AccountService
 {
     private readonly IAccountRepository _accountRepository;
-
-    public AccountService(IAccountRepository accountRepository)
+    private readonly IEmailHandler _emailhandler;
+    public AccountService(IAccountRepository accountRepository, IEmailHandler emailhandler)
     {
         _accountRepository = accountRepository;
+        _emailhandler = emailhandler;
     }
 
     public IEnumerable<GetAccountDto>? GetAccounts()
