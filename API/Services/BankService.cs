@@ -15,9 +15,10 @@ namespace API.Services
         public IEnumerable<GetBankDto>? GetBanks()
         {
             var banks = _bankRepository.GetAll();
-            if (!banks.Any())
+
+            if (banks is null)
             {
-                return null; // No bank found
+                return null;
             }
 
             var toDto = banks.Select(bank =>
