@@ -1,6 +1,6 @@
 ﻿using API.DTOs.Companies;
 using API.Services;
-using API.Utilities.Enums;
+using API.Utilities.Handlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -42,113 +42,113 @@ public class CompanyController : ControllerBase
         });
     }
 
-        [HttpGet("{guid}")]
-        [AllowAnonymous]
-        public IActionResult GetByGuid(Guid guid)
+    [HttpGet("{guid}")]
+    [AllowAnonymous]
+    public IActionResult GetByGuid(Guid guid)
+    {
+        var company = _service.GetCompany(guid);
+        if (company is null)
         {
-            var company = _service.GetCompany(guid);
-            if (company is null)
+            return NotFound(new ResponseHandler<GetCompanyDto>
             {
-                return NotFound(new ResponseHandler<GetCompanyDto>
-                {
-                    Code = StatusCodes.Status404NotFound,
-                    Status = HttpStatusCode.NotFound.ToString(),
-                    Message = "Data not found"
-                });
-            }
-
-            return Ok(new ResponseHandler<GetCompanyDto>
-            {
-                Code = StatusCodes.Status200OK,
-                Status = HttpStatusCode.OK.ToString(),
-                Message = "Data found",
-                Data = company
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Data not found"
             });
         }
 
-        [HttpPost]
-        public IActionResult Create(CreateCompanyDto newCompanyDto)
+        return Ok(new ResponseHandler<GetCompanyDto>
         {
-            var createCompany = _service.CreateCompany(newCompanyDto);
-            if (createCompany is null)
-            {
-                return BadRequest(new ResponseHandler<GetCompanyDto>
-                {
-                    Code = StatusCodes.Status400BadRequest,
-                    Status = HttpStatusCode.BadRequest.ToString(),
-                    Message = "Data not created"
-                });
-            }
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Data found",
+            Data = company
+        });
+    }
 
-            return Ok(new ResponseHandler<GetCompanyDto>
+    [HttpPost]
+    public IActionResult Create(CreateCompanyDto newCompanyDto)
+    {
+        var createCompany = _service.CreateCompany(newCompanyDto);
+        if (createCompany is null)
+        {
+            return BadRequest(new ResponseHandler<GetCompanyDto>
             {
-                Code = StatusCodes.Status200OK,
-                Status = HttpStatusCode.OK.ToString(),
-                Message = "Successfully created",
-                Data = createCompany
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "Data not created"
             });
         }
 
-        [HttpPut]
-        public IActionResult Update(UpdateCompanyDto updateCompanyDto)
+        return Ok(new ResponseHandler<GetCompanyDto>
         {
-            var update = _service.UpdateCompany(updateCompanyDto);
-            if (update is -1)
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Successfully created",
+            Data = createCompany
+        });
+    }
+
+    [HttpPut]
+    public IActionResult Update(UpdateCompanyDto updateCompanyDto)
+    {
+        var update = _service.UpdateCompany(updateCompanyDto);
+        if (update is -1)
+        {
+            return NotFound(new ResponseHandler<UpdateCompanyDto>
             {
-                return NotFound(new ResponseHandler<UpdateCompanyDto>
-                {
-                    Code = StatusCodes.Status404NotFound,
-                    Status = HttpStatusCode.NotFound.ToString(),
-                    Message = "Id not found"
-                });
-            }
-            if (update is 0)
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Id not found"
+            });
+        }
+        if (update is 0)
+        {
+            return BadRequest(new ResponseHandler<UpdateCompanyDto>
             {
-                return BadRequest(new ResponseHandler<UpdateCompanyDto>
-                {
-                    Code = StatusCodes.Status500InternalServerError,
-                    Status = HttpStatusCode.InternalServerError.ToString(),
-                    Message = "Check your data"
-                });
-            }
-            return Ok(new ResponseHandler<UpdateCompanyDto>
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Check your data"
+            });
+        }
+        return Ok(new ResponseHandler<UpdateCompanyDto>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Successfully updated"
+        });
+    }
+
+    [HttpDelete]
+    public IActionResult Delete(Guid guid)
+    {
+        var delete = _service.DeleteCompany(guid);
+
+        if (delete is -1)
+        {
+            return NotFound(new ResponseHandler<GetCompanyDto>
             {
-                Code = StatusCodes.Status200OK,
-                Status = HttpStatusCode.OK.ToString(),
-                Message = "Successfully updated"
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Id not found"
+            });
+        }
+        if (delete is 0)
+        {
+            return BadRequest(new ResponseHandler<GetCompanyDto>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Check connection to database"
             });
         }
 
-        [HttpDelete]
-        public IActionResult Delete(Guid guid)
+        return Ok(new ResponseHandler<GetCompanyDto>
         {
-            var delete = _service.DeleteCompany(guid);
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Successfully deleted"
+        });
+    }
 
-            if (delete is -1)
-            {
-                return NotFound(new ResponseHandler<GetCompanyDto>
-                {
-                    Code = StatusCodes.Status404NotFound,
-                    Status = HttpStatusCode.NotFound.ToString(),
-                    Message = "Id not found"
-                });
-            }
-            if (delete is 0)
-            {
-                return BadRequest(new ResponseHandler<GetCompanyDto>
-                {
-                    Code = StatusCodes.Status500InternalServerError,
-                    Status = HttpStatusCode.InternalServerError.ToString(),
-                    Message = "Check connection to database"
-                });
-            }
-
-            return Ok(new ResponseHandler<GetCompanyDto>
-            {
-                Code = StatusCodes.Status200OK,
-                Status = HttpStatusCode.OK.ToString(),
-                Message = "Successfully deleted"
-            });
-        }
-    
 }
