@@ -1,8 +1,6 @@
 ﻿using API.Contracts;
-using API.Repositories;
 using API.DTOs.Events;
 using API.Models;
-using System;
 
 namespace API.Services
 {
@@ -15,7 +13,7 @@ namespace API.Services
             _eventRepository = eventRepository;
         }
 
-        public IEnumerable<EventsDto>? GetAll()
+        public IEnumerable<EventsDto>? GetEvents()
         {
             var eventsModel = _eventRepository.GetAll();
 
@@ -24,27 +22,28 @@ namespace API.Services
                 return null;
             }
 
-            var events = eventsModel.Select(e => new EventsDto {
-                                                Guid = e.Guid,
-                                                Name = e.Name,
-                                                Thumbnail = e.Thumbnail,
-                                                Description = e.Description,
-                                                IsPublished = e.IsPublished,
-                                                IsPaid = e.IsPaid,
-                                                Price = e.Price,
-                                                Category = e.Category,
-                                                Status = e.Status,
-                                                StartDate = e.StartDate,
-                                                EndDate = e.EndDate,
-                                                Quota = e.Quota,
-                                                Place = e.Place,
-                                                CreatedBy = e.CreatedBy
-                                            }).ToList();
+            var events = eventsModel.Select(e => new EventsDto
+            {
+                Guid = e.Guid,
+                Name = e.Name,
+                Thumbnail = e.Thumbnail,
+                Description = e.Description,
+                IsPublished = e.IsPublished,
+                IsPaid = e.IsPaid,
+                Price = e.Price,
+                Category = e.Category,
+                Status = e.Status,
+                StartDate = e.StartDate,
+                EndDate = e.EndDate,
+                Quota = e.Quota,
+                Place = e.Place,
+                CreatedBy = e.CreatedBy
+            }).ToList();
 
             return events;
         }
 
-        public EventsDto? GetSingle(Guid guid)
+        public EventsDto? GetEvent(Guid guid)
         {
             var singleEvent = _eventRepository.GetByGuid(guid);
             if (singleEvent == null)
@@ -136,7 +135,7 @@ namespace API.Services
                 Guid = eventsDto!.Guid,
                 Name = eventsDto.Name!,
                 Thumbnail = eventsDto.Thumbnail,
-                Description = eventsDto .Description!,
+                Description = eventsDto.Description!,
                 IsPublished = (bool)eventsDto.IsPublished!,
                 IsPaid = (bool)eventsDto.IsPaid!,
                 Price = eventsDto.Price,
