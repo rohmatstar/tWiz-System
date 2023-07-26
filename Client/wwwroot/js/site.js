@@ -1,4 +1,7 @@
-﻿$('#login-btn').click(function (event) {
+﻿new DataTable('#data-table');
+
+
+$('#login-btn').click(function (event) {
     event.preventDefault();
     let login_text = $("#login-btn").html();
     $('#login-btn').html(`<div class="spinner-border text-light" role="status">

@@ -2,6 +2,7 @@
 using API.Models;
 using API.Utilities.Enums;
 using Client.Contracts;
+using Client.DTOs;
 using Client.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,7 @@ public class EmployeeController : Controller
     {
 
         var result = await repository.Get();
-        var ListEmployee = new List<GetEmployeeDto>();
+        var ListEmployee = new List<GetMasterEmployeeDtoClient>();
 
         if (result.Data != null)
         {
@@ -43,7 +44,7 @@ public class EmployeeController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(GetEmployeeDto newEmployee)
+    public async Task<IActionResult> Create(GetMasterEmployeeDtoClient newEmployee)
     {
         var result = await repository.Post(newEmployee);
         if (result.Status == "200")
@@ -87,24 +88,23 @@ public class EmployeeController : Controller
         {
             return RedirectToAction(nameof(Index));
         }
-        var employee = new GetEmployeeDto
+        var employee = new GetMasterEmployeeDtoClient
         {
             Guid = result.Data.Guid,
             Nik = result.Data.Nik,
             FullName = result.Data.FullName,
             BirthDate = result.Data.BirthDate,
-            Gender = result.Data.Gender,
             HiringDate = result.Data.HiringDate,
             PhoneNumber = result.Data.PhoneNumber,
-            CompanyGuid = result.Data.CompanyGuid,
-            AccountGuid = result.Data.AccountGuid
+/*            CompanyGuid = result.Data.CompanyGuid,
+            AccountGuid = result.Data.AccountGuid*/
         };
 
         return View(employee);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Edit(GetEmployeeDto employee)
+    public async Task<IActionResult> Edit(GetMasterEmployeeDtoClient employee)
     {
         if (!ModelState.IsValid)
         {

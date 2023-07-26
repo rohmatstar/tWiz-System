@@ -1,17 +1,36 @@
-﻿using Client.Models;
+﻿using API.DTOs.Employees;
+using Client.Contracts;
+using Client.DTOs;
+using Client.Models;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol.Core.Types;
 using System.Diagnostics;
 
 namespace Client.Controllers
 {
     public class AdminController : Controller
     {
+        private readonly IEmployeeRepository repository;
 
-        public IActionResult Index()
+        public  AdminController(IEmployeeRepository repository)
         {
-            return View();
+            this.repository = repository;
         }
+        public async Task<IActionResult> Index()
+        {
 
+            var result = await repository.Get();
+            var ListEmployee = new List<GetMasterEmployeeDtoClient>();
+
+            if (result.Data != null)
+            {
+                ListEmployee = result.Data.ToList();
+            }
+            Console.WriteLine("string TEST");
+            Console.WriteLine(ListEmployee[0].CompanyName);
+            return View(ListEmployee);
+            
+        }
         public IActionResult Login()
         {
             return View();
