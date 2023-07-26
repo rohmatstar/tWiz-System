@@ -261,6 +261,10 @@ public class RegisterPaymentService
         }
         catch
         {
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
             transaction.Rollback();
             return -6;
         }
@@ -288,7 +292,7 @@ public class RegisterPaymentService
 
         var registerPaymentUpdated = _registerPaymentRepository.Update(getRegisterPayment);
 
-        if (registerPaymentUpdated == null)
+        if (registerPaymentUpdated is false)
         {
             transaction.Rollback();
             return 0;
@@ -348,7 +352,7 @@ public class RegisterPaymentService
 
         var registerPaymentUpdated = _registerPaymentRepository.Update(getRegisterPayment);
 
-        if (registerPaymentUpdated == null)
+        if (registerPaymentUpdated is false)
         {
             transaction.Rollback();
             return 0;
