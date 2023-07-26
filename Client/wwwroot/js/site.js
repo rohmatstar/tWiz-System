@@ -95,17 +95,41 @@ $('#register-btn').click(function (event) {
             if (errorResponse && errorResponse.errors) {
                 console.log("xhr", xhr.responseJSON.errors);
 
+                var addressErrors = errorResponse.errors.Address;
+                var confirmPasswordErrors = errorResponse.errors.ConfirmPassword;
                 var emailErrors = errorResponse.errors.Email;
+                var nameErrors = errorResponse.errors.Name;
                 var passwordErrors = errorResponse.errors.Password;
+                var phoneNumberErrors = errorResponse.errors.PhoneNumber;
+
+                if (addressErrors) {
+                    error_item += "<br/>";
+                    error_item += addressErrors.join('<br/>');
+                }
+
+                if (confirmPasswordErrors) {
+                    error_item += "<br/>";
+                    error_item += confirmPasswordErrors.join('<br/>');
+                }
 
                 if (emailErrors) {
-
+                    error_item += "<br/>";
                     error_item += emailErrors.join('<br/>');
+                }
+
+                if (nameErrors) {
+                    error_item += "<br/>";
+                    error_item += nameErrors.join('<br/>');
                 }
 
                 if (passwordErrors) {
                     error_item += "<br/>";
                     error_item += passwordErrors.join('<br/>');
+                }
+
+                if (phoneNumberErrors) {
+                    error_item += "<br/>";
+                    error_item += phoneNumberErrors.join('<br/>');
                 }
             }
 
