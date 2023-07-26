@@ -2,7 +2,7 @@
 
 public class AproveRegisterPaymentDto
 {
-    public Guid RegisterPaymentGuid { get; set; }
+    public Guid Guid { get; set; }
     public string CompanyEmail { get; set; }
 }
 

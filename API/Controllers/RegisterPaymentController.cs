@@ -1,4 +1,5 @@
-﻿using API.DTOs.RegisterPayments;
+﻿using API.DTOs.Banks;
+using API.DTOs.RegisterPayments;
 using API.Services;
 using API.Utilities.Handlers;
 using Microsoft.AspNetCore.Authorization;
@@ -230,28 +231,27 @@ public class RegisterPaymentController : ControllerBase
 
     }
 
-    // Testing
-    /* [HttpPost("payment")]
-     [AllowAnonymous]
-     public IActionResult Payment(string email)
-     {
-         var generateOtp = _service.Payment(email);
-         if (generateOtp is null)
-         {
-             return BadRequest(new ResponseHandler<PaymentDto>
-             {
-                 Code = StatusCodes.Status400BadRequest,
-                 Status = HttpStatusCode.BadRequest.ToString(),
-                 Message = "Email Not Found"
-             });
-         }
+    [HttpPut("aprove")]
+    public IActionResult Aprove(AproveRegisterPaymentDto aproveRegisterPaymentDto)
+    {
+        var aprovedRegisterPaymentStatus = _service.AproveRegisterPayment(aproveRegisterPaymentDto);
 
-         return Ok(new ResponseHandler<PaymentDto>
-         {
-             Code = StatusCodes.Status200OK,
-             Status = HttpStatusCode.OK.ToString(),
-             Message = "Virtual Number Is Generated",
-             Data = generateOtp
-         });
-     }*/
+        if (aprovedRegisterPaymentStatus is 0)
+        {
+            return BadRequest(new ResponseHandler<UpdateBankDto>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "Check your data"
+            });
+        }
+
+
+        return Ok(new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Successfully aprove register payment"
+        });
+    }
 }

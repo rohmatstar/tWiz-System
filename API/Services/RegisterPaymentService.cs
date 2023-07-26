@@ -271,8 +271,63 @@ public class RegisterPaymentService
         return 1;
     }
 
-    public int AproveRegisterPayment()
+    public int AproveRegisterPayment(AproveRegisterPaymentDto aproveRegisterPaymentDto)
     {
+        using var transaction = _twizDbContext.Database.BeginTransaction();
+
+        var getRegisterPayment = _registerPaymentRepository.GetByGuid(aproveRegisterPaymentDto.Guid);
+
+        if (getRegisterPayment == null)
+        {
+            return 0;
+        }
+
+        getRegisterPayment.IsValid = true;
+        getRegisterPayment.StatusPayment = StatusPayment.Paid;
+        getRegisterPayment.ModifiedDate = DateTime.Now;
+
+        var registerPaymentUpdated = _registerPaymentRepository.Update(getRegisterPayment);
+
+        if (registerPaymentUpdated == null)
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
+        var getAccountCompany = _accountRepository.GetByEmail(aproveRegisterPaymentDto.CompanyEmail);
+
+        if (getAccountCompany is null)
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
+        // aktivasi account
+        getAccountCompany.IsActive = true;
+
+        var accountUpdated = _accountRepository.Update(getAccountCompany);
+
+        if (accountUpdated is false)
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
+
+        try
+        {
+            var contentEmail = $"<h1>Conratulation Your Account Has Been Activated!!</h1>" +
+                $"<p>welcome to tWiz. Now you can fully use the services of our tWiz service. Don't hesitate to contact the support center if you have any problems using our tWiz service</p>";
+
+            _emailHandler.SendEmail(aproveRegisterPaymentDto.CompanyEmail, "Aproved tWiz Account", contentEmail);
+            transaction.Commit();
+        }
+        catch
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
         return 1;
     }
 

@@ -19,9 +19,6 @@ public class AccountRepository : GeneralRepository<Account>, IAccountRepository
     {
         return _context.Set<Account>().FirstOrDefault(e => e.Email == email);
     }
-/*
-    public Account? GetByEmailAndPhoneNumber(string data)
-    {
-        return _context.Set<Account>().FirstOrDefault(e => e.PhoneNumber == data || e.Email == data);
-    }*/
+
+
 }
