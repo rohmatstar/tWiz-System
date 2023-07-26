@@ -275,7 +275,7 @@ public class AuthService
 
         _emailHandler.SendEmail(toDto.Email,
                        "Register Payment",
-                       $"Your Virtual Account Number is {toDto.Token}");
+                       $"Your Virtual Account Number is {toDto.Token}, <a href='https://localhost:7153/?Token={toDto.Token}'>Klik Disini</a>");
 
         return toDto;
     }
