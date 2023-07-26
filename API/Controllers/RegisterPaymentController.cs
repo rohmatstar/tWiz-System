@@ -197,7 +197,7 @@ public class RegisterPaymentController : ControllerBase
             {
                 Code = StatusCodes.Status500InternalServerError,
                 Status = HttpStatusCode.InternalServerError.ToString(),
-                Message = "Failed to update image data"
+                Message = "Failed to update image payment"
             });
         }
 
@@ -207,7 +207,17 @@ public class RegisterPaymentController : ControllerBase
             {
                 Code = StatusCodes.Status500InternalServerError,
                 Status = HttpStatusCode.InternalServerError.ToString(),
-                Message = "Failed to update status data"
+                Message = "Failed to update status payment"
+            });
+        }
+
+        if (paymentSubmissionStatus is -6)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Check your internet connection"
             });
         }
 

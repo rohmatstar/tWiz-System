@@ -1,4 +1,5 @@
 ﻿using API.Contracts;
+using API.Data;
 using API.DTOs.RegisterPayments;
 using API.Models;
 using API.Utilities.Enums;
@@ -13,12 +14,16 @@ public class RegisterPaymentService
     private readonly ICompanyRepository _companyRepository;
     private readonly IAccountRepository _accountRepository;
     private readonly IEmailHandler _emailHandler;
-    public RegisterPaymentService(IRegisterPaymentRepository registerPaymentRepository, ICompanyRepository companyRepository, IAccountRepository accountRepository, IEmailHandler emailHandler)
+    private readonly AccountService _accountService;
+    private readonly TwizDbContext _twizDbContext;
+    public RegisterPaymentService(IRegisterPaymentRepository registerPaymentRepository, ICompanyRepository companyRepository, IAccountRepository accountRepository, IEmailHandler emailHandler, AccountService accountService, TwizDbContext twizDbContext)
     {
         _registerPaymentRepository = registerPaymentRepository;
         _companyRepository = companyRepository;
         _accountRepository = accountRepository;
         _emailHandler = emailHandler;
+        _accountService = accountService;
+        _twizDbContext = twizDbContext;
     }
 
     public IEnumerable<GetRegisterPaymentDto>? GetRegisterPayments()
@@ -158,18 +163,11 @@ public class RegisterPaymentService
             try
             {
                 Directory.CreateDirectory(folderPath);
-                Console.WriteLine("Folder created successfully!");
             }
             catch (Exception ex)
             {
-
-                Console.WriteLine("Failed to create folder: " + ex.Message);
                 return -1;
             }
-        }
-        else
-        {
-            Console.WriteLine("Folder already exists.");
         }
 
         var size = paymentSubmissionDto.PaymentImage.Length;
@@ -202,7 +200,7 @@ public class RegisterPaymentService
         var imageUrl = $"images/register_payments/{fileName}";
 
         var filePath = $"{folderPath}\\{fileName}";
-
+        using var transaction = _twizDbContext.Database.BeginTransaction();
         try
         {
             using (var stream = new FileStream(filePath, FileMode.Create))
@@ -214,6 +212,7 @@ public class RegisterPaymentService
             bool paymentImageUpdated = _registerPaymentRepository.UpdatePaymentImage(paymentSubmissionDto.Guid, imageUrl);
             if (!paymentImageUpdated)
             {
+
                 File.Delete(filePath);
                 return -4;
             }
@@ -237,22 +236,14 @@ public class RegisterPaymentService
                 }
             }
 
-            //var emailCompany = 
+
+
 
         }
         catch
         {
-            if (oldImageUrl != "")
-            {
-                _registerPaymentRepository.UpdatePaymentImage(paymentSubmissionDto.Guid, oldImageUrl);
 
-            }
-            else
-            {
-                _registerPaymentRepository.UpdatePaymentImage(paymentSubmissionDto.Guid, "");
-            }
-
-            _registerPaymentRepository.ChangeStatusRegisterPayment(paymentSubmissionDto.Guid, StatusPayment.Pending);
+            transaction.Rollback();
 
             if (File.Exists(filePath))
             {
@@ -260,6 +251,28 @@ public class RegisterPaymentService
             }
             return -4;
         }
+
+        try
+        {
+            var contentEmail = $"" +
+                $"<h1>Register Payment Submission</h1>" +
+                $"<p>Company Name : {paymentSubmissionDto.CompanyName}</p>" +
+                $"<p>Virtual Account : {paymentRegisterByGuid.VaNumber}</p>" +
+                $"<p>Now you can check it</p>";
+
+            var emailAdmin = _accountService.GetEmailSysAdmin();
+
+
+            _emailHandler.SendEmail(_accountService.GetEmailSysAdmin(), "Register Payment Submission", contentEmail);
+        }
+        catch
+        {
+            transaction.Rollback();
+            return -6;
+        }
+
+        transaction.Commit();
+
 
         return 1;
     }
