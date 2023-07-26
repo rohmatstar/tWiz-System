@@ -271,5 +271,9 @@ public class RegisterPaymentService
         return 1;
     }
 
+    public int AproveRegisterPayment()
+    {
+        return 1;
+    }
 
 }
