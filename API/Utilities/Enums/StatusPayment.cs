@@ -2,7 +2,7 @@
 
 public enum StatusPayment
 {
-    pending,
-    checking,
-    paid
+    Pending,
+    Checking,
+    Paid
 }

@@ -56,11 +56,11 @@
                                             </g>
                                     </svg>
 
-                                    <p class="text-muted font-13 mt-2"> A email has been send to <b>youremail@domain.com</b>.
+                                    <p class="text-muted font-13 mt-2"> A email has been send to <b></b>.
                                         Please check for an email from company and click on the included link to
                                         reset your password. </p>
 
-                                    <a asp-controller="Admin" asp-action="Login" class="btn btn-md btn-block waves-effect waves-light mt-4" style="background-color: #FD5F04">Try Login Again</a>
+                                    <a id="reset-link" href="ResetPassword" class="btn btn-md btn-block waves-effect waves-light mt-4" style="background-color: #FD5F04">Reset Password</a>
                                 </div>
                         </div>
                     </div>
@@ -77,3 +77,20 @@
 </div>
 <!-- end container -->
 </div>
+
+<script>
+    const url = window.location.href;;
+
+    function getQueryParam(url, param) {
+        const searchParams = new URL(url).searchParams;
+        return searchParams.get(param);
+    }
+
+    const email = getQueryParam(url, 'email');
+
+    const emailParagraph = document.querySelector('.text-muted.font-13.mt-2 b');
+    emailParagraph.textContent = email;
+
+    const a = document.querySelector('#reset-link');
+    a.setAttribute("href", "ResetPassword?email=" + email);
+</script>
