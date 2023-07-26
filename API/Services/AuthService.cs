@@ -103,7 +103,7 @@ public class AuthService
                 return null;
             }
 
-            var getBank = _bankRepository.GetByName("Bank Rakyat Indonesia");
+            var getBank = _bankRepository.GetByName("Bank Syariah Indonesia");
             if (getBank is null)
             {
                 return null;

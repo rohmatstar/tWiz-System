@@ -61,6 +61,10 @@
 
                                 </form>
 
+                                <div id="error-list" class="small text-danger">
+                                    
+                                </div>
+
                                 <div class="row mt-4 pt-2">
                                     <div class="col-sm-12 text-center">
                                         <p class="text-muted mb-0">Don't have tWiz account? <a asp-controller="Admin" asp-action="Register" class="text-dark ml-1"><b>Register Now!</b></a></p>
@@ -81,30 +85,3 @@
 <!-- end container -->
 </div>
 <!-- end page -->
-
-<script>
-    $('#login-btn').click(function (event) {
-        event.preventDefault();
-
-        var email = $('#email').val();
-        var password = $('#password').val();
-
-        var data = {
-            email: email,
-            password: password
-        };
-
-        $.ajax({
-            type: 'POST',
-            url: 'https://localhost:7249/api/auths/login',
-            data: data,
-            dataType: 'json',
-            success: function (response) {
-                alert(response)
-            },
-            error: function (xhr, status, error) {
-                alert(error)
-            }
-        });
-    });
-</script>
