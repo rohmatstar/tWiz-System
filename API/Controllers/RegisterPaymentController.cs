@@ -71,7 +71,7 @@ public class RegisterPaymentController : ControllerBase
     [HttpPost]
     public IActionResult Create(CreateRegisterPaymentDto newRegisterPaymentDto)
     {
-        var createEventPayment = _service.CreateEventPayment(newRegisterPaymentDto);
+        var createEventPayment = _service.CreateRegisterPayment(newRegisterPaymentDto);
         if (createEventPayment is null)
         {
             return BadRequest(new ResponseHandler<GetRegisterPaymentDto>

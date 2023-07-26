@@ -64,7 +64,7 @@ public class RegisterPaymentService
 
     }
 
-    public GetRegisterPaymentDto? CreateEventPayment(CreateRegisterPaymentDto newRegisterPaymentDto)
+    public GetRegisterPaymentDto? CreateRegisterPayment(CreateRegisterPaymentDto newRegisterPaymentDto)
     {
         var registerPayment = new RegisterPayment
         {
@@ -153,8 +153,6 @@ public class RegisterPaymentService
     {
         var folderPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\register_payments");
 
-
-
         if (!Directory.Exists(folderPath))
         {
             try
@@ -229,7 +227,7 @@ public class RegisterPaymentService
                 return -5;
             }
 
-            // hapus foto lama
+            // hapus foto lama jika ada
             if (oldImageUrl != "")
             {
                 var filePathOldImage = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", oldImageUrl.Replace("/", "\\"));
@@ -238,6 +236,8 @@ public class RegisterPaymentService
                     File.Delete(filePathOldImage);
                 }
             }
+
+            //var emailCompany = 
 
         }
         catch
