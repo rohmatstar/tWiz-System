@@ -12,7 +12,7 @@ public class CompanyService
     private readonly IAccountRoleRepository _accountRoleRepository;
     private readonly IRoleRepository _roleRepository;
 
-   public CompanyService(IEmployeeRepository employeeRepository, ICompanyRepository companyRepository, IAccountRepository accountRepository, IAccountRoleRepository accountRoleRepository, IRoleRepository roleRepository)
+    public CompanyService(IEmployeeRepository employeeRepository, ICompanyRepository companyRepository, IAccountRepository accountRepository, IAccountRoleRepository accountRoleRepository, IRoleRepository roleRepository)
     {
         _employeeRepository = employeeRepository;
         _companyRepository = companyRepository;
@@ -138,5 +138,25 @@ public class CompanyService
         }
 
         return 1; // Company Deleted
+    }
+
+    public int ImportEmployees(ImportEmployeesDto importEmployeesDto)
+    {
+        var folderPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\tmp\excel");
+
+        if (!Directory.Exists(folderPath))
+        {
+            try
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
+        }
+
+
+        return 1;
     }
 }

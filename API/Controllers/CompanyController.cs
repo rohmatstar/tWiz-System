@@ -151,4 +151,17 @@ public class CompanyController : ControllerBase
         });
     }
 
+    [HttpPost("Employees/Import")]
+    public IActionResult ImportEmployees(ImportEmployeesDto importEmployeesDto)
+    {
+
+
+        return Ok(new ResponseHandler<GetCompanyDto>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Successfully deleted"
+        });
+    }
+
 }
