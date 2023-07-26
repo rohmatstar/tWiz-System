@@ -331,4 +331,63 @@ public class RegisterPaymentService
         return 1;
     }
 
+    public int RejectRegisterPayment(AproveRegisterPaymentDto aproveRegisterPaymentDto)
+    {
+        using var transaction = _twizDbContext.Database.BeginTransaction();
+
+        var getRegisterPayment = _registerPaymentRepository.GetByGuid(aproveRegisterPaymentDto.Guid);
+
+        if (getRegisterPayment == null)
+        {
+            return 0;
+        }
+
+        getRegisterPayment.IsValid = false;
+        getRegisterPayment.StatusPayment = StatusPayment.Pending;
+        getRegisterPayment.ModifiedDate = DateTime.Now;
+
+        var registerPaymentUpdated = _registerPaymentRepository.Update(getRegisterPayment);
+
+        if (registerPaymentUpdated == null)
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
+        var getAccountCompany = _accountRepository.GetByEmail(aproveRegisterPaymentDto.CompanyEmail);
+
+        if (getAccountCompany is null)
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
+        // aktivasi account
+        getAccountCompany.IsActive = false;
+
+        var accountUpdated = _accountRepository.Update(getAccountCompany);
+
+        if (accountUpdated is false)
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
+        try
+        {
+            var contentEmail = $"<h1>Your Submission is Rejected</h1>" +
+                $"<p>For customers. Sorry, we still can't activate your tWiz account because the proof of payment that you uploaded is invalid</p>";
+
+            _emailHandler.SendEmail(aproveRegisterPaymentDto.CompanyEmail, "Reject activation tWiz Account", contentEmail);
+            transaction.Commit();
+        }
+        catch
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
+        return 1;
+    }
+
 }

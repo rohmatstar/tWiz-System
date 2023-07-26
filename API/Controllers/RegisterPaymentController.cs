@@ -251,7 +251,31 @@ public class RegisterPaymentController : ControllerBase
         {
             Code = StatusCodes.Status200OK,
             Status = HttpStatusCode.OK.ToString(),
-            Message = "Successfully aprove register payment"
+            Message = "Successfully aprove register payment submission"
+        });
+    }
+
+    [HttpPut("reject")]
+    public IActionResult Reject(AproveRegisterPaymentDto aproveRegisterPaymentDto)
+    {
+        var rejectedRegisterPaymentStatus = _service.RejectRegisterPayment(aproveRegisterPaymentDto);
+
+        if (rejectedRegisterPaymentStatus is 0)
+        {
+            return BadRequest(new ResponseHandler<UpdateBankDto>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "Check your data"
+            });
+        }
+
+
+        return Ok(new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Successfully reject register payment submission"
         });
     }
 }
