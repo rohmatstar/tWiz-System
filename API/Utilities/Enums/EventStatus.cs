@@ -1,8 +1,8 @@
-﻿namespace API.Utilities.Enums
+﻿namespace API.Utilities.Enums;
+
+public enum EventStatus
 {
-    public enum EventStatus
-    {
-        Offline,
-        Online
-    }
+    Offline,
+    Online
 }
+

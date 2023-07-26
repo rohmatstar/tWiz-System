@@ -4,6 +4,7 @@ namespace API.DTOs.Accounts
 {
     public class GetAccountDto
     {
+        [Required]
         public Guid Guid { get; set; }
 
         [Required]
