@@ -64,7 +64,6 @@ builder.Services.AddTransient<IEmailHandler, EmailHandler>(_ => new EmailHandler
 
 
 
-
 // CORS
 builder.Services.AddCors(options =>
 {
@@ -78,7 +77,8 @@ builder.Services.AddCors(options =>
 
 // Swager Configuration
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(x => {
+builder.Services.AddSwaggerGen(x =>
+{
     x.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
@@ -108,6 +108,8 @@ builder.Services.AddSwaggerGen(x => {
             new string[] { }
         }
     });
+
+
 });
 
 var app = builder.Build();
@@ -126,6 +128,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 

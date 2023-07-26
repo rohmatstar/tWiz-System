@@ -1,4 +1,5 @@
-﻿using API.DTOs.RegisterPayments;
+﻿using API.DTOs.Banks;
+using API.DTOs.RegisterPayments;
 using API.Services;
 using API.Utilities.Handlers;
 using Microsoft.AspNetCore.Authorization;
@@ -71,7 +72,7 @@ public class RegisterPaymentController : ControllerBase
     [HttpPost]
     public IActionResult Create(CreateRegisterPaymentDto newRegisterPaymentDto)
     {
-        var createEventPayment = _service.CreateEventPayment(newRegisterPaymentDto);
+        var createEventPayment = _service.CreateRegisterPayment(newRegisterPaymentDto);
         if (createEventPayment is null)
         {
             return BadRequest(new ResponseHandler<GetRegisterPaymentDto>
@@ -153,28 +154,128 @@ public class RegisterPaymentController : ControllerBase
         });
     }
 
-    // Testing
-   /* [HttpPost("payment")]
-    [AllowAnonymous]
-    public IActionResult Payment(string email)
+
+
+    [HttpPut("payment-submission")]
+    public async Task<IActionResult> PaymentSubmission([FromForm] PaymentSubmissionDto paymentSubmissionDto)
     {
-        var generateOtp = _service.Payment(email);
-        if (generateOtp is null)
+
+        var paymentSubmissionStatus = await _service.UploadPaymentSubmission(paymentSubmissionDto);
+
+        if (paymentSubmissionStatus is -1)
         {
-            return BadRequest(new ResponseHandler<PaymentDto>
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<string>
             {
-                Code = StatusCodes.Status400BadRequest,
-                Status = HttpStatusCode.BadRequest.ToString(),
-                Message = "Email Not Found"
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Failed create folder image"
             });
         }
 
-        return Ok(new ResponseHandler<PaymentDto>
+        if (paymentSubmissionStatus is -2)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "File size cannot be more than 2mb"
+            });
+        }
+
+        if (paymentSubmissionStatus is -3)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "your uploaded file is not image file"
+            });
+        }
+
+        if (paymentSubmissionStatus is -4)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Failed to update image payment"
+            });
+        }
+
+        if (paymentSubmissionStatus is -5)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Failed to update status payment"
+            });
+        }
+
+        if (paymentSubmissionStatus is -6)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Check your internet connection"
+            });
+        }
+
+        return Ok(new ResponseHandler<string>
         {
             Code = StatusCodes.Status200OK,
             Status = HttpStatusCode.OK.ToString(),
-            Message = "Virtual Number Is Generated",
-            Data = generateOtp
+            Message = "Successfully update data"
         });
-    }*/
+
+    }
+
+    [HttpPut("aprove")]
+    public IActionResult Aprove(AproveRegisterPaymentDto aproveRegisterPaymentDto)
+    {
+        var aprovedRegisterPaymentStatus = _service.AproveRegisterPayment(aproveRegisterPaymentDto);
+
+        if (aprovedRegisterPaymentStatus is 0)
+        {
+            return BadRequest(new ResponseHandler<UpdateBankDto>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "Check your data"
+            });
+        }
+
+
+        return Ok(new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Successfully aprove register payment submission"
+        });
+    }
+
+    [HttpPut("reject")]
+    public IActionResult Reject(AproveRegisterPaymentDto aproveRegisterPaymentDto)
+    {
+        var rejectedRegisterPaymentStatus = _service.RejectRegisterPayment(aproveRegisterPaymentDto);
+
+        if (rejectedRegisterPaymentStatus is 0)
+        {
+            return BadRequest(new ResponseHandler<UpdateBankDto>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "Check your data"
+            });
+        }
+
+
+        return Ok(new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Successfully reject register payment submission"
+        });
+    }
 }
