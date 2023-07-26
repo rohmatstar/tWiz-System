@@ -1,6 +1,5 @@
 ﻿using API.Contracts;
 using API.Data;
-using API.DTOs.RegisterPayments;
 using API.Models;
 using API.Utilities.Enums;
 
@@ -12,20 +11,20 @@ public class RegisterPaymentRepository : GeneralRepository<RegisterPayment>, IRe
     {
     }
 
-    public bool UpdatePaymentImage(PaymentSubmissionDto paymentSubmissionDto)
+    public bool UpdatePaymentImage(Guid guid, string paymentImageUrl = "")
     {
         try
         {
-            var registerPaymentByGuid = _context.Set<RegisterPayment>().Find(paymentSubmissionDto.Guid);
+            var registerPaymentByGuid = _context.Set<RegisterPayment>().Find(guid);
 
             if (registerPaymentByGuid is null)
             {
                 return false;
             }
 
-            if (paymentSubmissionDto.PaymentImageUrl != null)
+            if (paymentImageUrl != "")
             {
-                registerPaymentByGuid.PaymentImage = paymentSubmissionDto.PaymentImageUrl;
+                registerPaymentByGuid.PaymentImage = paymentImageUrl;
                 _context.SaveChanges();
                 return true;
             }

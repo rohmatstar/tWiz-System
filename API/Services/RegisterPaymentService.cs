@@ -72,7 +72,7 @@ public class RegisterPaymentService
             CompanyGuid = newRegisterPaymentDto.CompanyGuid,
             VaNumber = newRegisterPaymentDto.VaNumber,
             Price = newRegisterPaymentDto.Price,
-            PaymentImage = newRegisterPaymentDto.PaymentImage,
+            PaymentImage = newRegisterPaymentDto.PaymentImage ?? "",
             IsValid = newRegisterPaymentDto.IsValid,
             BankGuid = newRegisterPaymentDto.BankGuid,
             CreatedDate = DateTime.Now,
@@ -193,19 +193,15 @@ public class RegisterPaymentService
         var paymentRegisterByGuid = _registerPaymentRepository.GetByGuid(paymentSubmissionDto.Guid);
         var oldImageUrl = "";
 
-        if (paymentRegisterByGuid != null)
+        if (paymentRegisterByGuid != null && paymentRegisterByGuid.PaymentImage != "")
         {
             oldImageUrl = paymentRegisterByGuid.PaymentImage;
-        }
-        else
-        {
-            return -4;
         }
 
 
         var randomName = GenerateHandler.GenerateRandomString();
         var fileName = randomName + paymentSubmissionDto.PaymentImage.FileName;
-        var urlImage = $"images/register_payments/{fileName}";
+        var imageUrl = $"images/register_payments/{fileName}";
 
         var filePath = $"{folderPath}\\{fileName}";
 
@@ -216,10 +212,8 @@ public class RegisterPaymentService
                 await paymentSubmissionDto.PaymentImage.CopyToAsync(stream);
             }
 
-            paymentSubmissionDto.PaymentImageUrl = urlImage;
-
             // update payment image
-            bool paymentImageUpdated = _registerPaymentRepository.UpdatePaymentImage(paymentSubmissionDto);
+            bool paymentImageUpdated = _registerPaymentRepository.UpdatePaymentImage(paymentSubmissionDto.Guid, imageUrl);
             if (!paymentImageUpdated)
             {
                 File.Delete(filePath);
@@ -236,11 +230,34 @@ public class RegisterPaymentService
             }
 
             // hapus foto lama
-            File.Delete(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", oldImageUrl.Replace("/", "\\")));
+            if (oldImageUrl != "")
+            {
+                var filePathOldImage = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", oldImageUrl.Replace("/", "\\"));
+                if (File.Exists(filePathOldImage))
+                {
+                    File.Delete(filePathOldImage);
+                }
+            }
+
         }
         catch
         {
-            File.Delete(filePath);
+            if (oldImageUrl != "")
+            {
+                _registerPaymentRepository.UpdatePaymentImage(paymentSubmissionDto.Guid, oldImageUrl);
+
+            }
+            else
+            {
+                _registerPaymentRepository.UpdatePaymentImage(paymentSubmissionDto.Guid, "");
+            }
+
+            _registerPaymentRepository.ChangeStatusRegisterPayment(paymentSubmissionDto.Guid, StatusPayment.Pending);
+
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
             return -4;
         }
 

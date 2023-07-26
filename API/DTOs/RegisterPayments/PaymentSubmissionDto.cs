@@ -6,7 +6,5 @@ public class PaymentSubmissionDto
 
     public IFormFile PaymentImage { get; set; }
 
-    public string? PaymentImageUrl { get; set; }
-
 }
 

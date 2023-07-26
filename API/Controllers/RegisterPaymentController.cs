@@ -155,7 +155,7 @@ public class RegisterPaymentController : ControllerBase
 
 
 
-    [HttpPost("payment-submission")]
+    [HttpPut("payment-submission")]
     public async Task<IActionResult> PaymentSubmission([FromForm] PaymentSubmissionDto paymentSubmissionDto)
     {
 
