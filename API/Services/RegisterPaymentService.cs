@@ -135,7 +135,6 @@ public class RegisterPaymentService
         return 1;
     }
 
-
     public int DeleteRegisterPayment(Guid guid)
     {
         var isExist = _registerPaymentRepository.IsExist(guid);
@@ -184,7 +183,6 @@ public class RegisterPaymentService
         {
             return -3;
         }
-
 
         var paymentRegisterByGuid = _registerPaymentRepository.GetByGuid(paymentSubmissionDto.Guid);
         var oldImageUrl = "";
@@ -235,10 +233,6 @@ public class RegisterPaymentService
                     File.Delete(filePathOldImage);
                 }
             }
-
-
-
-
         }
         catch
         {
@@ -277,37 +271,5 @@ public class RegisterPaymentService
         return 1;
     }
 
-    //Testing Mail Service
-    /* public PaymentDto Payment(string email)
-     {
-         var company = _accountRepository.GetAll().SingleOrDefault(account => account.Email == email);
-         if (company is null)
-         {
-             return null;
-         }
 
-         var toDto = new PaymentDto
-         {
-             Email = company.Email,
-             VaNumber = GenerateVA.GenerateRandomVA(),
-         };
-
-         var relatedAccount = _accountRepository.GetByGuid(company.Guid);
-
-         var update = new RegisterPayment
-         {
-             Guid = relatedAccount.Guid,
-             VaNumber = toDto.VaNumber,
-
-
-         };
-
-         var updateResult = _registerPaymentRepository.Update(update);
-
-         _emailHandler.SendEmail(toDto.Email,
-                        "Register Payment",
-                        $"Your Virtual Account Number is {toDto.VaNumber}");
-
-         return toDto;
-     }*/
 }
