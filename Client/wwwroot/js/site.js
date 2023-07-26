@@ -1,5 +1,9 @@
 ﻿$('#login-btn').click(function (event) {
     event.preventDefault();
+    let login_text = $("#login-btn").html();
+    $('#login-btn').html(`<div class="spinner-border text-light" role="status">
+  <span class="sr-only">Loading...</span>
+</div>`)
 
     var email = $('#email').val();
     var password = $('#password').val();
@@ -16,12 +20,16 @@
         contentType: 'application/json',
         success: function (response) {
             console.log(response);
+            $("#error-list").html("")
+
             if (response.code == 200) {
                 document.location.href = "Index";
             }
+            $("#login-btn").html(login_text)
         },
         error: function (xhr, status, error) {
             let error_item = "";
+            $("#error-list").html("")
 
             var errorResponse = xhr.responseJSON;
 
@@ -44,6 +52,7 @@
             
             
             $("#error-list").append(error_item)
+            $("#login-btn").html(login_text)
         }
     });
 });
