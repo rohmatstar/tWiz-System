@@ -19,7 +19,7 @@
                                     </a>
                                 </div>
                                 <h5 class="mb-1 mt-4">Register</h5>
-                                <p class="mb-0">Get access to tWiz System</p>
+                                <p class="mb-0">Get access to tWiz System or <a asp-controller="Admin" asp-action="Login" class="text-dark ml-1"><b>Login Now!</b></a></p>
                             </div>
 
                             <div class="account-content mt-4">
@@ -28,26 +28,42 @@
                                     <div class="form-group row">
                                             <div class="col-12">
                                                 <label for="username">Company Name</label>
-                                                <input class="form-control" type="text" id="username" required="" placeholder="PT My Company">
+                                                <input class="form-control" type="text" id="name" required="" placeholder="PT My Company">
                                             </div>
                                         </div>
 
                                     <div class="form-group row">
-                                        <div class="col-12">
+                                        <div class="col-6">
                                             <label for="emailaddress">Email Address</label>
-                                            <input class="form-control" type="email" id="emailaddress" required="" placeholder="company@mail.com">
+                                            <input class="form-control" type="email" id="email" required="" placeholder="company@mail.com">
+                                        </div>
+
+                                        <div class="col-6">
+                                            <label for="phoneNumber">Phone Number</label>
+                                            <input class="form-control" type="number" min="0" id="phone-number" required="" placeholder="+82 347563487567">
                                         </div>
                                     </div>
 
                                     <div class="form-group row">
                                         <div class="col-12">
+                                            <label for="address">Address</label>
+                                            <input class="form-control" type="text" id="address" required="" placeholder="Address">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-6">
                                             <label for="password">Password</label>
                                             <input class="form-control" type="password" required="" id="password" placeholder="Enter password">
                                         </div>
+
+                                        <div class="col-6">
+                                            <label for="password">Confirm Password</label>
+                                            <input class="form-control" type="password" required="" id="confirm-password" placeholder="Confirm password">
+                                        </div>
                                     </div>
 
-
-                                    <div class="form-group row">
+                                    <div class="form-group row d-none">
                                             <div class="col-12">
 
                                                     <div class="checkbox checkbox-success">
@@ -62,13 +78,15 @@
 
                                     <div class="form-group row text-center mt-2">
                                         <div class="col-12">
-                                            <button class="btn btn-md btn-block waves-effect waves-light" type="submit" style="background-color: #FD5F04">Register</button>
+                                            <button class="btn btn-md btn-block waves-effect waves-light" type="button" id="register-btn" style="background-color: #FD5F04">Register</button>
                                         </div>
                                     </div>
 
                                 </form>
 
-                                <div class="row mt-4 pt-2">
+                                <div id="error-list" class="text-danger"></div>
+
+                                <div class="row mt-4 pt-2 d-none">
                                     <div class="col-sm-12 text-center">
                                             <p class="text-muted">Already have tWiz Account?  <a asp-controller="Admin" asp-action="Login" class="text-dark ml-1"><b>Login Now!</b></a></p>
                                     </div>
