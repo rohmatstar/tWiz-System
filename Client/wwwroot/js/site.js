@@ -25,16 +25,25 @@
             if (response.code == 200) {
                 document.location.href = "Index";
             }
+            else {
+                $("#error-list").html("Account Not Found")
+            }
             $("#login-btn").html(login_text)
         },
         error: function (xhr, status, error) {
+
+            console.log("xhr", xhr.responseJSON.code);
             let error_item = "";
             $("#error-list").html("")
+
+            if (xhr.responseJSON.code == 404) {
+                $("#error-list").html("No Account Found")
+            }
 
             var errorResponse = xhr.responseJSON;
 
             if (errorResponse && errorResponse.errors) {
-                console.log("xhr", xhr.responseJSON.errors);
+                
 
                 var emailErrors = errorResponse.errors.Email;
                 var passwordErrors = errorResponse.errors.Password;
