@@ -18,6 +18,11 @@ namespace Client.Controllers
             return View();
         }
 
+        public IActionResult Unauthorize()
+        {
+            return View();
+        }
+
         public IActionResult Login()
         {
             return View();
