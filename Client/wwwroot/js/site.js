@@ -56,3 +56,62 @@
         }
     });
 });
+
+$('#register-btn').click(function (event) {
+    event.preventDefault();
+    let btn_text = $("#register-btn").html();
+    $('#register-btn').html(`<div class="spinner-border text-light" role="status"><span class="sr-only">Loading...</span></div>`)
+
+    var data = {
+        name: $('#name').val(),
+        email: $('#email').val(),
+        phoneNumber: $('#phone-number').val(),
+        address: $('#address').val(),
+        password: $('#password').val(),
+        confirmPassword: $('#confirm-password').val()
+    };
+
+    $.ajax({
+        method: 'POST',
+        url: 'https://localhost:7249/api/auths/register',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (response) {
+            console.log(response);
+            $("#error-list").html("")
+
+            if (response.code == 200) {
+                alert("Successfull Register")
+                document.location.href = "Login";
+            }
+            $("#register-btn").html(btn_text)
+        },
+        error: function (xhr, status, error) {
+            let error_item = "";
+            $("#error-list").html("")
+
+            var errorResponse = xhr.responseJSON;
+
+            if (errorResponse && errorResponse.errors) {
+                console.log("xhr", xhr.responseJSON.errors);
+
+                var emailErrors = errorResponse.errors.Email;
+                var passwordErrors = errorResponse.errors.Password;
+
+                if (emailErrors) {
+
+                    error_item += emailErrors.join('<br/>');
+                }
+
+                if (passwordErrors) {
+                    error_item += "<br/>";
+                    error_item += passwordErrors.join('<br/>');
+                }
+            }
+
+
+            $("#error-list").append(error_item)
+            $("#register-btn").html(btn_text)
+        }
+    });
+})
