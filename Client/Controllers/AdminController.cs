@@ -1,4 +1,5 @@
 ﻿using Client.Models;
+using API.DTOs.Events;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -10,16 +11,49 @@ namespace Client.Controllers
     public class AdminController : Controller
     {
         private readonly IAuthRepository repository;
+        private readonly IEventRepository _eventRepository;
 
-        public AdminController(IAuthRepository repository)
+        public AdminController(IAuthRepository repository, IEventRepository eventRepository)
         {
             this.repository = repository;
+            _eventRepository = eventRepository;
         }
 
         [Authorize]
         public IActionResult Index()
         {
             return View();
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Events()
+        {
+            var result = await _eventRepository.Get();
+            var events = new List<EventsDto>();
+
+            if (result.Data != null)
+            {
+                events = result.Data.Select(e => new EventsDto
+                {
+                    Guid = e.Guid,
+                    Name = e.Name,
+                    Thumbnail = e.Thumbnail,
+                    Description = e.Description,
+                    IsPublished = e.IsPublished,
+                    IsPaid = e.IsPaid,
+                    Price = e.Price,
+                    Category = e.Category,
+                    Status = e.Status,
+                    StartDate = e.StartDate,
+                    EndDate = e.EndDate,
+                    Quota = e.Quota,
+                    Place = e.Place,
+                    CreatedBy = e.CreatedBy
+                    //IsActive = e.IsActive
+                }).ToList();
+            }
+
+            return View(events);
         }
 
         [HttpGet]
@@ -48,7 +82,7 @@ namespace Client.Controllers
         }
 
         [HttpGet("/Sign-Out")]
-        public IActionResult Logout()
+        public IActionResult SignOut()
         {
             HttpContext.Session.Clear();
             return Redirect("/Admin/Login");

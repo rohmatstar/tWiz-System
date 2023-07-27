@@ -277,3 +277,77 @@ $('#reset-btn').click(function (e) {
         }
     });
 })
+
+/*var table = $('#events-table').DataTable({
+    "dom": "<'row'<'col'l><'col text-center'B><'col'f>>" +
+        "<'row'<'col-sm-12'tr>>" +
+        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+    buttons: [
+        {
+            extend: 'colvis',
+            text: 'Filter Columns',
+            className: 'btn btn-info'
+        },
+        {
+            extend: 'copy',
+            text: '<i class="bi bi-files"></i>',
+            className: 'btn btn-info'
+        },
+        {
+            extend: 'collection',
+            text: '<i class="bi bi-save"></i> Export',
+            className: 'btn btn-primary',
+            buttons: [
+                {
+                    extend: 'csv',
+                    text: '<i class="bi bi-file-earmark-spreadsheet"></i> Export to CSV'
+                },
+                {
+                    extend: 'excel',
+                    text: '<i class="bi bi-file-earmark-excel"></i> Export to Excel'
+                },
+                {
+                    extend: 'pdf',
+                    text: '<i class="bi bi-file-pdf"></i> Export to PDF'
+                }
+            ]
+        },
+        {
+            extend: 'print',
+            text: '<i class="bi bi-printer"></i> ',
+            className: 'btn btn-secondary'
+        }
+    ],
+    "columns": [
+        { "data": "name" },
+        { "data": "thumbnail" },
+        { "data": "description" },
+        { "data": "isPublished" },
+        { "data": "isPaid" },
+        { "data": "price" },
+        { "data": "category" },
+        { "data": "status" },
+        {
+            "data": function (row) {
+                return moment(row.startDate).format("D MMMM YYYY");
+            }
+        },
+        {
+            "data": function (row) {
+                return moment(row.endDate).format("D MMMM YYYY");
+            }
+        },
+        { "data": "thumbnail" },
+        { "data": "quota" },
+        { "data": "place" },
+        { "data": "createdBy" },
+        {
+            "data": null,
+            "render": function (data, type, row) {
+                return '<button onclick="" class="btn btn-primary btn-sm edit-button" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit ' + row.firstName + ' ' + row.lastName + '"><i class="bi bi-pencil"></i></button>' +
+                    '<button onclick="" class="btn btn-danger mx-1 btn-sm delete-button" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete ' + row.firstName + ' ' + row.lastName + '"><i class="bi bi-trash"></i></button>' +
+                    '<button onclick="" class="btn btn-info btn-sm details-button" data-bs-toggle="tooltip" data-bs-placement="bottom" title="See Details for ' + row.firstName + ' ' + row.lastName + '"><i class="bi bi-three-dots"></i></button>';
+            }
+        }
+    ]
+});*/
