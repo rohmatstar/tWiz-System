@@ -26,7 +26,7 @@ $('#login-btn').click(function (event) {
             $("#error-list").html("")
 
             if (response.code == 200) {
-                document.location.href = "Index";
+                document.location.href = `Login`;
             }
             else {
                 $("#error-list").html("Account Not Found")

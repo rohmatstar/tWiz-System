@@ -1,9 +1,10 @@
 using Client.Contracts;
-using Client.Reopositories;
+using Client.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
 using System.Text;
+using IAuthRepository = Client.Contracts.IAuthRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,9 +13,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
-builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-/*builder.Services.AddScoped<IAccountRepository, AccountRepository>();
-*/
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped(typeof(IRepository<,>), typeof(GeneralRepository<,>));
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -38,9 +40,10 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseCors(options => { options.AllowAnyOrigin(); options.AllowAnyHeader(); options.AllowAnyMethod(); });
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -49,25 +52,30 @@ app.UseRouting();
 app.UseStatusCodePages(async context => {
     var response = context.HttpContext.Response;
 
+// Custom Error Page
+app.UseStatusCodePages(async context => {
+    var response = context.HttpContext.Response;
+
     if (response.StatusCode.Equals((int)HttpStatusCode.Unauthorized))
     {
-        response.Redirect("/unauthorized");
+        response.Redirect("/Home/Unauthorize");
     }
-    else if (response.StatusCode.Equals((int)HttpStatusCode.NotFound))
+    /*else if (response.StatusCode.Equals((int)HttpStatusCode.NotFound))
     {
         response.Redirect("/notfound");
     }
     else if (response.StatusCode.Equals((int)HttpStatusCode.Forbidden))
     {
         response.Redirect("/forbidden");
-    }
+    }*/
 });
 
 app.UseSession();
 
+//Add JWToken to all incoming HTTP Request Header
 app.Use(async (context, next) =>
 {
-    var JWToken = context.Session.GetString("JWToken");
+    var JWToken = context.Session.GetString("JWTToken");
 
     if (!string.IsNullOrEmpty(JWToken))
     {
@@ -75,10 +83,10 @@ app.Use(async (context, next) =>
     }
 
     await next();
-
 });
 
 app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllerRoute(

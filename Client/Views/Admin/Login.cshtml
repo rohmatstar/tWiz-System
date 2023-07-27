@@ -1,11 +1,25 @@
-﻿@{
+﻿@model API.DTOs.Auths.LoginDto
+
+@{
+    ViewData["Title"] = "Login";
     Layout = "_LayoutAuthentication";
 }
 
 
-
 <div class="account-pages w-100 mt-5 mb-5">
     <div class="container">
+
+        @if (TempData["Success"] != null)
+    {
+        <div class="toast align-items-center text-white bg-success top-0 end-0 border-0" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="d-flex">
+            <div class="toast-body">
+              @TempData["Success"]
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+        </div>
+    }
 
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6 col-xl-5">
@@ -25,20 +39,22 @@
                             </div>
 
                             <div class="account-content mt-4">
-                                <form class="form-horizontal" action="#">
-
+                                <form asp-action="Login" class="form-horizontal">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                     <div class="form-group row">
                                         <div class="col-12">
-                                            <label for="emailaddress">Email address</label>
-                                            <input class="form-control" type="email" id="email" required="" placeholder="company@mail.com">
+                                            <label asp-for="Email" class="control-label"></label>
+                                            <input asp-for="Email" class="form-control" />
+                                            <span asp-validation-for="Email" class="text-danger"></span>
                                         </div>
                                     </div>
 
                                     <div class="form-group row">
                                         <div class="col-12">
                                             <a asp-controller="Admin" asp-action="ForgotPassword" class="text-muted float-right"><small>Forgot your password?</small></a>
-                                            <label for="password">Password</label>
-                                            <input class="form-control" type="password" required="" id="password" placeholder="Enter password">
+                                            <label asp-for="Password" class="control-label"></label>
+                                            <input asp-for="Password" type="password" class="form-control" />
+                                            <span asp-validation-for="Password" class="text-danger"></span>
                                         </div>
                                     </div>
 
@@ -57,7 +73,7 @@
 
                                     <div class="form-group row text-center mt-2">
                                         <div class="col-12">
-                                            <button id="login-btn" class="btn btn-md btn-block waves-effect waves-light" type="button" style="background-color: #FD5F04">Sign In</button>
+                                            <button id="login-btns" class="btn btn-md btn-block waves-effect waves-light" type="submit" style="background-color: #FD5F04">Sign In</button>
                                         </div>
                                     </div>
 
