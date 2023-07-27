@@ -1,4 +1,4 @@
-﻿using Client.DTOs;
+﻿using Client.DTOs.Employees;
 
 namespace Client.Contracts;
 

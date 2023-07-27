@@ -1,8 +1,6 @@
-﻿using API.DTOs.Employees;
-using API.Models;
-using API.Utilities.Enums;
-using Client.Contracts;
+﻿using Client.Contracts;
 using Client.DTOs;
+using Client.DTOs.Employees;
 using Client.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -62,11 +60,11 @@ public class EmployeeController : Controller
 
     }
 
-    [HttpPost]
+    /*[HttpPost]
     public async Task<IActionResult> Delete(Guid guid)
     {
         var result = await repository.Delete(guid);
-        var employee = new Employee();
+*//*        var employee = new Employee();*//*
         if (result.Data?.Guid is null)
         {
             return RedirectToAction(nameof(Index));
@@ -77,7 +75,7 @@ public class EmployeeController : Controller
         }
         return RedirectToAction(nameof(Index));
 
-    }
+    }*/
 
     [HttpGet]
     public async Task<IActionResult> Edit(Guid guid)

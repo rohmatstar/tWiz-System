@@ -1,5 +1,6 @@
-﻿using API.Utilities.Handlers;
+﻿
 using Client.Contracts;
+using Client.Utilities.Handlers;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;

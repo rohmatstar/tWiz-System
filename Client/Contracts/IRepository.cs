@@ -1,4 +1,4 @@
-﻿using API.Utilities.Handlers;
+﻿using Client.Utilities.Handlers;
 
 namespace Client.Contracts
 {

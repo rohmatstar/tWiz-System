@@ -1,6 +1,5 @@
-﻿using API.DTOs.Employees;
-using Client.Contracts;
-using Client.DTOs;
+﻿using Client.Contracts;
+using Client.DTOs.Employees;
 using Client.Models;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol.Core.Types;

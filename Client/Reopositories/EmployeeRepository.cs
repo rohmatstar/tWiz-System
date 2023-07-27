@@ -1,5 +1,5 @@
 ﻿using Client.Contracts;
-using Client.DTOs;
+using Client.DTOs.Employees;
 
 namespace Client.Reopositories
 {
