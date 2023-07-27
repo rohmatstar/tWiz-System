@@ -19,13 +19,6 @@ namespace Client.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            /*if(HttpContext.Session.GetString("JWTToken") != null)
-            {
-                string token = HttpContext.Session.GetString("JWTToken")!;
-                return View("Index", token);
-            }
-
-            return View("Login", "Admin");*/
             return View();
         }
 
@@ -54,10 +47,12 @@ namespace Client.Controllers
 
         }
 
-        /*public IActionResult Login()
+        [HttpGet("/Sign-Out")]
+        public IActionResult Logout()
         {
-            return View();
-        }*/
+            HttpContext.Session.Clear();
+            return Redirect("/Admin/Login");
+        }
 
         public IActionResult Register()
         {
@@ -83,12 +78,6 @@ namespace Client.Controllers
         {
             HttpContext.Session.SetString("JWTToken", JwtToken);
             return RedirectToAction("Index", "Admin");
-        }
-
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Remove("JWTToken");
-            return RedirectToAction("Login", "Admin");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

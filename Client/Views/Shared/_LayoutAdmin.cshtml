@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿﻿@using System.Security.Claims;
+
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8" />
@@ -21,6 +23,19 @@
     </head>
 
     <body>
+
+    @{
+        var username = User.Identity.Name;
+        string customClaimType = "GuidValue";
+        Claim guidClaim = User.Claims.FirstOrDefault(c => c.Type == customClaimType);
+        Guid? guidValue = null;
+
+        if (guidClaim != null && Guid.TryParse(guidClaim.Value, out Guid parsedGuid))
+        {
+            guidValue = parsedGuid;
+        }
+    }
+
 
     <!-- Begin page -->
     <div id="wrapper">
@@ -126,11 +141,13 @@
                     </div>
                 </li>
 
+                @if (User.Identity.IsAuthenticated)
+                {
                 <li class="dropdown notification-list">
                     <a class="nav-link dropdown-toggle nav-user mr-0 waves-effect waves-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                         <img src="~/assets/images/users/avatar-1.jpg" alt="user-image" class="rounded-circle">
                         <span class="pro-user-name ml-1">
-                            PT Mitra Integrasi Informatika  <i class="mdi mdi-chevron-down"></i>
+                                @username  <i class="mdi mdi-chevron-down"></i>
                         </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
@@ -155,6 +172,7 @@
 
                     </div>
                 </li>
+                }
 
                 <li class="dropdown notification-list">
                     <a href="javascript:void(0);" class="nav-link right-bar-toggle waves-effect waves-light">
