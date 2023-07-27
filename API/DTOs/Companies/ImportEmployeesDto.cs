@@ -8,9 +8,7 @@ public class ImportEmployeesDto
     public Guid CompanyGuid { get; set; }
 
     [Required]
-    public IFormFile Excel { get; set; }
+    public IFormFile File { get; set; }
 
-    [Required]
-    public string CompanyEmail { get; set; }
 }
 
