@@ -45,12 +45,12 @@ public class EmployeeController : Controller
     public async Task<IActionResult> Create(GetMasterEmployeeDtoClient newEmployee)
     {
         var result = await repository.Post(newEmployee);
-        if (result.Status == "200")
+        if (result.Code == 200)
         {
             TempData["Success"] = "Data berhasil masuk";
             return RedirectToAction(nameof(Index));
         }
-        else if (result.Status == "409")
+        else if (result.Code == 409)
         {
             ModelState.AddModelError(string.Empty, result.Message);
             return View();
@@ -108,8 +108,8 @@ public class EmployeeController : Controller
         {
             return View(employee);
         }
-        var result = await repository.Put(employee.Guid, employee);
-        if (result.Status == "200")
+        var result = await repository.Put(employee);
+        if (result.Code == 200)
         {
             TempData["Success"] = "Data Berhasil Diubah";
         }

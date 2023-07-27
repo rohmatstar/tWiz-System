@@ -1,9 +1,9 @@
-﻿@model IEnumerable<Client.DTOs.Employees.GetMasterEmployeeDto>
+﻿@model IEnumerable<Client.DTOs.Employees.GetMasterEmployeeDtoClient>
 
 @{
+    ViewData["Title"] = "Index";
     Layout = "_LayoutAdmin";
 }
-@model string
 
 <div class="row">
     <div class="col-xl-8">
@@ -128,6 +128,10 @@
             </p>
 
             <div class="table-responsive">
+                
+                <p>
+                    <a asp-action="Create">Create New</a>
+                </p>
 
                 <table id="data-table" class="table m-0 table-hover" style="width:100%">
                     <thead class="bg-light">
@@ -197,7 +201,7 @@
                                     @Html.DisplayFor(modelItem => item.PhoneNumber)
                                 </td>
                                 <td>
-                                    @(item.CompanyName)
+                                    @Html.DisplayFor(modelItem => item.CompanyName)
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.CompanyEmail)

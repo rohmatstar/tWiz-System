@@ -1,9 +1,9 @@
-﻿using API.Models;
-using Client.Contracts;
+﻿using Client.Contracts;
 using Client.DTOs;
 using System.Text;
-using API.DTOs.Auths;
 using Newtonsoft.Json;
+using Client.Models;
+using Client.DTOs.Auths;
 
 namespace Client.Repositories
 {

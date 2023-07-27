@@ -1,7 +1,8 @@
-﻿/*namespace Client.Contracts
+﻿using Client.Models;
+
+namespace Client.Contracts
 {
-    public interface IAccountRepository : IRepository<Account>
+    public interface IAccountRepository : IRepository<Account, Guid>
     {
     }
 }
-*/

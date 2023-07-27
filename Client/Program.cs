@@ -16,6 +16,7 @@ builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(GeneralRepository<,>));
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -49,11 +50,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseStatusCodePages(async context => {
-    var response = context.HttpContext.Response;
 
 // Custom Error Page
-app.UseStatusCodePages(async context => {
+app.UseStatusCodePages(async context =>
+{
     var response = context.HttpContext.Response;
 
     if (response.StatusCode.Equals((int)HttpStatusCode.Unauthorized))
@@ -86,7 +86,6 @@ app.Use(async (context, next) =>
 });
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllerRoute(
@@ -94,3 +93,4 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
