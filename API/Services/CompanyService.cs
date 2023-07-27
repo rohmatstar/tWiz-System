@@ -238,7 +238,7 @@ public class CompanyService
             {
                 Guid = new Guid(),
                 Email = employeeAccount.Email,
-                Password = HashingHandler.HashPassword(GenerateHandler.GenerateRandomString(10)),
+                Password = HashingHandler.HashPassword("s4n64tr4h45i4"),
                 IsActive = true,
                 Token = null,
                 TokenIsUsed = null,
