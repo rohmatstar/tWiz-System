@@ -251,10 +251,7 @@ public class CompanyService
 
             if (createdAccount is null)
             {
-                if (File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                }
+                FileHandler.DeleteFileIfExist(filePath);
                 transaction.Rollback();
                 // gagal insert data 
                 return -5;
@@ -273,10 +270,7 @@ public class CompanyService
 
             if (createdAccountRole is null)
             {
-                if (File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                }
+                FileHandler.DeleteFileIfExist(filePath);
                 transaction.Rollback();
                 // gagal insert data 
                 return -5;
@@ -300,10 +294,7 @@ public class CompanyService
 
             if (createdEmployee is null)
             {
-                if (File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                }
+                FileHandler.DeleteFileIfExist(filePath);
                 transaction.Rollback();
                 // gagal insert data 
                 return -5;
