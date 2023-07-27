@@ -211,7 +211,7 @@ public class RegisterPaymentService
             if (!paymentImageUpdated)
             {
 
-                File.Delete(filePath);
+                FileHandler.DeleteFileIfExist(filePath);
                 return -4;
             }
 
@@ -220,7 +220,7 @@ public class RegisterPaymentService
 
             if (!statusPaymentUpdated)
             {
-                File.Delete(filePath);
+                FileHandler.DeleteFileIfExist(filePath);
                 return -5;
             }
 
@@ -228,21 +228,14 @@ public class RegisterPaymentService
             if (oldImageUrl != "")
             {
                 var filePathOldImage = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", oldImageUrl.Replace("/", "\\"));
-                if (File.Exists(filePathOldImage))
-                {
-                    File.Delete(filePathOldImage);
-                }
+                FileHandler.DeleteFileIfExist(filePathOldImage);
             }
         }
         catch
         {
-
             transaction.Rollback();
 
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
+            FileHandler.DeleteFileIfExist(filePath);
             return -4;
         }
 
@@ -261,10 +254,7 @@ public class RegisterPaymentService
         }
         catch
         {
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
+            FileHandler.DeleteFileIfExist(filePath);
             transaction.Rollback();
             return -6;
         }
