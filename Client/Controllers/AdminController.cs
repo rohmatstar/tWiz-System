@@ -37,7 +37,7 @@ namespace Client.Controllers
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
             var result = await repository.Login(loginDto);
-            if (result.Code == "200")
+            if (result.Code == 200)
             {
                 HttpContext.Session.SetString("JWTToken", result.Data);
                 return RedirectToAction("Index", "Admin");
@@ -54,8 +54,23 @@ namespace Client.Controllers
             return Redirect("/Admin/Login");
         }
 
+        [HttpGet]
         public IActionResult Register()
         {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterDto registerDto)
+        {
+
+            var result = await repository.Register(registerDto);
+            if (result.Code == 200)
+            {
+                // TempData["Success"] = $"Successfully Registered! - {result.Message}!";
+                return RedirectToAction("Login", "Admin");
+            }
             return View();
         }
 

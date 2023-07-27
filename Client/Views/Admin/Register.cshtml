@@ -1,4 +1,6 @@
-﻿@{
+﻿@model API.DTOs.Auths.RegisterDto
+@{
+    ViewData["Title"] = "Register";
     Layout = "_LayoutAuthentication";
 }
 
@@ -23,43 +25,49 @@
                             </div>
 
                             <div class="account-content mt-4">
-                                <form class="form-horizontal" action="#">
+                                <form class="form-horizontal" asp-action="Register">
 
                                     <div class="form-group row">
                                             <div class="col-12">
-                                                <label for="username">Company Name</label>
-                                                <input class="form-control" type="text" id="name" required="" placeholder="PT My Company">
+                                                <label asp-for="Name">Company Name</label>
+                                                <input class="form-control" type="text" asp-for="Name" required="" placeholder="PT My Company">
+                                            <span asp-validation-for="Name" class="text-danger"></span>
                                             </div>
                                         </div>
 
                                     <div class="form-group row">
                                         <div class="col-6">
-                                            <label for="emailaddress">Email Address</label>
-                                            <input class="form-control" type="email" id="email" required="" placeholder="company@mail.com">
+                                            <label asp-for="Email">Email Address</label>
+                                            <input class="form-control" type="email" asp-for="Email" required="" placeholder="company@mail.com" />
+                                            <span asp-validation-for="Email" class="text-danger"></span>
                                         </div>
 
                                         <div class="col-6">
-                                            <label for="phoneNumber">Phone Number</label>
-                                            <input class="form-control" type="number" min="0" id="phone-number" required="" placeholder="+82 347563487567">
+                                            <label asp-for="PhoneNumber">Phone Number</label>
+                                            <input class="form-control" type="tel" asp-for="PhoneNumber" required="" placeholder="+82 347563487567">
+                                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                                         </div>
                                     </div>
 
                                     <div class="form-group row">
                                         <div class="col-12">
-                                            <label for="address">Address</label>
-                                            <input class="form-control" type="text" id="address" required="" placeholder="Address">
+                                            <label asp-for="Address">Address</label>
+                                            <input class="form-control" type="text" asp-for="Address" required="" placeholder="Address">
+                                            <span asp-validation-for="Address" class="text-danger"></span>
                                         </div>
                                     </div>
 
                                     <div class="form-group row">
                                         <div class="col-6">
-                                            <label for="password">Password</label>
-                                            <input class="form-control" type="password" required="" id="password" placeholder="Enter password">
+                                            <label asp-for="Password">Password</label>
+                                            <input class="form-control" type="password" required="" asp-for="Password" placeholder="Enter password">
+                                            <span asp-validation-for="Password" class="text-danger"></span>
                                         </div>
 
                                         <div class="col-6">
-                                            <label for="password">Confirm Password</label>
-                                            <input class="form-control" type="password" required="" id="confirm-password" placeholder="Confirm password">
+                                            <label for="ConfirmPassword">Confirm Password</label>
+                                            <input class="form-control" type="password" required="" asp-for="ConfirmPassword" placeholder="Confirm password">
+                                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                                         </div>
                                     </div>
 
@@ -78,7 +86,7 @@
 
                                     <div class="form-group row text-center mt-2">
                                         <div class="col-12">
-                                            <button class="btn btn-md btn-block waves-effect waves-light" type="button" id="register-btn" style="background-color: #FD5F04">Register</button>
+                                            <button class="btn btn-md btn-block waves-effect waves-light" type="submit" id="register-btns" style="background-color: #FD5F04">Register</button>
                                         </div>
                                     </div>
 
