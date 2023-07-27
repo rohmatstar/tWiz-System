@@ -1,6 +1,6 @@
-﻿using API.DTOs.Auths;
-using API.Models;
-using Client.DTOs;
+﻿using Client.DTOs;
+using Client.DTOs.Auths;
+using Client.Models;
 
 namespace Client.Contracts
 {

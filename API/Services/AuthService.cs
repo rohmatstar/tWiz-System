@@ -103,11 +103,19 @@ public class AuthService
                 return null;
             }
 
-            var getBank = _bankRepository.GetByName("Bank Syariah Indonesia");
-            if (getBank is null)
+            var getBanks = _bankRepository.GetAll().ToList();
+            if (getBanks is null || getBanks.Count == 0)
             {
-                return null;
+                return null; // Atau tindakan lain jika daftar kosong.
             }
+
+            Random random = new Random();
+            int randomIndex = random.Next(0, getBanks.Count-1); // Mendapatkan indeks acak dalam rentang [0, count-1].
+            var randomBank = getBanks[randomIndex]; // Mendapatkan bank secara acak.
+
+
+
+
 
             RegisterPayment registerPayment = new RegisterPayment
             {
@@ -118,7 +126,8 @@ public class AuthService
                 IsValid = false,
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now,
-                BankGuid = getBank.Guid
+                StatusPayment = StatusPayment.Pending,
+                BankGuid = randomBank.Guid
             };
 
             var createdRegisterPayment = _registerPaymentRepository.Create(registerPayment);
@@ -275,7 +284,7 @@ public class AuthService
 
         _emailHandler.SendEmail(toDto.Email,
                        "Register Payment",
-                       $"Your Virtual Account Number is {toDto.Token}");
+                       $"Your Virtual Account Number is {toDto.Token}, <a href='https://localhost:7153/?Token={toDto.Token}'>Klik Disini</a>");
 
         return toDto;
     }

@@ -1,35 +1,54 @@
-﻿using Client.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using Client.Contracts;
+using Client.DTOs.Employees;
+using Client.Models;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol.Core.Types;
 using System.Diagnostics;
-using API.DTOs.Auths;
 using Client.Contracts;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Client.Controllers
 {
     public class AdminController : Controller
     {
         private readonly IAuthRepository repository;
+        private readonly IEmployeeRepository employeeRepository;
 
-        public AdminController(IAuthRepository repository)
+        public AdminController(IAuthRepository repository, IEmployeeRepository employeeRepository)
         {
             this.repository = repository;
+            this.employeeRepository = employeeRepository;
         }
 
-        [Authorize]
-        public IActionResult Index()
+      /*  [Authorize]
+        public IActionResult IndexAuth()
         {
-            /*if(HttpContext.Session.GetString("JWTToken") != null)
+            if (HttpContext.Session.GetString("JWTToken") != null)
             {
                 string token = HttpContext.Session.GetString("JWTToken")!;
                 return View("Index", token);
             }
 
-            return View("Login", "Admin");*/
-            return View();
+            return View("Login", "Admin");
         }
 
-        [HttpGet]
+        [Authorize]*/
+        public async Task<IActionResult> Index()
+        {
+
+
+            var result = await employeeRepository.Get();
+            var ListEmployee = new List<GetMasterEmployeeDtoClient>();
+            
+            if (result.Data != null)
+            {
+                ListEmployee = result.Data.ToList();
+            }
+            return View(ListEmployee);
+
+          
+
+        }
         public IActionResult Login()
         {
             if (User.Identity!.IsAuthenticated)
@@ -39,7 +58,7 @@ namespace Client.Controllers
             return View();
         }
 
-        [HttpPost]
+      /*  [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
@@ -52,7 +71,7 @@ namespace Client.Controllers
             return View();
 
 
-        }
+        }*/
 
         /*public IActionResult Login()
         {
