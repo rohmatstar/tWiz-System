@@ -23,9 +23,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters = new()
         {
             ValidateAudience = true,
-            ValidAudience = builder.Configuration["JWTService:UrlAudience"],
+            ValidAudience = builder.Configuration["JWTService:Audience"],
             ValidateIssuer = true,
-            ValidIssuer = builder.Configuration["JWTService:UrlIssuer"],
+            ValidIssuer = builder.Configuration["JWTService:Issuer"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTService:Key"])),
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero
@@ -40,6 +40,8 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
+app.UseCors(options => { options.AllowAnyOrigin(); options.AllowAnyHeader(); options.AllowAnyMethod(); });
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
