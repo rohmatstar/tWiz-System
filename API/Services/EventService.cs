@@ -7,6 +7,9 @@ namespace API.Services
     public class EventService
     {
         private readonly IEventRepository _eventRepository;
+        private readonly IEmployeeParticipantRepository _employeeParticipantRepository;
+        private readonly ICompanyParticipantRepository _companyParticipantRepository;
+        private readonly IEventPaymentRepository _eventPaymentRepository;
 
         public EventService(IEventRepository eventRepository)
         {
@@ -209,5 +212,31 @@ namespace API.Services
 
             return deletedEvent;
         }
+
+
+        public List<GetMasterEventDto>? GetAllMasterEvent()
+        {
+            var getMasterEventList = new List<GetMasterEventDto>();
+            var events = _eventRepository.GetAll();
+
+            if (events is null)
+            {
+                return null;
+            }
+
+            var employeeParticipantGuids = new List<Guid>();
+            var companyParticipantGuids = new List<Guid>();
+
+
+
+
+
+
+            return getMasterEventList;
+
+
+        }
     }
+
+
 }
