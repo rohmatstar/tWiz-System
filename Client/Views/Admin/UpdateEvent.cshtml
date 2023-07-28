@@ -1,0 +1,141 @@
+﻿@*@model IEnumerable<API.DTOs.Events.EventsDto>*@
+@model API.DTOs.Events.CreateEvent
+@{
+    ViewData["Title"] = "Create Events";
+    Layout = "_LayoutAdmin";
+}
+
+<div class="row">
+    <div class="col-sm-4">
+        <h3>Update Event</h3>
+    </div>
+
+    <div class="col-sm-8 text-right">
+        <a asp-controller="Event" asp-action="Index" class="btn btn-danger waves-effect waves-light mb-3" data-animation="fadein" data-plugin="custommodal"
+           data-overlaySpeed="200" data-overlayColor="#36404a">Cancel</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+
+        <form asp-action="UpdateEvent" class="form-horizontal">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group row">
+                <div class="col-12">
+                    <label asp-for="Name" class="control-label">Event Name</label>
+                    <input asp-for="Name" class="form-control" type="text" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-12">
+                    <label asp-for="Thumbnail" class="control-label">Description</label>
+                    <input asp-for="Thumbnail" class="form-control" type="file" accept=".jpg" />
+                    <span asp-validation-for="Thumbnail" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-12">
+                    <label asp-for="Description" class="control-label">Description</label>
+                    <input asp-for="Description" class="form-control" type="text" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-12">
+                    <label asp-for="IsPublished" class="control-label">Publication</label>
+                    <select asp-for="IsPublished">
+                        <option value="0">Unpublish</option>
+                        <option value="1">Published</option>
+                    </select>
+                    <span asp-validation-for="IsPublished" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-12">
+                    <label asp-for="IsPaid" class="control-label">Payment</label>
+                    <select asp-for="IsPaid">
+                        <option value="0">Free</option>
+                        <option value="1">Paid</option>
+                    </select>
+                    <span asp-validation-for="Payment" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-12">
+                    <label asp-for="Price" class="control-label">Price</label>
+                    <input asp-for="Price" class="form-control" type="number" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-12">
+                    <label asp-for="Category" class="control-label">Category</label>
+                    <input asp-for="Category" class="form-control" type="text" />
+                    <span asp-validation-for="Category" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-12">
+                    <label asp-for="StartDate" class="control-label">Start Date</label>
+                    <input asp-for="StartDate" class="form-control" type="date" />
+                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-12">
+                    <label asp-for="EndDate" class="control-label">End Date</label>
+                    <input asp-for="EndaDate" class="form-control" type="date" />
+                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-12">
+                    <label asp-for="Quota" class="control-label">Quota</label>
+                    <input asp-for="Quota" class="form-control" type="number" min="1" step="1" />
+                    <span asp-validation-for="Quota" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-12">
+                    <label asp-for="Place" class="control-label">Place</label>
+                    <input asp-for="Place" class="form-control" type="text" />
+                    <span asp-validation-for="Place" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row text-center mt-2">
+                <div class="col-12">
+                    <button class="btn btn-md btn-block waves-effect waves-light" type="submit" id="register-btns" style="background-color: #FD5F04">Save Changes</button>
+                </div>
+            </div>
+        </form>
+
+        @*<form asp-action="UpdateEvent" class="form-horizontal">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group row">
+                <div class="col-12">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            </div>
+        </form>*@
+         Form Add | Edit | Delete
+
+         Save-Changes | Cancel
+    </div>
+    }
+</div>

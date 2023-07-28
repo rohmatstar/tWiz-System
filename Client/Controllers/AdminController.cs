@@ -81,6 +81,31 @@ namespace Client.Controllers
 
         }
 
+        [HttpGet]
+        public IActionResult CreateEvent()
+        {
+            if (User.Identity!.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Admin");
+            }
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateEvent(EventsDto eventDto)
+        {
+            var result = await _eventRepository.Post(eventDto);
+            if (result.Code == 200)
+            {
+                return RedirectToAction("Event", "Admin");
+            }
+            return View();
+
+
+        }
+
+
         [HttpGet("/Sign-Out")]
         public IActionResult SignOut()
         {
