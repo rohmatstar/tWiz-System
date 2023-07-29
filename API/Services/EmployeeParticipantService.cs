@@ -27,7 +27,7 @@ namespace API.Services
                 Guid = e.Guid,
                 EventGuid = e.EventGuid,
                 EmployeeGuid = e.EmployeeGuid,
-                IsJoin = e.IsJoin,
+                Status = e.Status,
                 IsPresent = e.IsPresent
             }).ToList();
 
@@ -50,7 +50,7 @@ namespace API.Services
                 Guid = e.Guid,
                 EventGuid = e.EventGuid,
                 EmployeeGuid = e.EmployeeGuid,
-                IsJoin = e.IsJoin,
+                Status = e.Status,
                 IsPresent = e.IsPresent
             };
 
@@ -64,7 +64,7 @@ namespace API.Services
                 Guid = new Guid(),
                 EventGuid = create.EventGuid,
                 EmployeeGuid = create.EmployeeGuid,
-                IsJoin = create.IsJoin,
+                Status = create.Status,
                 IsPresent = create.IsPresent,
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
@@ -82,7 +82,7 @@ namespace API.Services
                 Guid = model.Guid,
                 EventGuid = model.EventGuid,
                 EmployeeGuid = model.EmployeeGuid,
-                IsJoin = model.IsJoin,
+                Status = model.Status,
                 IsPresent = model.IsPresent
             };
 
@@ -102,7 +102,7 @@ namespace API.Services
                 Guid = update!.Guid,
                 EventGuid = update!.EventGuid,
                 EmployeeGuid = update!.EmployeeGuid,
-                IsJoin = update!.IsJoin,
+                Status = update!.Status,
                 IsPresent = update!.IsPresent
             };
 
@@ -117,7 +117,7 @@ namespace API.Services
                 Guid = model!.Guid,
                 EventGuid = model!.EventGuid,
                 EmployeeGuid = model!.EmployeeGuid,
-                IsJoin = model!.IsJoin,
+                Status = model!.Status,
                 IsPresent = model!.IsPresent
             };
 
@@ -143,7 +143,7 @@ namespace API.Services
                 Guid = model!.Guid,
                 EventGuid = model!.EventGuid,
                 EmployeeGuid = model!.EmployeeGuid,
-                IsJoin = model!.IsJoin,
+                Status = model!.Status,
                 IsPresent = model!.IsPresent
             };
 
