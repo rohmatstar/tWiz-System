@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using API.Utilities.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace API.DTOs.CompanyParticipants;
 
@@ -13,7 +14,7 @@ public class CompanyParticipantsDto
     [Required]
     public Guid CompanyGuid { get; set; }
 
-    public bool IsJoin { get; set; }
+    public InviteStatusLevel Status { get; set; }
 
     public bool IsPresent { get; set; }
 }
