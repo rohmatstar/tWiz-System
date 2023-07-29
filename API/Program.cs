@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
@@ -50,7 +51,23 @@ builder.Services.AddScoped<RegisterPaymentService>();
 builder.Services.AddScoped<EventPaymentService>();
 
 
-
+// Jwt Configuration
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+       .AddJwtBearer(options =>
+       {
+           options.RequireHttpsMetadata = false; // For development, jiak production maka true
+           options.SaveToken = true; // untuk mengharuskan menyimpan token di req header
+           options.TokenValidationParameters = new TokenValidationParameters()
+           {
+               ValidateIssuer = true,
+               ValidIssuer = builder.Configuration["JWTService:Issuer"],
+               ValidateAudience = true,
+               ValidAudience = builder.Configuration["JWTService:Audience"],
+               IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTService:Key"])),
+               ValidateLifetime = true,
+               ClockSkew = TimeSpan.Zero
+           };
+       });
 
 
 builder.Services.AddTransient<IEmailHandler, EmailHandler>(_ => new EmailHandler(
@@ -133,6 +150,7 @@ app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
