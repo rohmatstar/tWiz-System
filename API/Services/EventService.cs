@@ -214,28 +214,7 @@ namespace API.Services
         }
 
 
-        public List<GetMasterEventDto>? GetAllMasterEvent()
-        {
-            var getMasterEventList = new List<GetMasterEventDto>();
-            var events = _eventRepository.GetAll();
 
-            if (events is null)
-            {
-                return null;
-            }
-
-            var employeeParticipantGuids = new List<Guid>();
-            var companyParticipantGuids = new List<Guid>();
-
-
-
-
-
-
-            return getMasterEventList;
-
-
-        }
     }
 
 
