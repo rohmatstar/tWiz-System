@@ -1,10 +1,14 @@
 ﻿using Client.Models;
 using API.DTOs.Events;
 using Microsoft.AspNetCore.Authorization;
+﻿using Client.Contracts;
+using Client.DTOs.Employees;
+using Client.Models;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol.Core.Types;
 using System.Diagnostics;
-using API.DTOs.Auths;
 using Client.Contracts;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Client.Controllers
 {
@@ -13,17 +17,18 @@ namespace Client.Controllers
         private readonly IAuthRepository repository;
         private readonly IEventRepository _eventRepository;
 
-        public AdminController(IAuthRepository repository, IEventRepository eventRepository)
+        public AdminController(IAuthRepository repository, IEventRepository eventRepository, IEmployeeRepository employeeRepository)
         {
             this.repository = repository;
             _eventRepository = eventRepository;
-        }
+            this.employeeRepository = employeeRepository;
+        private readonly IEmployeeRepository employeeRepository;
 
-        [Authorize]
-        public IActionResult Index()
+      /*  [Authorize]
+        public IActionResult IndexAuth()
         {
             return View();
-        }
+        } */
 
         [Authorize]
         public async Task<IActionResult> Events()
@@ -32,6 +37,7 @@ namespace Client.Controllers
             var events = new List<EventsDto>();
 
             if (result.Data != null)
+            if (HttpContext.Session.GetString("JWTToken") != null)
             {
                 events = result.Data.Select(e => new EventsDto
                 {
@@ -56,7 +62,23 @@ namespace Client.Controllers
             return View(events);
         }
 
-        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Index()
+        {
+
+
+            var result = await employeeRepository.Get();
+            var ListEmployee = new List<GetMasterEmployeeDtoClient>();
+            
+            if (result.Data != null)
+            {
+                ListEmployee = result.Data.ToList();
+            }
+            return View(ListEmployee);
+
+          
+
+        }
         public IActionResult Login()
         {
             if (User.Identity!.IsAuthenticated)
