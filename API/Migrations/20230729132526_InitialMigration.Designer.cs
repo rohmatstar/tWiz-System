@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(TwizDbContext))]
-    [Migration("20230725012252_InitialMigration")]
+    [Migration("20230729132526_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -167,6 +167,10 @@ namespace API.Migrations
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("address");
 
+                    b.Property<string>("BankAccountNumber")
+                        .HasColumnType("nvarchar(25)")
+                        .HasColumnName("bank_account_number");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("created_date");
@@ -215,10 +219,6 @@ namespace API.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("event_guid");
 
-                    b.Property<bool>("IsJoin")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_join");
-
                     b.Property<bool>("IsPresent")
                         .HasColumnType("bit")
                         .HasColumnName("is_present");
@@ -226,6 +226,10 @@ namespace API.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("modified_date");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
+                        .HasColumnName("status");
 
                     b.HasKey("Guid");
 
@@ -321,10 +325,6 @@ namespace API.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("event_guid");
 
-                    b.Property<bool>("IsJoin")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_join");
-
                     b.Property<bool>("IsPresent")
                         .HasColumnType("bit")
                         .HasColumnName("is_present");
@@ -332,6 +332,10 @@ namespace API.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("modified_date");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
+                        .HasColumnName("status");
 
                     b.HasKey("Guid");
 
@@ -373,6 +377,10 @@ namespace API.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("end_date");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_active");
 
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit")
@@ -416,6 +424,10 @@ namespace API.Migrations
                     b.Property<string>("Thumbnail")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("thumbnail");
+
+                    b.Property<int>("UsedQuota")
+                        .HasColumnType("int")
+                        .HasColumnName("used_quota");
 
                     b.HasKey("Guid");
 
@@ -542,7 +554,6 @@ namespace API.Migrations
                         .HasColumnName("modified_date");
 
                     b.Property<string>("PaymentImage")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("payment_image");
 
