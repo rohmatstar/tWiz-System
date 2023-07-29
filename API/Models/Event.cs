@@ -5,10 +5,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace API.Models;
 
 
-[Table ("pmdt_events")]
+[Table("pmdt_events")]
 public class Event : BaseEntity
 {
-    [Column ("name", TypeName = "nvarchar(max)")]
+    [Column("name", TypeName = "nvarchar(max)")]
     public string Name { get; set; }
 
     [Column("thumbnail", TypeName = "nvarchar(max)")]
@@ -17,7 +17,7 @@ public class Event : BaseEntity
     [Column("description", TypeName = "text")]
     public string Description { get; set; }
 
-    [Column ("is_published")]
+    [Column("is_published")]
     public bool IsPublished { get; set; }
 
     [Column("is_paid")]
@@ -30,7 +30,7 @@ public class Event : BaseEntity
     [Column("category", TypeName = "nvarchar(30)")]
     public string Category { get; set; }
 
-    [Column ("status")]
+    [Column("status")]
     public EventStatus Status { get; set; }
 
     [Column("start_date")]
@@ -42,16 +42,22 @@ public class Event : BaseEntity
     [Column("quota")]
     public int Quota { get; set; }
 
+    [Column("used_quota")]
+    public int UsedQuota { get; set; }
+
     [Column("place", TypeName = "nvarchar(50)")]
     public string Place { get; set; }
+
+    [Column("is_active")]
+    public bool IsActive { get; set; }
 
     [Column("created_by")]
     public Guid CreatedBy { get; set; }
 
     // Cardinality
-    
-    public  ICollection<EmployeeParticipant>? EmployeeParticipants { get; set; }
-    public ICollection <CompanyParticipant>? CompanyParticipants { get; set; }
+
+    public ICollection<EmployeeParticipant>? EmployeeParticipants { get; set; }
+    public ICollection<CompanyParticipant>? CompanyParticipants { get; set; }
 
     public EventDoc? EventDoc { get; set; }
 
