@@ -154,6 +154,12 @@ public class TwizDbContext : DbContext
             .HasMany(ev => ev.EventPayment)
             .WithOne(evp => evp.Event);
 
+        //Event - Company (One to One)
+        modelBuilder.Entity<Company>()
+            .HasMany(c => c.Events)
+            .WithOne(ev => ev.Company)
+            .HasForeignKey(ev => ev.CreatedBy).OnDelete(DeleteBehavior.NoAction);
+
         //Bank - EventPayment (One to Many)
         modelBuilder.Entity<Bank>()
             .HasMany(b => b.EventPayments)

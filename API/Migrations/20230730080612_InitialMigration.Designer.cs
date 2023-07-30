@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(TwizDbContext))]
-    [Migration("20230729132526_InitialMigration")]
+    [Migration("20230730080612_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,9 +53,6 @@ namespace API.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("password");
 
-                    b.Property<Guid?>("RegisterPaymentGuid")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int?>("Token")
                         .HasColumnType("int")
                         .HasColumnName("token");
@@ -72,8 +69,6 @@ namespace API.Migrations
 
                     b.HasIndex("Email")
                         .IsUnique();
-
-                    b.HasIndex("RegisterPaymentGuid");
 
                     b.HasIndex("Token")
                         .IsUnique()
@@ -358,9 +353,6 @@ namespace API.Migrations
                         .HasColumnType("nvarchar(30)")
                         .HasColumnName("category");
 
-                    b.Property<Guid?>("CompanyGuid")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("created_by");
@@ -431,7 +423,7 @@ namespace API.Migrations
 
                     b.HasKey("Guid");
 
-                    b.HasIndex("CompanyGuid");
+                    b.HasIndex("CreatedBy");
 
                     b.ToTable("pmdt_events");
                 });
@@ -611,15 +603,6 @@ namespace API.Migrations
                     b.ToTable("pmdt_roles");
                 });
 
-            modelBuilder.Entity("API.Models.Account", b =>
-                {
-                    b.HasOne("API.Models.RegisterPayment", "RegisterPayment")
-                        .WithMany()
-                        .HasForeignKey("RegisterPaymentGuid");
-
-                    b.Navigation("RegisterPayment");
-                });
-
             modelBuilder.Entity("API.Models.AccountRole", b =>
                 {
                     b.HasOne("API.Models.Account", "Account")
@@ -711,7 +694,9 @@ namespace API.Migrations
                 {
                     b.HasOne("API.Models.Company", "Company")
                         .WithMany("Events")
-                        .HasForeignKey("CompanyGuid");
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Company");
                 });

@@ -10,6 +10,25 @@ namespace API.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "pmdt_accounts",
+                columns: table => new
+                {
+                    guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    email = table.Column<string>(type: "varchar(100)", nullable: false),
+                    password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    is_active = table.Column<bool>(type: "bit", nullable: false),
+                    token = table.Column<int>(type: "int", nullable: true),
+                    token_is_used = table.Column<bool>(type: "bit", nullable: true),
+                    token_expiration = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    modified_date = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_pmdt_accounts", x => x.guid);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "pmdt_banks",
                 columns: table => new
                 {
@@ -36,26 +55,6 @@ namespace API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_pmdt_roles", x => x.guid);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "pmdt_accounts",
-                columns: table => new
-                {
-                    guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    email = table.Column<string>(type: "varchar(100)", nullable: false),
-                    password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    is_active = table.Column<bool>(type: "bit", nullable: false),
-                    token = table.Column<int>(type: "int", nullable: true),
-                    token_is_used = table.Column<bool>(type: "bit", nullable: true),
-                    token_expiration = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    RegisterPaymentGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    modified_date = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_pmdt_accounts", x => x.guid);
                 });
 
             migrationBuilder.CreateTable(
@@ -161,7 +160,6 @@ namespace API.Migrations
                     place = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     is_active = table.Column<bool>(type: "bit", nullable: false),
                     created_by = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CompanyGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     modified_date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -169,8 +167,8 @@ namespace API.Migrations
                 {
                     table.PrimaryKey("PK_pmdt_events", x => x.guid);
                     table.ForeignKey(
-                        name: "FK_pmdt_events_pmdt_companies_CompanyGuid",
-                        column: x => x.CompanyGuid,
+                        name: "FK_pmdt_events_pmdt_companies_created_by",
+                        column: x => x.created_by,
                         principalTable: "pmdt_companies",
                         principalColumn: "guid");
                 });
@@ -331,11 +329,6 @@ namespace API.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_pmdt_accounts_RegisterPaymentGuid",
-                table: "pmdt_accounts",
-                column: "RegisterPaymentGuid");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_pmdt_accounts_token",
                 table: "pmdt_accounts",
                 column: "token",
@@ -411,9 +404,9 @@ namespace API.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_pmdt_events_CompanyGuid",
+                name: "IX_pmdt_events_created_by",
                 table: "pmdt_events",
-                column: "CompanyGuid");
+                column: "created_by");
 
             migrationBuilder.CreateIndex(
                 name: "IX_pmdt_register_payments_bank_guid",
@@ -474,23 +467,15 @@ namespace API.Migrations
                 table: "pmtr_event_docs",
                 column: "event_guid",
                 unique: true);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_pmdt_accounts_pmdt_register_payments_RegisterPaymentGuid",
-                table: "pmdt_accounts",
-                column: "RegisterPaymentGuid",
-                principalTable: "pmdt_register_payments",
-                principalColumn: "guid");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_pmdt_accounts_pmdt_register_payments_RegisterPaymentGuid",
-                table: "pmdt_accounts");
-
             migrationBuilder.DropTable(
                 name: "pmdt_event_payments");
+
+            migrationBuilder.DropTable(
+                name: "pmdt_register_payments");
 
             migrationBuilder.DropTable(
                 name: "pmtr_account_roles");
@@ -505,6 +490,9 @@ namespace API.Migrations
                 name: "pmtr_event_docs");
 
             migrationBuilder.DropTable(
+                name: "pmdt_banks");
+
+            migrationBuilder.DropTable(
                 name: "pmdt_roles");
 
             migrationBuilder.DropTable(
@@ -512,12 +500,6 @@ namespace API.Migrations
 
             migrationBuilder.DropTable(
                 name: "pmdt_events");
-
-            migrationBuilder.DropTable(
-                name: "pmdt_register_payments");
-
-            migrationBuilder.DropTable(
-                name: "pmdt_banks");
 
             migrationBuilder.DropTable(
                 name: "pmdt_companies");

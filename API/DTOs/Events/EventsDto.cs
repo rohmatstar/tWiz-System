@@ -45,8 +45,6 @@ namespace API.DTOs.Events
 
         public bool? IsActive { get; set; }
 
-        public string MakerName { get; set; }
-
         [Required]
         public string Place { get; set; }
 

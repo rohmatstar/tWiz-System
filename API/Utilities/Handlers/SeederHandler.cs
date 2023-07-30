@@ -286,7 +286,28 @@ public class SeederHandler
                 ModifiedDate = DateTime.Now
             };
 
-            _context.Set<Event>().AddRange(new List<Event> { event1, event2, event3 });
+            var event4 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 10, 15, 8, 30, 0),
+                EndDate = new DateTime(2023, 10, 15, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company1.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            _context.Set<Event>().AddRange(new List<Event> { event1, event2, event3, event4 });
             _context.SaveChanges();
 
 

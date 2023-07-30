@@ -142,9 +142,10 @@ public class EventController : ControllerBase
 
     [HttpGet("internal")]
     [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
-    public IActionResult GetInternalEvents()
+    public IActionResult GetInternalEvents([FromQuery] string? type)
     {
-        var internalEvents = _eventService.GetInternalEvents();
+        // type = 'public' or 'personal'
+        var internalEvents = _eventService.GetInternalEvents(type);
         if (internalEvents is not null)
         {
             return Ok(new ResponseHandler<List<EventsDto>>
