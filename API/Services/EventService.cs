@@ -1,4 +1,7 @@
 ﻿using API.Contracts;
+using API.DTOs.CompanyParticipants;
+using API.DTOs.EmployeeParticipants;
+using API.DTOs.EventPayments;
 using API.DTOs.Events;
 using API.Models;
 using API.Utilities.Enums;
@@ -474,6 +477,79 @@ public class EventService
     }
 
 
+
+    public GetMasterEventDto? GetDetailsEvent(Guid guid)
+    {
+        var getEvent = _eventRepository.GetByGuid(guid);
+
+        if (getEvent is null)
+        {
+            return null;
+        }
+
+        var getMakerEvent = _companyRepository.GetByGuid(getEvent.CreatedBy);
+
+        var companyParticipants = _companyParticipantRepository.GetAll().Where(cp => cp.EventGuid == guid).Select(cp => new CompanyParticipantsDto
+        {
+            Guid = cp.Guid,
+            CompanyGuid = cp.CompanyGuid,
+            EventGuid = cp.EventGuid,
+            IsPresent = cp.IsPresent,
+            Status = cp.Status
+        }).ToList();
+
+        var employeeParticipants = _employeeParticipantRepository.GetAll().Where(ep => ep.EventGuid == guid).Select(ep => new EmployeeParticipantsDto
+        {
+            Guid = ep.Guid,
+            EmployeeGuid = ep.EmployeeGuid,
+            EventGuid = ep.EventGuid,
+            IsPresent = ep.IsPresent,
+            Status = ep.Status
+        }).ToList();
+
+        var eventPayments = new List<GetEventPaymentDto>();
+
+        if (getEvent.IsPaid && getEvent.Price > 0)
+        {
+            eventPayments = _eventPaymentRepository.GetAll().Where(evp => evp.EventGuid == guid).Select(evp => new GetEventPaymentDto
+            {
+                Guid = evp.Guid,
+                EventGuid = evp.EventGuid,
+                AccountGuid = evp.AccountGuid,
+                BankGuid = evp.BankGuid,
+                IsValid = evp.IsValid,
+                PaymentImage = evp.PaymentImage,
+                StatusPayment = evp.StatusPayment,
+                VaNumber = evp.VaNumber,
+            }).ToList();
+        }
+
+        var getMasterEventDto = new GetMasterEventDto
+        {
+            EventGuid = getEvent.Guid,
+            Description = getEvent.Description,
+            EventName = getEvent.Name,
+            StartDate = getEvent.StartDate,
+            EndDate = getEvent.EndDate,
+            IsActive = getEvent.IsActive,
+            IsPublished = getEvent.IsPublished,
+            IsPaid = getEvent.IsPaid,
+            Price = getEvent.Price,
+            Place = getEvent.Place,
+            Category = getEvent.Category,
+            Quota = getEvent.Quota,
+            UsedQuota = getEvent.UsedQuota,
+            Status = getEvent.Status,
+            Thumbnail = getEvent.Thumbnail,
+            CreatedBy = getEvent.CreatedBy,
+            CompanyName = getMakerEvent?.Name,
+            CompanyParticipants = companyParticipants,
+            EmployeeParticipants = employeeParticipants,
+            EventPayments = eventPayments,
+        };
+
+        return getMasterEventDto;
+    }
 }
 
 
