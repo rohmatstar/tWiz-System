@@ -194,7 +194,7 @@ public class EventController : ControllerBase
     [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
     public IActionResult GetDetailsEvents(Guid event_guid)
     {
-        // type = 'public' or 'personal'
+
         var getDetailsEvent = _eventService.GetDetailsEvent(event_guid);
         if (getDetailsEvent is not null)
         {
@@ -220,7 +220,7 @@ public class EventController : ControllerBase
     [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
     public IActionResult GetPublicEvents()
     {
-        // type = 'public' or 'personal'
+
         var publicEvents = _eventService.GetPublicEvents();
         if (publicEvents is not null)
         {
@@ -230,6 +230,31 @@ public class EventController : ControllerBase
                 Status = HttpStatusCode.OK.ToString(),
                 Message = "Success",
                 Data = publicEvents
+            });
+        }
+
+        return StatusCode(StatusCodes.Status403Forbidden, new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status403Forbidden,
+            Status = HttpStatusCode.Forbidden.ToString(),
+            Message = "You cannot access!!"
+        });
+    }
+
+    [HttpGet("personal")]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
+    public IActionResult GetPersonalEvents()
+    {
+
+        var personalEvents = _eventService.GetPersonalEvents();
+        if (personalEvents is not null)
+        {
+            return Ok(new ResponseHandler<List<EventsDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success",
+                Data = personalEvents
             });
         }
 
