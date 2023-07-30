@@ -477,9 +477,9 @@ public class EventService
     }
 
 
-
     public GetMasterEventDto? GetDetailsEvent(Guid guid)
     {
+
         var getEvent = _eventRepository.GetByGuid(guid);
 
         if (getEvent is null)
@@ -549,6 +549,86 @@ public class EventService
         };
 
         return getMasterEventDto;
+    }
+
+    public List<EventsDto>? GetPublicEvents()
+    {
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        var publicEventsParticipant = new List<EventsDto>();
+        var companies = _companyRepository.GetAll();
+
+        var publicEvents = _eventRepository.GetAll().Where(ev => ev.IsPublished is true && ev.IsActive is true).Select(e =>
+        {
+            var makerEvent = companies.FirstOrDefault(c => c.Guid == e.CreatedBy);
+
+            return new EventsDto
+            {
+                Guid = e.Guid,
+                Name = e.Name,
+                Description = e.Description,
+                Thumbnail = e.Thumbnail,
+                StartDate = e.StartDate,
+                EndDate = e.EndDate,
+                IsPublished = e.IsPublished,
+                IsActive = e.IsActive,
+                IsPaid = e.IsPaid,
+                Price = e.Price,
+                Status = e.Status,
+                Place = e.Place,
+                Quota = e.Quota,
+                UsedQuota = e.UsedQuota,
+                Category = e.Category,
+                CreatedBy = e.CreatedBy,
+                MakerName = makerEvent?.Name
+            };
+        });
+
+        if (userRole == nameof(RoleLevel.Company))
+        {
+            var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
+
+            if (company is null)
+            {
+                return null;
+            }
+
+            var companyParticipants = _companyParticipantRepository.GetAll();
+
+            foreach (var publicEvent in publicEvents)
+            {
+                if (companyParticipants.FirstOrDefault(cp => cp.CompanyGuid == company.Guid && cp.EventGuid == publicEvent.Guid) is not null || publicEvent.CreatedBy == company.Guid)
+                {
+                    publicEventsParticipant.Add(publicEvent);
+                }
+            }
+        }
+
+
+        if (userRole == nameof(RoleLevel.Employee))
+        {
+            var employee = _employeeRepository.GetAll().FirstOrDefault(e => e.AccountGuid == Guid.Parse(accountGuid!));
+
+            if (employee is null)
+            {
+                return null;
+            }
+
+            var employeeParticipants = _employeeParticipantRepository.GetAll();
+
+            foreach (var publicEvent in publicEvents)
+            {
+                if (employeeParticipants.FirstOrDefault(ep => ep.EmployeeGuid == employee.Guid && ep.EventGuid == publicEvent.Guid) is not null)
+                {
+                    publicEventsParticipant.Add(publicEvent);
+                }
+            }
+        }
+
+        return publicEventsParticipant;
     }
 }
 

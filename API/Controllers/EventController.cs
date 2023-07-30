@@ -214,5 +214,31 @@ public class EventController : ControllerBase
             Message = "Your parameter is wrong"
         });
     }
+
+
+    [HttpGet("public")]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
+    public IActionResult GetPublicEvents()
+    {
+        // type = 'public' or 'personal'
+        var publicEvents = _eventService.GetPublicEvents();
+        if (publicEvents is not null)
+        {
+            return Ok(new ResponseHandler<List<EventsDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success",
+                Data = publicEvents
+            });
+        }
+
+        return StatusCode(StatusCodes.Status403Forbidden, new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status403Forbidden,
+            Status = HttpStatusCode.Forbidden.ToString(),
+            Message = "You cannot access!!"
+        });
+    }
 }
 

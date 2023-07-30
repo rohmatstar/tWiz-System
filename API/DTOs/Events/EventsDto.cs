@@ -50,5 +50,8 @@ namespace API.DTOs.Events
 
         [Required]
         public Guid CreatedBy { get; set; }
+
+
+        public string? MakerName { get; set; }
     }
 }
