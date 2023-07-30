@@ -164,5 +164,30 @@ public class EventController : ControllerBase
             Message = "You cannot access!!"
         });
     }
+
+    [HttpGet("external")]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
+    public IActionResult GetExternalEvents([FromQuery] string? type)
+    {
+        // type = 'public' or 'personal'
+        var internalEvents = _eventService.GetExternalEvents(type);
+        if (internalEvents is not null)
+        {
+            return Ok(new ResponseHandler<List<EventsDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success",
+                Data = internalEvents
+            });
+        }
+
+        return StatusCode(StatusCodes.Status403Forbidden, new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status403Forbidden,
+            Status = HttpStatusCode.Forbidden.ToString(),
+            Message = "You cannot access!!"
+        });
+    }
 }
 

@@ -26,7 +26,7 @@ public class TokenHandlers : ITokenHandlers
 
             audience: _configuration["JWTService:Audience"],
             claims: claims,
-            expires: DateTime.Now.AddMinutes(60),
+            expires: DateTime.Now.AddMinutes(30),
             signingCredentials: signinCredentials);
 
         var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);

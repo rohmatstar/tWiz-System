@@ -289,6 +289,48 @@ public class SeederHandler
             var event4 = new Event
             {
                 Guid = new Guid(),
+                Name = "Interview PT. JKI",
+                Quota = 5,
+                UsedQuota = 1,
+                StartDate = new DateTime(2023, 8, 15, 8, 30, 0),
+                EndDate = new DateTime(2023, 8, 15, 12, 0, 0),
+                Description = "Interview Kerja",
+                Category = "Interview",
+                CreatedBy = company2.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = false,
+                Status = EventStatus.Offline,
+                IsPublished = false,
+                Place = "jl. pramuka keren 3",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event5 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview PT. KLM",
+                Quota = 5,
+                UsedQuota = 1,
+                StartDate = new DateTime(2023, 8, 15, 8, 30, 0),
+                EndDate = new DateTime(2023, 8, 15, 12, 0, 0),
+                Description = "Interview Kerja",
+                Category = "Interview",
+                CreatedBy = company2.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Offline,
+                IsPublished = false,
+                Place = "jl. pramuka keren 2",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event6 = new Event
+            {
+                Guid = new Guid(),
                 Name = "Interview",
                 Quota = 3,
                 UsedQuota = 0,
@@ -307,7 +349,7 @@ public class SeederHandler
                 ModifiedDate = DateTime.Now
             };
 
-            _context.Set<Event>().AddRange(new List<Event> { event1, event2, event3, event4 });
+            _context.Set<Event>().AddRange(new List<Event> { event1, event2, event3, event4, event5, event6 });
             _context.SaveChanges();
 
 

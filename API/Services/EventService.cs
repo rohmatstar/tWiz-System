@@ -344,6 +344,135 @@ public class EventService
         return internalEvents;
     }
 
+    public List<EventsDto>? GetExternalEvents(string type = "")
+    {
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        var externalEvents = new List<EventsDto>();
+
+        if (userRole == nameof(RoleLevel.Company))
+        {
+            var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
+
+            if (company != null)
+            {
+                var getExternalEvents = new List<Event>();
+
+                if (string.Equals(type, nameof(EventTypeEnum.Public), StringComparison.OrdinalIgnoreCase))
+                {
+                    getExternalEvents = _eventRepository.GetAll().Where(ev => ev.CreatedBy != company.Guid && ev.IsPublished is true && ev.IsActive is true).ToList();
+
+                }
+                else if (string.Equals(type, nameof(EventTypeEnum.Personal), StringComparison.OrdinalIgnoreCase))
+                {
+                    getExternalEvents = _eventRepository.GetAll().Where(ev => ev.CreatedBy != company.Guid && ev.IsPublished is false && ev.IsActive is true).ToList();
+                }
+                else
+                {
+                    getExternalEvents = _eventRepository.GetAll().Where(ev => ev.CreatedBy != company.Guid && ev.IsActive is true).ToList();
+                }
+
+                var externalEventsIsActive = getExternalEvents.Select(ev => new EventsDto
+                {
+                    Guid = ev.Guid,
+                    Name = ev.Name,
+                    Description = ev.Description,
+                    Category = ev.Category,
+                    CreatedBy = ev.CreatedBy,
+                    StartDate = ev.StartDate,
+                    EndDate = ev.EndDate,
+                    IsActive = ev.IsActive,
+                    IsPaid = ev.IsPaid,
+                    IsPublished = ev.IsPublished,
+                    Status = ev.Status,
+                    Place = ev.Place,
+                    Price = ev.Price,
+                    Quota = ev.Quota,
+                    Thumbnail = ev.Thumbnail,
+                    UsedQuota = ev.UsedQuota,
+                }).ToList();
+
+                var companyParticipants = _companyParticipantRepository.GetAll();
+
+                foreach (var externalEvent in externalEventsIsActive)
+                {
+                    if (companyParticipants.FirstOrDefault(cp => cp.CompanyGuid == company.Guid && cp.EventGuid == externalEvent.Guid) is not null)
+                    {
+                        externalEvents.Add(externalEvent);
+                    }
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        if (userRole == nameof(RoleLevel.Employee))
+        {
+            var employee = _employeeRepository.GetAll().FirstOrDefault(e => e.AccountGuid == Guid.Parse(accountGuid!));
+
+            if (employee is not null)
+            {
+                var getExternalEvents = new List<Event>();
+
+                if (string.Equals(type, nameof(EventTypeEnum.Public), StringComparison.OrdinalIgnoreCase))
+                {
+                    getExternalEvents = _eventRepository.GetAll().Where(ev => ev.CreatedBy != employee.CompanyGuid && ev.IsPublished is true && ev.IsActive is true).ToList();
+
+                }
+                else if (string.Equals(type, nameof(EventTypeEnum.Personal), StringComparison.OrdinalIgnoreCase))
+                {
+                    getExternalEvents = _eventRepository.GetAll().Where(ev => ev.CreatedBy != employee.CompanyGuid && ev.IsPublished is false && ev.IsActive is true).ToList();
+                }
+                else
+                {
+                    getExternalEvents = _eventRepository.GetAll().Where(ev => ev.CreatedBy != employee.CompanyGuid && ev.IsActive is true).ToList();
+                }
+
+                var externalEventsIsActive = getExternalEvents.Select(ev => new EventsDto
+                {
+                    Guid = ev.Guid,
+                    Name = ev.Name,
+                    Description = ev.Description,
+                    Category = ev.Category,
+                    CreatedBy = ev.CreatedBy,
+                    StartDate = ev.StartDate,
+                    EndDate = ev.EndDate,
+                    IsActive = ev.IsActive,
+                    IsPaid = ev.IsPaid,
+                    IsPublished = ev.IsPublished,
+                    Status = ev.Status,
+                    Place = ev.Place,
+                    Price = ev.Price,
+                    Quota = ev.Quota,
+                    Thumbnail = ev.Thumbnail,
+                    UsedQuota = ev.UsedQuota,
+                }).ToList();
+
+                var employeeParticipants = _employeeParticipantRepository.GetAll();
+
+                foreach (var externalEvent in externalEventsIsActive)
+                {
+                    if (employeeParticipants.FirstOrDefault(ep => ep.EmployeeGuid == employee.Guid && ep.EventGuid == externalEvent.Guid) is not null)
+                    {
+                        externalEvents.Add(externalEvent);
+                    }
+                }
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+
+        return externalEvents;
+    }
+
 
 }
 
