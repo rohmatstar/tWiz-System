@@ -50,7 +50,11 @@ builder.Services.AddScoped<EmployeeService>();
 builder.Services.AddScoped<RegisterPaymentService>();
 builder.Services.AddScoped<EventPaymentService>();
 
+// add seeder to container
+builder.Services.AddTransient<SeederHandler>();
 
+// Add http context accessor
+builder.Services.AddHttpContextAccessor();
 // Jwt Configuration
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
        .AddJwtBearer(options =>
@@ -130,6 +134,29 @@ builder.Services.AddSwaggerGen(x =>
 });
 
 var app = builder.Build();
+
+// Setup Seeder
+/* cara jalankan seeder, ketikan di cli perintah : dotnet run seeddata --project <Path>/<App>.csproj
+ * contoh : dotnet run seeddata --project C:\Users\Febrianto\Desktop\final-project\tWiz-System\API\API.csproj
+ * 
+ */
+if (args.Length == 1 && args[0].ToLower() == "seeddata")
+    SeedData(app);
+
+void SeedData(IHost app)
+{
+    var scopedFactory = app.Services.GetService<IServiceScopeFactory>();
+
+    using (var scope = scopedFactory.CreateScope())
+    {
+        var service = scope.ServiceProvider.GetService<SeederHandler>();
+
+        // tambahkan sesuai kebutuhan, jika tidak dipakai dicomment saja jangan dihapus
+        service.GenerateEventMaster();
+        //service.RemoveAllData();
+    }
+}
+
 
 // CORS
 app.UseCors(options =>
