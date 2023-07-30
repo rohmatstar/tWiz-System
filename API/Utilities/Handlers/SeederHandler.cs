@@ -21,7 +21,7 @@ public class SeederHandler
             {
                 Guid = new Guid(),
                 Email = "febrianto.bekasi@gmail.com",
-                Password = "!Company123",
+                Password = HashingHandler.HashPassword("!Company123"),
                 IsActive = true,
                 Token = null,
                 TokenIsUsed = null,
@@ -34,7 +34,7 @@ public class SeederHandler
             {
                 Guid = new Guid(),
                 Email = "optimusprime200039@gmail.com",
-                Password = "!Company123",
+                Password = HashingHandler.HashPassword("!Company123"),
                 IsActive = true,
                 Token = null,
                 TokenIsUsed = null,
@@ -48,7 +48,7 @@ public class SeederHandler
             {
                 Guid = new Guid(),
                 Email = "ikxe496@gmail.com",
-                Password = "!Employee123",
+                Password = HashingHandler.HashPassword("!Employee123"),
                 IsActive = true,
                 Token = null,
                 TokenIsUsed = null,
@@ -61,7 +61,7 @@ public class SeederHandler
             {
                 Guid = new Guid(),
                 Email = "andri@example.com",
-                Password = "!Employee123",
+                Password = HashingHandler.HashPassword("!Employee123"),
                 IsActive = true,
                 Token = null,
                 TokenIsUsed = null,
@@ -74,7 +74,7 @@ public class SeederHandler
             {
                 Guid = new Guid(),
                 Email = "septia@example.com",
-                Password = "!Employee123",
+                Password = HashingHandler.HashPassword("!Employee123"),
                 IsActive = true,
                 Token = null,
                 TokenIsUsed = null,
@@ -85,6 +85,67 @@ public class SeederHandler
 
             _context.Set<Account>().AddRange(new List<Account> { account1, account2, account3, account4, account5 });
             _context.SaveChanges();
+
+
+            var companyRole = new Role
+            {
+                Guid = new Guid(),
+                Name = nameof(RoleLevel.Company),
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employeeRole = new Role
+            {
+                Guid = new Guid(),
+                Name = nameof(RoleLevel.Employee),
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            _context.Set<Role>().AddRange(new List<Role> { companyRole, employeeRole });
+            _context.SaveChanges();
+
+
+            var account1Role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account1.Guid,
+                RoleGuid = companyRole.Guid,
+            };
+
+            var account2Role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account2.Guid,
+                RoleGuid = companyRole.Guid,
+            };
+
+            var account3Role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account3.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+            var account4Role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account4.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+            var account5Role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account5.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+
+            _context.Set<AccountRole>().AddRange(new List<AccountRole> { account1Role, account2Role, account3Role, account4Role, account5Role });
+            _context.SaveChanges();
+
 
 
             var company1 = new Company
@@ -197,15 +258,96 @@ public class SeederHandler
                 IsPaid = false,
                 Price = 0,
                 IsActive = true,
-                Status = EventStatus.Offline,
+                Status = EventStatus.Online,
                 IsPublished = true,
                 Place = "www.zoom.com",
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
             };
 
+            var event3 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Workshop Create Branding",
+                Quota = 50,
+                UsedQuota = 10,
+                StartDate = new DateTime(2023, 8, 15, 8, 30, 0),
+                EndDate = new DateTime(2023, 8, 15, 12, 0, 0),
+                Description = "Acara seminar cara membuat branding yang bagus",
+                Category = "Brand",
+                CreatedBy = company2.Guid,
+                IsPaid = true,
+                Price = 5000,
+                IsActive = true,
+                Status = EventStatus.Offline,
+                IsPublished = true,
+                Place = "jl. pramuka keren",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
 
-            _context.Set<Event>().AddRange(new List<Event> { event1, event2 });
+            _context.Set<Event>().AddRange(new List<Event> { event1, event2, event3 });
+            _context.SaveChanges();
+
+
+            var employeeParticipant_1_1 = new EmployeeParticipant
+            {
+                Guid = new Guid(),
+                EventGuid = event1.Guid,
+                EmployeeGuid = employee1.Guid,
+                Status = InviteStatusLevel.Pending,
+                IsPresent = false,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employeeParticipant_1_2 = new EmployeeParticipant
+            {
+                Guid = new Guid(),
+                EventGuid = event1.Guid,
+                EmployeeGuid = employee2.Guid,
+                Status = InviteStatusLevel.Pending,
+                IsPresent = false,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employeeParticipant_2_1 = new EmployeeParticipant
+            {
+                Guid = new Guid(),
+                EventGuid = event2.Guid,
+                EmployeeGuid = employee1.Guid,
+                Status = InviteStatusLevel.Pending,
+                IsPresent = false,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employeeParticipant_2_2 = new EmployeeParticipant
+            {
+                Guid = new Guid(),
+                EventGuid = event2.Guid,
+                EmployeeGuid = employee2.Guid,
+                Status = InviteStatusLevel.Pending,
+                IsPresent = false,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employeeParticipant_3_1 = new EmployeeParticipant
+            {
+                Guid = new Guid(),
+                EventGuid = event3.Guid,
+                EmployeeGuid = employee1.Guid,
+                Status = InviteStatusLevel.Pending,
+                IsPresent = false,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+
+            _context.Set<EmployeeParticipant>().AddRange(new List<EmployeeParticipant> { employeeParticipant_1_1, employeeParticipant_1_2, employeeParticipant_2_1, employeeParticipant_2_2, employeeParticipant_3_1 });
+
             _context.SaveChanges();
 
             transaction.Commit();
@@ -222,18 +364,45 @@ public class SeederHandler
 
     public void RemoveAllData()
     {
-        var accounts = _context.Set<Account>().Where(a => a.Email != "tidak ada");
-        _context.Set<Account>().RemoveRange(accounts);
-        _context.SaveChanges();
+        using var transaction = _context.Database.BeginTransaction();
+        try
+        {
+            var eventParticipants = _context.Set<EmployeeParticipant>().Where(ep => ep.Guid != new Guid());
+            _context.Set<EmployeeParticipant>().RemoveRange(eventParticipants);
+            _context.SaveChanges();
+
+            var events = _context.Set<Event>().Where(a => a.Name != "tidak ada");
+            _context.Set<Event>().RemoveRange(events);
+            _context.SaveChanges();
+
+            var employees = _context.Set<Employee>().Where(a => a.FullName != "tidak ada");
+            _context.Set<Employee>().RemoveRange(employees);
+            _context.SaveChanges();
 
 
-        var companies = _context.Set<Company>().Where(a => a.Name != "tidak ada");
-        _context.Set<Company>().RemoveRange(companies);
-        _context.SaveChanges();
+            var companies = _context.Set<Company>().Where(a => a.Name != "tidak ada");
+            _context.Set<Company>().RemoveRange(companies);
+            _context.SaveChanges();
 
-        var employees = _context.Set<Employee>().Where(a => a.FullName != "tidak ada");
-        _context.Set<Employee>().RemoveRange(employees);
-        _context.SaveChanges();
+            var accountRoles = _context.Set<AccountRole>().Where(a => a.Guid != new Guid());
+            _context.Set<AccountRole>().RemoveRange(accountRoles);
+            _context.SaveChanges();
+
+            var accounts = _context.Set<Account>().Where(a => a.Email != "tidak ada");
+            _context.Set<Account>().RemoveRange(accounts);
+            _context.SaveChanges();
+
+            var roles = _context.Set<Role>().Where(a => a.Name != "tidak ada");
+            _context.Set<Role>().RemoveRange(roles);
+            _context.SaveChanges();
+
+            transaction.Commit();
+        }
+        catch
+        {
+            transaction.Rollback();
+        }
+
     }
 
 

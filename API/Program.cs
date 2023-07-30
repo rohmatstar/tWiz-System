@@ -85,6 +85,10 @@ builder.Services.AddTransient<IEmailHandler, EmailHandler>(_ => new EmailHandler
 
 
 
+//builder.Services.AddControllers().AddJsonOptions(x =>
+//                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
+
 // CORS
 builder.Services.AddCors(options =>
 {
@@ -152,8 +156,8 @@ void SeedData(IHost app)
         var service = scope.ServiceProvider.GetService<SeederHandler>();
 
         // tambahkan sesuai kebutuhan, jika tidak dipakai dicomment saja jangan dihapus
+        service.RemoveAllData();
         service.GenerateEventMaster();
-        //service.RemoveAllData();
     }
 }
 

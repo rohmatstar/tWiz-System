@@ -1,6 +1,7 @@
 ﻿using API.Contracts;
 using API.DTOs.Events;
 using API.Models;
+using API.Utilities.Enums;
 using System.Security.Claims;
 
 namespace API.Services;
@@ -8,13 +9,17 @@ namespace API.Services;
 public class EventService
 {
     private readonly IEventRepository _eventRepository;
+    private readonly IEmployeeRepository _employeeRepository;
     private readonly IEmployeeParticipantRepository _employeeParticipantRepository;
     private readonly ICompanyParticipantRepository _companyParticipantRepository;
     private readonly IEventPaymentRepository _eventPaymentRepository;
+    private readonly ICompanyRepository _companyRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    public EventService(IEventRepository eventRepository, IHttpContextAccessor httpContextAccessor, IEmployeeParticipantRepository employeeParticipantRepository, ICompanyParticipantRepository companyParticipantRepository, IEventPaymentRepository eventPaymentRepository)
+    public EventService(IEventRepository eventRepository, IHttpContextAccessor httpContextAccessor, IEmployeeParticipantRepository employeeParticipantRepository, ICompanyParticipantRepository companyParticipantRepository, IEventPaymentRepository eventPaymentRepository, ICompanyRepository companyRepository, IEmployeeRepository employeeRepository)
     {
         _eventRepository = eventRepository;
+        _companyRepository = companyRepository;
+        _employeeRepository = employeeRepository;
         _employeeParticipantRepository = employeeParticipantRepository;
         _companyParticipantRepository = companyParticipantRepository;
         _eventPaymentRepository = eventPaymentRepository;
@@ -220,16 +225,100 @@ public class EventService
     }
 
 
-    public List<Event> GetInternalEvents()
+    public List<EventsDto>? GetInternalEvents()
     {
         var claimUser = _httpContextAccessor.HttpContext?.User;
 
         var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
-        var userGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        var internalEvents = new List<EventsDto>();
+
+        if (userRole == nameof(RoleLevel.Company))
+        {
+            var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
+
+            if (company != null)
+            {
+                internalEvents = _eventRepository.GetEventsByCreatedBy(company.Guid).Select(ev => new EventsDto
+                {
+                    Guid = ev.Guid,
+                    Name = ev.Name,
+                    Description = ev.Description,
+                    Category = ev.Category,
+                    CreatedBy = ev.CreatedBy,
+                    StartDate = ev.StartDate,
+                    EndDate = ev.EndDate,
+                    IsActive = ev.IsActive,
+                    IsPaid = ev.IsPaid,
+                    IsPublished = ev.IsPublished,
+                    Status = ev.Status,
+                    Place = ev.Place,
+                    Price = ev.Price,
+                    Quota = ev.Quota,
+                    MakerName = company.Name,
+                    Thumbnail = ev.Thumbnail,
+                    UsedQuota = ev.UsedQuota,
+                }).ToList();
+            }
+            else
+            {
+                return null;
+            }
 
 
+        }
 
-        return new List<Event>();
+        if (userRole == nameof(RoleLevel.Employee))
+        {
+            var employee = _employeeRepository.GetAll().FirstOrDefault(e => e.AccountGuid == Guid.Parse(accountGuid!));
+
+
+            if (employee is not null)
+            {
+                var company = _companyRepository.GetByGuid(employee.CompanyGuid);
+
+                var internalEventsIsActive = _eventRepository.GetEventsByCreatedBy(employee.CompanyGuid).Where(ev => ev.IsActive is true).Select(ev => new EventsDto
+                {
+                    Guid = ev.Guid,
+                    Name = ev.Name,
+                    Description = ev.Description,
+                    Category = ev.Category,
+                    CreatedBy = ev.CreatedBy,
+                    MakerName = company.Name,
+                    StartDate = ev.StartDate,
+                    EndDate = ev.EndDate,
+                    IsActive = ev.IsActive,
+                    IsPaid = ev.IsPaid,
+                    IsPublished = ev.IsPublished,
+                    Status = ev.Status,
+                    Place = ev.Place,
+                    Price = ev.Price,
+                    Quota = ev.Quota,
+                    Thumbnail = ev.Thumbnail,
+                    UsedQuota = ev.UsedQuota,
+                }).ToList();
+
+                var employeeParticipants = _employeeParticipantRepository.GetAll();
+
+                foreach (var internalEvent in internalEventsIsActive)
+                {
+                    if (employeeParticipants.FirstOrDefault(ep => ep.EmployeeGuid == employee.Guid && ep.EventGuid == internalEvent.Guid) is not null)
+                    {
+                        internalEvents.Add(internalEvent);
+                    }
+                }
+            }
+            else
+            {
+
+                return null;
+            }
+
+        }
+
+
+        return internalEvents;
     }
 }
 
