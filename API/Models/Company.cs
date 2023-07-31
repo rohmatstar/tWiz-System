@@ -3,10 +3,10 @@
 namespace API.Models;
 
 
-[Table ("pmdt_companies")]
+[Table("pmdt_companies")]
 public class Company : BaseEntity
 {
-    [Column ("name", TypeName = "nvarchar(100)" )]
+    [Column("name", TypeName = "nvarchar(100)")]
     public string Name { get; set; }
 
     [Column("phone_number", TypeName = "nvarchar(20)")]
@@ -14,6 +14,9 @@ public class Company : BaseEntity
 
     [Column("address", TypeName = "nvarchar(100)")]
     public string Address { get; set; }
+
+    [Column("bank_account_number", TypeName = "nvarchar(25)")]
+    public string? BankAccountNumber { get; set; }
 
     [Column("account_guid")]
     public Guid AccountGuid { get; set; }

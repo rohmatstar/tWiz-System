@@ -32,5 +32,5 @@ public class Account : BaseEntity
     public ICollection<EventPayment>? EventPayments { get; set; }
     public Company? Company { get; set; }
     public Employee? Employee { get; set; }
-    public RegisterPayment? RegisterPayment { get; set; }
+    public SysAdmin? SysAdmin { get; set; }
 }

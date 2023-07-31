@@ -1,9 +1,11 @@
 ﻿namespace API.Utilities.Enums;
 
-public enum StatusPayment
+
+public enum InviteStatusLevel
 {
     Pending,
-    Checking,
-    Paid,
+    Accepted,
     Rejected
 }
+
+

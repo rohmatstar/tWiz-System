@@ -1,4 +1,7 @@
-﻿using API.Utilities.Enums;
+﻿using API.DTOs.CompanyParticipants;
+using API.DTOs.EmployeeParticipants;
+using API.DTOs.EventPayments;
+using API.Utilities.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace API.DTOs.Events;
@@ -40,13 +43,22 @@ public class GetMasterEventDto
     public int Quota { get; set; }
 
     [Required]
+    public int UsedQuota { get; set; }
+
+    [Required]
     public string Place { get; set; }
+
+    [Required]
+    public bool IsActive { get; set; }
 
     [Required]
     public Guid CreatedBy { get; set; }
 
-    public List<Guid>? CompanyParticipantGuids { get; set; }
-    public List<Guid>? EmployeeParticipantGuids { get; set; }
-    public Guid? BankGuid { get; set; }
+    public string? CompanyName { get; set; }
+
+    public List<CompanyParticipantsDto>? CompanyParticipants { get; set; }
+    public List<EmployeeParticipantsDto>? EmployeeParticipants { get; set; }
+    public List<GetEventPaymentDto>? EventPayments { get; set; }
+
 }
 

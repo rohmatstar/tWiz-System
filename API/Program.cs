@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
@@ -49,8 +50,28 @@ builder.Services.AddScoped<EmployeeService>();
 builder.Services.AddScoped<RegisterPaymentService>();
 builder.Services.AddScoped<EventPaymentService>();
 
+// add seeder to container
+builder.Services.AddTransient<SeederHandler>();
 
-
+// Add http context accessor
+builder.Services.AddHttpContextAccessor();
+// Jwt Configuration
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+       .AddJwtBearer(options =>
+       {
+           options.RequireHttpsMetadata = false; // For development, jiak production maka true
+           options.SaveToken = true; // untuk mengharuskan menyimpan token di req header
+           options.TokenValidationParameters = new TokenValidationParameters()
+           {
+               ValidateIssuer = true,
+               ValidIssuer = builder.Configuration["JWTService:Issuer"],
+               ValidateAudience = true,
+               ValidAudience = builder.Configuration["JWTService:Audience"],
+               IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTService:Key"])),
+               ValidateLifetime = true,
+               ClockSkew = TimeSpan.Zero
+           };
+       });
 
 
 builder.Services.AddTransient<IEmailHandler, EmailHandler>(_ => new EmailHandler(
@@ -62,6 +83,10 @@ builder.Services.AddTransient<IEmailHandler, EmailHandler>(_ => new EmailHandler
 
 // ==================================================== End Services ==================================================== //
 
+
+
+//builder.Services.AddControllers().AddJsonOptions(x =>
+//                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 
 // CORS
@@ -114,6 +139,29 @@ builder.Services.AddSwaggerGen(x =>
 
 var app = builder.Build();
 
+// Setup Seeder
+/* cara jalankan seeder, ketikan di cli perintah : dotnet run seeddata --project <Path>/<App>.csproj
+ * contoh : dotnet run seeddata --project C:\Users\Febrianto\Desktop\final-project\tWiz-System\API\API.csproj
+ * 
+ */
+if (args.Length == 1 && args[0].ToLower() == "seeddata")
+    SeedData(app);
+
+void SeedData(IHost app)
+{
+    var scopedFactory = app.Services.GetService<IServiceScopeFactory>();
+
+    using (var scope = scopedFactory.CreateScope())
+    {
+        var service = scope.ServiceProvider.GetService<SeederHandler>();
+
+        // tambahkan sesuai kebutuhan, jika tidak dipakai dicomment saja jangan dihapus
+        service.RemoveAllData();
+        service.GenerateEventMaster();
+    }
+}
+
+
 // CORS
 app.UseCors(options =>
 {
@@ -133,6 +181,7 @@ app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using API.Utilities.Enums;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace API.DTOs.EmployeeParticipants
@@ -11,8 +12,8 @@ namespace API.DTOs.EmployeeParticipants
         [Required]
         public Guid EmployeeGuid { get; set; }
 
-        [DefaultValue(false)]
-        public bool IsJoin { get; set; }
+        [DefaultValue(InviteStatusLevel.Pending)]
+        public InviteStatusLevel Status { get; set; }
 
         [DefaultValue(false)]
         public bool IsPresent { get; set; }

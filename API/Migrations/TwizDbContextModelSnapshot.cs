@@ -51,9 +51,6 @@ namespace API.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("password");
 
-                    b.Property<Guid?>("RegisterPaymentGuid")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int?>("Token")
                         .HasColumnType("int")
                         .HasColumnName("token");
@@ -70,8 +67,6 @@ namespace API.Migrations
 
                     b.HasIndex("Email")
                         .IsUnique();
-
-                    b.HasIndex("RegisterPaymentGuid");
 
                     b.HasIndex("Token")
                         .IsUnique()
@@ -165,6 +160,10 @@ namespace API.Migrations
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("address");
 
+                    b.Property<string>("BankAccountNumber")
+                        .HasColumnType("nvarchar(25)")
+                        .HasColumnName("bank_account_number");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("created_date");
@@ -213,10 +212,6 @@ namespace API.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("event_guid");
 
-                    b.Property<bool>("IsJoin")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_join");
-
                     b.Property<bool>("IsPresent")
                         .HasColumnType("bit")
                         .HasColumnName("is_present");
@@ -224,6 +219,10 @@ namespace API.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("modified_date");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
+                        .HasColumnName("status");
 
                     b.HasKey("Guid");
 
@@ -319,10 +318,6 @@ namespace API.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("event_guid");
 
-                    b.Property<bool>("IsJoin")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_join");
-
                     b.Property<bool>("IsPresent")
                         .HasColumnType("bit")
                         .HasColumnName("is_present");
@@ -330,6 +325,10 @@ namespace API.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("modified_date");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
+                        .HasColumnName("status");
 
                     b.HasKey("Guid");
 
@@ -352,9 +351,6 @@ namespace API.Migrations
                         .HasColumnType("nvarchar(30)")
                         .HasColumnName("category");
 
-                    b.Property<Guid?>("CompanyGuid")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("created_by");
@@ -371,6 +367,10 @@ namespace API.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("end_date");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_active");
 
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit")
@@ -415,9 +415,13 @@ namespace API.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("thumbnail");
 
+                    b.Property<int>("UsedQuota")
+                        .HasColumnType("int")
+                        .HasColumnName("used_quota");
+
                     b.HasKey("Guid");
 
-                    b.HasIndex("CompanyGuid");
+                    b.HasIndex("CreatedBy");
 
                     b.ToTable("pmdt_events");
                 });
@@ -540,7 +544,6 @@ namespace API.Migrations
                         .HasColumnName("modified_date");
 
                     b.Property<string>("PaymentImage")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("payment_image");
 
@@ -598,13 +601,44 @@ namespace API.Migrations
                     b.ToTable("pmdt_roles");
                 });
 
-            modelBuilder.Entity("API.Models.Account", b =>
+            modelBuilder.Entity("API.Models.SysAdmin", b =>
                 {
-                    b.HasOne("API.Models.RegisterPayment", "RegisterPayment")
-                        .WithMany()
-                        .HasForeignKey("RegisterPaymentGuid");
+                    b.Property<Guid>("Guid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("guid");
 
-                    b.Navigation("RegisterPayment");
+                    b.Property<Guid>("AccountGuid")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("account_guid");
+
+                    b.Property<string>("BankAccountNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("bank_account_number");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_date");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("modified_date");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Guid");
+
+                    b.HasIndex("AccountGuid")
+                        .IsUnique();
+
+                    b.HasIndex("BankAccountNumber")
+                        .IsUnique();
+
+                    b.ToTable("pmdt_sys_admins");
                 });
 
             modelBuilder.Entity("API.Models.AccountRole", b =>
@@ -698,7 +732,9 @@ namespace API.Migrations
                 {
                     b.HasOne("API.Models.Company", "Company")
                         .WithMany("Events")
-                        .HasForeignKey("CompanyGuid");
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Company");
                 });
@@ -760,6 +796,17 @@ namespace API.Migrations
                     b.Navigation("Company");
                 });
 
+            modelBuilder.Entity("API.Models.SysAdmin", b =>
+                {
+                    b.HasOne("API.Models.Account", "Account")
+                        .WithOne("SysAdmin")
+                        .HasForeignKey("API.Models.SysAdmin", "AccountGuid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
             modelBuilder.Entity("API.Models.Account", b =>
                 {
                     b.Navigation("AccountRoles");
@@ -769,6 +816,8 @@ namespace API.Migrations
                     b.Navigation("Employee");
 
                     b.Navigation("EventPayments");
+
+                    b.Navigation("SysAdmin");
                 });
 
             modelBuilder.Entity("API.Models.Bank", b =>
