@@ -601,6 +601,46 @@ namespace API.Migrations
                     b.ToTable("pmdt_roles");
                 });
 
+            modelBuilder.Entity("API.Models.SysAdmin", b =>
+                {
+                    b.Property<Guid>("Guid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("guid");
+
+                    b.Property<Guid>("AccountGuid")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("account_guid");
+
+                    b.Property<string>("BankAccountNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("bank_account_number");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_date");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("modified_date");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Guid");
+
+                    b.HasIndex("AccountGuid")
+                        .IsUnique();
+
+                    b.HasIndex("BankAccountNumber")
+                        .IsUnique();
+
+                    b.ToTable("pmdt_sys_admins");
+                });
+
             modelBuilder.Entity("API.Models.AccountRole", b =>
                 {
                     b.HasOne("API.Models.Account", "Account")
@@ -756,6 +796,17 @@ namespace API.Migrations
                     b.Navigation("Company");
                 });
 
+            modelBuilder.Entity("API.Models.SysAdmin", b =>
+                {
+                    b.HasOne("API.Models.Account", "Account")
+                        .WithOne("SysAdmin")
+                        .HasForeignKey("API.Models.SysAdmin", "AccountGuid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
             modelBuilder.Entity("API.Models.Account", b =>
                 {
                     b.Navigation("AccountRoles");
@@ -765,6 +816,8 @@ namespace API.Migrations
                     b.Navigation("Employee");
 
                     b.Navigation("EventPayments");
+
+                    b.Navigation("SysAdmin");
                 });
 
             modelBuilder.Entity("API.Models.Bank", b =>

@@ -20,6 +20,7 @@ public class TwizDbContext : DbContext
     public DbSet<EventPayment> EventPayments { get; set; }
     public DbSet<RegisterPayment> RegisterPayments { get; set; }
     public DbSet<Role> Roles { get; set; }
+    public DbSet<SysAdmin> SysAdmins { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -112,6 +113,12 @@ public class TwizDbContext : DbContext
                 ep.VaNumber
             }).IsUnique();
 
+        modelBuilder.Entity<SysAdmin>()
+            .HasIndex(sa => new
+            {
+                sa.BankAccountNumber
+            }).IsUnique();
+
         //Account - Account Roles (One to Many)
         modelBuilder.Entity<Account>()
             .HasMany(account => account.AccountRoles)
@@ -189,6 +196,11 @@ public class TwizDbContext : DbContext
         modelBuilder.Entity<Employee>()
           .HasMany(e => e.EmployeeParticipants)
           .WithOne(ep => ep.Employee);
+
+        // Account - SysAdmin
+        modelBuilder.Entity<SysAdmin>()
+          .HasOne(sa => sa.Account)
+          .WithOne(a => a.SysAdmin);
     }
 
 }

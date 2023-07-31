@@ -82,6 +82,28 @@ namespace API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "pmdt_sys_admins",
+                columns: table => new
+                {
+                    guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    name = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    bank_account_number = table.Column<string>(type: "nvarchar(30)", nullable: false),
+                    account_guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    modified_date = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_pmdt_sys_admins", x => x.guid);
+                    table.ForeignKey(
+                        name: "FK_pmdt_sys_admins_pmdt_accounts_account_guid",
+                        column: x => x.account_guid,
+                        principalTable: "pmdt_accounts",
+                        principalColumn: "guid",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "pmtr_account_roles",
                 columns: table => new
                 {
@@ -432,6 +454,18 @@ namespace API.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_pmdt_sys_admins_account_guid",
+                table: "pmdt_sys_admins",
+                column: "account_guid",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_pmdt_sys_admins_bank_account_number",
+                table: "pmdt_sys_admins",
+                column: "bank_account_number",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_pmtr_account_roles_account_guid_role_guid",
                 table: "pmtr_account_roles",
                 columns: new[] { "account_guid", "role_guid" },
@@ -476,6 +510,9 @@ namespace API.Migrations
 
             migrationBuilder.DropTable(
                 name: "pmdt_register_payments");
+
+            migrationBuilder.DropTable(
+                name: "pmdt_sys_admins");
 
             migrationBuilder.DropTable(
                 name: "pmtr_account_roles");
