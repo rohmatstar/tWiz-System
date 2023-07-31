@@ -1,0 +1,386 @@
+﻿@{
+    ViewData["Title"] = "Ticket";
+    ViewData["Username"] = ViewBag.Username as string;
+    ViewData["Role"] = ViewBag.Role as string;
+    Layout = "_LayoutUser";
+}
+
+@section Filter{
+    <div class="col-auto">
+        <div class="btn-group">
+            <button type="button"
+                    class="btn btn-outline-primary bg-white text-primary dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                    data-bs-auto-close="false"
+                    aria-expanded="false">
+                <i class="bx bx-filter"></i> Filter
+            </button>
+            <div class="dropdown-menu dropdown-menu-end w-px-300">
+                <form class="p-4" onsubmit="">
+                    <div class="mb-3">
+                        <label for="publication" class="form-label">Publication</label>
+                        <div class="form-check">
+                            <input checked type="radio" class="form-check-input" id="publication-all" name="publication" value="all">
+                            <label class="form-check-label" for="publication-all">All</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" id="publication-published" name="publication" value="published">
+                            <label class="form-check-label" for="publication-published">Published</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" id="publication-draft" name="publication" value="draft">
+                            <label class="form-check-label" for="publication-draft">Draft</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="visibility" class="form-label">Visibility</label>
+                        <div class="form-check">
+                            <input checked type="radio" class="form-check-input" id="visibility-all" name="visibility" value="all">
+                            <label class="form-check-label" for="visibility-all">All</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" id="visibility-public" name="visibility" value="public">
+                            <label class="form-check-label" for="visibility-public">Public</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" id="visibility-private" name="visibility" value="private">
+                            <label class="form-check-label" for="visibility-private">Private</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Type</label>
+                        <div class="form-check">
+                            <input checked type="radio" class="form-check-input" id="type-all" name="type" value="all">
+                            <label class="form-check-label" for="type-all">All</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" id="type-online" name="type" value="online">
+                            <label class="form-check-label" for="type-online">Online</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" id="type-offline" name="type" value="offline">
+                            <label class="form-check-label" for="type-offline">Offline</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="sort-by" class="form-label">Sort by</label>
+                        <select class="form-select" id="sort-by" name="sort-by">
+                            <option selected value="newest">Newest</option>
+                            <option value="oldest">Oldest</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Apply</button>
+                    <button type="reset" class="btn btn-text bg-white text-primary">Use Default</button>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+@section Toast{
+    <div class="bs-toast toast toast-placement-ex m-2 fade bg-success top-0 start-50 translate-middle-x" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+        <div class="toast-header">
+            <i class="bx bx-bell me-2"></i>
+            <div class="me-auto fw-semibold">Changes Saved!</div>
+        </div>
+        <div class="toast-body">
+            All changes successfully saved into database
+        </div>
+    </div>
+}
+
+<!-- Modals -->
+<div class="modal fade" id="event-detail" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header align-items-center">
+                <h5 class="mb-0" id="event-detail-name"></h5>
+
+                <div class="col text-end">
+                    <span class="badge bg-danger" id="event-detail-type"></span>
+                    <span class="badge bg-warning" id="event-detail-category"></span>
+                    <span class="badge bg-success" id="event-detail-status"></span>
+                    <span class="badge bg-info" id="event-detail-payment"></span>
+                </div>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="col-md">
+                    <div class="card shadow-none mb-3">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img class="card-img mb-3" src="" alt="" id="event-detail-thumbnail" />
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body py-0">
+                                    <p class="card-text mb-3" id="event-detail-description"></p>
+                                    <p class="card-text mb-3">
+                                        <span id="event-detail-startdate"></span> - <span id="event-detail-enddate"></span>
+                                    </p>
+                                    <p class="card-text mb-1">
+                                        Held by <strong><span id="event-detail-organizer"></span></strong>
+                                    </p>
+                                    <p class="card-text mb-3">
+                                        On <strong><span id="event-detail-place"></span></strong>
+                                    </p>
+                                    <div class="card-text fw-bold mb-1">
+                                        <span id="event-detail-joined">0</span> Participants Joined
+                                    </div>
+                                    <div class="card-text fw-bold text-success mb-1">
+                                        <span id="event-detail-quota">0</span> Quota Available
+                                    </div>
+                                    <div class="h6 mb-3">
+                                        <del>Rp. <span id="event-detail-promo">0</span>,-</del>
+                                        <span class="text-danger">Rp. <span id="event-detail-price">0</span>,-</span>
+                                    </div>
+
+                                    <a href="javascript:void(0)" class="btn btn-primary">Join</a>
+                                    <a href="javascript:void(0)" class="btn btn-outline-danger">Not Now</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="edit-participants" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header align-items-center">
+                <h5 class="mb-0">Edit Participants</h5>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Type company or your employee name" />
+                    <button class="btn btn-outline-primary" type="button" id="">Add</button>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="fw-semibold text-primary">Companies</div>
+                        <div class="demo-inline-spacing mt-3">
+                            <div class="list-group">
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Apple Inc.
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Microsoft Corporation
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Amazon.com Inc.
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Alphabet Inc. (Google)
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Facebook, Inc.
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Tencent Holdings Limited
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Tesla, Inc.
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Samsung Electronics Co., Ltd.
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Walmart Inc.
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Visa Inc.
+                                </label>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="fw-semibold text-primary">Employees</div>
+                        <div class="demo-inline-spacing mt-3">
+                            <div class="list-group">
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    John Doe
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Jane Smith
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Michael Johnson
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Emily Brown
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    David Lee
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Sarah Wang
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Robert Garcia
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Laura Martinez
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Christopher Kim
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Amanda Wilson
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer justify-content-between border-top py-3">
+                <div class="col">
+                    <button type="button" class="btn btn-text text-danger bg-light">Delete selected</button>
+                </div>
+                <div class="col text-end">
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        const eventData = [{
+            "name": "Annual Gala Dinner",
+            "thumbnail": "../assets/img/elements/4.jpg",
+            "description": "Event Description is a comprehensive and detailed narrative that provides essential information about an upcoming event. This description serves as a means to inform potential attendees, participants, or interested parties about the event's purpose, content, and key features.",
+            "type": "Public",
+            "category": "MoU",
+            "status": "Online",
+            "payment": "Free",
+            "price": 0,
+            "quota": 100,
+            "joined": 88, // Kuota terisi
+            "startDate": "21 Agustus 2023, 16.00 WIB",
+            "endDate": "21 Agustus 2023, 18.00 WIB",
+            "organizer": "PT Metrodata Electronics Tbk.",
+            "place": "Google Meet",
+        }];
+
+        function renderEvent(index, event) {
+            const eventElement = `
+                  <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card h-100">
+                      <img class="card-img-obj card-img-top" src="${event.thumbnail}" alt="${event.name} by ${event.organizer}" />
+                      <div class="card-body">
+                        <div class="mb-3">
+                          <span class="badge bg-danger">${event.type}</span>
+                          <span class="badge bg-warning">${event.category}</span>
+                          <span class="badge bg-success">${event.status}</span>
+                          <span class="badge bg-info">${event.payment}</span>
+                        </div>
+                        <h5 class="card-title">${event.name}</h5>
+                        <h6 class="small">${event.startDate}</h6>
+                        <p class="card-text">${event.description}</p>
+                        <div class="row align-items-center justify-content-center">
+                          <div class="col">
+                            <div class="h6 mb-1"><del>Rp. 100.000,-</del></div>
+                            <div class="h5 text-danger mb-0">Rp. ${event.price},-</div>
+                          </div>
+                          <div class="col-auto">
+                            <a href="#" onclick="showEvent(${index})" class="btn btn-outline-primary">See Details</a>
+                            <div class="btn-group">
+                              <button type="button" class="btn btn-outline-primary bg-white text-primary">Modify</button>
+                              <button
+                                type="button"
+                                class="btn btn-outline-primary text-primary bg-white dropdown-toggle dropdown-toggle-split"
+                                id="dropdownMenuReference"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                                data-bs-reference="parent"
+                              >
+                              </button>
+                              <ul class="dropdown-menu" aria-labelledby="dropdownMenuReference">
+                                <li><a class="dropdown-item" href="#">
+                                  <i class="bx bx-pencil me-2"></i> Edit Event</a></li>
+                                <li><a href="#" class="dropdown-item" onclick="showParticipants(${index})"><i class="bx bx-group me-2"></i> Edit Participant</a></li>
+                                <li>
+                                  <div class="dropdown-item">
+                                    <a class="btn btn-primary text-white btn-block w-100">Publish</a>
+                                  </div>
+                                </li>
+                                <li>
+                                  <hr class="dropdown-divider" />
+                                </li>
+                                <li><a class="dropdown-item text-danger" href="javascript:void(0)"><i class="bx bx-trash me-2"></i>Delete Event</a></li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                `;
+
+            $("#render-body").append(eventElement);
+        }
+
+        function renderEvents() {
+            $.each(eventData, function (index, data) {
+                renderEvent(index, data);
+            });
+        }
+        renderEvents();
+
+        function showEvent(index) {
+            const event = eventData[index];
+            $("#event-detail-name").text(event.name);
+            $("#event-detail-thumbnail").attr("src", event.thumbnail).attr("alt", event.name + " by " + event.organizer);
+            $("#event-detail-description").text(event.description);
+            $("#event-detail-startdate").text(event.startDate);
+            $("#event-detail-enddate").text(event.endDate);
+            $("#event-detail-organizer").text(event.organizer);
+            $("#event-detail-place").text(event.place);
+            $("#event-detail-joined").text(event.joined);
+            $("#event-detail-quota").text(event.quota - event.joined);
+            $("#event-detail-promo").text(event.price + 100000);
+            $("#event-detail-price").text(event.price);
+            $("#event-detail").modal('show');
+        }
+
+        function showParticipants(index) {
+            $("#event-detail").modal('show');
+        }
+
+    </script>
+}
