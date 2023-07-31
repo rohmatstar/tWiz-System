@@ -162,13 +162,13 @@ public class AuthService
         var account = _accountRepository.GetByEmail(loginDto.Email);
         if (account is null)
         {
-            return "0";
+            return "0"; // account not found
         }
 
         var isPasswordValid = HashingHandler.ValidatePassword(loginDto.Password, account.Password);
         if (!isPasswordValid)
         {
-            return "-1";
+            return "-1"; // wrong password
         }
 
         var claims = new List<Claim>()
@@ -192,7 +192,7 @@ public class AuthService
         }
         catch
         {
-            return "-2";
+            return "-2"; // generate token is failed
         }
     }
 
