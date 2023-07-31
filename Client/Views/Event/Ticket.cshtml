@@ -1,0 +1,154 @@
+﻿@{
+    ViewData["Title"] = "Ticket";
+    ViewData["Username"] = ViewBag.Username as string;
+    ViewData["Role"] = ViewBag.Role as string;
+    Layout = "_LayoutUser";
+}
+
+@section Filter{
+    <div class="col-auto">
+        <div class="btn-group">
+            <button type="button"
+                    class="btn btn-outline-primary bg-white text-primary dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                    data-bs-auto-close="false"
+                    aria-expanded="false">
+                <i class="bx bx-filter"></i> Filter
+            </button>
+            <div class="dropdown-menu dropdown-menu-end w-px-300">
+                <form class="p-4" onsubmit="">
+                    <div class="mb-3">
+                        <label for="time" class="form-label">Time</label>
+                        <div class="form-check">
+                            <input checked type="radio" class="form-check-input" id="time-all" name="attendance" value="all">
+                            <label class="form-check-label" for="time-all">All</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" id="time-coming-soon" name="time" value="coming-soon">
+                            <label class="form-check-label" for="time-coming-soon">Coming Soon</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" id="time-past" name="time" value="past">
+                            <label class="form-check-label" for="time-past">Past</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="sort-by" class="form-label">Sort by</label>
+                        <select class="form-select" id="sort-by" name="sort-by">
+                            <option selected value="newest">Newest</option>
+                            <option value="oldest">Oldest</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Apply</button>
+                    <button type="reset" class="btn btn-text bg-white text-primary">Use Default</button>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+@section Toast{
+
+}
+
+<div class="modal fade"
+     id="ticketModal"
+     aria-labelledby="modalToggleLabel"
+     tabindex="-1"
+     style="display: none"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm-fullscreen">
+        <div class="modal-content text-center">
+            <div class="modal-body">
+                <h5 id="event-name-card" class="card-title"></h5>
+                <p id="participant-name-card" class="card-text text-primary"></p>
+                <p id="date-card" class="mb-0 small"></p>
+                <p id="place-card" class="small"></p>
+                <p id="ticket-code-card" class="card-text"><small class="text-muted"></small></p>
+
+                <img id="barcode-card" class="d-block w-100" />
+            </div>
+
+            <div class="modal-footer justify-content-center border-top py-3">
+                <button data-bs-toggle="modal" data-bs-dismiss="modal" type="button" class="btn btn-primary">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        const ticketData = [
+            {
+                "eventName": "Corporate Conferention",
+                "participantName": "PT Mitra Integrasi Informatika",
+                "startDate": "21 Agustus 2023, 16.00 WIB",
+                "place": "Aston Hotel, Gerogol, Jakarta Barat",
+                "ticketCode": "2347732467-234637283"
+            },
+            {
+                "eventName": "Annual Gala Dinner",
+                "participantName": "ABC Corporation",
+                "startDate": "10 September 2023, 19.30 WIB",
+                "place": "Grand Ballroom, City Center Hotel",
+                "ticketCode": "9847382792-839201837"
+            }
+        ];
+
+        function renderTicket(index, ticketData) {
+            const ticketContainer = $('<div>').addClass('col-md-3 mb-3');
+            const card = $('<div>').addClass('card text-center');
+            const cardBody = $('<div>').addClass('card-body');
+            cardBody.append($('<h5>').addClass('card-title').text(ticketData.eventName));
+            cardBody.append($('<p>').addClass('card-text text-primary').text(ticketData.participantName));
+            cardBody.append($('<p>').addClass('mb-0 small').text(ticketData.startDate));
+            cardBody.append($('<p>').addClass('small').text(ticketData.place));
+            cardBody.append($('<p>').addClass('card-text').append($('<small>').addClass('text-muted').text("#" + ticketData.ticketCode)));
+            cardBody.append($('<img>').attr('id', "barcode-" + ticketData.ticketCode).addClass('d-block w-100'));
+
+            const cardFooter = $('<div>').addClass('card-footer text-muted border-top');
+            cardFooter.append($('<button>').attr('onclick', 'showTicket(' + index + ')').addClass('btn btn-primary').text('View Ticket'));
+
+            card.append(cardBody);
+            card.append(cardFooter);
+
+            ticketContainer.append(card);
+
+            $('#render-body').append(ticketContainer);
+            $("#barcode-" + ticketData.ticketCode).JsBarcode(ticketData.ticketCode);
+        }
+
+        function renderTickets() {
+            /*$.ajax({
+              // url: '',
+              method: 'GET',
+              dataType: 'json',
+              success: function(data) {
+                $.each(data, function(index, ticket) {
+                  renderTicket(ticket);
+                });
+              },
+              error: function(jqXHR, textStatus, errorThrown) {
+                console.error('Error fetching ticket data:', errorThrown);
+              }
+            });*/
+            $.each(ticketData, function (index, ticket) {
+                renderTicket(index, ticket);
+            });
+        }
+        renderTickets();
+
+        function showTicket(index) {
+            const ticket = ticketData[index];
+            $("#event-name-card").text(ticket.eventName);
+            $("#participant-name-card").text(ticket.participantName);
+            $("#date-card").text(ticket.startDate);
+            $("#place-card").text(ticket.place);
+            $("#ticket-code-card").text(ticket.ticketCode);
+            $("#barcode-card").JsBarcode(ticket.ticketCode);
+            $("#ticketModal").modal('show');
+        }
+    </script>
+}
