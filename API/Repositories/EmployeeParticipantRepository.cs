@@ -9,4 +9,18 @@ public class EmployeeParticipantRepository : GeneralRepository<EmployeeParticipa
     public EmployeeParticipantRepository(TwizDbContext context) : base(context)
     {
     }
+
+    public bool Deletes(List<EmployeeParticipant> employeeParticipants)
+    {
+        try
+        {
+            _context.Set<EmployeeParticipant>().RemoveRange(employeeParticipants);
+            _context.SaveChanges();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }
