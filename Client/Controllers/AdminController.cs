@@ -1,5 +1,5 @@
 ﻿using Client.Models;
-using API.DTOs.Events;
+/*using Client.DTOs.Events;*/
 using Microsoft.AspNetCore.Authorization;
 ﻿using Client.Contracts;
 using Client.DTOs.Employees;
@@ -9,28 +9,30 @@ using NuGet.Protocol.Core.Types;
 using System.Diagnostics;
 using Client.Contracts;
 using Microsoft.AspNetCore.Authorization;
+using Client.DTOs.Auths;
 
 namespace Client.Controllers
 {
     public class AdminController : Controller
     {
         private readonly IAuthRepository repository;
-        private readonly IEventRepository _eventRepository;
+        /*private readonly IEventRepository _eventRepository;*/
 
-        public AdminController(IAuthRepository repository, IEventRepository eventRepository, IEmployeeRepository employeeRepository)
+        public AdminController(IAuthRepository repository, IEmployeeRepository employeeRepository)
         {
             this.repository = repository;
-            _eventRepository = eventRepository;
+            /*_eventRepository = eventRepository;*/
             this.employeeRepository = employeeRepository;
+        }
         private readonly IEmployeeRepository employeeRepository;
 
-      /*  [Authorize]
+        /*  [Authorize]
         public IActionResult IndexAuth()
         {
             return View();
         } */
 
-        [Authorize]
+        /*[Authorize]
         public async Task<IActionResult> Events()
         {
             var result = await _eventRepository.Get();
@@ -60,24 +62,20 @@ namespace Client.Controllers
             }
 
             return View(events);
-        }
+        }*/
 
-        [Authorize]
-        public async Task<IActionResult> Index()
+        /*[Authorize]*/
+        public IActionResult Index()/*async Task<IActionResult> Index()*/
         {
-
-
-            var result = await employeeRepository.Get();
+            /*var result = await employeeRepository.Get();
             var ListEmployee = new List<GetMasterEmployeeDtoClient>();
             
             if (result.Data != null)
             {
                 ListEmployee = result.Data.ToList();
             }
-            return View(ListEmployee);
-
-          
-
+            return View(ListEmployee);*/
+            return View();
         }
         public IActionResult Login()
         {
@@ -113,7 +111,7 @@ namespace Client.Controllers
             return View();
         }
 
-        [HttpPost]
+        /*[HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateEvent(EventsDto eventDto)
         {
@@ -125,7 +123,7 @@ namespace Client.Controllers
             return View();
 
 
-        }
+        }*/
 
 
         [HttpGet("/Sign-Out")]
@@ -141,7 +139,7 @@ namespace Client.Controllers
             return View();
         }
 
-        [HttpPost]
+        /*[HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterDto registerDto)
         {
@@ -153,7 +151,7 @@ namespace Client.Controllers
                 return RedirectToAction("Login", "Admin");
             }
             return View();
-        }
+        }*/
 
         public IActionResult ForgotPassword()
         {
