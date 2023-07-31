@@ -2,7 +2,6 @@
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace API.Utilities;
@@ -27,7 +26,7 @@ public class TokenHandlers : ITokenHandlers
 
             audience: _configuration["JWTService:Audience"],
             claims: claims,
-            expires: DateTime.Now.AddMinutes(10),
+            expires: DateTime.Now.AddMinutes(30),
             signingCredentials: signinCredentials);
 
         var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);

@@ -39,10 +39,19 @@ namespace API.DTOs.Events
         [Required]
         public int Quota { get; set; }
 
+
+        public int? UsedQuota { get; set; }
+
+
+        public bool? IsActive { get; set; }
+
         [Required]
         public string Place { get; set; }
 
         [Required]
         public Guid CreatedBy { get; set; }
+
+
+        public string? MakerName { get; set; }
     }
 }

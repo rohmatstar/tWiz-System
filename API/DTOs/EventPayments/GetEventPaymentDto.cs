@@ -18,7 +18,7 @@ public class GetEventPaymentDto
     public int VaNumber { get; set; }
 
     [Required]
-    public string PaymentImage { get; set; }
+    public string? PaymentImage { get; set; }
 
     [Required]
     public bool IsValid { get; set; }
