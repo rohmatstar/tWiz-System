@@ -2,7 +2,6 @@
 using API.Data;
 using API.DTOs.Auths;
 using API.Models;
-using API.Repositories;
 using API.Utilities.Enums;
 using API.Utilities.Handlers;
 using System.Security.Claims;
@@ -110,12 +109,8 @@ public class AuthService
             }
 
             Random random = new Random();
-            int randomIndex = random.Next(0, getBanks.Count-1); // Mendapatkan indeks acak dalam rentang [0, count-1].
+            int randomIndex = random.Next(0, getBanks.Count - 1); // Mendapatkan indeks acak dalam rentang [0, count-1].
             var randomBank = getBanks[randomIndex]; // Mendapatkan bank secara acak.
-
-
-
-
 
             RegisterPayment registerPayment = new RegisterPayment
             {
@@ -277,7 +272,7 @@ public class AuthService
 
         var updateResult = _accountRepository.Update(update);
 
-        if(!updateResult)
+        if (!updateResult)
         {
             return null;
         }

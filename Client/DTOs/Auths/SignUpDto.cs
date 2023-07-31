@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Client.DTOs.Auths
 {
-    public class RegisterDto
+    public class SignUpDto
     {
         [Required]
         public string Name { get; set; }

@@ -91,7 +91,7 @@ $('#register-btn').click(function (event) {
 
             if (response.code == 200) {
                 alert("Successfull Register")
-                document.location.href = "Login";
+                document.location.href = "/Company/SignIn";
             }
             $("#register-btn").html(btn_text)
         },
@@ -142,9 +142,13 @@ $('#register-btn').click(function (event) {
                 }
             }
 
+            if (errorResponse.code == 400) {
+                error_item += "Account is already exist"
+            }
 
+            $('#register-btn').html(`<button class="btn btn-md btn-block waves-effect waves-light" type="button" id="register-btn" style="background-color: #FD5F04">Register</button>`)
             $("#error-list").append(error_item)
-            $("#register-btn").html(btn_text)
+            //$("#register-btn").html(btn_text)
         }
     });
 })

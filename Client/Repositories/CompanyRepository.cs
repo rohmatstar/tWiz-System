@@ -1,11 +1,11 @@
 ﻿using Client.Contracts;
-using Client.Models;
+using Client.DTOs.Companies;
 
 namespace Client.Repositories
 {
-    public class CompanyRepository : GeneralRepository<Company, Guid>, ICompanyRepository
+    public class CompanyRepository : GeneralRepository<GetCompanyDto, Guid>, ICompanyRepository
     {
-        public CompanyRepository(string request) : base(request)
+        public CompanyRepository(string request = "companies/") : base(request)
         {
         }
     }

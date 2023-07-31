@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Client.Utilities.Validations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Client.DTOs.Companies;
 
@@ -27,7 +28,6 @@ public class EmployeeAccountDto
 
     [Required]
     [EmailAddress]
-    [EmailDuplicateProperty("", "Email")]
     public string Email { get; set; }
 
     [Required]
