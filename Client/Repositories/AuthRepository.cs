@@ -21,7 +21,7 @@ public class AuthRepository : GeneralRepository<Account, string>, IAuthRepositor
         this.request = request;
     }
 
-    public async Task<ResponseDto<string>> Login(LoginDto loginDto)
+    public async Task<ResponseDto<string>> SignIn(SignInDto loginDto)
     {
         ResponseDto<string> entity = null!;
         StringContent content = new StringContent(JsonConvert.SerializeObject(loginDto), Encoding.UTF8, "application/json");

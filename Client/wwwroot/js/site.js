@@ -1,69 +1,76 @@
-﻿$('#login-btn').click(function (event) {
-    event.preventDefault();
-    let login_text = $("#login-btn").html();
-    $('#login-btn').html(`<div class="spinner-border text-light" role="status">
-  <span class="sr-only">Loading...</span>
-</div>`)
+﻿//$('#login-btn').click(function (event) {
+//    event.preventDefault();
+//    let login_text = $("#login-btn").html();
+//    $('#login-btn').html(`<div class="spinner-border text-light" role="status">
+//  <span class="sr-only">Loading...</span>
+//</div>`)
 
-    var email = $('#email').val();
-    var password = $('#password').val();
+//    var email = $('#email').val();
+//    var password = $('#password').val();
 
-    var data = {
-        email: email,
-        password: password
-    };
+//    var data = {
+//        email: email,
+//        password: password
+//    };
 
-    $.ajax({
-        method: 'POST',
-        url: 'https://localhost:7249/api/auths/login',
-        data: JSON.stringify(data),
-        contentType: 'application/json',
-        success: function (response) {
-            console.log(response);
-            $("#error-list").html("")
+//    $.ajax({
+//        method: 'POST',
+//        url: 'https://localhost:7249/api/auths/login',
+//        data: JSON.stringify(data),
+//        contentType: 'application/json',
+//        success: function (response) {
+//            console.log(response);
+//            $("#error-list").html("")
 
-            if (response.code == 200) {
-                document.location.href = `Login`;
-            }
-            else {
-                $("#error-list").html("Account Not Found")
-            }
-            $("#login-btn").html(login_text)
-        },
-        error: function (xhr, status, error) {
+//            if (response.code == 200) {
+//                document.location.href = `/Auth/SignUp`;
+//                console.log("berhasil")
+//            }
+//            else {
+//                $("#error-list").html("Account Not Found")
+//            }
+//            $("#login-btn").html(login_text)
+//        },
+//        error: function (xhr, status, error) {
 
-            console.log("xhr", xhr.responseJSON.code);
-            let error_item = "";
-            $("#error-list").html("")
+//            console.log("xhr", xhr.responseJSON.code);
+//            let error_item = "";
+//            $("#error-list").html("")
 
-            if (xhr.responseJSON.code == 404) {
-                $("#error-list").html("No Account Found")
-            }
+//            if (xhr.responseJSON.code == 404) {
+//                $("#error-list").html("No Account Found")
+//            }
 
-            var errorResponse = xhr.responseJSON;
+//            var errorResponse = xhr.responseJSON;
 
-            if (errorResponse && errorResponse.errors) {
-                
+//            if (errorResponse && errorResponse.errors) {
 
-                var emailErrors = errorResponse.errors.Email;
-                var passwordErrors = errorResponse.errors.Password;
 
-                if (emailErrors) {
-                    
-                    error_item += emailErrors.join('<br/>');
-                }
+//                var emailErrors = errorResponse.errors.Email;
+//                var passwordErrors = errorResponse.errors.Password;
 
-                if (passwordErrors) {
-                    error_item += "<br/>";
-                    error_item += passwordErrors.join('<br/>');
-                }
-            }
-            
-            
-            $("#error-list").append(error_item)
-            $("#login-btn").html(login_text)
-        }
-    });
+//                if (emailErrors) {
+
+//                    error_item += emailErrors.join('<br/>');
+//                }
+
+//                if (passwordErrors) {
+//                    error_item += "<br/>";
+//                    error_item += passwordErrors.join('<br/>');
+//                }
+//            }
+
+
+//            $("#error-list").append(error_item)
+//            $("#login-btn").html(login_text)
+//        }
+//    });
+//});
+
+$('#login-btn').click(function (event) {
+    //event.preventDefault();
+    //let btn_text = $("#register-btn").html();
+    $('#login-btn').html(`<div class="spinner-border text-light" role="status"><span class="sr-only">Loading...</span></div>`)
 });
 
 $('#register-btn').click(function (event) {
