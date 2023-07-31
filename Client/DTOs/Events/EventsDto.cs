@@ -1,7 +1,7 @@
-﻿using API.Utilities.Enums;
+﻿using Client.Utilities.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace API.DTOs.Events
+namespace Client.DTOs.Events
 {
     public class EventsDto
     {

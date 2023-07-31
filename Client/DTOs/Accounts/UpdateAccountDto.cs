@@ -1,7 +1,7 @@
-﻿using API.Utilities.Validations;
+﻿using Client.Utilities.Validations;
 using System.ComponentModel.DataAnnotations;
 
-namespace API.DTOs.Accounts;
+namespace Client.DTOs.Accounts;
 
 public class UpdateAccountDto
 {
@@ -10,7 +10,6 @@ public class UpdateAccountDto
 
     [Required]
     [EmailAddress]
-    [EmailDuplicateProperty("Guid", "Email")]
     public string Email { get; set; }
 
     [Required]

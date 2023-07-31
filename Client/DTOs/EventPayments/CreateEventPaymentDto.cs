@@ -1,8 +1,8 @@
-﻿using API.Utilities.Enums;
+﻿using Client.Utilities.Enums;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace API.DTOs.EventPayments;
+namespace Client.DTOs.EventPayments;
 
 public class CreateEventPaymentDto
 {

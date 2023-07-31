@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace API.DTOs.Banks;
+namespace Client.DTOs.Banks;
 
 public class GetBankDto
 {

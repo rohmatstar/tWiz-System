@@ -1,13 +1,12 @@
-﻿using API.Utilities.Validations;
+﻿using Client.Utilities.Validations;
 using System.ComponentModel.DataAnnotations;
 
-namespace API.DTOs.Accounts
+namespace Client.DTOs.Accounts
 {
     public class CreateAccountDto
     {
         [Required]
         [EmailAddress]
-        [EmailDuplicateProperty("Guid", "Email")]
         public string Email { get; set; }
 
         [Required]

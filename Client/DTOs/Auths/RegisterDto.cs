@@ -1,8 +1,7 @@
-﻿using API.Utilities.Enums;
-using API.Utilities.Validations;
+﻿using Client.Utilities.Validations;
 using System.ComponentModel.DataAnnotations;
 
-namespace API.DTOs.Auths
+namespace Client.DTOs.Auths
 {
     public class RegisterDto
     {

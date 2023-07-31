@@ -1,4 +1,4 @@
-﻿namespace API.DTOs.RegisterPayments;
+﻿namespace Client.DTOs.RegisterPayments;
 
 public class AproveRegisterPaymentDto
 {

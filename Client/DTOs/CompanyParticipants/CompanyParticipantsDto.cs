@@ -1,7 +1,7 @@
-﻿using API.Utilities.Enums;
+﻿using Client.Utilities.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace API.DTOs.CompanyParticipants;
+namespace Client.DTOs.CompanyParticipants;
 
 public class CompanyParticipantsDto
 {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace API.DTOs.Companies;
+namespace Client.DTOs.Companies;
 
 public class ImportEmployeesDto
 {

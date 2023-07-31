@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace API.DTOs.EmployeeParticipants;
+namespace Client.DTOs.EmployeeParticipants;
 
 public class UpdateEmployeParticipantsDto
 {

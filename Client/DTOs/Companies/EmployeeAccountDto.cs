@@ -1,7 +1,6 @@
-﻿using API.Utilities.Validations;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace API.DTOs.Companies;
+namespace Client.DTOs.Companies;
 
 public class EmployeeAccountDto
 {

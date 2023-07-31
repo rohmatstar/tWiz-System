@@ -1,8 +1,8 @@
-﻿using API.Utilities.Enums;
+﻿using Client.Utilities.Enums;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace API.DTOs.EmployeeParticipants
+namespace Client.DTOs.EmployeeParticipants
 {
     public class CreateEmployeeParticipantDto
     {

@@ -1,10 +1,10 @@
-﻿using API.DTOs.CompanyParticipants;
-using API.DTOs.EmployeeParticipants;
-using API.DTOs.EventPayments;
-using API.Utilities.Enums;
+﻿using Client.DTOs.CompanyParticipants;
+using Client.DTOs.EmployeeParticipants;
+using Client.DTOs.EventPayments;
+using Client.Utilities.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace API.DTOs.Events;
+namespace Client.DTOs.Events;
 
 public class GetMasterEventDto
 {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace API.DTOs.AccountRoles
+namespace Client.DTOs.AccountRoles
 {
     public class CreateAccountRoleDto
     {

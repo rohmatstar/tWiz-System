@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace API.DTOs.Accounts
+namespace Client.DTOs.Accounts
 {
     public class GetAccountDto
     {

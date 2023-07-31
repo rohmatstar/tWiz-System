@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace API.DTOs.Auths
+namespace Client.DTOs.Auths
 {
     public class ForgotPasswordDto
     {

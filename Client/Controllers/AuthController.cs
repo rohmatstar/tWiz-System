@@ -4,5 +4,6 @@ namespace Client.Controllers;
 
 public class AuthController : Controller
 {
+
 }
 

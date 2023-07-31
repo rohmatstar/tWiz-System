@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace API.DTOs.RegisterPayments;
+namespace Client.DTOs.RegisterPayments;
 
 public class PaymentSubmissionDto
 {
