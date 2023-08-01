@@ -1,6 +1,25 @@
-﻿@{
+﻿@using System.Security.Claims;
+@{
+    // JWT Parse
+    var username = User!.Identity!.Name;
+
+    string customClaimType = "GuidValue";
+    Claim guidClaim = User.Claims.FirstOrDefault(c => c.Type == customClaimType);
+    Guid? guidValue = null;
+
+    if (guidClaim != null && Guid.TryParse(guidClaim.Value, out Guid parsedGuid))
+    {
+        guidValue = parsedGuid;
+    }
+
     var role = ViewBag.Role as string;
     var avatar = $"../assets/img/avatars/{role}.png";
+
+    var signout = "CompanySignOut";
+
+    if(role != "company"){
+        signout = "EmployeeSignOut";
+    }
 
     var active = ViewBag.Active as string;
 }
@@ -47,6 +66,23 @@
 
 <body>
     @await RenderSectionAsync("Toast", required: false)
+
+    @* Modals*@
+    <div class="modal fade" id="SignOutModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content text-center">
+                <div class="modal-body">
+                    <div class="h6 mb-0">Are you sure want to sign out?</div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                    <a href="Auth/@signout" class="btn btn-primary">Absolutely!</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
@@ -254,9 +290,9 @@
                                     </li>
 
                                     <li>
-                                        <a class="dropdown-item text-danger" href="#">
+                                        <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#SignOutModal">
                                             <i class="bx bx-power-off me-2"></i>
-                                            <span class="align-middle">Log Out</span>
+                                            <span class="align-middle">Sign Out</span>
                                         </a>
                                     </li>
                                 </ul>
