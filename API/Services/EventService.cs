@@ -849,10 +849,97 @@ public class EventService
     }
 
 
-    public List<TicketDto> GetTickets()
+    public List<TicketDto>? GetTickets(QueryParamGetTicketDto queryParams)
     {
-        var userTickets = new List<TicketDto>();
+        var claimUser = _httpContextAccessor.HttpContext?.User;
 
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        var userTickets = new List<TicketDto>();
+        var events = _eventRepository.GetAll();
+
+        var time = queryParams.time;
+        var sortBy = queryParams.sort_by;
+
+
+        // time values : "all", "coming-soon", "now", "past"
+        // sortby values : "newest", "older"
+
+        var now = DateTime.Now;
+
+        if (time == "coming-soon")
+        {
+            events = events.Where(e => e.StartDate > now).ToList();
+        }
+
+        if (time == "now")
+        {
+            events = events.Where(e => e.StartDate < now && e.EndDate > now).ToList();
+        }
+
+        if (time == "past")
+        {
+            events = events.Where(e => e.EndDate < now).ToList();
+        }
+
+        if (sortBy == "newest")
+        {
+            events = events.OrderBy(e => e.StartDate).ToList();
+        }
+
+        if (sortBy == "older")
+        {
+            events = events.OrderByDescending(e => e.StartDate).ToList();
+        }
+
+
+
+        if (userRole == nameof(RoleLevel.Company))
+        {
+            var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
+
+            if (company is null)
+            {
+                return null;
+            }
+
+            var companyParticipants = _companyParticipantRepository.GetAll();
+
+            foreach (var e in events)
+            {
+                var companyAsParticipantInEvent = companyParticipants.FirstOrDefault(cp => cp.CompanyGuid == company.Guid && cp.EventGuid == e.Guid);
+                if (companyAsParticipantInEvent is not null || e.CreatedBy == company.Guid)
+                {
+                    userTickets.Add(new TicketDto { EventName = e.Name, ParticipantName = company.Name, Place = e.Place, StartDate = e.StartDate.ToString("dd MMMM yyyy, HH:mm WIB"), TicketCode = $"{Math.Abs(e.Guid.GetHashCode())} + {Math.Abs(companyAsParticipantInEvent!.Guid.GetHashCode())}" });
+                }
+            }
+        }
+
+
+        if (userRole == nameof(RoleLevel.Employee))
+        {
+            var employee = _employeeRepository.GetAll().FirstOrDefault(e => e.AccountGuid == Guid.Parse(accountGuid!));
+
+            if (employee is null)
+            {
+                return null;
+            }
+
+            var employeeParticipants = _employeeParticipantRepository.GetAll();
+
+            events = events.Where(e => e.IsActive == true).ToList();
+
+            foreach (var e in events)
+            {
+                var employeeAsParticipantInEvent = employeeParticipants.FirstOrDefault(ep => ep.EmployeeGuid == employee.Guid && ep.EventGuid == e.Guid);
+
+                if (employeeAsParticipantInEvent is not null)
+                {
+                    userTickets.Add(new TicketDto { EventName = e.Name, ParticipantName = employee.FullName, Place = e.Place, StartDate = e.StartDate.ToString("dd MMMM yyyy, HH:mm WIB"), TicketCode = $"{Math.Abs(e.Guid.GetHashCode())} + {Math.Abs(employeeAsParticipantInEvent!.Guid.GetHashCode())}" });
+                }
+            }
+        }
 
         return userTickets;
     }
