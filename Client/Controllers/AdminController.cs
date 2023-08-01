@@ -2,10 +2,7 @@
 using Client.DTOs.Employees;
 using Client.Models;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Protocol.Core.Types;
 using System.Diagnostics;
-using Client.Contracts;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Client.Controllers
 {
@@ -20,33 +17,33 @@ namespace Client.Controllers
             this.employeeRepository = employeeRepository;
         }
 
-      /*  [Authorize]
-        public IActionResult IndexAuth()
-        {
-            if (HttpContext.Session.GetString("JWTToken") != null)
-            {
-                string token = HttpContext.Session.GetString("JWTToken")!;
-                return View("Index", token);
-            }
+        /*  [Authorize]
+          public IActionResult IndexAuth()
+          {
+              if (HttpContext.Session.GetString("JWTToken") != null)
+              {
+                  string token = HttpContext.Session.GetString("JWTToken")!;
+                  return View("Index", token);
+              }
 
-            return View("Login", "Admin");
-        }
+              return View("Login", "Admin");
+          }
 
-        [Authorize]*/
+          [Authorize]*/
         public async Task<IActionResult> Index()
         {
 
 
             var result = await employeeRepository.Get();
             var ListEmployee = new List<GetMasterEmployeeDtoClient>();
-            
+
             if (result.Data != null)
             {
                 ListEmployee = result.Data.ToList();
             }
             return View(ListEmployee);
 
-          
+
 
         }
         public IActionResult Login()
@@ -58,30 +55,25 @@ namespace Client.Controllers
             return View();
         }
 
-      /*  [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginDto loginDto)
-        {
-            var result = await repository.Login(loginDto);
-            if (result.Code == "200")
-            {
-                HttpContext.Session.SetString("JWTToken", result.Data);
-                return RedirectToAction("Index", "Admin");
-            }
-            return View();
+        /*  [HttpPost]
+          [ValidateAntiForgeryToken]
+          public async Task<IActionResult> Login(LoginDto loginDto)
+          {
+              var result = await repository.Login(loginDto);
+              if (result.Code == "200")
+              {
+                  HttpContext.Session.SetString("JWTToken", result.Data);
+                  return RedirectToAction("Index", "Admin");
+              }
+              return View();
 
 
-        }*/
+          }*/
 
         /*public IActionResult Login()
         {
             return View();
         }*/
-
-        public IActionResult Register()
-        {
-            return View();
-        }
 
         public IActionResult ForgotPassword()
         {

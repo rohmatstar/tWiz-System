@@ -1,9 +1,9 @@
 ﻿using Client.Utilities.Validations;
 using System.ComponentModel.DataAnnotations;
 
-namespace Client.DTOs.Auths
+namespace Client.DTOs.Accounts
 {
-    public class LoginDto
+    public class CreateAccountDto
     {
         [Required]
         [EmailAddress]
@@ -12,5 +12,11 @@ namespace Client.DTOs.Auths
         [Required]
         [PasswordPolicy]
         public string Password { get; set; }
+
+        [Required]
+        public bool IsActive { get; set; }
+        public int? Token { get; set; }
+        public bool? TokenIsUsed { get; set; }
+        public DateTime? TokenExpiration { get; set; }
     }
 }

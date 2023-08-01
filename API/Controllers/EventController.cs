@@ -21,12 +21,12 @@ public class EventController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetEvents()
+    public IActionResult GetEvents([FromQuery] QueryParamGetEventDto queryParams)
     {
-        var eventsData = _eventService.GetEvents();
+        var eventsData = _eventService.GetEvents(queryParams);
         if (eventsData != null)
         {
-            return Ok(new ResponseHandler<IEnumerable<EventsDto>>
+            return Ok(new ResponseHandler<IEnumerable<GetEventDto>>
             {
                 Code = StatusCodes.Status200OK,
                 Status = HttpStatusCode.OK.ToString(),

@@ -4,11 +4,7 @@ using API.Services;
 using API.Utilities.Handlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Net;
-using System.Security.Claims;
-using System.Text;
 
 namespace API.Controllers;
 
@@ -47,37 +43,28 @@ public class AuthController : ControllerBase
         });
     }
 
-	[HttpPost("login")]
-	public ActionResult Login(LoginDto loginDto)
-	{
-		var login = _authService.Login(loginDto);
+    [HttpPost("login")]
+    public ActionResult Login(LoginDto loginDto)
+    {
+        var login = _authService.Login(loginDto);
 
-        if (login is "-1")
+        if (login is "-1" || login is "0")
         {
             return NotFound(new ResponseHandler<LoginDto>
             {
-                Code = StatusCodes.Status404NotFound,
+                Code = StatusCodes.Status400BadRequest,
                 Status = HttpStatusCode.BadRequest.ToString(),
-                Message = "Data null"
+                Message = "Email or password is wrong"
             });
         }
 
-        if (login is "0")
-        {
-            return BadRequest(new ResponseHandler<LoginDto>
-            {
-                Code = StatusCodes.Status400BadRequest,
-                Status = HttpStatusCode.BadRequest.ToString(),
-                Message = "Data not created"
-            });
-        }
         if (login is "-2")
         {
             return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<LoginDto>
             {
                 Code = StatusCodes.Status500InternalServerError,
                 Status = HttpStatusCode.InternalServerError.ToString(),
-                Message = "Otp does not match"
+                Message = "Internal server error"
             });
         }
 
@@ -86,7 +73,7 @@ public class AuthController : ControllerBase
             Code = StatusCodes.Status200OK,
             Status = HttpStatusCode.OK.ToString(),
             Message = "Successfully login",
-            Data = login
+            Data = login // token
         });
     }
 

@@ -1,72 +1,76 @@
-﻿new DataTable('#data-table');
+﻿//$('#login-btn').click(function (event) {
+//    event.preventDefault();
+//    let login_text = $("#login-btn").html();
+//    $('#login-btn').html(`<div class="spinner-border text-light" role="status">
+//  <span class="sr-only">Loading...</span>
+//</div>`)
 
+//    var email = $('#email').val();
+//    var password = $('#password').val();
+
+//    var data = {
+//        email: email,
+//        password: password
+//    };
+
+//    $.ajax({
+//        method: 'POST',
+//        url: 'https://localhost:7249/api/auths/login',
+//        data: JSON.stringify(data),
+//        contentType: 'application/json',
+//        success: function (response) {
+//            console.log(response);
+//            $("#error-list").html("")
+
+//            if (response.code == 200) {
+//                document.location.href = `/Auth/SignUp`;
+//                console.log("berhasil")
+//            }
+//            else {
+//                $("#error-list").html("Account Not Found")
+//            }
+//            $("#login-btn").html(login_text)
+//        },
+//        error: function (xhr, status, error) {
+
+//            console.log("xhr", xhr.responseJSON.code);
+//            let error_item = "";
+//            $("#error-list").html("")
+
+//            if (xhr.responseJSON.code == 404) {
+//                $("#error-list").html("No Account Found")
+//            }
+
+//            var errorResponse = xhr.responseJSON;
+
+//            if (errorResponse && errorResponse.errors) {
+
+
+//                var emailErrors = errorResponse.errors.Email;
+//                var passwordErrors = errorResponse.errors.Password;
+
+//                if (emailErrors) {
+
+//                    error_item += emailErrors.join('<br/>');
+//                }
+
+//                if (passwordErrors) {
+//                    error_item += "<br/>";
+//                    error_item += passwordErrors.join('<br/>');
+//                }
+//            }
+
+
+//            $("#error-list").append(error_item)
+//            $("#login-btn").html(login_text)
+//        }
+//    });
+//});
 
 $('#login-btn').click(function (event) {
-    event.preventDefault();
-    let login_text = $("#login-btn").html();
-    $('#login-btn').html(`<div class="spinner-border text-light" role="status">
-  <span class="sr-only">Loading...</span>
-</div>`)
-
-    var email = $('#email').val();
-    var password = $('#password').val();
-
-    var data = {
-        email: email,
-        password: password
-    };
-
-    $.ajax({
-        method: 'POST',
-        url: 'https://localhost:7249/api/auths/login',
-        data: JSON.stringify(data),
-        contentType: 'application/json',
-        success: function (response) {
-            console.log(response);
-            $("#error-list").html("")
-
-            if (response.code == 200) {
-                document.location.href = `Login`;
-            }
-            else {
-                $("#error-list").html("Account Not Found")
-            }
-            $("#login-btn").html(login_text)
-        },
-        error: function (xhr, status, error) {
-
-            console.log("xhr", xhr.responseJSON.code);
-            let error_item = "";
-            $("#error-list").html("")
-
-            if (xhr.responseJSON.code == 404) {
-                $("#error-list").html("No Account Found")
-            }
-
-            var errorResponse = xhr.responseJSON;
-
-            if (errorResponse && errorResponse.errors) {
-                
-
-                var emailErrors = errorResponse.errors.Email;
-                var passwordErrors = errorResponse.errors.Password;
-
-                if (emailErrors) {
-                    
-                    error_item += emailErrors.join('<br/>');
-                }
-
-                if (passwordErrors) {
-                    error_item += "<br/>";
-                    error_item += passwordErrors.join('<br/>');
-                }
-            }
-            
-            
-            $("#error-list").append(error_item)
-            $("#login-btn").html(login_text)
-        }
-    });
+    //event.preventDefault();
+    //let btn_text = $("#register-btn").html();
+    $('#login-btn').html(`<div class="spinner-border text-light" role="status"><span class="sr-only">Loading...</span></div>`)
 });
 
 $('#register-btn').click(function (event) {
@@ -94,7 +98,7 @@ $('#register-btn').click(function (event) {
 
             if (response.code == 200) {
                 alert("Successfull Register")
-                document.location.href = "Login";
+                document.location.href = "/Company/SignIn";
             }
             $("#register-btn").html(btn_text)
         },
@@ -145,9 +149,13 @@ $('#register-btn').click(function (event) {
                 }
             }
 
+            if (errorResponse.code == 400) {
+                error_item += "Account is already exist"
+            }
 
+            $('#register-btn').html(`<button class="btn btn-md btn-block waves-effect waves-light" type="button" id="register-btn" style="background-color: #FD5F04">Register</button>`)
             $("#error-list").append(error_item)
-            $("#register-btn").html(btn_text)
+            //$("#register-btn").html(btn_text)
         }
     });
 })

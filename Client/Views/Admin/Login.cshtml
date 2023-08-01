@@ -1,4 +1,4 @@
-﻿@model Client.DTOs.Auths.LoginDto
+﻿@model Client.DTOs.Auths.SignInDto
 
 @{
     ViewData["Title"] = "Login";
@@ -73,7 +73,7 @@
 
                                     <div class="form-group row text-center mt-2">
                                         <div class="col-12">
-                                            <button id="login-btns" class="btn btn-md btn-block waves-effect waves-light" type="submit" style="background-color: #FD5F04">Sign In</button>
+                                            <button id="login-btn" class="btn btn-md btn-block waves-effect waves-light" type="submit" style="background-color: #FD5F04">Sign In</button>
                                         </div>
                                     </div>
 
@@ -85,7 +85,7 @@
 
                                 <div class="row mt-4 pt-2">
                                     <div class="col-sm-12 text-center">
-                                        <p class="text-muted mb-0">Don't have tWiz account? <a asp-controller="Admin" asp-action="Register" class="text-dark ml-1"><b>Register Now!</b></a></p>
+                                        <p class="text-muted mb-0">Don't have tWiz account? <a asp-controller="Auth" asp-action="SignUp" class="text-dark ml-1"><b>Register Now!</b></a></p>
                                     </div>
                                 </div>
 

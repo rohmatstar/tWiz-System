@@ -491,5 +491,42 @@ public class SeederHandler
 
         return randomString;
     }
+
+    public void GenerateBanks()
+    {
+        using var transaction = _context.Database.BeginTransaction();
+
+        try
+        {
+            var bri = new Bank
+            {
+                Guid = new Guid(),
+                Code = "BRI",
+                Name = "Bank Rakyat Indonesia",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now,
+            };
+
+            var mandiri = new Bank
+            {
+                Guid = new Guid(),
+                Code = "BM",
+                Name = "Bank Mandiri",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now,
+            };
+
+            _context.Set<Bank>().AddRange(new List<Bank> { bri, mandiri });
+
+            _context.SaveChanges();
+
+            transaction.Commit();
+        }
+        catch
+        {
+            transaction.Rollback();
+        }
+
+    }
 }
 
