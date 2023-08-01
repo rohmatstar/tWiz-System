@@ -69,6 +69,10 @@ app.UseStatusCodePages(async context =>
     {
         response.Redirect("/Error/Forbidden");
     }
+    else if (response.StatusCode.Equals((int)HttpStatusCode.MethodNotAllowed))
+    {
+        response.Redirect("/Error/MethodNotAllowed");
+    }
 });
 
 app.UseSession();
