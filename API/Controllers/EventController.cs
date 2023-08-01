@@ -265,5 +265,28 @@ public class EventController : ControllerBase
             Message = "You cannot access!!"
         });
     }
+
+    [HttpGet("tickets")]
+    public IActionResult GetTickets([FromQuery] QueryParamGetTicketDto queryParams)
+    {
+        var personalEvents = _eventService.GetTickets(queryParams);
+        if (personalEvents is not null)
+        {
+            return Ok(new ResponseHandler<List<TicketDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success",
+                Data = personalEvents
+            });
+        }
+
+        return StatusCode(StatusCodes.Status403Forbidden, new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status403Forbidden,
+            Status = HttpStatusCode.Forbidden.ToString(),
+            Message = "You cannot access!!"
+        });
+    }
 }
 

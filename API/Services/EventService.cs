@@ -909,9 +909,20 @@ public class EventService
             foreach (var e in events)
             {
                 var companyAsParticipantInEvent = companyParticipants.FirstOrDefault(cp => cp.CompanyGuid == company.Guid && cp.EventGuid == e.Guid);
-                if (companyAsParticipantInEvent is not null || e.CreatedBy == company.Guid)
+
+                if (companyAsParticipantInEvent is not null)
                 {
-                    userTickets.Add(new TicketDto { EventName = e.Name, ParticipantName = company.Name, Place = e.Place, StartDate = e.StartDate.ToString("dd MMMM yyyy, HH:mm WIB"), TicketCode = $"{Math.Abs(e.Guid.GetHashCode())} + {Math.Abs(companyAsParticipantInEvent!.Guid.GetHashCode())}" });
+                    var ticketCode = $"{Math.Abs(e.Guid.GetHashCode())}-{Math.Abs(companyAsParticipantInEvent!.Guid.GetHashCode())}";
+                    var ticket = new TicketDto
+                    {
+                        EventName = e.Name,
+                        ParticipantName = company.Name,
+                        Place = e.Place,
+                        StartDate = e.StartDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+                        TicketCode = ticketCode
+                    };
+
+                    userTickets.Add(ticket);
                 }
             }
         }
@@ -934,9 +945,20 @@ public class EventService
             {
                 var employeeAsParticipantInEvent = employeeParticipants.FirstOrDefault(ep => ep.EmployeeGuid == employee.Guid && ep.EventGuid == e.Guid);
 
+
                 if (employeeAsParticipantInEvent is not null)
                 {
-                    userTickets.Add(new TicketDto { EventName = e.Name, ParticipantName = employee.FullName, Place = e.Place, StartDate = e.StartDate.ToString("dd MMMM yyyy, HH:mm WIB"), TicketCode = $"{Math.Abs(e.Guid.GetHashCode())} + {Math.Abs(employeeAsParticipantInEvent!.Guid.GetHashCode())}" });
+                    var ticketCode = $"{Math.Abs(e.Guid.GetHashCode())}-{Math.Abs(employeeAsParticipantInEvent!.Guid.GetHashCode())}";
+                    var ticket = new TicketDto
+                    {
+                        EventName = e.Name,
+                        ParticipantName = employee.FullName,
+                        Place = e.Place,
+                        StartDate = e.StartDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+                        TicketCode = ticketCode
+                    };
+
+                    userTickets.Add(ticket);
                 }
             }
         }
