@@ -1,7 +1,9 @@
 ﻿using API.DTOs.Accounts;
+using API.DTOs.Events;
 using API.Services;
 using API.Utilities.Handlers;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 using System.Net;
 
 namespace API.Controllers;
@@ -147,6 +149,21 @@ public class AccountController : ControllerBase
             Status = HttpStatusCode.OK.ToString(),
             Message = "Successfully deleted"
         });
+    }
+
+    [HttpGet("Test")]
+    public IActionResult Test([FromQuery] QueryParamGetEventDto queryParams)
+    {
+        string dateString = "31 July 2023, 14:28 WIB";
+        string format = "dd MMMM yyyy, HH:mm 'WIB'";
+
+        DateTime dateTime = DateTime.ParseExact(dateString, format, CultureInfo.InvariantCulture);
+
+        Console.WriteLine(dateTime); // Output: 7/31/2023 2:28:00 PM
+
+
+
+        return Ok();
     }
 
 }

@@ -1,11 +1,24 @@
+﻿using Client.Contracts;
 ﻿using Client.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace Client.Controllers
 {
+    private readonly IAuthRepository _authRepository;
+
     public class AuthController : Controller
     {
+        public AuthController(IAuthRepository repository)
+        {
+            _authRepository = repository;
+        }
+
+        public IActionResult SignUp()
+        {
+            return View();
+        }
+
         /*[Authorize]*/
         public IActionResult Login()
         {

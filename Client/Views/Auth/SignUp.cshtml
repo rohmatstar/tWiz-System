@@ -1,0 +1,109 @@
+﻿@{
+    ViewData["Title"] = "Sign Up";
+    Layout = "_LayoutAuthentication";
+}
+
+<div class="account-pages w-100 mt-5 mb-5">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6 col-xl-5">
+                <div class="card mb-0">
+
+                    <div class="card-body p-4">
+
+                        <div class="account-box">
+                            <div class="account-logo-box">
+                                <div class="text-center">
+                                    <a href="index.html">
+                                        <img src="~/img/tWiz-Logo.png" alt="" height="30">
+                                    </a>
+                                </div>
+                                <h5 class="mb-1 mt-4">Register</h5>
+                                <p class="mb-0">Get access to tWiz System or <a asp-controller="Company" asp-action="SignIn" class="text-dark ml-1"><b>Login Now!</b></a></p>
+                            </div>
+
+                            <div class="account-content mt-4">
+                                <form class="form-horizontal" action="#">
+
+                                    <div class="form-group row">
+                                        <div class="col-12">
+                                            <label for="username">Company Name</label>
+                                            <input class="form-control" type="text" id="name" required="" placeholder="PT My Company">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-6">
+                                            <label for="emailaddress">Email Address</label>
+                                            <input class="form-control" type="email" id="email" required="" placeholder="company@mail.com">
+                                        </div>
+
+                                        <div class="col-6">
+                                            <label for="phoneNumber">Phone Number</label>
+                                            <input class="form-control" type="number" min="0" id="phone-number" required="" placeholder="+82 347563487567">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-12">
+                                            <label for="address">Address</label>
+                                            <input class="form-control" type="text" id="address" required="" placeholder="Address">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-6">
+                                            <label for="password">Password</label>
+                                            <input class="form-control" type="password" required="" id="password" placeholder="Enter password">
+                                        </div>
+
+                                        <div class="col-6">
+                                            <label for="password">Confirm Password</label>
+                                            <input class="form-control" type="password" required="" id="confirm-password" placeholder="Confirm password">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row d-none">
+                                        <div class="col-12">
+
+                                            <div class="checkbox checkbox-success">
+                                                <input id="remember" type="checkbox">
+                                                <label for="remember">
+                                                    I accept <a href="#">Terms and Conditions</a>
+                                                </label>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row text-center mt-2">
+                                        <div class="col-12">
+                                            <button class="btn btn-md btn-block waves-effect waves-light" type="button" id="register-btn" style="background-color: #FD5F04">Register</button>
+                                        </div>
+                                    </div>
+
+                                </form>
+
+                                <div id="error-list" class="text-danger"></div>
+
+                                <div class="row mt-4 pt-2 d-none">
+                                    <div class="col-sm-12 text-center">
+                                        <p class="text-muted">Already have tWiz Account?  <a asp-controller="Company" asp-action="SignIn" class="text-dark ml-1"><b>Login Now!</b></a></p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- end card-body -->
+            </div>
+            <!-- end card -->
+        </div>
+        <!-- end row -->
+    </div>
+    <!-- end container -->
+</div>
+<!-- end page -->

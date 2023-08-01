@@ -17,6 +17,7 @@ builder.Services.AddScoped(typeof(IRepository<,>), typeof(GeneralRepository<,>))
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 /*builder.Services.AddScoped<IEventRepository, EventRepository>();*/
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

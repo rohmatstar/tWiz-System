@@ -2,7 +2,6 @@
 using API.Data;
 using API.DTOs.Auths;
 using API.Models;
-using API.Repositories;
 using API.Utilities.Enums;
 using API.Utilities.Handlers;
 using System.Linq;
@@ -111,12 +110,8 @@ public class AuthService
             }
 
             Random random = new Random();
-            int randomIndex = random.Next(0, getBanks.Count-1); // Mendapatkan indeks acak dalam rentang [0, count-1].
+            int randomIndex = random.Next(0, getBanks.Count - 1); // Mendapatkan indeks acak dalam rentang [0, count-1].
             var randomBank = getBanks[randomIndex]; // Mendapatkan bank secara acak.
-
-
-
-
 
             RegisterPayment registerPayment = new RegisterPayment
             {
@@ -168,13 +163,13 @@ public class AuthService
         var account = _accountRepository.GetByEmail(loginDto.Email);
         if (account is null)
         {
-            return "0";
+            return "0"; // account not found
         }
 
         var isPasswordValid = HashingHandler.ValidatePassword(loginDto.Password, account.Password);
         if (!isPasswordValid)
         {
-            return "-1";
+            return "-1"; // wrong password
         }
 
         var claims = new List<Claim>()
@@ -208,7 +203,7 @@ public class AuthService
         }
         catch
         {
-            return "-2";
+            return "-2"; // generate token is failed
         }
     }
 
@@ -288,7 +283,7 @@ public class AuthService
 
         var updateResult = _accountRepository.Update(update);
 
-        if(!updateResult)
+        if (!updateResult)
         {
             return null;
         }

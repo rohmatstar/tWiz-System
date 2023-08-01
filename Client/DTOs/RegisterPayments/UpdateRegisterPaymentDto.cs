@@ -1,0 +1,29 @@
+﻿using Client.Utilities.Enums;
+using System.ComponentModel.DataAnnotations;
+
+namespace Client.DTOs.RegisterPayments;
+
+public class UpdateRegisterPaymentDto
+{
+    [Required]
+    public Guid Guid { get; set; }
+
+    [Required]
+    public Guid CompanyGuid { get; set; }
+
+    [Required]
+    public int VaNumber { get; set; }
+
+    [Required]
+    public decimal Price { get; set; }
+    public string? PaymentImage { get; set; }
+
+    [Required]
+    public bool IsValid { get; set; }
+
+    [Required]
+    public StatusPayment StatusPayment { get; set; }
+
+    [Required]
+    public Guid BankGuid { get; set; }
+}
