@@ -3,7 +3,7 @@
 @{
     var toast = TempData["toast"] as dynamic;
 
-    ViewData["Title"] = "Sign In";
+    ViewData["Title"] = "Sign in as Employee";
     Layout = "_LayoutAuth";
 }
 
@@ -76,12 +76,5 @@
                 <button class="btn btn-primary d-grid w-100" type="submit">Sign in</button>
             </div>
         </form>
-
-        <p class="text-center">
-            <span>New on our platform?</span>
-            <a asp-asp-controller="Auth" asp-action="SignUp">
-                <span>Create an account</span>
-            </a>
-        </p>
     </div>
 </div>

@@ -1,6 +1,6 @@
 ﻿@model Client.DTOs.Auths.RegisterDto
 @{
-    ViewData["Title"] = "Sign up as Company";
+    ViewData["Title"] = "Sign Up";
     Layout = "_LayoutAuth";
 }
 
@@ -16,7 +16,7 @@
         <h4 class="mb-2">Adventure starts here</h4>
         <p class="mb-4">Make your event management easy and fun!</p>
 
-        <form id="formAuthentication" class="mb-3" asp-action="SignUp" method="POST">
+        <form id="formAuthentication" class="mb-3" asp-action="Register" method="POST">
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input type="email"
@@ -57,7 +57,7 @@
 
         <p class="text-center">
             <span>Already have an account?</span>
-            <a asp-action="SignIn">
+            <a asp-action="CompanySignIn">
                 <span>Sign in instead</span>
             </a>
         </p>

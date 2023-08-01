@@ -9,7 +9,7 @@ namespace Client.Controllers
     {
         private void SetCommonViewBagData()
         {
-            ViewBag.Role = "company";
+            ViewBag.Role = "employee";
             ViewBag.Username = "PT Mitra Integrasi Informatika";
         }
         /*[Authorize]*/

@@ -23,7 +23,7 @@ namespace Client.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            return RedirectToAction("SignIn", "Auth");
+            return RedirectToAction("CompanySignIn", "Auth");
         }
 
         /*[Authorize]*/
@@ -35,7 +35,14 @@ namespace Client.Controllers
 
         /*[Authorize]*/
         [HttpGet]
-        public IActionResult SignIn()
+        public IActionResult EmployeeSignIn()
+        {
+            return View();
+        }
+
+        /*[Authorize]*/
+        [HttpGet]
+        public IActionResult CompanySignIn()
         {
             return View();
         }
@@ -57,7 +64,7 @@ namespace Client.Controllers
                 };
 
                 HttpContext.Session.SetString("JWTToken", token!);
-                return RedirectToAction("Index", "Dashboard");
+                return View("Dashboard");
             }
 
             TempData["toast"] = new ToastDto
