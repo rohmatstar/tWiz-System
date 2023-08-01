@@ -4,16 +4,18 @@ using System.Diagnostics;
 
 namespace Client.Controllers
 {
-    public class HomeController : Controller
+    public class ErrorController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public IActionResult Unauthorize()
         {
-            _logger = logger;
+            return View();
         }
-
-        public IActionResult Index()
+        public IActionResult Notfound()
+        {
+            return View();
+        }
+        public IActionResult Forbidden()
         {
             return View();
         }
