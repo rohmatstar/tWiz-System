@@ -19,75 +19,109 @@ namespace Client.Controllers
             _authRepository = authRepository;
         }
 
-        /*[Authorize]*/
+        /* ===== General =======*/
         [HttpGet]
         public IActionResult Index()
         {
             return RedirectToAction("CompanySignIn", "Auth");
         }
+        public IActionResult ForgetPassword()
+        {
+            return View();
+        }
 
-        /*[Authorize]*/
+        public IActionResult ResetPassword()
+        {
+            return View();
+        }
+
+        /* ===== Company =======*/
         [HttpGet]
         public IActionResult SignUp()
         {
             return View();
         }
 
-        /*[Authorize]*/
-        [HttpGet]
-        public IActionResult EmployeeSignIn()
-        {
-            return View();
-        }
-
-        /*[Authorize]*/
         [HttpGet]
         public IActionResult CompanySignIn()
         {
+            if (User.Identity!.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Dashboard");
+            }
             return View();
         }
 
-        /*[Authorize]*/
         [HttpPost]
-        public async Task<IActionResult> SignIn(SignInDto signDto)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CompanySignIn(SignInDto signDto)
         {
             var result = await _authRepository.SignIn(signDto);
             if (result.Code == 200)
             {
                 var token = result?.Data;
-
+                HttpContext.Session.SetString("JWTToken", token!);
+                return RedirectToAction("Index", "Dashboard");
+            }
+            else
+            {
                 TempData["toast"] = new ToastDto
                 {
-                    Color = "success",
-                    Title = "Signed in",
-                    Subtitle = "Welcome, you have signed in to tWiz!"
+                    Color = "danger",
+                    Title = "Sign in Failed",
+                    Subtitle = "So sorry, there is some mistake when signing in you"
                 };
 
-                HttpContext.Session.SetString("JWTToken", token!);
-                return View("Dashboard");
+                return View();
             }
+        }
+        public IActionResult CompanySignOut()
+        {
+            HttpContext.Session.Remove("JWTToken");
+            return RedirectToAction("CompanySignIn", "Auth");
+        }
 
-            TempData["toast"] = new ToastDto
+        /* ===== Employee =======*/
+        [HttpGet]
+        public IActionResult EmployeeSignIn()
+        {
+            if (User.Identity!.IsAuthenticated)
             {
-                Color = "danger",
-                Title = "Sign in Failed",
-                Subtitle = "So sorry, there is some mistake when signing in you"
-            };
-
+                return RedirectToAction("Index", "Event");
+            }
             return View();
         }
 
-        /*[Authorize]*/
-        public IActionResult ForgetPassword()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EmployeeSignIn(SignInDto signDto)
         {
-            return View();
+            var result = await _authRepository.SignIn(signDto);
+            if (result.Code == 200)
+            {
+                var token = result?.Data;
+                HttpContext.Session.SetString("JWTToken", token!);
+                return RedirectToAction("Index", "Event");
+            }
+            else
+            {
+                TempData["toast"] = new ToastDto
+                {
+                    Color = "danger",
+                    Title = "Sign in Failed",
+                    Subtitle = "So sorry, there is some mistake when signing in you"
+                };
+
+                return View();
+            }
+        }
+        public IActionResult EmployeeSignOut()
+        {
+            HttpContext.Session.Remove("JWTToken");
+            return RedirectToAction("EmployeeSignIn", "Auth");
         }
 
-        /*[Authorize]*/
-        public IActionResult ResetPassword()
-        {
-            return View();
-        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

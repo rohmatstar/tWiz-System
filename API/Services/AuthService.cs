@@ -186,7 +186,7 @@ public class AuthService
         }
         var accountName = (from an in getAccountName select an.Name);
 
-        claims.AddRange(accountName.Select(name => new Claim(ClaimTypes.Name, accountName)));*/
+        claims.AddRange(accountName.Select(name => new Claim(ClaimTypes.Name, name)));*/
 
         var getAccountRole = _accountRoleRepository.GetByGuidCompany(account.Guid);
 
