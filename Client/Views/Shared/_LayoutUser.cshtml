@@ -67,116 +67,137 @@
 
                 <div class="menu-inner-shadow"></div>
 
-                <ul class="menu-inner py-1">
-                    <li class="menu-item @(active == "dashboard" ? "active" : "")">
-                        <a asp-controller="Dashboard" asp-action="Index" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                            <div>Dashboard</div>
-                        </a>
-                    </li>
+                @if (role == "company")
+                {
+                    <ul class="menu-inner py-1">
+                        <li class="menu-item @(active == "dashboard" ? "active" : "")">
+                            <a asp-controller="Dashboard" asp-action="Index" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                                <div>Dashboard</div>
+                            </a>
+                        </li>
 
-                    <li class="menu-item @(active == "event" || active == "create_event" || active == "invited_event" || active == "ticket" ? "active open" : "")">
-                        <a href="#" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-cube"></i>
-                            <div>Events</div>
-                        </a>
+                        <li class="menu-item @(active == "event" || active == "create_event" || active == "invited_event" || active == "ticket" ? "active open" : "")">
+                            <a href="#" class="menu-link menu-toggle">
+                                <i class="menu-icon tf-icons bx bx-cube"></i>
+                                <div>Events</div>
+                            </a>
 
-                        <ul class="menu-sub">
-                            <li class="menu-item @(active == "create_event" ? "active" : "")">
-                                <a asp-controller="Event" asp-action="Create" class="menu-link">
-                                    <div>Create Event</div>
-                                </a>
-                            </li>
-                            <li class="menu-item @(active == "event" ? "active" : "")">
-                                <a asp-controller="Event" asp-action="Index" class="menu-link">
-                                    <div>Events List</div>
-                                </a>
-                            </li>
-                            <li class="menu-item @(active == "invited_event" ? "active" : "")">
-                                <a asp-controller="Event" asp-action="Invited" class="menu-link">
-                                    <div>Invited Events</div>
-                                </a>
-                            </li>
-                            <li class="menu-item @(active == "ticket" ? "active" : "")">
-                                <a asp-controller="Event" asp-action="Ticket" class="menu-link">
-                                    <div>Ticket</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                            <ul class="menu-sub">
+                                <li class="menu-item @(active == "create_event" ? "active" : "")">
+                                    <a asp-controller="Event" asp-action="Create" class="menu-link">
+                                        <div>Create Event</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item @(active == "event" ? "active" : "")">
+                                    <a asp-controller="Event" asp-action="Index" class="menu-link">
+                                        <div>Events List</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item @(active == "invited_event" ? "active" : "")">
+                                    <a asp-controller="Event" asp-action="Invited" class="menu-link">
+                                        <div>Invited Events</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item @(active == "ticket" ? "active" : "")">
+                                    <a asp-controller="Event" asp-action="Ticket" class="menu-link">
+                                        <div>Ticket</div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
 
-                    <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-group"></i>
-                            <div>Employees</div>
-                        </a>
+                        <li class="menu-item">
+                            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                <i class="menu-icon tf-icons bx bx-group"></i>
+                                <div>Employees</div>
+                            </a>
 
-                        <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="#" class="menu-link">
-                                    <div>Create Employee</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="#" class="menu-link">
-                                    <div>Employees List</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                            <ul class="menu-sub">
+                                <li class="menu-item">
+                                    <a href="#" class="menu-link">
+                                        <div>Create Employee</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="#" class="menu-link">
+                                        <div>Employees List</div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
 
-                    <li class="menu-item">
-                        <a href="#" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-buildings"></i>
-                            <div>Companies</div>
-                        </a>
-                    </li>
+                        <li class="menu-item">
+                            <a href="#" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-buildings"></i>
+                                <div>Companies</div>
+                            </a>
+                        </li>
 
-                    <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-credit-card-alt"></i>
-                            <div>Transaction</div>
-                        </a>
+                        <li class="menu-item">
+                            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                <i class="menu-icon tf-icons bx bx-credit-card-alt"></i>
+                                <div>Transaction</div>
+                            </a>
 
-                        <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="#" class="menu-link">
-                                    <div>Transactions List</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="#" class="menu-link">
-                                    <div>Approved</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="#" class="menu-link">
-                                    <div>Rejected</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                            <ul class="menu-sub">
+                                <li class="menu-item">
+                                    <a href="#" class="menu-link">
+                                        <div>Transactions List</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="#" class="menu-link">
+                                        <div>Approved</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="#" class="menu-link">
+                                        <div>Rejected</div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
 
-                    <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-spreadsheet"></i>
-                            <div>Report</div>
-                        </a>
+                        <li class="menu-item">
+                            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                <i class="menu-icon tf-icons bx bx-spreadsheet"></i>
+                                <div>Report</div>
+                            </a>
 
-                        <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="#" class="menu-link">
-                                    <div>Events Reporting</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="#" class="menu-link">
-                                    <div>Payment Reporting</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+                            <ul class="menu-sub">
+                                <li class="menu-item">
+                                    <a href="#" class="menu-link">
+                                        <div>Events Reporting</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="#" class="menu-link">
+                                        <div>Payment Reporting</div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                }
+                else
+                {
+                    <ul class="menu-inner py-1">
+                        <li class="menu-item @(active == "event" ? "active" : "")">
+                            <a asp-controller="Employee" asp-action="Event" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-cube"></i>
+                                <div>Events</div>
+                            </a>
+                        </li>
+
+                        <li class="menu-item @(active == "transaction" ? "active" : "")">
+                            <a asp-controller="Employee" asp-action="Transaction" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-cube"></i>
+                                <div>Transactions</div>
+                            </a>
+                        </li>
+                    </ul>
+                }
             </aside>
             
             <div class="layout-page">
