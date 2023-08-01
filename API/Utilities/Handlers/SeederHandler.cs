@@ -325,7 +325,140 @@ public class SeederHandler
                 ModifiedDate = DateTime.Now
             };
 
-            _context.Set<Account>().AddRange(new List<Account> { account1, account2, account3, account4, account5, account6,account7,account8,account9,account10, account11, account12, account13, account14, account15, account16, account17, account18, account19, account20, account21,account22,account23,account24 });
+            var account25 = new Account
+            {
+                Guid = new Guid(),
+                Email = "ojk11@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var account26 = new Account
+            {
+                Guid = new Guid(),
+                Email = "ojk12@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var account27 = new Account
+            {
+                Guid = new Guid(),
+                Email = "ojk13@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var account28 = new Account
+            {
+                Guid = new Guid(),
+                Email = "ojk14@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var account29 = new Account
+            {
+                Guid = new Guid(),
+                Email = "ojk15@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var account30 = new Account
+            {
+                Guid = new Guid(),
+                Email = "ojk16@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+
+            var account31 = new Account
+            {
+                Guid = new Guid(),
+                Email = "ojk17@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var account32 = new Account
+            {
+                Guid = new Guid(),
+                Email = "ojk18@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var account33 = new Account
+            {
+                Guid = new Guid(),
+                Email = "ojk19@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+
+            var account34 = new Account
+            {
+                Guid = new Guid(),
+                Email = "ojk20@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+
+            _context.Set<Account>().AddRange(new List<Account> { account1, account2, account3, account4, account5, account6,account7,account8,account9,account10, account11, account12, account13, account14, account15, account16, account17, account18, account19, account20, account21,account22,account23,account24, account25, account26, account27, account28, account29, account30, account31, account32, account33, account34 });
             _context.SaveChanges();
 
 
@@ -528,7 +661,83 @@ public class SeederHandler
             };
 
 
-            _context.Set<AccountRole>().AddRange(new List<AccountRole> { account1Role, account2Role, account3Role, account4Role, account5Role, account6role, account7role, account8role, account9role, account10role, account11role, account12role, account13role, account14role , account15role, account16role, account17role, account18role, account19role, account20role, account21role, account22role, account23role, account24role});
+            var account25role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account25.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+
+            var account26role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account26.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+            var account27role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account27.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+
+            var account28role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account28.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+            var account29role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account29.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+
+            var account30role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account30.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+
+            var account31role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account31.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+            var account32role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account32.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+
+            var account33role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account33.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+
+            var account34role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account34.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+            _context.Set<AccountRole>().AddRange(new List<AccountRole> { account1Role, account2Role, account3Role, account4Role, account5Role, account6role, account7role, account8role, account9role, account10role, account11role, account12role, account13role, account14role , account15role, account16role, account17role, account18role, account19role, account20role, account21role, account22role, account23role, account24role, account25role, account26role, account27role, account28role, account29role, account30role, account31role, account32role, account33role, account34role});
             _context.SaveChanges();
 
             var company1 = new Company
@@ -721,7 +930,7 @@ public class SeederHandler
                 Gender = GenderEnum.Female,
                 PhoneNumber = "085772144544",
                 AccountGuid = account15.Guid,
-                CompanyGuid = company1.Guid,
+                CompanyGuid = company2.Guid,
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
             };
@@ -735,7 +944,7 @@ public class SeederHandler
                 Gender = GenderEnum.Female,
                 PhoneNumber = "085772144555",
                 AccountGuid = account16.Guid,
-                CompanyGuid = company1.Guid,
+                CompanyGuid = company2.Guid,
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
             };
@@ -749,7 +958,7 @@ public class SeederHandler
                 Gender = GenderEnum.Female,
                 PhoneNumber = "085772144566",
                 AccountGuid = account17.Guid,
-                CompanyGuid = company1.Guid,
+                CompanyGuid = company2.Guid,
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
             };
@@ -763,7 +972,7 @@ public class SeederHandler
                 Gender = GenderEnum.Male,
                 PhoneNumber = "085772144577",
                 AccountGuid = account18.Guid,
-                CompanyGuid = company1.Guid,
+                CompanyGuid = company2.Guid,
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
             };
@@ -777,7 +986,7 @@ public class SeederHandler
                 Gender = GenderEnum.Female,
                 PhoneNumber = "085772144588",
                 AccountGuid = account19.Guid,
-                CompanyGuid = company1.Guid,
+                CompanyGuid = company2.Guid,
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
             };
@@ -791,7 +1000,7 @@ public class SeederHandler
                 Gender = GenderEnum.Female,
                 PhoneNumber = "085772144599",
                 AccountGuid = account20.Guid,
-                CompanyGuid = company1.Guid,
+                CompanyGuid = company2.Guid,
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
             };
@@ -806,7 +1015,7 @@ public class SeederHandler
                 Gender = GenderEnum.Female,
                 PhoneNumber = "085772144600",
                 AccountGuid = account21.Guid,
-                CompanyGuid = company1.Guid,
+                CompanyGuid = company2.Guid,
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
             };
@@ -820,7 +1029,7 @@ public class SeederHandler
                 Gender = GenderEnum.Male,
                 PhoneNumber = "085772144601",
                 AccountGuid = account22.Guid,
-                CompanyGuid = company1.Guid,
+                CompanyGuid = company2.Guid,
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
             };
@@ -834,7 +1043,7 @@ public class SeederHandler
                 Gender = GenderEnum.Female,
                 PhoneNumber = "085772144602",
                 AccountGuid = account23.Guid,
-                CompanyGuid = company1.Guid,
+                CompanyGuid = company2.Guid,
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
             };
@@ -848,12 +1057,152 @@ public class SeederHandler
                 Gender = GenderEnum.Male,
                 PhoneNumber = "085772144603",
                 AccountGuid = account24.Guid,
-                CompanyGuid = company1.Guid,
+                CompanyGuid = company2.Guid,
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
             };
 
-            _context.Set<Employee>().AddRange(new List<Employee> { employee1, employee2, employee3, employee4, employee5, employee6, employee7, employee8, employee9, employee10, employee11, employee12, employee13, employee14, employee15, employee16, employee17, employee18, employee19, employee20 });
+            var employee21 = new Employee
+            {
+                FullName = "Karina Putri",
+                Nik = "11121",
+                BirthDate = new DateTime(2000, 07, 08),
+                HiringDate = new DateTime(2023, 01, 01),
+                Gender = GenderEnum.Female,
+                PhoneNumber = "085772144604",
+                AccountGuid = account25.Guid,
+                CompanyGuid = company3.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee22 = new Employee
+            {
+                FullName = "Catherine Marceline",
+                Nik = "11122",
+                BirthDate = new DateTime(2000, 07, 05),
+                HiringDate = new DateTime(2023, 01, 12),
+                Gender = GenderEnum.Female,
+                PhoneNumber = "085772144605",
+                AccountGuid = account25.Guid,
+                CompanyGuid = company3.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee23 = new Employee
+            {
+                FullName = "Elga Agatha",
+                Nik = "11123",
+                BirthDate = new DateTime(2000, 12, 20),
+                HiringDate = new DateTime(2022, 10, 01),
+                Gender = GenderEnum.Female,
+                PhoneNumber = "085772144606",
+                AccountGuid = account26.Guid,
+                CompanyGuid = company3.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee24 = new Employee
+            {
+                FullName = "Ray Manik",
+                Nik = "11124",
+                BirthDate = new DateTime(2000, 05, 19),
+                HiringDate = new DateTime(2022, 08, 09),
+                Gender = GenderEnum.Male,
+                PhoneNumber = "085772144607",
+                AccountGuid = account27.Guid,
+                CompanyGuid = company3.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee25 = new Employee
+            {
+                FullName = "Cesar Juliant",
+                Nik = "11125",
+                BirthDate = new DateTime(2000, 07, 13),
+                HiringDate = new DateTime(2022, 01, 17),
+                Gender = GenderEnum.Male,
+                PhoneNumber = "085772144608",
+                AccountGuid = account28.Guid,
+                CompanyGuid = company3.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee26 = new Employee
+            {
+                FullName = "Andriligar Putra",
+                Nik = "11126",
+                BirthDate = new DateTime(2000, 05, 25),
+                HiringDate = new DateTime(2022, 05, 17),
+                Gender = GenderEnum.Male,
+                PhoneNumber = "085772144609",
+                AccountGuid = account29.Guid,
+                CompanyGuid = company3.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee27 = new Employee
+            {
+                FullName = "Kelvin Herdian",
+                Nik = "11127",
+                BirthDate = new DateTime(1999, 09, 20),
+                HiringDate = new DateTime(2018, 04, 15),
+                Gender = GenderEnum.Male,
+                PhoneNumber = "085772144610",
+                AccountGuid = account30.Guid,
+                CompanyGuid = company3.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee28 = new Employee
+            {
+                FullName = "Bayu Ramadhika",
+                Nik = "11128",
+                BirthDate = new DateTime(2000, 12, 08),
+                HiringDate = new DateTime(2023, 01, 10),
+                Gender = GenderEnum.Male,
+                PhoneNumber = "085772144611",
+                AccountGuid = account31.Guid,
+                CompanyGuid = company3.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee29 = new Employee
+            {
+                FullName = "Naruto Uzumaki",
+                Nik = "11129",
+                BirthDate = new DateTime(1995, 06, 10),
+                HiringDate = new DateTime(2023, 02, 18),
+                Gender = GenderEnum.Male,
+                PhoneNumber = "085772144612",
+                AccountGuid = account32.Guid,
+                CompanyGuid = company3.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee30 = new Employee
+            {
+                FullName = "Adib Rayhan",
+                Nik = "11130",
+                BirthDate = new DateTime(2000, 07, 07),
+                HiringDate = new DateTime(2023, 01, 17),
+                Gender = GenderEnum.Male,
+                PhoneNumber = "085772144613",
+                AccountGuid = account33.Guid,
+                CompanyGuid = company3.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            _context.Set<Employee>().AddRange(new List<Employee> { employee1, employee2, employee3, employee4, employee5, employee6, employee7, employee8, employee9, employee10, employee11, employee12, employee13, employee14, employee15, employee16, employee17, employee18, employee19, employee20, employee21, employee22, employee23, employee24, employee25, employee26, employee27, employee28, employee29, employee30 });
             _context.SaveChanges();
 
 
@@ -985,7 +1334,513 @@ public class SeederHandler
             };
 
 
-            _context.Set<Event>().AddRange(new List<Event> { event1, event2, event3, event4, event5, event6 });
+            var event7 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Webinar Cyber Security",
+                Quota = 100,
+                UsedQuota = 10,
+                StartDate = new DateTime(2023, 11, 10, 12, 0, 0),
+                EndDate = new DateTime(2023, 11, 10, 15, 0, 0),
+                Description = "Webinar Cyber Security Dengan Narasumber xyz",
+                Category = "Webinar",
+                CreatedBy = company1.Guid,
+                IsPaid = true,
+                Price = 75000,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = true,
+                Place = "Microsoft Teams",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event8 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Recruitment Developer IT",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 07, 07, 8, 30, 0),
+                EndDate = new DateTime(2023, 07, 08, 17, 0, 0),
+                Description = "Recruitment Karyawan PT.ABC Untuk Bagian Developer IT",
+                Category = "Interview",
+                CreatedBy = company1.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Offline,
+                IsPublished = false,
+                Place = "PT.ABC",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event9 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 09, 10, 8, 30, 0),
+                EndDate = new DateTime(2023, 09, 15, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company1.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event10 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 05, 12, 8, 30, 0),
+                EndDate = new DateTime(2023, 05, 12, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company1.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event11 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 05, 12, 8, 30, 0),
+                EndDate = new DateTime(2023, 05, 12, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company2.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event12 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 05, 12, 8, 30, 0),
+                EndDate = new DateTime(2023, 05, 12, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company2.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event13 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 05, 12, 8, 30, 0),
+                EndDate = new DateTime(2023, 05, 12, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company2.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event14 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 05, 12, 8, 30, 0),
+                EndDate = new DateTime(2023, 05, 12, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company2.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event15 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 05, 12, 8, 30, 0),
+                EndDate = new DateTime(2023, 05, 12, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company2.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event16 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 05, 12, 8, 30, 0),
+                EndDate = new DateTime(2023, 05, 12, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company2.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event17 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 05, 12, 8, 30, 0),
+                EndDate = new DateTime(2023, 05, 12, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company2.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event18 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 05, 12, 8, 30, 0),
+                EndDate = new DateTime(2023, 05, 12, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company2.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event19 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 05, 12, 8, 30, 0),
+                EndDate = new DateTime(2023, 05, 12, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company2.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event20 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 05, 12, 8, 30, 0),
+                EndDate = new DateTime(2023, 05, 12, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company2.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event21 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 05, 12, 8, 30, 0),
+                EndDate = new DateTime(2023, 05, 12, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company3.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event22 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 05, 12, 8, 30, 0),
+                EndDate = new DateTime(2023, 05, 12, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company3.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event23 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 05, 12, 8, 30, 0),
+                EndDate = new DateTime(2023, 05, 12, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company3.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event24 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 05, 12, 8, 30, 0),
+                EndDate = new DateTime(2023, 05, 12, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company3.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event25 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 05, 12, 8, 30, 0),
+                EndDate = new DateTime(2023, 05, 12, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company3.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event26 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 05, 12, 8, 30, 0),
+                EndDate = new DateTime(2023, 05, 12, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company3.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event27 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 05, 12, 8, 30, 0),
+                EndDate = new DateTime(2023, 05, 12, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company3.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event28 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 05, 12, 8, 30, 0),
+                EndDate = new DateTime(2023, 05, 12, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company3.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var event29 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 05, 12, 8, 30, 0),
+                EndDate = new DateTime(2023, 05, 12, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company3.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+
+            var event30 = new Event
+            {
+                Guid = new Guid(),
+                Name = "Interview",
+                Quota = 3,
+                UsedQuota = 0,
+                StartDate = new DateTime(2023, 05, 12, 8, 30, 0),
+                EndDate = new DateTime(2023, 05, 12, 12, 0, 0),
+                Description = "Interview client",
+                Category = "Interview",
+                CreatedBy = company3.Guid,
+                IsPaid = false,
+                Price = 0,
+                IsActive = true,
+                Status = EventStatus.Online,
+                IsPublished = false,
+                Place = "www.zoom.com",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+
+            _context.Set<Event>().AddRange(new List<Event> { event1, event2, event3, event4, event5, event6, event7, event8, event9, event10,event11, event12, event13, event14, event15, event16, event17, event18, event19, event20, event21, event22, event23, event24, event25, event26, event27, event28, event29, event30 });
             _context.SaveChanges();
 
             var companyParticipant_1_1 = new CompanyParticipant
