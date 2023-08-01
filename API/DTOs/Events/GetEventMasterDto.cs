@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace API.DTOs.Events;
 
-public class GetMasterEventDto
+public class GetEventMasterDto
 {
     public Guid Guid { get; set; }
 

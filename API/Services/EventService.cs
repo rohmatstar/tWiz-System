@@ -1,4 +1,5 @@
 ﻿using API.Contracts;
+using API.DTOs.EmployeeParticipants;
 using API.DTOs.Events;
 using API.Models;
 using API.Utilities.Enums;
@@ -194,35 +195,90 @@ public class EventService
         return userEvents;
     }
 
-    public EventsDto? GetEvent(Guid guid)
+    public GetEventMasterDto? GetEvent(Guid guid)
     {
         var singleEvent = _eventRepository.GetByGuid(guid);
-        if (singleEvent == null)
+
+        if (singleEvent is null)
         {
             return null;
         }
 
-        var e = singleEvent;
+        var makerEvent = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == singleEvent.CreatedBy);
 
-        var events = new EventsDto
+        if (makerEvent is null)
         {
-            Guid = e!.Guid,
-            Name = e.Name,
-            Thumbnail = e.Thumbnail,
-            Description = e.Description,
-            IsPublished = e.IsPublished,
-            IsPaid = e.IsPaid,
-            Price = e.Price,
-            Category = e.Category,
-            Status = e.Status,
-            StartDate = e.StartDate,
-            EndDate = e.EndDate,
-            Quota = e.Quota,
-            Place = e.Place,
-            CreatedBy = e.CreatedBy
+            return null;
+        }
+
+        var detailsEvent = new GetEventMasterDto
+        {
+            Guid = singleEvent.Guid,
+            Name = singleEvent.Name,
+            Thumbnail = singleEvent.Thumbnail,
+            Description = singleEvent.Description,
+            Category = singleEvent.Category,
+            Organizer = makerEvent.Name,
+            Payment = singleEvent.IsPaid == true ? "paid" : "free",
+            Price = singleEvent.Price,
+            Place = singleEvent.Place,
+            PlaceType = singleEvent.Status == 0 ? "offline" : "online",
+            StartDate = singleEvent.StartDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+            EndDate = singleEvent.EndDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+            Quota = singleEvent.Quota,
+            Joined = singleEvent.UsedQuota,
+            Visibility = singleEvent.IsPublished == true ? "public" : "private",
+            PublicationStatus = singleEvent.IsActive == true ? "published" : "draft",
+
         };
 
-        return events;
+
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+
+        if (userRole == nameof(RoleLevel.Company))
+        {
+            var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
+
+            if (company == null)
+            {
+                return null;
+            }
+
+            var companyParticipantsEvent = new List<CompanyParticipant>();
+            var employeeParticipantsEvent = new List<EmployeeParticipantsDto>();
+
+            if (singleEvent.CreatedBy == company.Guid)
+            {
+                //companyParticipantsEvent = _companyParticipantRepository.GetAll().ToList();
+            }
+        }
+
+
+        var e = singleEvent;
+
+        //var events = new EventsDto
+        //{
+        //    Guid = e!.Guid,
+        //    Name = e.Name,
+        //    Thumbnail = e.Thumbnail,
+        //    Description = e.Description,
+        //    IsPublished = e.IsPublished,
+        //    IsPaid = e.IsPaid,
+        //    Price = e.Price,
+        //    Category = e.Category,
+        //    Status = e.Status,
+        //    StartDate = e.StartDate,
+        //    EndDate = e.EndDate,
+        //    Quota = e.Quota,
+        //    Place = e.Place,
+        //    CreatedBy = e.CreatedBy
+        //};
+
+        return new GetEventMasterDto();
     }
 
     public EventsDto? CreateEvent(CreateEventDto createEventDto)
