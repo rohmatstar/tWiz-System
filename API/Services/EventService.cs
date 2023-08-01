@@ -847,6 +847,15 @@ public class EventService
 
         return publicEventsParticipant;
     }
+
+
+    public List<TicketDto> GetTickets()
+    {
+        var userTickets = new List<TicketDto>();
+
+
+        return userTickets;
+    }
 }
 
 
