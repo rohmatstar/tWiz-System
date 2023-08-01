@@ -195,7 +195,137 @@ public class SeederHandler
                 ModifiedDate = DateTime.Now
             };
 
-            _context.Set<Account>().AddRange(new List<Account> { account1, account2, account3, account4, account5, account6,account7,account8,account9,account10, account11, account12, account13, account14 });
+            var account15 = new Account
+            {
+                Guid = new Guid(),
+                Email = "ojk1@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var account16 = new Account
+            {
+                Guid = new Guid(),
+                Email = "ojk2@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var account17 = new Account
+            {
+                Guid = new Guid(),
+                Email = "ojk3@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var account18 = new Account
+            {
+                Guid = new Guid(),
+                Email = "ojk4@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var account19 = new Account
+            {
+                Guid = new Guid(),
+                Email = "ojk5@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var account20 = new Account
+            {
+                Guid = new Guid(),
+                Email = "ojk6@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var account21 = new Account
+            {
+                Guid = new Guid(),
+                Email = "ojk7@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var account22 = new Account
+            {
+                Guid = new Guid(),
+                Email = "ojk8@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var account23 = new Account
+            {
+                Guid = new Guid(),
+                Email = "ojk9@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var account24 = new Account
+            {
+                Guid = new Guid(),
+                Email = "ojk10@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            _context.Set<Account>().AddRange(new List<Account> { account1, account2, account3, account4, account5, account6,account7,account8,account9,account10, account11, account12, account13, account14, account15, account16, account17, account18, account19, account20, account21,account22,account23,account24 });
             _context.SaveChanges();
 
 
@@ -325,8 +455,80 @@ public class SeederHandler
                 RoleGuid = employeeRole.Guid,
             };
 
+            var account15role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account15.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
 
-            _context.Set<AccountRole>().AddRange(new List<AccountRole> { account1Role, account2Role, account3Role, account4Role, account5Role, account6role, account7role, account8role, account9role, account10role, account11role, account12role, account13role, account14role});
+            var account16role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account16.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+            var account17role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account17.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+
+            var account18role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account18.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+
+            var account19role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account19.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+            var account20role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account20.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+            var account21role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account21.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+            var account22role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account22.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+            var account23role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account23.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+            var account24role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account24.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+
+            _context.Set<AccountRole>().AddRange(new List<AccountRole> { account1Role, account2Role, account3Role, account4Role, account5Role, account6role, account7role, account8role, account9role, account10role, account11role, account12role, account13role, account14role , account15role, account16role, account17role, account18role, account19role, account20role, account21role, account22role, account23role, account24role});
             _context.SaveChanges();
 
             var company1 = new Company
@@ -509,7 +711,149 @@ public class SeederHandler
                 ModifiedDate = DateTime.Now
             };
 
-            _context.Set<Employee>().AddRange(new List<Employee> { employee1, employee2, employee3, employee4, employee5, employee6, employee7, employee8, employee9, employee10 });
+
+            var employee11 = new Employee
+            {
+                FullName = "Chirtina Widiarti",
+                Nik = "11111",
+                BirthDate = new DateTime(2000, 07, 12),
+                HiringDate = new DateTime(2021, 02, 18),
+                Gender = GenderEnum.Female,
+                PhoneNumber = "085772144544",
+                AccountGuid = account15.Guid,
+                CompanyGuid = company1.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee12 = new Employee
+            {
+                FullName = "Yolanda Novit",
+                Nik = "11112",
+                BirthDate = new DateTime(1999, 11, 20),
+                HiringDate = new DateTime(2021, 02, 17),
+                Gender = GenderEnum.Female,
+                PhoneNumber = "085772144555",
+                AccountGuid = account16.Guid,
+                CompanyGuid = company1.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee13 = new Employee
+            {
+                FullName = "Cindy Calista",
+                Nik = "11113",
+                BirthDate = new DateTime(2000, 07, 20),
+                HiringDate = new DateTime(2021, 10, 07),
+                Gender = GenderEnum.Female,
+                PhoneNumber = "085772144566",
+                AccountGuid = account17.Guid,
+                CompanyGuid = company1.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee14 = new Employee
+            {
+                FullName = "Bodat Ersetiawan",
+                Nik = "11114",
+                BirthDate = new DateTime(1995, 05, 19),
+                HiringDate = new DateTime(2021, 01, 02),
+                Gender = GenderEnum.Male,
+                PhoneNumber = "085772144577",
+                AccountGuid = account18.Guid,
+                CompanyGuid = company1.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee15 = new Employee
+            {
+                FullName = "Nessa Vanesha",
+                Nik = "11115",
+                BirthDate = new DateTime(1995, 04, 17),
+                HiringDate = new DateTime(2022, 02, 09),
+                Gender = GenderEnum.Female,
+                PhoneNumber = "085772144588",
+                AccountGuid = account19.Guid,
+                CompanyGuid = company1.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee16 = new Employee
+            {
+                FullName = "Dita Veronica",
+                Nik = "11116",
+                BirthDate = new DateTime(1996, 03, 31),
+                HiringDate = new DateTime(2021, 05, 10),
+                Gender = GenderEnum.Female,
+                PhoneNumber = "085772144599",
+                AccountGuid = account20.Guid,
+                CompanyGuid = company1.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+
+            var employee17 = new Employee
+            {
+                FullName = "Marcelina Marcelino",
+                Nik = "11117",
+                BirthDate = new DateTime(1995, 01, 30),
+                HiringDate = new DateTime(2021, 04, 12),
+                Gender = GenderEnum.Female,
+                PhoneNumber = "085772144600",
+                AccountGuid = account21.Guid,
+                CompanyGuid = company1.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee18 = new Employee
+            {
+                FullName = "Liam Galaghar",
+                Nik = "11118",
+                BirthDate = new DateTime(1993, 08, 12),
+                HiringDate = new DateTime(2020, 08, 3),
+                Gender = GenderEnum.Male,
+                PhoneNumber = "085772144601",
+                AccountGuid = account22.Guid,
+                CompanyGuid = company1.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee19 = new Employee
+            {
+                FullName = "Soekarni Putri",
+                Nik = "11119",
+                BirthDate = new DateTime(1994, 08, 17),
+                HiringDate = new DateTime(2021, 07, 19),
+                Gender = GenderEnum.Female,
+                PhoneNumber = "085772144602",
+                AccountGuid = account23.Guid,
+                CompanyGuid = company1.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee20 = new Employee
+            {
+                FullName = "Math Physics",
+                Nik = "11120",
+                BirthDate = new DateTime(1995, 07, 20),
+                HiringDate = new DateTime(2023, 01, 17),
+                Gender = GenderEnum.Male,
+                PhoneNumber = "085772144603",
+                AccountGuid = account24.Guid,
+                CompanyGuid = company1.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            _context.Set<Employee>().AddRange(new List<Employee> { employee1, employee2, employee3, employee4, employee5, employee6, employee7, employee8, employee9, employee10, employee11, employee12, employee13, employee14, employee15, employee16, employee17, employee18, employee19, employee20 });
             _context.SaveChanges();
 
 
