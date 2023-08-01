@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
 using System.Text;
-using IAuthRepository = Client.Contracts.IAuthRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +15,7 @@ builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(GeneralRepository<,>));
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+/*builder.Services.AddScoped<IEventRepository, EventRepository>();*/
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 
@@ -59,16 +59,16 @@ app.UseStatusCodePages(async context =>
 
     if (response.StatusCode.Equals((int)HttpStatusCode.Unauthorized))
     {
-        response.Redirect("/Home/Unauthorize");
+        response.Redirect("/Error/Unauthorize");
     }
-    /*else if (response.StatusCode.Equals((int)HttpStatusCode.NotFound))
+    else if (response.StatusCode.Equals((int)HttpStatusCode.NotFound))
     {
-        response.Redirect("/notfound");
+        response.Redirect("/Error/Notfound");
     }
     else if (response.StatusCode.Equals((int)HttpStatusCode.Forbidden))
     {
-        response.Redirect("/forbidden");
-    }*/
+        response.Redirect("/Error/Forbidden");
+    }
 });
 
 app.UseSession();

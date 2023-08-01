@@ -1,0 +1,170 @@
+﻿@{
+    var toast = TempData["toast"] as dynamic;
+
+    ViewData["Title"] = "Create Event";
+    ViewData["Username"] = ViewBag.Username as string;
+    ViewData["Role"] = ViewBag.Role as string;
+    Layout = "_LayoutUser";
+}
+
+@section Filter{
+
+}
+
+@section Toast{
+    @if (toast != null)
+    {
+        var toastColor = toast.Color ?? "secondary";
+        var toastClass = $"bs-toast toast toast-placement-ex m-2 fade bg-{toastColor} top-0 start-50 translate-middle-x";
+
+        <div class="@toastClass" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+            <div class="toast-header">
+                <i class="bx bx-bell me-2"></i>
+                <div class="me-auto fw-semibold">@toast.Title</div>
+            </div>
+            <div class="toast-body">
+                @toast.Subtitle
+            </div>
+        </div>
+    }
+}
+
+<div class="col-12">
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="mb-4">Event Information</h5>
+                    <div class="mb-3 row">
+                        <label for="event-name" class="col-md-4 col-form-label">Event Name</label>
+                        <div class="col-md-8">
+                            <input class="form-control" autofocus type="text" value="" id="event-name" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="thumbnail" class="col-md-4 col-form-label">Thumbnail</label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="file" id="thumbnail" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="description" class="col-md-4 col-form-label">Description</label>
+                        <div class="col-md-8">
+                            <textarea class="form-control" id="description" rows="4"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="event-type" class="col-md-4 col-form-label">Event Type</label>
+                        <div class="col-md-8">
+                            <select class="form-select" id="event-type">
+                                <option value="public">Public</option>
+                                <option value="private">Private</option>
+                            </select>
+                            <div class="form-text text-primary">
+                                If you choose 'Private', you'll have to insert the participant before publilshing
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="category" class="col-md-4 col-form-label">Category</label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="text" value="" id="category" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="quota" class="col-md-4 col-form-label">Quota</label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="number" min="0" value="0" id="quota" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 ps-4">
+                    <h5 class="mb-4">Event Date</h5>
+                    <div class="mb-3 row">
+                        <label for="start-date" class="col-md-4 col-form-label">Start Date</label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="date" id="start-date" />
+                        </div>
+                    </div>
+
+                    <div class="mb-5 row">
+                        <label for="end-date" class="col-md-4 col-form-label">End Date</label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="date" id="end-date" />
+                        </div>
+                    </div>
+
+                    <h5>Payment Information & Status</h5>
+                    <div class="mb-3 row">
+                        <label class="col-md-4 col-form-label">Payment</label>
+                        <div class="col-md-8">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="event-pay" id="event-pay-free" value="free" checked>
+                                <label class="form-check-label" for="event-pay-free">Free</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="event-pay" id="event-pay-paid" value="paid">
+                                <label class="form-check-label" for="event-pay-paid">Paid</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="price" class="col-md-4 col-form-label">Price</label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="number" min="0" value="0" id="price" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="status" class="col-md-4 col-form-label">Status</label>
+                        <div class="col-md-8">
+                            <select class="form-select" id="status">
+                                <option value="online">Online</option>
+                                <option value="offline">Offline</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="place" class="col-md-4 col-form-label">Place</label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="text" id="place" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="card-footer border-top p-0 pt-3 text-end">
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-outline-primary bg-white text-primary">Save as Draft</button>
+                    <button type="button"
+                            class="btn btn-outline-primary bg-white text-primary dropdown-toggle dropdown-toggle-split"
+                            id="dropdownMenuReference"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                            data-bs-reference="parent">
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuReference">
+                        <li>
+                            <div class="dropdown-item">
+                                <button type="submit" class="btn btn-primary">Save and Add Participant</button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+}

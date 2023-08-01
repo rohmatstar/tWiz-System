@@ -1,4 +1,5 @@
 ﻿using Client.Contracts;
+using Client.DTOs;
 using Client.DTOs.Auths;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,6 +16,7 @@ public class CompanyController : Controller
         _authRepository = authRepository;
     }
 
+    [HttpGet]
     public IActionResult SignIn()
     {
         return View();
@@ -25,17 +27,27 @@ public class CompanyController : Controller
     {
 
         var result = await _authRepository.SignIn(signDto);
-        if (result.Code == "200")
+        if (result.Code == 200)
         {
             var token = result?.Data;
 
-            TempData["Success"] = "Berhasil Login";
-            //HttpContext.Session.SetString("JWToken", token);
+            ViewBag.Toast = new ToastDto
+            {
+                Color = "success",
+                Title = "Signed in",
+                Subtitle = "Welcome, you have signed in to tWiz!"
+            };
+
             HttpContext.Session.SetString("JWToken", token!);
-            return RedirectToRoute(new { controller = "User", action = "Dashboard" });
+            return RedirectToAction("Index", "Dashboard");
         }
 
-        TempData["Error"] = result.Message;
+        ViewBag.Toast = new ToastDto
+        {
+            Color = "danger",
+            Title = "Sign in Failed",
+            Subtitle = "So sorry, there is some mistake when signing in you"
+        };
         return View();
     }
 }

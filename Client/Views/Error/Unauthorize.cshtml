@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "Unauthorized";
+}
+
+<div class="container-xxl container-p-y">
+    <div class="misc-wrapper">
+        <div class="display-1 mb-2 mx-2 text-secondary">401</div>
+        <h2 class="mb-2 mx-2">Unauthorized</h2>
+        <p class="mb-4 mx-2">Oops! It seems you've wandered into an exclusive area.<br />To access this page, you'll need to show some credentials.<br />Please sign in to continue your journey.</p>
+        <a asp-controller="Auth" asp-action="SignIn" class="btn btn-primary">Sign in</a>
+    </div>
+</div>
