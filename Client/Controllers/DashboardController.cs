@@ -2,6 +2,7 @@
 using Client.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Client.Controllers
 {
@@ -9,10 +10,10 @@ namespace Client.Controllers
     {
         private void SetCommonViewBagData()
         {
-            ViewBag.Role = "employee";
+            ViewBag.Role = "company";
             ViewBag.Username = "PT Mitra Integrasi Informatika";
         }
-        /*[Authorize]*/
+        [Authorize]
         public IActionResult Index()
         {
             SetCommonViewBagData();
