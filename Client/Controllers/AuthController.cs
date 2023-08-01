@@ -1,33 +1,63 @@
 ﻿using Client.Contracts;
-﻿using Client.Models;
+using Client.DTOs;
+using Client.DTOs.Auths;
+using Client.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace Client.Controllers
 {
-    private readonly IAuthRepository _authRepository;
-
     public class AuthController : Controller
     {
-        public AuthController(IAuthRepository repository)
-        {
-            _authRepository = repository;
-        }
 
-        public IActionResult SignUp()
-        {
-            return View();
-        }
+        private readonly ICompanyRepository _companyRepository;
+        private readonly IAuthRepository _authRepository;
 
-        /*[Authorize]*/
-        public IActionResult Login()
+        public AuthController(ICompanyRepository companyRepository, IAuthRepository authRepository)
         {
-            return View();
+            _companyRepository = companyRepository;
+            _authRepository = authRepository;
         }
 
         /*[Authorize]*/
-        public IActionResult Register()
+        [HttpGet]
+        public IActionResult SignIn()
         {
+            ViewBag.Toast = new ToastDto
+            {
+                Color = "success",
+                Title = "Signed in",
+                Subtitle = "Welcome, you have signed in to tWiz!"
+            };
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SignIn(SignInDto signDto)
+        {
+
+            var result = await _authRepository.SignIn(signDto);
+            if (result.Code == 200)
+            {
+                var token = result?.Data;
+
+                ViewBag.Toast = new ToastDto
+                {
+                    Color = "success",
+                    Title = "Signed in",
+                    Subtitle = "Welcome, you have signed in to tWiz!"
+                };
+
+                HttpContext.Session.SetString("JWTToken", token!);
+                return RedirectToAction("Index", "Dashboard");
+            }
+
+            ViewBag.Toast = new ToastDto
+            {
+                Color = "danger",
+                Title = "Sign in Failed",
+                Subtitle = "So sorry, there is some mistake when signing in you"
+            };
             return View();
         }
 

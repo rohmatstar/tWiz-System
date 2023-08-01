@@ -1,8 +1,26 @@
 ﻿@{
+    var toastColor = ViewBag.Toast.Color as string != null ? ViewBag.Toast.Color as string : "success";
+    var toastClass = $"bs-toast toast toast-placement-ex m-2 fade bg-{toastColor} top-0 start-50 translate-middle-x";
+
     ViewData["Title"] = "Dashboard";
     ViewData["Username"] = ViewBag.Username as string;
     ViewData["Role"] = ViewBag.Role as string;
     Layout = "_LayoutUser";
+}
+
+@section Toast{
+    @if (ViewBag.Toast != null)
+    {
+        <div class="@toastClass" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+            <div class="toast-header">
+                <i class="bx bx-bell me-2"></i>
+                <div class="me-auto fw-semibold">@ViewBag.Toast.Title</div>
+            </div>
+            <div class="toast-body">
+                @ViewBag.Toast.Subtitle
+            </div>
+        </div>
+    }
 }
 
 <div class="col-12 col-lg-8 order-2 order-md-3 order-lg-2 mb-4">
