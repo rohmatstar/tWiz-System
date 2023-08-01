@@ -82,8 +82,120 @@ public class SeederHandler
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
             };
+            var account6 = new Account
+            {
+                Guid = new Guid(),
+                Email = "prawiramanik19@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+            var account7 = new Account
+            {
+                Guid = new Guid(),
+                Email = "rayvaldoprawira@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+            var account8 = new Account
+            {
+                Guid = new Guid(),
+                Email = "kagemonji@example.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+            var account9 = new Account
+            {
+                Guid = new Guid(),
+                Email = "sophia@example.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+            var account10 = new Account
+            {
+                Guid = new Guid(),
+                Email = "bodat@example.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
 
-            _context.Set<Account>().AddRange(new List<Account> { account1, account2, account3, account4, account5 });
+            var account11 = new Account
+            {
+                Guid = new Guid(),
+                Email = "twiz.mcc@gmail.com",
+                Password = HashingHandler.HashPassword("!Admin123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var account12 = new Account
+            {
+                Guid = new Guid(),
+                Email = "kagemonji@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var account13 = new Account
+            {
+                Guid = new Guid(),
+                Email = "saras008@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var account14 = new Account
+            {
+                Guid = new Guid(),
+                Email = "ojk@gmail.com",
+                Password = HashingHandler.HashPassword("!Employee123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            _context.Set<Account>().AddRange(new List<Account> { account1, account2, account3, account4, account5, account6,account7,account8,account9,account10, account11, account12, account13, account14 });
             _context.SaveChanges();
 
 
@@ -103,7 +215,15 @@ public class SeederHandler
                 ModifiedDate = DateTime.Now
             };
 
-            _context.Set<Role>().AddRange(new List<Role> { companyRole, employeeRole });
+            var sysadminRole = new Role
+            {
+                Guid = new Guid(),
+                Name = nameof(RoleLevel.SysAdmin),
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            _context.Set<Role>().AddRange(new List<Role> { companyRole, employeeRole, sysadminRole });
             _context.SaveChanges();
 
 
@@ -142,11 +262,72 @@ public class SeederHandler
                 RoleGuid = employeeRole.Guid,
             };
 
+            var account6role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid= account6.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
 
-            _context.Set<AccountRole>().AddRange(new List<AccountRole> { account1Role, account2Role, account3Role, account4Role, account5Role });
+            var account7role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account7.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+            var account8role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account8.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+            var account9role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account9.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+            var account10role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account10.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+            var account11role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account11.Guid,
+                RoleGuid = sysadminRole.Guid,
+            };
+
+            var account12role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account12.Guid,
+                RoleGuid =  companyRole.Guid,
+            };
+
+            var account13role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account13.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+            var account14role = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = account14.Guid,
+                RoleGuid = employeeRole.Guid,
+            };
+
+
+            _context.Set<AccountRole>().AddRange(new List<AccountRole> { account1Role, account2Role, account3Role, account4Role, account5Role, account6role, account7role, account8role, account9role, account10role, account11role, account12role, account13role, account14role});
             _context.SaveChanges();
-
-
 
             var company1 = new Company
             {
@@ -172,7 +353,19 @@ public class SeederHandler
                 ModifiedDate = DateTime.Now
             };
 
-            _context.Set<Company>().AddRange(new List<Company> { company1, company2 });
+            var company3 = new Company
+            {
+                Guid = new Guid(),
+                Name = "PT.Ray",
+                Address = "JL.Bojong Koneng",
+                PhoneNumber = "085555867777",
+                AccountGuid = account12.Guid,
+                BankAccountNumber = "55555726656",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            _context.Set<Company>().AddRange(new List<Company> { company1, company2, company3});
             _context.SaveChanges();
 
 
@@ -180,7 +373,7 @@ public class SeederHandler
             var employee1 = new Employee
             {
                 FullName = "Jasman mosabasa",
-                Nik = "1111",
+                Nik = "11101",
                 BirthDate = new DateTime(2000, 02, 12),
                 HiringDate = new DateTime(2023, 03, 22),
                 Gender = GenderEnum.Male,
@@ -194,7 +387,7 @@ public class SeederHandler
             var employee2 = new Employee
             {
                 FullName = "Oka Rahul",
-                Nik = "22222",
+                Nik = "11102",
                 BirthDate = new DateTime(2000, 04, 11),
                 HiringDate = new DateTime(2023, 02, 2),
                 Gender = GenderEnum.Male,
@@ -208,18 +401,115 @@ public class SeederHandler
             var employee3 = new Employee
             {
                 FullName = "Isnaini Rofiah",
-                Nik = "33333",
+                Nik = "11103",
                 BirthDate = new DateTime(2000, 05, 12),
                 HiringDate = new DateTime(2023, 02, 20),
                 Gender = GenderEnum.Female,
                 PhoneNumber = "1222332",
                 AccountGuid = account5.Guid,
-                CompanyGuid = company2.Guid,
+                CompanyGuid = company1.Guid,
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
             };
 
-            _context.Set<Employee>().AddRange(new List<Employee> { employee1, employee2, employee3 });
+            var employee4 = new Employee
+            {
+                FullName = "Sujatmiko Abdulah",
+                Nik = "11104",
+                BirthDate = new DateTime(1995, 03, 20),
+                HiringDate = new DateTime(2021, 06, 19),
+                Gender = GenderEnum.Male,
+                PhoneNumber = "085772144577",
+                AccountGuid = account6.Guid,
+                CompanyGuid = company1.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee5 = new Employee
+            {
+                FullName = "Raka Budut",
+                Nik = "11105",
+                BirthDate = new DateTime(1995, 04, 20),
+                HiringDate = new DateTime(2021, 05, 19),
+                Gender = GenderEnum.Male,
+                PhoneNumber = "085772144566",
+                AccountGuid = account7.Guid,
+                CompanyGuid = company1.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee6 = new Employee
+            {
+                FullName = "Leyhan Abil",
+                Nik = "11106",
+                BirthDate = new DateTime(1995, 05, 20),
+                HiringDate = new DateTime(2021, 04, 19),
+                Gender = GenderEnum.Male,
+                PhoneNumber = "085772144555",
+                AccountGuid = account8.Guid,
+                CompanyGuid = company1.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee7 = new Employee
+            {
+                FullName = "Kiko Kikah",
+                Nik = "11107",
+                BirthDate = new DateTime(1995, 06, 20),
+                HiringDate = new DateTime(2021, 03, 19),
+                Gender = GenderEnum.Male,
+                PhoneNumber = "085772144544",
+                AccountGuid = account9.Guid,
+                CompanyGuid = company1.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+            var employee8 = new Employee
+            {
+                FullName = "Sumiati Abdulah",
+                Nik = "11108",
+                BirthDate = new DateTime(1995, 07, 20),
+                HiringDate = new DateTime(2021, 02, 19),
+                Gender = GenderEnum.Female,
+                PhoneNumber = "085772144533",
+                AccountGuid = account10.Guid,
+                CompanyGuid = company1.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee9 = new Employee
+            {
+                FullName = "Chris Sumanto",
+                Nik = "11109",
+                BirthDate = new DateTime(1995, 07, 20),
+                HiringDate = new DateTime(2021, 02, 19),
+                Gender = GenderEnum.Male,
+                PhoneNumber = "085772144533",
+                AccountGuid = account13.Guid,
+                CompanyGuid = company1.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employee10 = new Employee
+            {
+                FullName = "Dhani Budi",
+                Nik = "11110",
+                BirthDate = new DateTime(1995, 07, 20),
+                HiringDate = new DateTime(2021, 02, 19),
+                Gender = GenderEnum.Female,
+                PhoneNumber = "085772144533",
+                AccountGuid = account14.Guid,
+                CompanyGuid = company1.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            _context.Set<Employee>().AddRange(new List<Employee> { employee1, employee2, employee3, employee4, employee5, employee6, employee7, employee8, employee9, employee10 });
             _context.SaveChanges();
 
 
@@ -275,7 +565,7 @@ public class SeederHandler
                 EndDate = new DateTime(2023, 8, 15, 12, 0, 0),
                 Description = "Acara seminar cara membuat branding yang bagus",
                 Category = "Brand",
-                CreatedBy = company2.Guid,
+                CreatedBy = company1.Guid,
                 IsPaid = true,
                 Price = 5000,
                 IsActive = true,
@@ -296,7 +586,7 @@ public class SeederHandler
                 EndDate = new DateTime(2023, 8, 15, 12, 0, 0),
                 Description = "Interview Kerja",
                 Category = "Interview",
-                CreatedBy = company2.Guid,
+                CreatedBy = company1.Guid,
                 IsPaid = false,
                 Price = 0,
                 IsActive = false,
@@ -317,7 +607,7 @@ public class SeederHandler
                 EndDate = new DateTime(2023, 8, 15, 12, 0, 0),
                 Description = "Interview Kerja",
                 Category = "Interview",
-                CreatedBy = company2.Guid,
+                CreatedBy = company1.Guid,
                 IsPaid = false,
                 Price = 0,
                 IsActive = true,
@@ -504,7 +794,7 @@ public class SeederHandler
                 Code = "BRI",
                 Name = "Bank Rakyat Indonesia",
                 CreatedDate = DateTime.Now,
-                ModifiedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
             };
 
             var mandiri = new Bank
@@ -513,10 +803,37 @@ public class SeederHandler
                 Code = "BM",
                 Name = "Bank Mandiri",
                 CreatedDate = DateTime.Now,
-                ModifiedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
             };
 
-            _context.Set<Bank>().AddRange(new List<Bank> { bri, mandiri });
+            var bsi = new Bank
+            {
+                Guid = new Guid(),
+                Code = "BSI",
+                Name = "Bank Syariah Indonesia",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var bni = new Bank
+            {
+                Guid = new Guid(),
+                Code = "BNI",
+                Name = "Bank Nasional Indonesia",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var bca = new Bank
+            {
+                Guid = new Guid(),
+                Code = "BCA",
+                Name = "Bank Central Asia",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            _context.Set<Bank>().AddRange(new List<Bank> { bri, mandiri , bsi, bni, bca });
 
             _context.SaveChanges();
 
