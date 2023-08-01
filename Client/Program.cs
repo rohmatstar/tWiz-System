@@ -73,6 +73,10 @@ app.UseStatusCodePages(async context =>
     {
         response.Redirect("/Error/MethodNotAllowed");
     }
+    else if (response.StatusCode.Equals((int)HttpStatusCode.InternalServerError))
+    {
+        response.Redirect("/Error/InternalServerError");
+    }
 });
 
 app.UseSession();
