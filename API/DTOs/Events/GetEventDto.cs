@@ -14,13 +14,13 @@ namespace API.DTOs.Events
         public string Description { get; set; }
 
         [Required]
-        public string Type { get; set; }
+        public string Visibility { get; set; }
 
         [Required]
         public string Category { get; set; }
 
         [Required]
-        public string Status { get; set; }
+        public string PlaceType { get; set; }
 
         [Required]
         public string Payment { get; set; }
@@ -39,10 +39,13 @@ namespace API.DTOs.Events
         public string EndDate { get; set; }
 
         [Required]
-        public Guid Organizer { get; set; }
+        public string Organizer { get; set; }
 
         [Required]
         public string Place { get; set; }
+
+        [Required]
+        public string PublicationStatus { get; set; }
 
     }
 }

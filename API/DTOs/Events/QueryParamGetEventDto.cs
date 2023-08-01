@@ -3,15 +3,15 @@
 public class QueryParamGetEventDto
 {
     // all, published, draft
-    public string? Publication { get; set; }
+    public string? publication_status { get; set; }
 
     // all, private, public
-    public string? Visibility { get; set; }
+    public string? visibility { get; set; }
 
     // all, offline, online
-    public string? Type { get; set; }
+    public string? place_type { get; set; }
 
     // newest, older
-    public string? SortBy { get; set; }
+    public string? sort_by { get; set; }
 }
 

@@ -5,6 +5,7 @@ using API.DTOs.EventPayments;
 using API.DTOs.Events;
 using API.Models;
 using API.Utilities.Enums;
+using System.Globalization;
 using System.Security.Claims;
 
 namespace API.Services;
@@ -30,34 +31,170 @@ public class EventService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public IEnumerable<EventsDto>? GetEvents()
+    public List<GetEventDto>? GetEvents(QueryParamGetEventDto queryParams)
     {
-        var eventsModel = _eventRepository.GetAll();
+        var userEvents = new List<GetEventDto>();
+        var filterEvents = (from e in _eventRepository.GetAll()
+                            join c in _companyRepository.GetAll()
+                            on e.CreatedBy equals c.Guid
+                            select new GetEventDto
+                            {
+                                Guid = e.Guid,
+                                Name = e.Name,
+                                Description = e.Description,
+                                Thumbnail = e.Thumbnail,
+                                Visibility = e.IsPublished == true ? "public" : "private",
+                                Category = e.Category,
+                                PlaceType = e.Status == EventStatus.Offline ? "offline" : "online",
+                                Payment = e.IsPaid == true ? "paid" : "free",
+                                Price = e.Price,
+                                Quota = e.Quota,
+                                Joined = e.UsedQuota,
+                                StartDate = e.StartDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+                                EndDate = e.EndDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+                                Organizer = c.Name,
+                                Place = e.Place,
+                                PublicationStatus = e.IsActive == true ? "published" : "draft"
+                            }).ToList();
 
-        if (eventsModel is null)
+
+        if (filterEvents is null)
         {
             return null;
         }
 
-        var events = eventsModel.Select(e => new EventsDto
-        {
-            Guid = e.Guid,
-            Name = e.Name,
-            Thumbnail = e.Thumbnail,
-            Description = e.Description,
-            IsPublished = e.IsPublished,
-            IsPaid = e.IsPaid,
-            Price = e.Price,
-            Category = e.Category,
-            Status = e.Status,
-            StartDate = e.StartDate,
-            EndDate = e.EndDate,
-            Quota = e.Quota,
-            Place = e.Place,
-            CreatedBy = e.CreatedBy
-        }).ToList();
+        var publicationStatus = queryParams.publication_status?.ToLower();
+        var visibility = queryParams.visibility?.ToLower();
+        var placeType = queryParams.place_type?.ToLower();
+        var sortBy = queryParams.sort_by?.ToLower();
 
-        return events;
+        var publicationStatusValues = new List<string>() { "all", "published", "draft" };
+        var visibilityValues = new List<string>() { "all", "public", "private" };
+        var placeTypeValues = new List<string>() { "all", "offline", "online" };
+
+        //if (publicationStatusValues.Contains(publicationStatus) && visibilityValues.Contains(visibility) && publicationStatusValues.Contains(publicationStatus))
+        //{
+
+        //    if (publicationStatus != "all" && visibility != "all" && placeType != "all")
+        //    {
+        //        filterEvents = filterEvents.Where(e => e.PublicationStatus == publicationStatus && e.Visibility == visibility && e.PlaceType == placeType).ToList();
+        //    }
+
+        //    if (publicationStatus != "all" && visibility != "all")
+        //    {
+        //        filterEvents = filterEvents.Where(e => e.PublicationStatus == publicationStatus && e.Visibility == visibility).ToList();
+        //    }
+
+        //    if (publicationStatus != "all")
+        //    {
+        //        filterEvents = filterEvents.Where(e => e.PublicationStatus == publicationStatus).ToList();
+        //    }
+        //}
+
+        if (publicationStatusValues.Contains(publicationStatus))
+        {
+            if (publicationStatus != "all")
+            {
+                filterEvents = filterEvents.Where(e => e.PublicationStatus == publicationStatus).ToList();
+            }
+        }
+
+        if (visibilityValues.Contains(visibility))
+        {
+            if (visibility != "all")
+            {
+                filterEvents = filterEvents.Where(e => e.Visibility == visibility).ToList();
+            }
+        }
+
+        if (placeTypeValues.Contains(placeType))
+        {
+            if (placeType != "all")
+            {
+                filterEvents = filterEvents.Where(e => e.PlaceType == placeType).ToList();
+            }
+        }
+
+        string format = "dd MMMM yyyy, HH:mm 'WIB'";
+        if (sortBy == "older")
+        {
+            filterEvents = filterEvents.OrderBy(e => DateTime.ParseExact(e.StartDate, format, CultureInfo.InvariantCulture)).ToList();
+        }
+
+        if (sortBy == "newest")
+        {
+            filterEvents = filterEvents.OrderByDescending(e => DateTime.ParseExact(e.StartDate, format, CultureInfo.InvariantCulture)).ToList();
+        }
+
+        // authorization
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        if (userRole == nameof(RoleLevel.Company))
+        {
+            var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
+
+            if (company == null)
+            {
+                return null;
+            }
+
+            filterEvents = filterEvents.Where(e =>
+            {
+                if (e.Organizer == company.Name)
+                {
+                    return true;
+                }
+                else if (e.Organizer != company.Name && e.PublicationStatus == "draft")
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }).ToList();
+
+            var companyParticipants = _companyParticipantRepository.GetAll();
+
+            foreach (var filterEvent in filterEvents)
+            {
+                if (companyParticipants.FirstOrDefault(cp => cp.CompanyGuid == company.Guid && cp.EventGuid == filterEvent.Guid) is not null || filterEvent.Organizer == company.Name)
+                {
+                    userEvents.Add(filterEvent);
+                }
+            }
+
+        }
+        else if (userRole == nameof(RoleLevel.Employee))
+        {
+            var employee = _employeeRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
+
+            if (employee is null)
+            {
+                return null;
+            }
+            filterEvents = filterEvents.Where(e => e.PublicationStatus == "published").ToList();
+
+            var employeeParticipants = _employeeParticipantRepository.GetAll();
+
+            foreach (var filterEvent in filterEvents)
+            {
+                if (employeeParticipants.FirstOrDefault(ep => ep.EmployeeGuid == employee.Guid && ep.EventGuid == filterEvent.Guid) is not null)
+                {
+                    userEvents.Add(filterEvent);
+                }
+            }
+
+        }
+        else
+        {
+            return null;
+        }
+
+        return userEvents;
     }
 
     public EventsDto? GetEvent(Guid guid)
