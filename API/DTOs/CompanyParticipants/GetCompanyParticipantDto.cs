@@ -15,7 +15,7 @@ public class GetCompanyParticipantDto
 
     public string CompanyName { get; set; }
 
-    public string JoinStatus { get; set; }
+    public string InvitationStatus { get; set; }
 
     public bool IsPresent { get; set; }
 }

@@ -1,4 +1,5 @@
 ﻿using API.Contracts;
+using API.DTOs.CompanyParticipants;
 using API.DTOs.EmployeeParticipants;
 using API.DTOs.Events;
 using API.Models;
@@ -248,12 +249,35 @@ public class EventService
                 return null;
             }
 
-            var companyParticipantsEvent = new List<CompanyParticipant>();
+            var companyParticipantsEvent = new List<GetCompanyParticipantDto>();
             var employeeParticipantsEvent = new List<EmployeeParticipantsDto>();
+
+            var companies = _companyRepository.GetAll();
+            var employeeParticipants = _employeeParticipantRepository.GetAll();
 
             if (singleEvent.CreatedBy == company.Guid)
             {
-                //companyParticipantsEvent = _companyParticipantRepository.GetAll().ToList();
+                companyParticipantsEvent = _companyParticipantRepository.GetAll().Where(cp => cp.EventGuid == singleEvent.Guid && cp.CompanyGuid != company.Guid).Select(cp =>
+                {
+                    var companyName = companies.FirstOrDefault(c => c.Guid == cp.CompanyGuid);
+                    var invitataionStatus = "";
+
+                    if (cp.Status == InviteStatusLevel.Pending) invitataionStatus = "pending";
+                    if (cp.Status == InviteStatusLevel.Accepted) invitataionStatus = "accepted";
+                    if (cp.Status == InviteStatusLevel.Rejected) invitataionStatus = "rejected";
+
+
+                    return new GetCompanyParticipantDto
+                    {
+                        Guid = cp.Guid,
+                        EventName = singleEvent.Name,
+                        CompanyGuid = cp.CompanyGuid,
+                        CompanyName = companyName?.Name ?? "",
+                        InvitationStatus = invitataionStatus,
+                        IsPresent = cp.IsPresent,
+                    };
+                }).ToList();
+
             }
         }
 
