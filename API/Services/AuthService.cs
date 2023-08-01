@@ -4,6 +4,7 @@ using API.DTOs.Auths;
 using API.Models;
 using API.Utilities.Enums;
 using API.Utilities.Handlers;
+using System.Linq;
 using System.Security.Claims;
 
 namespace API.Services;
@@ -178,6 +179,15 @@ public class AuthService
             new Claim("Email", loginDto.Email)
         };
 
+        /*var getAccountName = _companyRepository.GetName(account.Guid);
+        if (getAccountName is null)
+        {
+            getAccountName = (IEnumerable<Company>?)_employeeRepository.GetName(account.Guid);
+        }
+        var accountName = (from an in getAccountName select an.Name);
+
+        claims.AddRange(accountName.Select(name => new Claim(ClaimTypes.Name, accountName)));*/
+
         var getAccountRole = _accountRoleRepository.GetByGuidCompany(account.Guid);
 
         var getRoleNameByAccountRole = from ar in getAccountRole
@@ -185,6 +195,7 @@ public class AuthService
                                        select r.Name;
 
         claims.AddRange(getRoleNameByAccountRole.Select(role => new Claim(ClaimTypes.Role, role)));
+
         try
         {
             var token = _tokenHandler.GenerateToken(claims);
