@@ -941,6 +941,7 @@ public class SeederHandler
                 ModifiedDate = DateTime.Now
             };
 
+
             var event5 = new Event
             {
                 Guid = new Guid(),
@@ -983,9 +984,78 @@ public class SeederHandler
                 ModifiedDate = DateTime.Now
             };
 
+
             _context.Set<Event>().AddRange(new List<Event> { event1, event2, event3, event4, event5, event6 });
             _context.SaveChanges();
 
+            var companyParticipant_1_1 = new CompanyParticipant
+            {
+                Guid = new Guid(),
+                EventGuid = event1.Guid,
+                CompanyGuid = company1.Guid,
+                Status = InviteStatusLevel.Accepted,
+                IsPresent = false,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var companyParticipant_2_1 = new CompanyParticipant
+            {
+                Guid = new Guid(),
+                EventGuid = event2.Guid,
+                CompanyGuid = company1.Guid,
+                Status = InviteStatusLevel.Accepted,
+                IsPresent = false,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var companyParticipant_3_1 = new CompanyParticipant
+            {
+                Guid = new Guid(),
+                EventGuid = event3.Guid,
+                CompanyGuid = company2.Guid,
+                Status = InviteStatusLevel.Accepted,
+                IsPresent = false,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var companyParticipant_4_1 = new CompanyParticipant
+            {
+                Guid = new Guid(),
+                EventGuid = event4.Guid,
+                CompanyGuid = company2.Guid,
+                Status = InviteStatusLevel.Accepted,
+                IsPresent = false,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var companyParticipant_5_1 = new CompanyParticipant
+            {
+                Guid = new Guid(),
+                EventGuid = event5.Guid,
+                CompanyGuid = company2.Guid,
+                Status = InviteStatusLevel.Accepted,
+                IsPresent = false,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var companyParticipant_6_1 = new CompanyParticipant
+            {
+                Guid = new Guid(),
+                EventGuid = event6.Guid,
+                CompanyGuid = company1.Guid,
+                Status = InviteStatusLevel.Accepted,
+                IsPresent = false,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            _context.Set<CompanyParticipant>().AddRange(new List<CompanyParticipant> { companyParticipant_1_1, companyParticipant_2_1, companyParticipant_3_1, companyParticipant_4_1, companyParticipant_5_1, companyParticipant_6_1 });
+            _context.SaveChanges();
 
             var employeeParticipant_1_1 = new EmployeeParticipant
             {
@@ -1068,6 +1138,10 @@ public class SeederHandler
             _context.Set<EmployeeParticipant>().RemoveRange(eventParticipants);
             _context.SaveChanges();
 
+            var companyParticipants = _context.Set<CompanyParticipant>().Where(ep => ep.Guid != new Guid());
+            _context.Set<CompanyParticipant>().RemoveRange(companyParticipants);
+            _context.SaveChanges();
+
             var events = _context.Set<Event>().Where(a => a.Name != "tidak ada");
             _context.Set<Event>().RemoveRange(events);
             _context.SaveChanges();
@@ -1091,6 +1165,10 @@ public class SeederHandler
 
             var roles = _context.Set<Role>().Where(a => a.Name != "tidak ada");
             _context.Set<Role>().RemoveRange(roles);
+            _context.SaveChanges();
+
+            var banks = _context.Set<Bank>().Where(a => a.Name != "tidak ada");
+            _context.Set<Bank>().RemoveRange(banks);
             _context.SaveChanges();
 
             transaction.Commit();

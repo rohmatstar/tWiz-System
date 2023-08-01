@@ -118,12 +118,12 @@ public class EventService
         string format = "dd MMMM yyyy, HH:mm 'WIB'";
         if (sortBy == "older")
         {
-            filterEvents = filterEvents.OrderBy(e => DateTime.ParseExact(e.StartDate, format, CultureInfo.InvariantCulture)).ToList();
+            filterEvents = filterEvents.OrderByDescending(e => DateTime.ParseExact(e.StartDate, format, CultureInfo.InvariantCulture)).ToList();
         }
 
         if (sortBy == "newest")
         {
-            filterEvents = filterEvents.OrderByDescending(e => DateTime.ParseExact(e.StartDate, format, CultureInfo.InvariantCulture)).ToList();
+            filterEvents = filterEvents.OrderBy(e => DateTime.ParseExact(e.StartDate, format, CultureInfo.InvariantCulture)).ToList();
         }
 
         // authorization
@@ -846,6 +846,121 @@ public class EventService
         }
 
         return publicEventsParticipant;
+    }
+
+
+    public List<TicketDto>? GetTickets(QueryParamGetTicketDto queryParams)
+    {
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        var userTickets = new List<TicketDto>();
+        var events = _eventRepository.GetAll();
+
+        var time = queryParams.time;
+        var sortBy = queryParams.sort_by;
+
+
+        // time values : "all", "coming-soon", "now", "past"
+        // sortby values : "newest", "older"
+
+        var now = DateTime.Now;
+
+        if (time == "coming-soon")
+        {
+            events = events.Where(e => e.StartDate > now).ToList();
+        }
+
+        if (time == "now")
+        {
+            events = events.Where(e => e.StartDate < now && e.EndDate > now).ToList();
+        }
+
+        if (time == "past")
+        {
+            events = events.Where(e => e.EndDate < now).ToList();
+        }
+
+        if (sortBy == "newest")
+        {
+            events = events.OrderBy(e => e.StartDate).ToList();
+        }
+
+        if (sortBy == "older")
+        {
+            events = events.OrderByDescending(e => e.StartDate).ToList();
+        }
+
+        events = events.Where(e => e.IsActive == true).ToList();
+
+        if (userRole == nameof(RoleLevel.Company))
+        {
+            var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
+
+            if (company is null)
+            {
+                return null;
+            }
+
+            var companyParticipants = _companyParticipantRepository.GetAll();
+
+            foreach (var e in events)
+            {
+                var companyAcceptedEvent = companyParticipants.FirstOrDefault(cp => cp.CompanyGuid == company.Guid && cp.EventGuid == e.Guid && cp.Status == InviteStatusLevel.Accepted);
+
+                if (companyAcceptedEvent is not null)
+                {
+                    var ticketCode = $"{Math.Abs(e.Guid.GetHashCode())}-{Math.Abs(companyAcceptedEvent.Guid.GetHashCode())}";
+                    var ticket = new TicketDto
+                    {
+                        EventName = e.Name,
+                        ParticipantName = company.Name,
+                        Place = e.Place,
+                        StartDate = e.StartDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+                        TicketCode = ticketCode
+                    };
+
+                    userTickets.Add(ticket);
+                }
+            }
+        }
+
+
+        if (userRole == nameof(RoleLevel.Employee))
+        {
+            var employee = _employeeRepository.GetAll().FirstOrDefault(e => e.AccountGuid == Guid.Parse(accountGuid!));
+
+            if (employee is null)
+            {
+                return null;
+            }
+
+            var employeeParticipants = _employeeParticipantRepository.GetAll();
+
+            foreach (var e in events)
+            {
+                var employeeAcceptedEvent = employeeParticipants.FirstOrDefault(ep => ep.EmployeeGuid == employee.Guid && ep.EventGuid == e.Guid && ep.Status == InviteStatusLevel.Accepted);
+
+                if (employeeAcceptedEvent is not null)
+                {
+                    var ticketCode = $"{Math.Abs(e.Guid.GetHashCode())}-{Math.Abs(employeeAcceptedEvent.Guid.GetHashCode())}";
+                    var ticket = new TicketDto
+                    {
+                        EventName = e.Name,
+                        ParticipantName = employee.FullName,
+                        Place = e.Place,
+                        StartDate = e.StartDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+                        TicketCode = ticketCode
+                    };
+
+                    userTickets.Add(ticket);
+                }
+            }
+        }
+
+        return userTickets;
     }
 }
 

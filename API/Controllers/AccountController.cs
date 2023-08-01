@@ -3,7 +3,6 @@ using API.DTOs.Events;
 using API.Services;
 using API.Utilities.Handlers;
 using Microsoft.AspNetCore.Mvc;
-using System.Globalization;
 using System.Net;
 
 namespace API.Controllers;
@@ -154,12 +153,21 @@ public class AccountController : ControllerBase
     [HttpGet("Test")]
     public IActionResult Test([FromQuery] QueryParamGetEventDto queryParams)
     {
-        string dateString = "31 July 2023, 14:28 WIB";
-        string format = "dd MMMM yyyy, HH:mm 'WIB'";
+        Guid guid = Guid.NewGuid();
+        var entities = _service.GetAccounts().FirstOrDefault();
 
-        DateTime dateTime = DateTime.ParseExact(dateString, format, CultureInfo.InvariantCulture);
 
-        Console.WriteLine(dateTime); // Output: 7/31/2023 2:28:00 PM
+        // Convert Guid to 32-bit signed integer using GetHashCode()
+        int hashCode = entities.Guid.GetHashCode();
+
+        //Guid guid = Guid.NewGuid();
+
+        // Convert Guid to a positive number
+        int positiveNumber = Math.Abs(entities.Guid.GetHashCode());
+
+        Console.WriteLine($"Guid: {entities.Guid}");
+        Console.WriteLine($"Positive Number: {positiveNumber}");
+
 
 
 
