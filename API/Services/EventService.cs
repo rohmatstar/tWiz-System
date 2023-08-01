@@ -893,7 +893,7 @@ public class EventService
             events = events.OrderByDescending(e => e.StartDate).ToList();
         }
 
-
+        events = events.Where(e => e.IsActive == true).ToList();
 
         if (userRole == nameof(RoleLevel.Company))
         {
@@ -908,11 +908,11 @@ public class EventService
 
             foreach (var e in events)
             {
-                var companyAsParticipantInEvent = companyParticipants.FirstOrDefault(cp => cp.CompanyGuid == company.Guid && cp.EventGuid == e.Guid);
+                var companyAcceptedEvent = companyParticipants.FirstOrDefault(cp => cp.CompanyGuid == company.Guid && cp.EventGuid == e.Guid && cp.Status == InviteStatusLevel.Accepted);
 
-                if (companyAsParticipantInEvent is not null)
+                if (companyAcceptedEvent is not null)
                 {
-                    var ticketCode = $"{Math.Abs(e.Guid.GetHashCode())}-{Math.Abs(companyAsParticipantInEvent!.Guid.GetHashCode())}";
+                    var ticketCode = $"{Math.Abs(e.Guid.GetHashCode())}-{Math.Abs(companyAcceptedEvent.Guid.GetHashCode())}";
                     var ticket = new TicketDto
                     {
                         EventName = e.Name,
@@ -939,16 +939,13 @@ public class EventService
 
             var employeeParticipants = _employeeParticipantRepository.GetAll();
 
-            events = events.Where(e => e.IsActive == true).ToList();
-
             foreach (var e in events)
             {
-                var employeeAsParticipantInEvent = employeeParticipants.FirstOrDefault(ep => ep.EmployeeGuid == employee.Guid && ep.EventGuid == e.Guid);
+                var employeeAcceptedEvent = employeeParticipants.FirstOrDefault(ep => ep.EmployeeGuid == employee.Guid && ep.EventGuid == e.Guid && ep.Status == InviteStatusLevel.Accepted);
 
-
-                if (employeeAsParticipantInEvent is not null)
+                if (employeeAcceptedEvent is not null)
                 {
-                    var ticketCode = $"{Math.Abs(e.Guid.GetHashCode())}-{Math.Abs(employeeAsParticipantInEvent!.Guid.GetHashCode())}";
+                    var ticketCode = $"{Math.Abs(e.Guid.GetHashCode())}-{Math.Abs(employeeAcceptedEvent.Guid.GetHashCode())}";
                     var ticket = new TicketDto
                     {
                         EventName = e.Name,
