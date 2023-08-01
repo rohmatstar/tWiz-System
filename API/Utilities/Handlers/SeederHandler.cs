@@ -357,7 +357,7 @@ public class SeederHandler
                 Guid = new Guid(),
                 EventGuid = event1.Guid,
                 CompanyGuid = company1.Guid,
-                Status = InviteStatusLevel.Pending,
+                Status = InviteStatusLevel.Accepted,
                 IsPresent = false,
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
@@ -368,7 +368,7 @@ public class SeederHandler
                 Guid = new Guid(),
                 EventGuid = event2.Guid,
                 CompanyGuid = company1.Guid,
-                Status = InviteStatusLevel.Pending,
+                Status = InviteStatusLevel.Accepted,
                 IsPresent = false,
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
@@ -379,7 +379,7 @@ public class SeederHandler
                 Guid = new Guid(),
                 EventGuid = event3.Guid,
                 CompanyGuid = company2.Guid,
-                Status = InviteStatusLevel.Pending,
+                Status = InviteStatusLevel.Accepted,
                 IsPresent = false,
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
@@ -390,7 +390,7 @@ public class SeederHandler
                 Guid = new Guid(),
                 EventGuid = event4.Guid,
                 CompanyGuid = company2.Guid,
-                Status = InviteStatusLevel.Pending,
+                Status = InviteStatusLevel.Accepted,
                 IsPresent = false,
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
@@ -401,7 +401,7 @@ public class SeederHandler
                 Guid = new Guid(),
                 EventGuid = event5.Guid,
                 CompanyGuid = company2.Guid,
-                Status = InviteStatusLevel.Pending,
+                Status = InviteStatusLevel.Accepted,
                 IsPresent = false,
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
@@ -412,7 +412,7 @@ public class SeederHandler
                 Guid = new Guid(),
                 EventGuid = event6.Guid,
                 CompanyGuid = company1.Guid,
-                Status = InviteStatusLevel.Pending,
+                Status = InviteStatusLevel.Accepted,
                 IsPresent = false,
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
