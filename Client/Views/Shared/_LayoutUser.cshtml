@@ -83,7 +83,7 @@
 
                         <ul class="menu-sub">
                             <li class="menu-item @(active == "create_event" ? "active" : "")">
-                                <a asp-controller="Event" asp-action="Create" class="menu-link active">
+                                <a asp-controller="Event" asp-action="Create" class="menu-link">
                                     <div>Create Event</div>
                                 </a>
                             </li>
@@ -192,7 +192,7 @@
                     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
                         <div class="navbar-nav align-items-center">
                             <div class="nav-item d-flex align-items-center">
-                                <span class="me-2">Good Afternoon!</span>
+                                <span class="me-2" id="greeting">Welcome Back!</span>
                                 <strong>@ViewData["Username"]</strong>
                             </div>
                         </div>
@@ -295,6 +295,7 @@
     <script src="../assets/vendor/libs/apex-charts/apexcharts.js"></script>
 
     <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/ui-popover.js"></script>
 
     <script src="../assets/js/ui-toasts.js"></script>
     <script type="text/javascript">
@@ -313,5 +314,23 @@
 
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        var currentHour = new Date().getHours();
+        var greeting = getGreeting(currentHour);
+        document.getElementById("greeting").textContent = greeting;
+
+        function getGreeting(hour) {
+            if (hour >= 5 && hour < 11) {
+                return "Good Morning!";
+            } else if (hour >= 11 && hour < 15) {
+                return "Good Day!";
+            } else if (hour >= 15 && hour < 18) {
+                return "Good Afternoon!";
+            } else {
+                return "Good Evening!";
+            }
+        }
+    </script>
 </body>
 </html>
