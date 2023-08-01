@@ -19,11 +19,7 @@ namespace Client.Controllers
             SetCommonViewBagData();
             var active = "event";
             ViewBag.Active = active;
-            ViewBag.Toast = new ToastDto {
-                Color = "danger",
-                Title = "Changes Unsaved!",
-                Subtitle = "There's some problem when save changes"
-            };
+
             return View();
         }
 

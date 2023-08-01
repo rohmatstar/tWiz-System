@@ -1,4 +1,6 @@
 ﻿@{
+    var toast = TempData["toast"] as dynamic;
+
     ViewData["Title"] = "Invited Events";
     ViewData["Username"] = ViewBag.Username as string;
     ViewData["Role"] = ViewBag.Role as string;
@@ -82,15 +84,21 @@
 }
 
 @section Toast{
-    <div class="bs-toast toast toast-placement-ex m-2 fade bg-success top-0 start-50 translate-middle-x" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
-        <div class="toast-header">
-            <i class="bx bx-bell me-2"></i>
-            <div class="me-auto fw-semibold">Changes Saved!</div>
+    @if (toast != null)
+    {
+        var toastColor = toast.Color ?? "secondary";
+        var toastClass = $"bs-toast toast toast-placement-ex m-2 fade bg-{toastColor} top-0 start-50 translate-middle-x";
+
+        <div class="@toastClass" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+            <div class="toast-header">
+                <i class="bx bx-bell me-2"></i>
+                <div class="me-auto fw-semibold">@toast.Title</div>
+            </div>
+            <div class="toast-body">
+                @toast.Subtitle
+            </div>
         </div>
-        <div class="toast-body">
-            All changes successfully saved into database
-        </div>
-    </div>
+    }
 }
 
 <!-- Modals -->

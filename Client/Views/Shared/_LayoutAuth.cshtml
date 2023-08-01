@@ -45,9 +45,31 @@
     <script src="../assets/vendor/libs/popper/popper.js"></script>
     <script src="../assets/vendor/js/bootstrap.js"></script>
     <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
     <script src="../assets/vendor/js/menu.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.8.0/dist/JsBarcode.all.min.js"></script>
+
+    <script src="../assets/vendor/libs/apex-charts/apexcharts.js"></script>
+
     <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/ui-popover.js"></script>
+
+    <script src="../assets/js/ui-toasts.js"></script>
+    <script type="text/javascript">
+        setTimeout(function () {
+            $(".toast").addClass('show');
+        }, 1000);
+
+        setTimeout(function () {
+            $(".toast").removeClass('show');
+        }, 5000);
+    </script>
+
+    <script src="../assets/js/dashboards-analytics.js"></script>
+
     <script async defer src="https://buttons.github.io/buttons.js"></script>
+
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -1,4 +1,5 @@
-﻿using Client.Models;
+﻿using Client.DTOs;
+using Client.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -17,6 +18,7 @@ namespace Client.Controllers
             SetCommonViewBagData();
             var active = "dashboard";
             ViewBag.Active = active;
+
             return View();
         }
 

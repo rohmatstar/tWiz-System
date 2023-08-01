@@ -21,27 +21,35 @@ namespace Client.Controllers
 
         /*[Authorize]*/
         [HttpGet]
-        public IActionResult SignIn()
+        public IActionResult Index()
         {
-            ViewBag.Toast = new ToastDto
-            {
-                Color = "success",
-                Title = "Signed in",
-                Subtitle = "Welcome, you have signed in to tWiz!"
-            };
+            return RedirectToAction("SignIn", "Auth");
+        }
+
+        /*[Authorize]*/
+        [HttpGet]
+        public IActionResult SignUp()
+        {
             return View();
         }
 
+        /*[Authorize]*/
+        [HttpGet]
+        public IActionResult SignIn()
+        {
+            return View();
+        }
+
+        /*[Authorize]*/
         [HttpPost]
         public async Task<IActionResult> SignIn(SignInDto signDto)
         {
-
             var result = await _authRepository.SignIn(signDto);
             if (result.Code == 200)
             {
                 var token = result?.Data;
 
-                ViewBag.Toast = new ToastDto
+                TempData["toast"] = new ToastDto
                 {
                     Color = "success",
                     Title = "Signed in",
@@ -52,12 +60,13 @@ namespace Client.Controllers
                 return RedirectToAction("Index", "Dashboard");
             }
 
-            ViewBag.Toast = new ToastDto
+            TempData["toast"] = new ToastDto
             {
                 Color = "danger",
                 Title = "Sign in Failed",
                 Subtitle = "So sorry, there is some mistake when signing in you"
             };
+
             return View();
         }
 

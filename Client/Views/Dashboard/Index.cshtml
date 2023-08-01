@@ -1,6 +1,5 @@
 ﻿@{
-    var toastColor = ViewBag.Toast.Color as string != null ? ViewBag.Toast.Color as string : "success";
-    var toastClass = $"bs-toast toast toast-placement-ex m-2 fade bg-{toastColor} top-0 start-50 translate-middle-x";
+    var toast = TempData["toast"] as dynamic;
 
     ViewData["Title"] = "Dashboard";
     ViewData["Username"] = ViewBag.Username as string;
@@ -9,15 +8,18 @@
 }
 
 @section Toast{
-    @if (ViewBag.Toast != null)
+    @if (toast != null)
     {
+        var toastColor = toast.Color ?? "secondary";
+        var toastClass = $"bs-toast toast toast-placement-ex m-2 fade bg-{toastColor} top-0 start-50 translate-middle-x";
+
         <div class="@toastClass" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
             <div class="toast-header">
                 <i class="bx bx-bell me-2"></i>
-                <div class="me-auto fw-semibold">@ViewBag.Toast.Title</div>
+                <div class="me-auto fw-semibold">@toast.Title</div>
             </div>
             <div class="toast-body">
-                @ViewBag.Toast.Subtitle
+                @toast.Subtitle
             </div>
         </div>
     }
