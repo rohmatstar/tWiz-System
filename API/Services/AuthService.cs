@@ -204,7 +204,7 @@ public class AuthService
         }
         else
         {
-            claims.Add(new Claim("Name", company.Name));
+            claims.Add(new Claim(ClaimTypes.Name, company.Name));
         }
 
         var getAccountRole = _accountRoleRepository.GetByGuidCompany(account.Guid);
@@ -213,7 +213,7 @@ public class AuthService
                                        join r in _roleRepository.GetAll() on ar.RoleGuid equals r.Guid
                                        select r.Name;
 
-        claims.AddRange(getRoleNameByAccountRole.Select(role => new Claim("Role", role)));
+        claims.AddRange(getRoleNameByAccountRole.Select(role => new Claim(ClaimTypes.Role, role)));
 
         try
         {

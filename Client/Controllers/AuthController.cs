@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace Client.Controllers
 {
@@ -90,7 +91,7 @@ namespace Client.Controllers
                 var jwtHandler = new JwtSecurityTokenHandler();
                 var jwtToken = jwtHandler.ReadJwtToken(token);
 
-                var roles = jwtToken.Claims.Where(c => c.Type == "Role").Select(c => c.Value).ToList();
+                var roles = jwtToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
                 string role = roles!.FirstOrDefault()!;
 
                 if(type == role)
