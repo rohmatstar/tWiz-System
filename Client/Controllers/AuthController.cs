@@ -2,8 +2,11 @@
 using Client.DTOs;
 using Client.DTOs.Auths;
 using Client.Models;
+using Client.Utilities.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Client.Controllers
 {
@@ -33,7 +36,7 @@ namespace Client.Controllers
                 return RedirectToAction("Index", "Dashboard");
             }
 
-            TempData["type"] = "Company";
+            TempData["type"] = RoleLevel.Company.ToString();
             return View("SignIn");
         }
         public IActionResult ForgetPassword()
@@ -69,7 +72,7 @@ namespace Client.Controllers
                 return RedirectToAction("Index", "Dashboard");
             }
 
-            TempData["type"] = "Company";
+            TempData["type"] = RoleLevel.Company.ToString();
             return View("SignIn");
         }
 
@@ -82,9 +85,31 @@ namespace Client.Controllers
             var result = await _authRepository.SignIn(signDto);
             if (result.Code == 200)
             {
+                // Role match checking
                 var token = result?.Data;
-                HttpContext.Session.SetString("JWTToken", token!);
-                return RedirectToAction("Index", "Dashboard");
+                var jwtHandler = new JwtSecurityTokenHandler();
+                var jwtToken = jwtHandler.ReadJwtToken(token);
+
+                var roles = jwtToken.Claims.Where(c => c.Type == "Role").Select(c => c.Value).ToList();
+                string role = roles!.FirstOrDefault()!;
+
+                if(type == role)
+                {
+                    HttpContext.Session.SetString("JWTToken", token!);
+                    return RedirectToAction("Index", "Dashboard");
+                }
+                else
+                {
+                    TempData["toast"] = new ToastDto
+                    {
+                        Color = "warning",
+                        Title = "Credential Doesn't Match",
+                        Subtitle = "Oops! you cannot sign in as " + type
+                    };
+
+                    TempData["type"] = type;
+                    return View("SignIn");
+                }
             }
             else
             {
@@ -118,6 +143,17 @@ namespace Client.Controllers
         }
 
         /* ===== Employee =======*/
+        [HttpGet]
+        public IActionResult SignInAsEmployee()
+        {
+            if (User.Identity!.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Dashboard");
+            }
+
+            TempData["type"] = RoleLevel.Employee.ToString();
+            return View("SignIn");
+        }
         public IActionResult SignoutEmployee()
         {
             HttpContext.Session.Remove("JWTToken");
