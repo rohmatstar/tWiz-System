@@ -17,13 +17,15 @@ public class EventPaymentService
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IEventRepository _eventRepository;
     private readonly IAccountRepository _accountRepository;
+    private readonly ICompanyParticipantRepository _companyParticipantRepository;
+    private readonly IEmployeeParticipantRepository _employeeParticipantRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly TwizDbContext _twizDbContext;
     private readonly AccountService _accountService;
 
     private readonly IEmailHandler _emailHandler;
 
-    public EventPaymentService(IEventPaymentRepository eventPaymentRepository, IBankRepository bankRepository, ICompanyRepository companyRepository, IEmployeeRepository employeeRepository, IEventRepository eventRepository, IHttpContextAccessor httpContextAccessor, TwizDbContext twizDbContext, AccountService accountService, IEmailHandler emailHandler)
+    public EventPaymentService(IEventPaymentRepository eventPaymentRepository, IBankRepository bankRepository, ICompanyRepository companyRepository, IEmployeeRepository employeeRepository, IEventRepository eventRepository, IHttpContextAccessor httpContextAccessor, TwizDbContext twizDbContext, AccountService accountService, IEmailHandler emailHandler, ICompanyParticipantRepository companyParticipantRepository, IEmployeeParticipantRepository employeeParticipantRepository, IAccountRepository accountRepository)
     {
         _eventPaymentRepository = eventPaymentRepository;
         _bankRepository = bankRepository;
@@ -34,6 +36,9 @@ public class EventPaymentService
         _twizDbContext = twizDbContext;
         _accountService = accountService;
         _emailHandler = emailHandler;
+        _companyParticipantRepository = companyParticipantRepository;
+        _employeeParticipantRepository = employeeParticipantRepository;
+        _accountRepository = accountRepository;
     }
 
     public IEnumerable<GetEventPaymentDto>? GetEventPayments()
@@ -324,7 +329,67 @@ public class EventPaymentService
 
         var getEventPayment = _eventPaymentRepository.GetByGuid(aproveEventPaymentDto.Guid);
 
+
         if (getEventPayment == null)
+        {
+            return 0;
+        }
+        var getEvent = _eventRepository.GetByGuid(getEventPayment.EventGuid);
+
+        if (getEvent is null)
+        {
+            return 0;
+        }
+
+        var account = _accountRepository.GetByEmail(aproveEventPaymentDto.AccountEmail);
+
+        if (account is null)
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == account.Guid);
+        var employee = _employeeRepository.GetAll().FirstOrDefault(e => e.AccountGuid == account.Guid);
+
+        // check who owns the account (company or employee)
+        if (company is not null)
+        {
+            var companyParticipant = _companyParticipantRepository.GetAll().FirstOrDefault(cp => cp.CompanyGuid == company.Guid && cp.EventGuid == getEvent.Guid);
+
+            if (companyParticipant is null)
+            {
+                return 0;
+            }
+
+            companyParticipant.Status = InviteStatusLevel.Accepted;
+
+            var updatedCompanyParticipant = _companyParticipantRepository.Update(companyParticipant);
+
+            if (updatedCompanyParticipant is false)
+            {
+                return 0;
+            }
+        }
+        else if (employee is not null)
+        {
+            var employeeParticipant = _employeeParticipantRepository.GetAll().FirstOrDefault(cp => cp.EmployeeGuid == employee.Guid && cp.EventGuid == getEvent.Guid);
+
+            if (employeeParticipant is null)
+            {
+                return 0;
+            }
+
+            employeeParticipant.Status = InviteStatusLevel.Accepted;
+
+            var updatedCompanyParticipant = _employeeParticipantRepository.Update(employeeParticipant);
+
+            if (updatedCompanyParticipant is false)
+            {
+                return 0;
+            }
+        }
+        else
         {
             return 0;
         }
@@ -341,32 +406,18 @@ public class EventPaymentService
             return 0;
         }
 
-        var getAccountCompany = _accountRepository.GetByEmail(aproveEventPaymentDto.CompanyEmail);
-
-        if (getAccountCompany is null)
-        {
-            transaction.Rollback();
-            return 0;
-        }
-
-        // aktivasi account
-        getAccountCompany.IsActive = true;
-
-        var accountUpdated = _accountRepository.Update(getAccountCompany);
-
-        if (accountUpdated is false)
-        {
-            transaction.Rollback();
-            return 0;
-        }
-
 
         try
         {
-            var contentEmail = $"<h1>Conratulation Your Account Has Been Activated!!</h1>" +
-                $"<p>welcome to tWiz. Now you can fully use the services of our tWiz service. Don't hesitate to contact the support center if you have any problems using our tWiz service</p>";
+            var contentEmail = $"<h1>Congratulation Your Event Payment Submission Has Been Verified</h1>" +
+                $"<h2>{getEvent.Name.ToUpper()}</h2>" +
+                $"<p>{getEvent.Description}</p>" +
+                $"<p>{getEvent.StartDate}</p>" +
+                $"<p>{getEvent.EndDate} </p>"
+                ;
 
-            _emailHandler.SendEmail(aproveEventPaymentDto.CompanyEmail, "Aproved tWiz Account", contentEmail);
+            _emailHandler.SendEmail(aproveEventPaymentDto.AccountEmail, "Aproved event payment submission", contentEmail);
+
             transaction.Commit();
         }
         catch

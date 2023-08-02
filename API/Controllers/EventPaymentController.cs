@@ -228,4 +228,28 @@ public class EventPaymentController : ControllerBase
         });
 
     }
+
+    [HttpPut("aprove")]
+    public IActionResult Aprove(AproveEventPaymentDto aproveEventPaymentDto)
+    {
+        var aprovedEventPaymentStatus = _service.AproveEventPayment(aproveEventPaymentDto);
+
+        if (aprovedEventPaymentStatus is 0)
+        {
+            return BadRequest(new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "Check your data"
+            });
+        }
+
+
+        return Ok(new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Successfully aprove event payment submission"
+        });
+    }
 }
