@@ -1,23 +1,18 @@
-﻿@using System.Security.Claims;
+﻿@using Client.Utilities.Enums;
+@using System.Security.Claims;
 @{
     // JWT Parse
-    var username = User!.Identity!.Name;
-
-    string customClaimType = "GuidValue";
-    Claim guidClaim = User.Claims.FirstOrDefault(c => c.Type == customClaimType);
-    Guid? guidValue = null;
-
-    if (guidClaim != null && Guid.TryParse(guidClaim.Value, out Guid parsedGuid))
-    {
-        guidValue = parsedGuid;
-    }
-
-    var role = ViewBag.Role as string;
+    var username = User!.Claims!.FirstOrDefault(c => c.Type == "Name")!.Value;
+    var role = User!.Claims!.FirstOrDefault(c => c.Type == "Role")!.Value;
     var avatar = $"../assets/img/avatars/{role}.png";
 
     var signout = "Auth/SignoutCompany";
-    if(role != "company"){
+    if(role == RoleLevel.Employee.ToString()){
         signout = "Auth/SignoutEmployee";
+    }
+    if (role == RoleLevel.SysAdmin.ToString())
+    {
+        signout = "Auth/SignoutSysAdmin";
     }
 
     var active = ViewBag.Active as string;
@@ -86,7 +81,7 @@
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
 
-            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme @role">
+            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme @role.ToLower()">
                 <div class="app-brand demo">
                     <a asp-asp-controller="Dashboard" asp-action="Index" class="app-brand-link">
                         <span class="app-brand-logo demo">
@@ -102,7 +97,7 @@
 
                 <div class="menu-inner-shadow"></div>
 
-                @if (role == "company")
+                @if (role == RoleLevel.Company.ToString())
                 {
                     <ul class="menu-inner py-1">
                         <li class="menu-item @(active == "dashboard" ? "active" : "")">
@@ -227,7 +222,7 @@
 
                         <li class="menu-item @(active == "transaction" ? "active" : "")">
                             <a asp-controller="Employee" asp-action="Transaction" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-cube"></i>
+                                <i class="menu-icon tf-icons bx bx-credit-card-alt"></i>
                                 <div>Transactions</div>
                             </a>
                         </li>
@@ -249,7 +244,7 @@
                         <div class="navbar-nav align-items-center">
                             <div class="nav-item d-flex align-items-center">
                                 <span class="me-2" id="greeting">Welcome Back!</span>
-                                <strong>@ViewData["Username"]</strong>
+                                <strong>@username</strong>
                             </div>
                         </div>
 
@@ -276,9 +271,9 @@
                                             <div class="d-flex">
                                                 <div class="flex-grow-1">
                                                     <span class="fw-semibold d-block">
-                                                        @ViewData["Username"]
+                                                        @username
                                                     </span>
-                                                    <small class="text-muted text-capitalize">@ViewData["Role"]</small>
+                                                    <small class="text-muted text-capitalize">@role</small>
                                                 </div>
                                             </div>
                                         </a>
@@ -357,7 +352,7 @@
     <script type="text/javascript">
         setTimeout(function () {
             $(".toast").addClass('show');
-        }, 1000);
+        }, 500);
 
         setTimeout(function () {
             $(".toast").removeClass('show');
