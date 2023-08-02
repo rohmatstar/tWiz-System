@@ -1,6 +1,6 @@
-﻿@model Client.DTOs.Auths.RegisterDto
+﻿@model Client.DTOs.Auths.SignUpDto
 @{
-    ViewData["Title"] = "Sign up as Company";
+    ViewData["Title"] = "Sign up for Company";
     Layout = "_LayoutAuth";
 }
 
@@ -17,42 +17,112 @@
         <p class="mb-4">Make your event management easy and fun!</p>
 
         <form id="formAuthentication" class="mb-3" asp-action="SignUp" method="POST">
-            <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="email"
-                       class="form-control"
-                       id="username"
-                       name="username"
-                       placeholder="Enter your username"
-                       autofocus />
-            </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="text" class="form-control" id="email" name="email" placeholder="Enter your email" />
-            </div>
-            <div class="mb-3 form-password-toggle">
-                <label class="form-label" for="password">Password</label>
-                <div class="input-group input-group-merge">
-                    <input type="password"
-                           id="password"
-                           class="form-control"
-                           name="password"
-                           placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                           aria-describedby="password" />
-                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
-                </div>
-            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="mb-3">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="terms-conditions" name="terms" />
-                    <label class="form-check-label" for="terms-conditions">
-                        I agree to
-                        <a href="javascript:void(0);">Term & Condition</a>
-                    </label>
+            <div id="carouselExample" class="carousel slide" data-bs-ride="static" data-bs-interval="false">
+                <div class="carousel-inner">
+                    <!-- 1 -->
+                    <div class="carousel-item active">
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label">Company Name</label>
+                            <input type="text" asp-for="Name"
+                                   class="form-control"
+                                   id="name"
+                                   name="name"
+                                   placeholder="Enter your Company Name"
+                                   autofocus />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">Email</label>
+                            <input type="email" class="form-control" asp-for="Email" id="email" name="email" placeholder="Enter your email" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="PhoneNumber">Phone Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text" id="phone_number">+</span>
+                                <input type="number" min="1" step="1" length="15"
+                                       class="form-control"
+                                       placeholder="Phone Number"
+                                       asp-for="PhoneNumber"
+                                       aria-label="Username"
+                                       aria-describedby="phone_number" />
+                            </div>
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+
+                        <a class="btn btn-primary d-block w-100" href="#carouselExample" role="button" data-bs-slide="next">
+                            Next <i class="bx bx-right-arrow-alt"></i>
+                        </a>
+                    </div>
+
+                    <!-- 2 -->
+                    <div class="carousel-item">
+                        <div class="mb-3">
+                            <label asp-for="Address" class="form-label">Address</label>
+                            <textarea class="form-control" id="address" name="address" asp-for="Address" rows="3"></textarea>
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3 form-password-toggle">
+                                    <label class="form-label" asp-for="Password">Password</label>
+                                    <div class="input-group input-group-merge">
+                                        <input type="password"
+                                               id="password"
+                                               class="form-control"
+                                               name="password"
+                                               asp-for="Password"
+                                               placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
+                                        <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                    </div>
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3 form-password-toggle">
+                                    <label class="form-label" asp-for="ConfirmPassword">Confirm Password</label>
+                                    <div class="input-group input-group-merge">
+                                        <input type="password"
+                                               id="confirm_password"
+                                               class="form-control"
+                                               name="confirm_password"
+                                               asp-for="ConfirmPassword"
+                                               placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
+                                        <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                    </div>
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        @*<div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms-conditions" name="terms" />
+                                <label class="form-check-label" for="terms-conditions">
+                                    I agree to
+                                    <a href="javascript:void(0);">Term & Condition</a>
+                                </label>
+                            </div>
+                        </div>*@
+
+                        <div class="row">
+                            <div class="col-auto">
+                                <a class="btn btn-outline-primary bg-white text-primary d-inline-block" href="#carouselExample" role="button" data-bs-slide="prev">
+                                    <i class="bx bx-left-arrow-alt"></i>
+                                </a>
+                            </div>
+                            <div class="col ps-0">
+                                <button type="submit" class="btn btn-primary d-block w-100">Sign up</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <button class="btn btn-primary d-grid w-100">Sign up</button>
+            </div>  
         </form>
 
         <p class="text-center">
