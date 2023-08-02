@@ -190,32 +190,6 @@ public class EventController : ControllerBase
         });
     }
 
-    //[HttpGet("details/{event_guid}")]
-    //[Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
-    //public IActionResult GetDetailsEvents(Guid event_guid)
-    //{
-
-    //    var getDetailsEvent = _eventService.GetDetailsEvent(event_guid);
-    //    if (getDetailsEvent is not null)
-    //    {
-    //        return Ok(new ResponseHandler<GetMasterEventDto>
-    //        {
-    //            Code = StatusCodes.Status200OK,
-    //            Status = HttpStatusCode.OK.ToString(),
-    //            Message = "Success",
-    //            Data = getDetailsEvent
-    //        });
-    //    }
-
-    //    return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
-    //    {
-    //        Code = StatusCodes.Status400BadRequest,
-    //        Status = HttpStatusCode.Forbidden.ToString(),
-    //        Message = "Your parameter is wrong"
-    //    });
-    //}
-
-
     [HttpGet("public")]
     [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
     public IActionResult GetPublicEvents()
