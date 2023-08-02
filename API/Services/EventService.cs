@@ -56,7 +56,6 @@ public class EventService
                                 PublicationStatus = e.IsActive == true ? "published" : "draft"
                             }).ToList();
 
-
         if (filterEvents is null)
         {
             return null;
@@ -70,25 +69,6 @@ public class EventService
         var publicationStatusValues = new List<string>() { "all", "published", "draft" };
         var visibilityValues = new List<string>() { "all", "public", "private" };
         var placeTypeValues = new List<string>() { "all", "offline", "online" };
-
-        //if (publicationStatusValues.Contains(publicationStatus) && visibilityValues.Contains(visibility) && publicationStatusValues.Contains(publicationStatus))
-        //{
-
-        //    if (publicationStatus != "all" && visibility != "all" && placeType != "all")
-        //    {
-        //        filterEvents = filterEvents.Where(e => e.PublicationStatus == publicationStatus && e.Visibility == visibility && e.PlaceType == placeType).ToList();
-        //    }
-
-        //    if (publicationStatus != "all" && visibility != "all")
-        //    {
-        //        filterEvents = filterEvents.Where(e => e.PublicationStatus == publicationStatus && e.Visibility == visibility).ToList();
-        //    }
-
-        //    if (publicationStatus != "all")
-        //    {
-        //        filterEvents = filterEvents.Where(e => e.PublicationStatus == publicationStatus).ToList();
-        //    }
-        //}
 
         if (publicationStatusValues.Contains(publicationStatus))
         {
@@ -364,8 +344,7 @@ public class EventService
                 detailsEvent.EmployeeParticipants = employeeParticipantsEvent;
             }
         }
-
-        if (userRole == nameof(RoleLevel.Employee))
+        else if (userRole == nameof(RoleLevel.Employee))
         {
             var employee = employees.FirstOrDefault(e => e.AccountGuid == Guid.Parse(accountGuid!));
 
@@ -377,6 +356,10 @@ public class EventService
             var paymentGuid = _eventPaymentRepository.GetAll().FirstOrDefault(ep => ep.EventGuid == singleEvent.Guid && ep.AccountGuid == employee.AccountGuid)?.Guid;
 
             detailsEvent.PaymentGuid = paymentGuid;
+        }
+        else
+        {
+            return null;
         }
 
         return detailsEvent;
@@ -575,8 +558,7 @@ public class EventService
                 return null;
             }
         }
-
-        if (userRole == nameof(RoleLevel.Employee))
+        else if (userRole == nameof(RoleLevel.Employee))
         {
             var employee = _employeeRepository.GetAll().FirstOrDefault(e => e.AccountGuid == Guid.Parse(accountGuid!));
 
@@ -704,8 +686,7 @@ public class EventService
                 return null;
             }
         }
-
-        if (userRole == nameof(RoleLevel.Employee))
+        else if (userRole == nameof(RoleLevel.Employee))
         {
             var employee = _employeeRepository.GetAll().FirstOrDefault(e => e.AccountGuid == Guid.Parse(accountGuid!));
 
@@ -822,9 +803,7 @@ public class EventService
                 }
             }
         }
-
-
-        if (userRole == nameof(RoleLevel.Employee))
+        else if (userRole == nameof(RoleLevel.Employee))
         {
             var employee = _employeeRepository.GetAll().FirstOrDefault(e => e.AccountGuid == Guid.Parse(accountGuid!));
 
@@ -842,6 +821,10 @@ public class EventService
                     publicEventsParticipant.Add(publicEvent);
                 }
             }
+        }
+        else
+        {
+            return null;
         }
 
         return publicEventsParticipant;
@@ -902,9 +885,7 @@ public class EventService
                 }
             }
         }
-
-
-        if (userRole == nameof(RoleLevel.Employee))
+        else if (userRole == nameof(RoleLevel.Employee))
         {
             var employee = _employeeRepository.GetAll().FirstOrDefault(e => e.AccountGuid == Guid.Parse(accountGuid!));
 
@@ -922,6 +903,10 @@ public class EventService
                     publicEventsParticipant.Add(publicEvent);
                 }
             }
+        }
+        else
+        {
+            return null;
         }
 
         return publicEventsParticipant;
@@ -1005,9 +990,7 @@ public class EventService
                 }
             }
         }
-
-
-        if (userRole == nameof(RoleLevel.Employee))
+        else if (userRole == nameof(RoleLevel.Employee))
         {
             var employee = _employeeRepository.GetAll().FirstOrDefault(e => e.AccountGuid == Guid.Parse(accountGuid!));
 
@@ -1037,6 +1020,10 @@ public class EventService
                     userTickets.Add(ticket);
                 }
             }
+        }
+        else
+        {
+            return null;
         }
 
         return userTickets;
