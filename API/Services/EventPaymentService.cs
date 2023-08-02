@@ -1,7 +1,10 @@
 ﻿using API.Contracts;
+using API.Data;
 using API.DTOs.EventPayments;
 using API.Models;
 using API.Utilities.Enums;
+using API.Utilities.Handlers;
+using API.Utilities.Validations;
 using System.Security.Claims;
 
 namespace API.Services;
@@ -14,8 +17,12 @@ public class EventPaymentService
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IEventRepository _eventRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly TwizDbContext _twizDbContext;
+    private readonly AccountService _accountService;
 
-    public EventPaymentService(IEventPaymentRepository eventPaymentRepository, IBankRepository bankRepository, ICompanyRepository companyRepository, IEmployeeRepository employeeRepository, IEventRepository eventRepository, IHttpContextAccessor httpContextAccessor)
+    private readonly IEmailHandler _emailHandler;
+
+    public EventPaymentService(IEventPaymentRepository eventPaymentRepository, IBankRepository bankRepository, ICompanyRepository companyRepository, IEmployeeRepository employeeRepository, IEventRepository eventRepository, IHttpContextAccessor httpContextAccessor, TwizDbContext twizDbContext, AccountService accountService, IEmailHandler emailHandler)
     {
         _eventPaymentRepository = eventPaymentRepository;
         _bankRepository = bankRepository;
@@ -23,6 +30,9 @@ public class EventPaymentService
         _employeeRepository = employeeRepository;
         _eventRepository = eventRepository;
         _httpContextAccessor = httpContextAccessor;
+        _twizDbContext = twizDbContext;
+        _accountService = accountService;
+        _emailHandler = emailHandler;
     }
 
     public IEnumerable<GetEventPaymentDto>? GetEventPayments()
@@ -96,8 +106,7 @@ public class EventPaymentService
 
             getEventPayment.AccountName = company.Name;
         }
-
-        if (userRole == nameof(RoleLevel.Employee))
+        else if (userRole == nameof(RoleLevel.Employee))
         {
             var employee = _employeeRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
 
@@ -107,6 +116,10 @@ public class EventPaymentService
             }
 
             getEventPayment.AccountName = employee.FullName;
+        }
+        else
+        {
+            return null;
         }
 
         return getEventPayment;
@@ -196,5 +209,129 @@ public class EventPaymentService
         }
 
         return 1; // EventPayment Deleted
+    }
+
+    public async Task<int> UploadEventPaymentSubmission(EventPaymentSubmissionDto paymentSubmissionDto)
+    {
+        var folderPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\event_payments");
+
+        if (!Directory.Exists(folderPath))
+        {
+            try
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
+        }
+
+        var size = paymentSubmissionDto.PaymentImageFile.Length;
+
+        // jika ukuran gambar lebih dari 2mb
+        if (size > 2000000)
+        {
+            return -2;
+        }
+
+        bool isImage = FileValidation.IsValidImageExtension(paymentSubmissionDto.PaymentImageFile);
+
+        if (!isImage)
+        {
+            return -3;
+        }
+
+        var eventPaymentByGuid = _eventPaymentRepository.GetByGuid(paymentSubmissionDto.Guid);
+        var oldImageUrl = "";
+
+        if (eventPaymentByGuid != null && eventPaymentByGuid.PaymentImage != "")
+        {
+            oldImageUrl = eventPaymentByGuid.PaymentImage;
+        }
+
+
+        var randomName = GenerateHandler.GenerateRandomString();
+        var fileName = randomName + paymentSubmissionDto.PaymentImageFile.FileName;
+        var imageUrl = $"images/event_payments/{fileName}";
+
+        var filePath = $"{folderPath}\\{fileName}";
+        using var transaction = _twizDbContext.Database.BeginTransaction();
+        try
+        {
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await paymentSubmissionDto.PaymentImageFile.CopyToAsync(stream);
+            }
+
+            //// update payment image
+            //bool paymentImageUpdated = _eventPaymentRepository.UpdatePaymentImage(paymentSubmissionDto.Guid, imageUrl);
+            //if (!paymentImageUpdated)
+            //{
+
+            //    FileHandler.DeleteFileIfExist(filePath);
+            //    return -4;
+            //}
+
+            //// update status payment
+            //bool statusPaymentUpdated = _eventPaymentRepository.ChangeStatusEventPayment(paymentSubmissionDto.Guid, StatusPayment.Checking);
+
+            //if (!statusPaymentUpdated)
+            //{
+            //    FileHandler.DeleteFileIfExist(filePath);
+            //    return -5;
+            //}
+
+            eventPaymentByGuid!.PaymentImage = imageUrl;
+            eventPaymentByGuid.StatusPayment = StatusPayment.Checking;
+            bool updatedEventPayment = _eventPaymentRepository.Update(eventPaymentByGuid);
+
+            if (updatedEventPayment == false)
+            {
+                FileHandler.DeleteFileIfExist(filePath);
+                return -5;
+            }
+
+
+
+            // hapus foto lama jika ada
+            if (oldImageUrl != "")
+            {
+                var filePathOldImage = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", oldImageUrl.Replace("/", "\\"));
+                FileHandler.DeleteFileIfExist(filePathOldImage);
+            }
+        }
+        catch
+        {
+            transaction.Rollback();
+
+            FileHandler.DeleteFileIfExist(filePath);
+            return -4;
+        }
+
+        try
+        {
+            var contentEmail = $"" +
+                $"<h1>Event Payment Submission</h1>" +
+                $"<p>Participant Name : {paymentSubmissionDto.AccountName}</p>" +
+                $"<p>Virtual Account : {eventPaymentByGuid.VaNumber}</p>" +
+                $"<p>Now you can check it</p>";
+
+            var emailAdmin = _accountService.GetEmailSysAdmin();
+
+
+            _emailHandler.SendEmail(_accountService.GetEmailSysAdmin(), "Event Payment Submission", contentEmail);
+        }
+        catch
+        {
+            FileHandler.DeleteFileIfExist(filePath);
+            transaction.Rollback();
+            return -6;
+        }
+
+        transaction.Commit();
+
+
+        return 1;
     }
 }

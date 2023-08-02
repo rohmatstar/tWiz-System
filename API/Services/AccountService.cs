@@ -1,7 +1,6 @@
 ﻿using API.Contracts;
 using API.DTOs.Accounts;
 using API.Models;
-using API.Utilities.Enums;
 using API.Utilities.Handlers;
 
 namespace API.Services;
@@ -12,13 +11,16 @@ public class AccountService
     private readonly IEmailHandler _emailhandler;
     private readonly IAccountRoleRepository _accountRoleRepository;
     private readonly IRoleRepository _roleRepository;
+    private readonly ISysAdminRepository _sysAdminRepository;
 
-    public AccountService(IAccountRepository accountRepository, IEmailHandler emailhandler, IAccountRoleRepository accountRoleRepository, IRoleRepository roleRepository)
+
+    public AccountService(IAccountRepository accountRepository, IEmailHandler emailhandler, IAccountRoleRepository accountRoleRepository, IRoleRepository roleRepository, ISysAdminRepository sysAdminRepository)
     {
         _accountRepository = accountRepository;
         _emailhandler = emailhandler;
         _accountRoleRepository = accountRoleRepository;
         _roleRepository = roleRepository;
+        _sysAdminRepository = sysAdminRepository;
     }
 
     public IEnumerable<GetAccountDto>? GetAccounts()
@@ -149,21 +151,25 @@ public class AccountService
 
     public string GetEmailSysAdmin()
     {
-        var emailSysAdmin = (from account in GetAccounts()
-                             join accountRole in _accountRoleRepository.GetAll()
-                             on account.Guid equals accountRole.AccountGuid
-                             join role in _roleRepository.GetAll()
-                             on accountRole.RoleGuid equals role.Guid
-                             where role.Name == nameof(RoleLevel.SysAdmin)
-                             select account.Email
-                      ).FirstOrDefault();
+        //var emailSysAdmin = (from account in GetAccounts()
+        //                     join accountRole in _accountRoleRepository.GetAll()
+        //                     on account.Guid equals accountRole.AccountGuid
+        //                     join role in _roleRepository.GetAll()
+        //                     on accountRole.RoleGuid equals role.Guid
+        //                     where role.Name == nameof(RoleLevel.SysAdmin)
+        //                     select account.Email
+        //              ).FirstOrDefault();
 
-        if (emailSysAdmin == null)
-        {
-            return "";
-        }
+        //if (emailSysAdmin == null)
+        //{
+        //    return "";
+        //}
 
-        return emailSysAdmin;
+        var sysAdmin = _sysAdminRepository.GetAll().ToList()[0];
+
+        var accountSysAdmin = _accountRepository.GetByGuid(sysAdmin.AccountGuid);
+
+        return accountSysAdmin?.Email ?? "";
     }
 }
 

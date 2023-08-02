@@ -103,7 +103,15 @@ public class SeederHandler
                 ModifiedDate = DateTime.Now
             };
 
-            _context.Set<Role>().AddRange(new List<Role> { companyRole, employeeRole });
+            var sysadminRole = new Role
+            {
+                Guid = new Guid(),
+                Name = nameof(RoleLevel.SysAdmin),
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            _context.Set<Role>().AddRange(new List<Role> { companyRole, employeeRole, sysadminRole });
             _context.SaveChanges();
 
 
@@ -501,6 +509,50 @@ public class SeederHandler
             _context.Set<EventPayment>().AddRange(new List<EventPayment> { eventPayment_ev3_c2a2_1 });
             _context.SaveChanges();
 
+
+
+            var AccountSysAdmin = new Account
+            {
+                Guid = new Guid(),
+                Email = "febrianto18@mhs.ubharajaya.ac.id",
+                Password = HashingHandler.HashPassword("!Sysadmin123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            _context.Set<Account>().AddRange(new List<Account> { AccountSysAdmin });
+            _context.SaveChanges();
+
+            var accountSysadminRole = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = AccountSysAdmin.Guid,
+                RoleGuid = sysadminRole.Guid,
+            };
+
+            _context.Set<AccountRole>().AddRange(new List<AccountRole> { accountSysadminRole });
+            _context.SaveChanges();
+
+            var sysadmin = new SysAdmin
+            {
+                Guid = new Guid(),
+                AccountGuid = AccountSysAdmin.Guid,
+                BankAccountNumber = "111122223333",
+                Name = "Febrianto sysadmin",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+
+            _context.Set<SysAdmin>().AddRange(new List<SysAdmin> { sysadmin });
+            _context.SaveChanges();
+
+            // <=====
+
             transaction.Commit();
         }
         catch (Exception ex)
@@ -518,6 +570,10 @@ public class SeederHandler
         using var transaction = _context.Database.BeginTransaction();
         try
         {
+            var sysAdmins = _context.Set<SysAdmin>().Where(ep => ep.Guid != new Guid());
+            _context.Set<SysAdmin>().RemoveRange(sysAdmins);
+            _context.SaveChanges();
+
             var eventParticipants = _context.Set<EmployeeParticipant>().Where(ep => ep.Guid != new Guid());
             _context.Set<EmployeeParticipant>().RemoveRange(eventParticipants);
             _context.SaveChanges();
