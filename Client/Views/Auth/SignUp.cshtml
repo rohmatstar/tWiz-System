@@ -28,12 +28,14 @@
         <!-- Logo -->
         <div class="app-brand justify-content-center">
             <a asp-asp-controller="Home" asp-action="Index" class="app-brand-link gap-2">
-                <span class="app-brand-text demo text-body fw-bolder">tWiz</span>
+                <span class="app-brand-text demo text-body fw-bolder">
+                    <img class="logo" src="../landing/img/icon-white.png" alt="" />tWiz
+                </span>
             </a>
         </div>
         <!-- /Logo -->
         <h4 class="mb-2">Adventure starts here</h4>
-        <p class="mb-4">Make your event management easy and fun!</p>
+        <p class="mb-4">Make your event management quick and easy!</p>
 
         <form id="formAuthentication" class="mb-3" asp-action="SignUp" method="POST">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
