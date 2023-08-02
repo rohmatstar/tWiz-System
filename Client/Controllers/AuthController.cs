@@ -23,7 +23,18 @@ namespace Client.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            return RedirectToAction("SignIn", new { loginType = "Company" });
+            return Redirect("/Auth/SignIn");
+        }
+        [HttpGet]
+        public IActionResult SignIn()
+        {
+            if (User.Identity!.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Dashboard");
+            }
+
+            TempData["type"] = "Company";
+            return View("SignIn");
         }
         public IActionResult ForgetPassword()
         {
@@ -36,35 +47,38 @@ namespace Client.Controllers
         }
 
         /* ===== Company =======*/
+
         [HttpGet]
         public IActionResult SignUp()
         {
             return View();
         }
 
+        /*[HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SignUp(SignUpDto signUpDto)
+        {
+            
+        }*/
+
         [HttpGet]
-        public IActionResult SignIn(string loginType)
+        public IActionResult SignInAsCompany()
         {
             if (User.Identity!.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Dashboard");
             }
 
-            if (loginType != null)
-            {
-                if (loginType == "Employee" || loginType == "Company")
-                {
-                    TempData["loginType"] = loginType;
-                    return View();
-                }
-            }
-            return RedirectToAction("SignIn", new { loginType = "Company" });
+            TempData["type"] = "Company";
+            return View("SignIn");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CompanySignIn(SignInDto signDto)
+        public async Task<IActionResult> SignIn(SignInDto signDto)
         {
+            var type = Request.Form["type"].ToString();
+
             var result = await _authRepository.SignIn(signDto);
             if (result.Code == 200)
             {
@@ -81,56 +95,34 @@ namespace Client.Controllers
                     Subtitle = "So sorry, there is some mistake when signing in you"
                 };
 
+                TempData["type"] = type;
                 return View("SignIn");
             }
         }
-        public IActionResult CompanySignOut()
+
+        public IActionResult SignoutCompany()
         {
+            /*HttpContext.Session.Remove("JWTToken");
+            TempData["toast"] = new ToastDto
+            {
+                Color = "success",
+                Title = "Signed Out!",
+                Subtitle = "You have been Logged out of System. Sign in to access it again"
+            };
+
+            TempData["type"] = "Company";
+            return View("SignIn");*/
+
             HttpContext.Session.Remove("JWTToken");
-            return RedirectToAction("CompanySignIn", "Auth");
+            return Redirect("/Auth/SignInAsCompany");
         }
 
         /* ===== Employee =======*/
-        [HttpGet]
-        public IActionResult EmployeeSignIn()
-        {
-            if (User.Identity!.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Event");
-            }
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EmployeeSignIn(SignInDto signDto)
-        {
-            var result = await _authRepository.SignIn(signDto);
-            if (result.Code == 200)
-            {
-                var token = result?.Data;
-                HttpContext.Session.SetString("JWTToken", token!);
-                return RedirectToAction("Index", "Event");
-            }
-            else
-            {
-                TempData["toast"] = new ToastDto
-                {
-                    Color = "danger",
-                    Title = "Sign in Failed",
-                    Subtitle = "So sorry, there is some mistake when signing in you"
-                };
-
-                return View();
-            }
-        }
-        public IActionResult EmployeeSignOut()
+        public IActionResult SignoutEmployee()
         {
             HttpContext.Session.Remove("JWTToken");
-            return RedirectToAction("EmployeeSignIn", "Auth");
+            return Redirect("/Auth/SignInAsEmployee");
         }
-
-
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

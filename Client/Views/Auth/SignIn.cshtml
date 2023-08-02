@@ -2,8 +2,8 @@
 
 @{
     var toast = TempData["toast"] as dynamic;
-    var loginType = TempData["loginType"] as string;
-    ViewData["Title"] = "Sign in as " + loginType;
+    var type = TempData["type"] as string;
+    ViewData["Title"] = "Sign in as " + type;
 
     Layout = "_LayoutAuth";
 }
@@ -38,7 +38,9 @@
         <h4 class="mb-2">Welcome to tWiz!</h4>
         <p class="mb-4">Please sign-in to your account and start the adventure</p>
 
-        <form id="formAuthentication" class="mb-3" asp-action="CompanySignIn" method="POST">
+        <form id="formAuthentication" class="mb-3" asp-action="SignIn" method="post">
+            <input type="hidden" name="type" value="@type" />
+
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="mb-3">
                 <label asp-for="Email" class="control-label">Email</label>
@@ -79,7 +81,7 @@
             </div>
         </form>
 
-        @if (loginType == "Company")
+        @if (type == "Company")
         {
             <p class="text-center">
                 <span>New on our platform?</span>

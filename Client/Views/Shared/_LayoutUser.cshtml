@@ -15,10 +15,9 @@
     var role = ViewBag.Role as string;
     var avatar = $"../assets/img/avatars/{role}.png";
 
-    var signout = "CompanySignOut";
-
+    var signout = "Auth/SignoutCompany";
     if(role != "company"){
-        signout = "EmployeeSignOut";
+        signout = "Auth/SignoutEmployee";
     }
 
     var active = ViewBag.Active as string;
@@ -78,7 +77,7 @@
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         Cancel
                     </button>
-                    <a href="Auth/@signout" class="btn btn-primary">Absolutely!</a>
+                    <a href="@signout" class="btn btn-primary">Absolutely!</a>
                 </div>
             </div>
         </div>
@@ -290,10 +289,10 @@
                                     </li>
 
                                     <li>
-                                        <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#SignOutModal">
+                                        <button class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#SignOutModal">
                                             <i class="bx bx-power-off me-2"></i>
                                             <span class="align-middle">Sign Out</span>
-                                        </a>
+                                        </button>
                                     </li>
                                 </ul>
                             </li>
