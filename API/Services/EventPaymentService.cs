@@ -211,7 +211,7 @@ public class EventPaymentService
         return 1; // EventPayment Deleted
     }
 
-    public async Task<int> UploadPaymentSubmission(EventPaymentSubmissionDto paymentSubmissionDto)
+    public async Task<int> UploadEventPaymentSubmission(EventPaymentSubmissionDto paymentSubmissionDto)
     {
         var folderPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\event_payments");
 
@@ -288,6 +288,7 @@ public class EventPaymentService
 
             if (updatedEventPayment == false)
             {
+                FileHandler.DeleteFileIfExist(filePath);
                 return -5;
             }
 

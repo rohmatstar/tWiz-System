@@ -530,8 +530,8 @@ public class SeederHandler
             var accountSysadminRole = new AccountRole
             {
                 Guid = new Guid(),
-                AccountGuid = account4.Guid,
-                RoleGuid = employeeRole.Guid,
+                AccountGuid = AccountSysAdmin.Guid,
+                RoleGuid = sysadminRole.Guid,
             };
 
             _context.Set<AccountRole>().AddRange(new List<AccountRole> { accountSysadminRole });
@@ -570,6 +570,10 @@ public class SeederHandler
         using var transaction = _context.Database.BeginTransaction();
         try
         {
+            var sysAdmins = _context.Set<SysAdmin>().Where(ep => ep.Guid != new Guid());
+            _context.Set<SysAdmin>().RemoveRange(sysAdmins);
+            _context.SaveChanges();
+
             var eventParticipants = _context.Set<EmployeeParticipant>().Where(ep => ep.Guid != new Guid());
             _context.Set<EmployeeParticipant>().RemoveRange(eventParticipants);
             _context.SaveChanges();
