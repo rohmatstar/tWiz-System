@@ -313,7 +313,7 @@ public class EventPaymentService
         {
             var contentEmail = $"" +
                 $"<h1>Event Payment Submission</h1>" +
-                $"<p>Participant Name : febri</p>" +
+                $"<p>Participant Name : {paymentSubmissionDto.AccountName}</p>" +
                 $"<p>Virtual Account : {eventPaymentByGuid.VaNumber}</p>" +
                 $"<p>Now you can check it</p>";
 
