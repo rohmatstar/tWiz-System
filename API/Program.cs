@@ -31,6 +31,7 @@ builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IRegisterPaymentRepository, RegisterPaymentRepository>();
 builder.Services.AddScoped<IEventPaymentRepository, EventPaymentRepository>();
+builder.Services.AddScoped<ISysAdminRepository, SysAdminRepository>();
 // ================================================= End Repositories ==================================================== //
 
 // ===================================================== Services ==================================================== //
