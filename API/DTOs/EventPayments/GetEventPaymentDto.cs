@@ -1,5 +1,4 @@
-﻿using API.Utilities.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace API.DTOs.EventPayments;
 
@@ -11,8 +10,12 @@ public class GetEventPaymentDto
     [Required]
     public Guid AccountGuid { get; set; }
 
+    public string AccountName { get; set; }
+
     [Required]
     public Guid EventGuid { get; set; }
+
+    public string EventName { get; set; }
 
     [Required]
     public int VaNumber { get; set; }
@@ -24,8 +27,10 @@ public class GetEventPaymentDto
     public bool IsValid { get; set; }
 
     [Required]
-    public StatusPayment StatusPayment { get; set; }
+    public string StatusPayment { get; set; }
 
     [Required]
     public Guid BankGuid { get; set; }
+
+    public string BankName { get; set; }
 }

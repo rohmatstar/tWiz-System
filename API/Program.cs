@@ -157,8 +157,8 @@ void SeedData(IHost app)
 
         // tambahkan sesuai kebutuhan, jika tidak dipakai dicomment saja jangan dihapus
         service.RemoveAllData();
-        service.GenerateEventMaster();
         service.GenerateBanks();
+        service.GenerateEventMaster();
     }
 }
 

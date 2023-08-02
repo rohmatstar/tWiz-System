@@ -1,16 +1,28 @@
 ﻿using API.Contracts;
 using API.DTOs.EventPayments;
 using API.Models;
+using API.Utilities.Enums;
+using System.Security.Claims;
 
 namespace API.Services;
 
 public class EventPaymentService
 {
     private readonly IEventPaymentRepository _eventPaymentRepository;
+    private readonly IBankRepository _bankRepository;
+    private readonly ICompanyRepository _companyRepository;
+    private readonly IEmployeeRepository _employeeRepository;
+    private readonly IEventRepository _eventRepository;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public EventPaymentService(IEventPaymentRepository eventPaymentRepository)
+    public EventPaymentService(IEventPaymentRepository eventPaymentRepository, IBankRepository bankRepository, ICompanyRepository companyRepository, IEmployeeRepository employeeRepository, IEventRepository eventRepository, IHttpContextAccessor httpContextAccessor)
     {
         _eventPaymentRepository = eventPaymentRepository;
+        _bankRepository = bankRepository;
+        _companyRepository = companyRepository;
+        _employeeRepository = employeeRepository;
+        _eventRepository = eventRepository;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public IEnumerable<GetEventPaymentDto>? GetEventPayments()
@@ -42,7 +54,19 @@ public class EventPaymentService
         {
             return null;
         }
-        var toDto = new GetEventPaymentDto
+
+        var eventName = _eventRepository.GetByGuid(eventPayments.EventGuid)?.Name;
+        var bankName = _bankRepository.GetByGuid(eventPayments.BankGuid)?.Name;
+
+        var statusPayment = "";
+
+        if (eventPayments.StatusPayment == StatusPayment.Pending) statusPayment = "pending";
+        if (eventPayments.StatusPayment == StatusPayment.Checking) statusPayment = "checking";
+        if (eventPayments.StatusPayment == StatusPayment.Paid) statusPayment = "paid";
+        if (eventPayments.StatusPayment == StatusPayment.Rejected) statusPayment = "rejected";
+
+
+        var getEventPayment = new GetEventPaymentDto
         {
             Guid = eventPayments.Guid,
             AccountGuid = eventPayments.AccountGuid,
@@ -51,8 +75,41 @@ public class EventPaymentService
             PaymentImage = eventPayments.PaymentImage,
             IsValid = eventPayments.IsValid,
             BankGuid = eventPayments.BankGuid,
+            BankName = bankName ?? "",
+            EventName = eventName ?? "",
+            StatusPayment = statusPayment ?? ""
         };
-        return toDto;
+
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        if (userRole == nameof(RoleLevel.Company))
+        {
+            var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
+
+            if (company is null)
+            {
+                return null;
+            }
+
+            getEventPayment.AccountName = company.Name;
+        }
+
+        if (userRole == nameof(RoleLevel.Employee))
+        {
+            var employee = _employeeRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
+
+            if (employee is null)
+            {
+                return null;
+            }
+
+            getEventPayment.AccountName = employee.FullName;
+        }
+
+        return getEventPayment;
 
     }
 

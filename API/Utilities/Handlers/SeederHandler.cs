@@ -481,6 +481,26 @@ public class SeederHandler
 
             _context.SaveChanges();
 
+
+
+            // Febri testing seeder
+            var eventPayment_ev3_c2a2_1 = new EventPayment
+            {
+                Guid = new Guid(),
+                EventGuid = event3.Guid,
+                AccountGuid = account2.Guid,
+                BankGuid = GetRandomBank()!.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now,
+                IsValid = false,
+                PaymentImage = "",
+                StatusPayment = StatusPayment.Pending
+            };
+
+            _context.Set<EventPayment>().AddRange(new List<EventPayment> { eventPayment_ev3_c2a2_1 });
+            _context.SaveChanges();
+
             transaction.Commit();
         }
         catch (Exception ex)
@@ -603,6 +623,21 @@ public class SeederHandler
             transaction.Rollback();
         }
 
+    }
+
+    public Bank? GetRandomBank()
+    {
+        var getBanks = _context.Set<Bank>().ToList();
+        if (getBanks is null || getBanks.Count() == 0)
+        {
+            return null; // Atau tindakan lain jika daftar kosong.
+        }
+
+        Random random = new Random();
+        int randomIndex = random.Next(0, getBanks.Count() - 1); // Mendapatkan indeks acak dalam rentang [0, count-1].
+        var randomBank = getBanks[randomIndex]; // Mendapatkan bank secara acak.
+
+        return randomBank ?? null;
     }
 }
 

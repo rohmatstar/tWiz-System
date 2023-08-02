@@ -4,7 +4,6 @@ using API.DTOs.Auths;
 using API.Models;
 using API.Utilities.Enums;
 using API.Utilities.Handlers;
-using System.Linq;
 using System.Security.Claims;
 
 namespace API.Services;
@@ -179,14 +178,34 @@ public class AuthService
             new Claim("Email", loginDto.Email)
         };
 
-        var getAccountName = _companyRepository.GetName(account.Guid);
-        if (getAccountName is null)
-        {
-            getAccountName = (IEnumerable<Company>?)_employeeRepository.GetName(account.Guid);
-        }
-        var accountName = (from an in getAccountName select an.Name);
+        //var getAccountName = _companyRepository.GetName(account.Guid);
+        //if (getAccountName is null)
+        //{
+        //    getAccountName = (IEnumerable<Company>?)_employeeRepository.GetName(account.Guid);
+        //}
+        //var accountName = (from an in getAccountName select an.Name);
 
-        claims.AddRange(accountName.Select(name => new Claim(ClaimTypes.Name, name)));
+        //claims.AddRange(accountName.Select(name => new Claim(ClaimTypes.Name, name)));
+
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == account.Guid);
+
+        if (company is null)
+        {
+            var employee = _employeeRepository.GetAll().FirstOrDefault(e => e.AccountGuid == account.Guid);
+
+            if (employee is null)
+            {
+                return "0";
+            }
+            else
+            {
+                claims.Add(new Claim(ClaimTypes.Name, employee.FullName));
+            }
+        }
+        else
+        {
+            claims.Add(new Claim(ClaimTypes.Name, company.Name));
+        }
 
         var getAccountRole = _accountRoleRepository.GetByGuidCompany(account.Guid);
 
