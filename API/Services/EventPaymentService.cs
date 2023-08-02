@@ -16,6 +16,7 @@ public class EventPaymentService
     private readonly ICompanyRepository _companyRepository;
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IEventRepository _eventRepository;
+    private readonly IAccountRepository _accountRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly TwizDbContext _twizDbContext;
     private readonly AccountService _accountService;
@@ -264,24 +265,6 @@ public class EventPaymentService
                 await paymentSubmissionDto.PaymentImageFile.CopyToAsync(stream);
             }
 
-            //// update payment image
-            //bool paymentImageUpdated = _eventPaymentRepository.UpdatePaymentImage(paymentSubmissionDto.Guid, imageUrl);
-            //if (!paymentImageUpdated)
-            //{
-
-            //    FileHandler.DeleteFileIfExist(filePath);
-            //    return -4;
-            //}
-
-            //// update status payment
-            //bool statusPaymentUpdated = _eventPaymentRepository.ChangeStatusEventPayment(paymentSubmissionDto.Guid, StatusPayment.Checking);
-
-            //if (!statusPaymentUpdated)
-            //{
-            //    FileHandler.DeleteFileIfExist(filePath);
-            //    return -5;
-            //}
-
             eventPaymentByGuid!.PaymentImage = imageUrl;
             eventPaymentByGuid.StatusPayment = StatusPayment.Checking;
             bool updatedEventPayment = _eventPaymentRepository.Update(eventPaymentByGuid);
@@ -331,6 +314,66 @@ public class EventPaymentService
 
         transaction.Commit();
 
+
+        return 1;
+    }
+
+    public int AproveEventPayment(AproveEventPaymentDto aproveEventPaymentDto)
+    {
+        using var transaction = _twizDbContext.Database.BeginTransaction();
+
+        var getEventPayment = _eventPaymentRepository.GetByGuid(aproveEventPaymentDto.Guid);
+
+        if (getEventPayment == null)
+        {
+            return 0;
+        }
+
+        getEventPayment.IsValid = true;
+        getEventPayment.StatusPayment = StatusPayment.Paid;
+        getEventPayment.ModifiedDate = DateTime.Now;
+
+        var eventPaymentUpdated = _eventPaymentRepository.Update(getEventPayment);
+
+        if (eventPaymentUpdated is false)
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
+        var getAccountCompany = _accountRepository.GetByEmail(aproveEventPaymentDto.CompanyEmail);
+
+        if (getAccountCompany is null)
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
+        // aktivasi account
+        getAccountCompany.IsActive = true;
+
+        var accountUpdated = _accountRepository.Update(getAccountCompany);
+
+        if (accountUpdated is false)
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
+
+        try
+        {
+            var contentEmail = $"<h1>Conratulation Your Account Has Been Activated!!</h1>" +
+                $"<p>welcome to tWiz. Now you can fully use the services of our tWiz service. Don't hesitate to contact the support center if you have any problems using our tWiz service</p>";
+
+            _emailHandler.SendEmail(aproveEventPaymentDto.CompanyEmail, "Aproved tWiz Account", contentEmail);
+            transaction.Commit();
+        }
+        catch
+        {
+            transaction.Rollback();
+            return 0;
+        }
 
         return 1;
     }
