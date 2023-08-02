@@ -10,7 +10,7 @@ namespace API.Controllers;
 
 
 [ApiController]
-[Route("api/registerpayments")]
+[Route("api/register-payments")]
 public class RegisterPaymentController : ControllerBase
 {
     private readonly RegisterPaymentService _service;
