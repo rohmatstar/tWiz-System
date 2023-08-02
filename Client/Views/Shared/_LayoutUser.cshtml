@@ -2,8 +2,8 @@
 @using System.Security.Claims;
 @{
     // JWT Parse
-    var username = User!.Claims!.FirstOrDefault(c => c.Type == "Name")!.Value;
-    var role = User!.Claims!.FirstOrDefault(c => c.Type == "Role")!.Value;
+    var username = User!.Claims!.FirstOrDefault(c => c.Type == ClaimTypes.Name)!.Value;
+    var role = User!.Claims!.FirstOrDefault(c => c.Type == ClaimTypes.Role)!.Value;
     var avatar = $"../assets/img/avatars/{role}.png";
 
     var signout = "Auth/SignoutCompany";
