@@ -28,7 +28,7 @@
                             <input type="text" asp-for="Name"
                                    class="form-control"
                                    id="name"
-                                   name="name"
+                                   name="Name"
                                    placeholder="Enter your Company Name"
                                    autofocus />
                             <span asp-validation-for="Name" class="text-danger"></span>
@@ -36,7 +36,7 @@
 
                         <div class="mb-3">
                             <label asp-for="Email" class="form-label">Email</label>
-                            <input type="email" class="form-control" asp-for="Email" id="email" name="email" placeholder="Enter your email" />
+                            <input type="email" class="form-control" asp-for="Email" id="email" name="Email" placeholder="Enter your email" />
                             <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
 
@@ -48,6 +48,7 @@
                                        class="form-control"
                                        placeholder="Phone Number"
                                        asp-for="PhoneNumber"
+                                       name="PhoneNumber"
                                        aria-label="Username"
                                        aria-describedby="phone_number" />
                             </div>
@@ -63,7 +64,7 @@
                     <div class="carousel-item">
                         <div class="mb-3">
                             <label asp-for="Address" class="form-label">Address</label>
-                            <textarea class="form-control" id="address" name="address" asp-for="Address" rows="3"></textarea>
+                            <textarea class="form-control" id="address" name="Address" asp-for="Address" rows="3"></textarea>
                             <span asp-validation-for="Address" class="text-danger"></span>
                         </div>
 
@@ -75,7 +76,7 @@
                                         <input type="password"
                                                id="password"
                                                class="form-control"
-                                               name="password"
+                                               name="Password"
                                                asp-for="Password"
                                                placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
                                         <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
@@ -90,7 +91,7 @@
                                         <input type="password"
                                                id="confirm_password"
                                                class="form-control"
-                                               name="confirm_password"
+                                               name="ConfirmPassword"
                                                asp-for="ConfirmPassword"
                                                placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
                                         <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>

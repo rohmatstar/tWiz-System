@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using NuGet.Protocol.Core.Types;
 
 namespace Client.Controllers
 {
@@ -55,6 +56,26 @@ namespace Client.Controllers
         [HttpGet]
         public IActionResult SignUp()
         {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SignUp(SignUpDto signUpDto)
+        {
+            var result = await _authRepository.SignUp(signUpDto);
+            if (result.Code == 200)
+            {
+                TempData["toast"] = new ToastDto
+                {
+                    Color = "success",
+                    Title = "Successfully sign up!",
+                    Subtitle = "Your account has been created, pay to activate it"
+                };
+
+                TempData["type"] = RoleLevel.Company.ToString();
+                return View("SignIn");
+            }
             return View();
         }
 
