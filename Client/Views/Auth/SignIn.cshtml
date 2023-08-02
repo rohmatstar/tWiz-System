@@ -2,8 +2,9 @@
 
 @{
     var toast = TempData["toast"] as dynamic;
+    var loginType = TempData["loginType"] as string;
+    ViewData["Title"] = "Sign in as " + loginType;
 
-    ViewData["Title"] = "Sign in as Company";
     Layout = "_LayoutAuth";
 }
 
@@ -45,18 +46,19 @@
                     type="email" class="form-control" id="email"
                     name="email"
                     placeholder="Enter your email"
-                    autofocus />
+                    autofocus
+                    tabindex="1"/>
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="mb-3 form-password-toggle">
                 <div class="d-flex justify-content-between">
                     <label asp-for="Password" class="control-label">Password</label>
-                    <a asp-asp-controller="Auth" asp-action="ForgetPassword">
+                    <a tabindex="-1" asp-asp-controller="Auth" asp-action="ForgetPassword">
                         <small>Forgot Password?</small>
                     </a>
                 </div>
                 <div class="input-group input-group-merge">
-                    <input asp-for="Password"  type="password"
+                    <input tabindex="2" asp-for="Password"  type="password"
                            id="password"
                            class="form-control"
                            name="password"
@@ -77,11 +79,14 @@
             </div>
         </form>
 
-        <p class="text-center">
-            <span>New on our platform?</span>
-            <a asp-asp-controller="Auth" asp-action="SignUp">
-                <span>Create an account</span>
-            </a>
-        </p>
+        @if (loginType == "Company")
+        {
+            <p class="text-center">
+                <span>New on our platform?</span>
+                <a asp-asp-controller="Auth" asp-action="SignUp">
+                    <span>Create an account</span>
+                </a>
+            </p>
+        }
     </div>
 </div>
