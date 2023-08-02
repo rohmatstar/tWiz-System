@@ -1,5 +1,6 @@
 ﻿using API.DTOs.EventPayments;
 using API.Services;
+using API.Utilities.Enums;
 using API.Utilities.Handlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,8 @@ namespace API.Controllers;
 
 
 [ApiController]
-[Route("api/eventpayments")]
+[Route("api/event-payments")]
+[Authorize]
 public class EventPaymentController : ControllerBase
 {
     private readonly EventPaymentService _service;
@@ -44,7 +46,7 @@ public class EventPaymentController : ControllerBase
     }
 
     [HttpGet("{guid}")]
-    [AllowAnonymous]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
     public IActionResult GetByGuid(Guid guid)
     {
         var eventpayment = _service.GetEventPayment(guid);
