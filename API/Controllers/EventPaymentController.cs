@@ -220,6 +220,26 @@ public class EventPaymentController : ControllerBase
             });
         }
 
+        if (paymentSubmissionStatus is -7)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Check your data"
+            });
+        }
+
+        if (paymentSubmissionStatus is 0)
+        {
+            return StatusCode(StatusCodes.Status401Unauthorized, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status401Unauthorized,
+                Status = HttpStatusCode.Unauthorized.ToString(),
+                Message = "Not Authenticated"
+            });
+        }
+
         return Ok(new ResponseHandler<string>
         {
             Code = StatusCodes.Status200OK,

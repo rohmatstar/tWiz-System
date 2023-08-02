@@ -219,6 +219,38 @@ public class EventPaymentService
 
     public async Task<int> UploadEventPaymentSubmission(EventPaymentSubmissionDto paymentSubmissionDto)
     {
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+        var accountName = "";
+
+        if (accountGuid == null)
+        {
+            return 0;
+        }
+
+        var account = _accountRepository.GetByGuid(Guid.Parse(accountGuid));
+
+        if (account == null)
+        {
+            return 0;
+        }
+
+        var eventPaymentByGuid = _eventPaymentRepository.GetByGuid(paymentSubmissionDto.Guid);
+
+        if (eventPaymentByGuid is null)
+        {
+            return -7;
+        }
+
+        var getEvent = _eventRepository.GetByGuid(eventPaymentByGuid.EventGuid);
+
+        if (getEvent is null)
+        {
+            return -7;
+        }
+
         var folderPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\event_payments");
 
         if (!Directory.Exists(folderPath))
@@ -248,7 +280,6 @@ public class EventPaymentService
             return -3;
         }
 
-        var eventPaymentByGuid = _eventPaymentRepository.GetByGuid(paymentSubmissionDto.Guid);
         var oldImageUrl = "";
 
         if (eventPaymentByGuid != null && eventPaymentByGuid.PaymentImage != "")
@@ -272,6 +303,7 @@ public class EventPaymentService
 
             eventPaymentByGuid!.PaymentImage = imageUrl;
             eventPaymentByGuid.StatusPayment = StatusPayment.Checking;
+            eventPaymentByGuid.IsValid = false;
             bool updatedEventPayment = _eventPaymentRepository.Update(eventPaymentByGuid);
 
             if (updatedEventPayment == false)
@@ -288,6 +320,68 @@ public class EventPaymentService
                 var filePathOldImage = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", oldImageUrl.Replace("/", "\\"));
                 FileHandler.DeleteFileIfExist(filePathOldImage);
             }
+
+            if (userRole == nameof(RoleLevel.Company))
+            {
+                var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == account.Guid);
+
+                if (company is null)
+                {
+                    return 0;
+                }
+
+                accountName = company.Name;
+
+                var companyParticipant = _companyParticipantRepository.GetAll().FirstOrDefault(cp => cp.CompanyGuid == company.Guid && cp.EventGuid == getEvent.Guid);
+
+                if (companyParticipant is null)
+                {
+                    return 0;
+                }
+
+                companyParticipant.Status = InviteStatusLevel.Checking;
+
+                var updatedCompanyParticipant = _companyParticipantRepository.Update(companyParticipant);
+
+                if (updatedCompanyParticipant is false)
+                {
+                    return 0;
+                }
+            }
+            else if (userRole == nameof(RoleLevel.Employee))
+            {
+                var employee = _employeeRepository.GetAll().FirstOrDefault(c => c.AccountGuid == account.Guid);
+
+                if (employee is null)
+                {
+                    return 0;
+                }
+
+                accountName = employee.FullName;
+
+                var employeeParticipant = _employeeParticipantRepository.GetAll().FirstOrDefault(ep => ep.EmployeeGuid == employee.Guid && ep.EventGuid == getEvent.Guid);
+
+                if (employeeParticipant is null)
+                {
+                    return 0;
+                }
+
+                employeeParticipant.Status = InviteStatusLevel.Checking;
+
+                var updatedEmployeeParticipant = _employeeParticipantRepository.Update(employeeParticipant);
+
+                if (updatedEmployeeParticipant is false)
+                {
+                    return 0;
+                }
+            }
+            else
+            {
+                transaction.Rollback();
+
+                FileHandler.DeleteFileIfExist(filePath);
+                return -4;
+            }
         }
         catch
         {
@@ -301,7 +395,7 @@ public class EventPaymentService
         {
             var contentEmail = $"" +
                 $"<h1>Event Payment Submission</h1>" +
-                $"<p>Participant Name : {paymentSubmissionDto.AccountName}</p>" +
+                $"<p>Participant Name : {accountName}</p>" +
                 $"<p>Virtual Account : {eventPaymentByGuid.VaNumber}</p>" +
                 $"<p>Now you can check it</p>";
 
@@ -405,7 +499,6 @@ public class EventPaymentService
             transaction.Rollback();
             return 0;
         }
-
 
         try
         {
