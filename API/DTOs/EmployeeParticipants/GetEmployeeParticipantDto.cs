@@ -13,6 +13,7 @@ public class GetEmployeeParticipantDto
     public Guid EmployeeGuid { get; set; }
 
     public string EmployeeName { get; set; }
+    public string CompanyName { get; set; }
 
     public string InvitationStatus { get; set; }
 

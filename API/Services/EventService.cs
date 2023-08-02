@@ -196,7 +196,7 @@ public class EventService
         return userEvents;
     }
 
-    public GetEventMasterDto? GetEvent(Guid guid)
+    public GetEventMasterDto? GetEvent(Guid guid, string? usedfor)
     {
         var singleEvent = _eventRepository.GetByGuid(guid);
 
@@ -205,7 +205,7 @@ public class EventService
             return null;
         }
 
-        var makerEvent = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == singleEvent.CreatedBy);
+        var makerEvent = _companyRepository.GetAll().FirstOrDefault(c => c.Guid == singleEvent.CreatedBy);
 
         if (makerEvent is null)
         {
@@ -239,6 +239,7 @@ public class EventService
         var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
         var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
 
+        var employees = _employeeRepository.GetAll();
 
         if (userRole == nameof(RoleLevel.Company))
         {
@@ -249,14 +250,16 @@ public class EventService
                 return null;
             }
 
-            var companyParticipantsEvent = new List<GetCompanyParticipantDto>();
-            var employeeParticipantsEvent = new List<EmployeeParticipantsDto>();
-
             var companies = _companyRepository.GetAll();
+            var employeeParticipantsEvent = new List<GetEmployeeParticipantDto>();
+
             var employeeParticipants = _employeeParticipantRepository.GetAll();
 
+            // jika company adalah si pembuat event
             if (singleEvent.CreatedBy == company.Guid)
             {
+                var companyParticipantsEvent = new List<GetCompanyParticipantDto>();
+
                 companyParticipantsEvent = _companyParticipantRepository.GetAll().Where(cp => cp.EventGuid == singleEvent.Guid && cp.CompanyGuid != company.Guid).Select(cp =>
                 {
                     var companyName = companies.FirstOrDefault(c => c.Guid == cp.CompanyGuid);
@@ -278,12 +281,105 @@ public class EventService
                     };
                 }).ToList();
 
+                var employeeParticipantsEvent2 = employeeParticipants.Where(ep =>
+                {
+                    var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
 
+                    if (usedfor == "edit")
+                    {
+                        var isEmployeeCompany = employee?.CompanyGuid == company.Guid;
+
+                        return ep.EventGuid == singleEvent.Guid && isEmployeeCompany;
+                    }
+
+                    return ep.EventGuid == singleEvent.Guid;
+                    //return true;
+
+                }).Select(ep =>
+                {
+                    var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
+                    var employeeName = employee?.FullName;
+
+                    var companyEmployeeName = companies.FirstOrDefault(c => c.Guid == employee?.CompanyGuid)?.Name;
+
+                    var invitataionStatus = "";
+
+                    if (ep.Status == InviteStatusLevel.Pending) invitataionStatus = "pending";
+                    if (ep.Status == InviteStatusLevel.Accepted) invitataionStatus = "accepted";
+                    if (ep.Status == InviteStatusLevel.Rejected) invitataionStatus = "rejected";
+
+                    return new GetEmployeeParticipantDto
+                    {
+                        Guid = ep.Guid,
+                        EventName = singleEvent.Name,
+                        EmployeeGuid = ep.EmployeeGuid,
+                        EmployeeName = employeeName ?? "",
+                        InvitationStatus = invitataionStatus,
+                        CompanyName = companyEmployeeName ?? "",
+                        IsPresent = ep.IsPresent,
+                    };
+                }).ToList();
+
+                detailsEvent.CompanyParticipants = companyParticipantsEvent;
+                detailsEvent.EmployeeParticipants = employeeParticipantsEvent2;
+            }
+            else
+            {
+                employeeParticipantsEvent = employeeParticipants.Where(ep =>
+                {
+                    var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
+                    var isEmployeeCompany = employee?.CompanyGuid == company.Guid;
+
+                    return ep.EventGuid == singleEvent.Guid && isEmployeeCompany;
+
+                }).Select(ep =>
+                {
+                    var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
+                    var employeeName = employee?.FullName;
+
+                    var companyEmployeeName = companies.FirstOrDefault(c => c.Guid == employee?.CompanyGuid)?.Name;
+
+                    var invitataionStatus = "";
+
+                    if (ep.Status == InviteStatusLevel.Pending) invitataionStatus = "pending";
+                    if (ep.Status == InviteStatusLevel.Accepted) invitataionStatus = "accepted";
+                    if (ep.Status == InviteStatusLevel.Rejected) invitataionStatus = "rejected";
+
+                    return new GetEmployeeParticipantDto
+                    {
+                        Guid = ep.Guid,
+                        EventName = singleEvent.Name,
+                        EmployeeGuid = ep.EmployeeGuid,
+                        EmployeeName = employeeName ?? "",
+                        CompanyName = companyEmployeeName ?? "",
+                        InvitationStatus = invitataionStatus,
+                        IsPresent = ep.IsPresent,
+                    };
+                }).ToList();
+
+                var paymentGuid = _eventPaymentRepository.GetAll().FirstOrDefault(ep => ep.EventGuid == singleEvent.Guid && ep.AccountGuid == company.AccountGuid)?.Guid;
+
+                detailsEvent.PaymentGuid = paymentGuid;
+
+                detailsEvent.EmployeeParticipants = employeeParticipantsEvent;
             }
         }
 
+        if (userRole == nameof(RoleLevel.Employee))
+        {
+            var employee = employees.FirstOrDefault(e => e.AccountGuid == Guid.Parse(accountGuid!));
 
-        var e = singleEvent;
+            if (employee is null)
+            {
+                return null;
+            }
+
+            var paymentGuid = _eventPaymentRepository.GetAll().FirstOrDefault(ep => ep.EventGuid == singleEvent.Guid && ep.AccountGuid == employee.AccountGuid)?.Guid;
+
+            detailsEvent.PaymentGuid = paymentGuid;
+        }
+
+        //var e = singleEvent;
 
         //var events = new EventsDto
         //{
@@ -303,7 +399,7 @@ public class EventService
         //    CreatedBy = e.CreatedBy
         //};
 
-        return new GetEventMasterDto();
+        return detailsEvent;
     }
 
     public EventsDto? CreateEvent(CreateEventDto createEventDto)

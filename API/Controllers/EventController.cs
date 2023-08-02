@@ -45,12 +45,12 @@ public class EventController : ControllerBase
     }
 
     [HttpGet("{guid}")]
-    public IActionResult GetEvent(Guid guid)
+    public IActionResult GetEvent(Guid guid, [FromQuery] string? usedfor)
     {
-        var eventsData = _eventService.GetEvent(guid);
+        var eventsData = _eventService.GetEvent(guid, usedfor);
         if (eventsData != null)
         {
-            return Ok(new ResponseHandler<EventsDto>
+            return Ok(new ResponseHandler<GetEventMasterDto>
             {
                 Code = StatusCodes.Status200OK,
                 Status = HttpStatusCode.OK.ToString(),
@@ -61,9 +61,9 @@ public class EventController : ControllerBase
 
         return NotFound(new ResponseHandler<EventsDto>
         {
-            Code = StatusCodes.Status404NotFound,
-            Status = HttpStatusCode.NotFound.ToString(),
-            Message = "Not Found",
+            Code = StatusCodes.Status403Forbidden,
+            Status = HttpStatusCode.Forbidden.ToString(),
+            Message = "You cannot access it",
             Data = null
         });
     }

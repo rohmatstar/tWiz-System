@@ -53,7 +53,7 @@ public class GetEventMasterDto
     public Guid? PaymentGuid { get; set; }
 
     public List<GetCompanyParticipantDto>? CompanyParticipants { get; set; }
-    public List<EmployeeParticipantsDto>? EmployeeParticipants { get; set; }
+    public List<GetEmployeeParticipantDto>? EmployeeParticipants { get; set; }
     public List<GetEventPaymentDto>? EventPayments { get; set; }
 
 }
