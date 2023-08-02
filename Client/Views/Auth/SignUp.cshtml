@@ -1,7 +1,26 @@
 ﻿@model Client.DTOs.Auths.SignUpDto
 @{
+    var toast = TempData["toast"] as dynamic;
     ViewData["Title"] = "Sign up for Company";
     Layout = "_LayoutAuth";
+}
+
+@section Toast{
+    @if (toast != null)
+    {
+        var toastColor = toast.Color ?? "secondary";
+        var toastClass = $"bs-toast toast toast-placement-ex m-2 fade bg-{toastColor} top-0 start-50 translate-middle-x";
+
+        <div class="@toastClass" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+            <div class="toast-header">
+                <i class="bx bx-bell me-2"></i>
+                <div class="me-auto fw-semibold">@toast.Title</div>
+            </div>
+            <div class="toast-body">
+                @toast.Subtitle
+            </div>
+        </div>
+    }
 }
 
 <div class="card">

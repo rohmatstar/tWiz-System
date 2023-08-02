@@ -76,7 +76,17 @@ namespace Client.Controllers
                 TempData["type"] = RoleLevel.Company.ToString();
                 return View("SignIn");
             }
-            return View();
+            else
+            {
+                TempData["toast"] = new ToastDto
+                {
+                    Color = "danger",
+                    Title = "Sign up Failed",
+                    Subtitle = "So sorry, there is some mistake when signing up process"
+                };
+
+                return View();
+            }
         }
 
         /*[HttpPost]
