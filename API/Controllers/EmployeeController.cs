@@ -1,4 +1,5 @@
-﻿using API.DTOs.Employees;
+﻿using API.DTOs.Companies;
+using API.DTOs.Employees;
 using API.Services;
 using API.Utilities.Handlers;
 using Microsoft.AspNetCore.Authorization;
@@ -70,7 +71,7 @@ public class EmployeeController : ControllerBase
 
 
 
-[HttpGet]
+    [HttpGet]
     public IActionResult GetAll()
     {
         var entities = _service.GetEmployees();
@@ -200,6 +201,69 @@ public class EmployeeController : ControllerBase
             Code = StatusCodes.Status200OK,
             Status = HttpStatusCode.OK.ToString(),
             Message = "Successfully deleted"
+        });
+    }
+
+    [HttpPost("import")]
+    public async Task<IActionResult> ImportEmployees([FromForm] ImportEmployeesDto importEmployeesDto)
+    {
+        var importedEmployeesStatus = await _service.ImportEmployees(importEmployeesDto);
+
+        if (importedEmployeesStatus is -1)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "gagal membuat folder penyimpanan file excel"
+            });
+        }
+
+        if (importedEmployeesStatus is -2)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "file yang diupload bukan excel"
+            });
+        }
+
+        if (importedEmployeesStatus is -3)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "gagal upload file excel"
+            });
+        }
+
+        if (importedEmployeesStatus is -4)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "data role name employee belum di buat"
+            });
+        }
+
+        if (importedEmployeesStatus is -5)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "gagal insert data"
+            });
+        }
+
+        return Ok(new ResponseHandler<GetCompanyDto>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Successfully import data"
         });
     }
 }
