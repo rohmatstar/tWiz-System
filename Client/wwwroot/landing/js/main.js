@@ -14,14 +14,36 @@
     Sticky
     ======================================= */
   window.onscroll = function () {
+    const btn = document.querySelectorAll(".btn-wrapper a");
     const header_navbar = document.querySelector(".navbar-area");
     const sticky = header_navbar.offsetTop;
     const logo = document.querySelector(".navbar-brand img");
 
     if (window.pageYOffset > sticky) {
+        btn[0].classList.add("text-white");
+        btn[0].classList.add("bg-primary");
+        btn[0].classList.remove("text-primary");
+        btn[0].classList.remove("bg-white");
+
+
+        btn[1].classList.add("text-white");
+        btn[1].classList.add("bg-primary");
+        btn[1].classList.remove("text-primary");
+        btn[1].classList.remove("bg-white");
+
         header_navbar.classList.add("sticky");
         logo.src = "landing/img/icon.png";
     } else {
+        btn[0].classList.remove("text-white");
+        btn[0].classList.remove("bg-primary");
+        btn[0].classList.add("text-primary");
+        btn[0].classList.add("bg-white");
+
+
+        btn[1].classList.remove("text-white");
+        btn[1].classList.remove("bg-primary");
+        btn[1].classList.add("text-primary");
+        btn[1].classList.add("bg-white");
         header_navbar.classList.remove("sticky");
         logo.src = "landing/img/icon-white.png";
     }

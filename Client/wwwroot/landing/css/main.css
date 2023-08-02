@@ -738,7 +738,7 @@ p {
   z-index: 1;
 }
 
-.navbar-nav .nav-item a::before {
+.navbar-nav .nav-item:not(.btn-wrapper) a::before {
   content: "";
   position: absolute;
   height: 5px;
