@@ -96,8 +96,7 @@ public class EventPaymentService
 
             getEventPayment.AccountName = company.Name;
         }
-
-        if (userRole == nameof(RoleLevel.Employee))
+        else if (userRole == nameof(RoleLevel.Employee))
         {
             var employee = _employeeRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
 
@@ -107,6 +106,10 @@ public class EventPaymentService
             }
 
             getEventPayment.AccountName = employee.FullName;
+        }
+        else
+        {
+            return null;
         }
 
         return getEventPayment;
