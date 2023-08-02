@@ -1,8 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using API.DTOs.CompanyParticipants;
+using API.DTOs.EmployeeParticipants;
+using API.DTOs.EventPayments;
+using System.ComponentModel.DataAnnotations;
 
 namespace API.DTOs.Events;
 
-public class GetEventDto
+public class GetEventMasterDto
 {
     public Guid Guid { get; set; }
 
@@ -47,4 +50,11 @@ public class GetEventDto
     [Required]
     public string PublicationStatus { get; set; }
 
+    public Guid? PaymentGuid { get; set; }
+
+    public List<GetCompanyParticipantDto>? CompanyParticipants { get; set; }
+    public List<GetEmployeeParticipantDto>? EmployeeParticipants { get; set; }
+    public List<GetEventPaymentDto>? EventPayments { get; set; }
+
 }
+
