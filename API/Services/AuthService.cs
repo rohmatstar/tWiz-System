@@ -179,14 +179,14 @@ public class AuthService
             new Claim("Email", loginDto.Email)
         };
 
-        /*var getAccountName = _companyRepository.GetName(account.Guid);
+        var getAccountName = _companyRepository.GetName(account.Guid);
         if (getAccountName is null)
         {
             getAccountName = (IEnumerable<Company>?)_employeeRepository.GetName(account.Guid);
         }
         var accountName = (from an in getAccountName select an.Name);
 
-        claims.AddRange(accountName.Select(name => new Claim(ClaimTypes.Name, name)));*/
+        claims.AddRange(accountName.Select(name => new Claim(ClaimTypes.Name, name)));
 
         var getAccountRole = _accountRoleRepository.GetByGuidCompany(account.Guid);
 

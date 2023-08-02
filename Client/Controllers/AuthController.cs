@@ -23,7 +23,7 @@ namespace Client.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            return RedirectToAction("CompanySignIn", "Auth");
+            return RedirectToAction("SignIn", new { loginType = "Company" });
         }
         public IActionResult ForgetPassword()
         {
@@ -43,13 +43,22 @@ namespace Client.Controllers
         }
 
         [HttpGet]
-        public IActionResult CompanySignIn()
+        public IActionResult SignIn(string loginType)
         {
             if (User.Identity!.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Dashboard");
             }
-            return View();
+
+            if (loginType != null)
+            {
+                if (loginType == "Employee" || loginType == "Company")
+                {
+                    TempData["loginType"] = loginType;
+                    return View();
+                }
+            }
+            return RedirectToAction("SignIn", new { loginType = "Company" });
         }
 
         [HttpPost]
@@ -72,7 +81,7 @@ namespace Client.Controllers
                     Subtitle = "So sorry, there is some mistake when signing in you"
                 };
 
-                return View();
+                return View("SignIn");
             }
         }
         public IActionResult CompanySignOut()
