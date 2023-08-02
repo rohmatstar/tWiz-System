@@ -56,10 +56,10 @@
                                 </li>
 
                                 <li class="nav-item btn-wrapper border-start ps-5">
-                                    <a class="btn btn-sm bg-primary rounded-pill px-3 text-white">Sign in Employee</a>
+                                    <a asp-controller="Auth" asp-action="SignInAsEmployee" class="btn btn-sm bg-primary rounded-pill px-3 text-white">Sign in Employee</a>
                                 </li>
                                 <li class="nav-item btn-wrapper ms-2">
-                                    <a class="btn btn-sm bg-primary rounded-pill px-3 text-white">Sign in Company</a>
+                                    <a asp-controller="Auth" asp-action="SignInAsCompany" class="btn btn-sm bg-primary rounded-pill px-3 text-white">Sign in Company</a>
                                 </li>
                             </ul>
                         </div>
@@ -81,7 +81,7 @@
                     <p class="small wow fadeInUp" data-wow-delay=".6s">
                         At tWiz, we specialize in the seamless arrangement of corporate events that leave a lasting impression. Our unwavering commitment to excellence ensures that your business gatherings, conferences, and meetings are flawlessly executed, reflecting the highest standards of professionalism.
                     </p>
-                    <a href="javascript:void(0)"
+                    <a asp-controller="Auth" asp-action="SignUp"
                         class="main-btn btn-sm border-btn btn-hover wow fadeInUp"
                         data-wow-delay=".6s">Register Now!</a>
                 </div>
@@ -165,7 +165,7 @@
                             Your corporate success is our priority. Choose tWiz for your corporate events and experience the art of precision in event management. Only for <strong>IDR 14,998,000</strong> With our affordable and competitive pricing, trust tWiz to deliver exceptional event management services without compromising on quality. Let's collaborate to create an unforgettable corporate event that leaves a lasting impact on your guests. Contact us today to discuss your event requirements and receive a personalized quote.
                         </p>
                     </div>
-                    <a href="javascript:void(0)"
+                    <a asp-controller="Auth" asp-action="SignUp"
                         class="main-btn btn-hover border-btn wow fadeInUp"
                         data-wow-delay=".6s">Register Now!</a>
                 </div>
@@ -217,9 +217,9 @@
                     <div class="footer-widget">
                         <h3>Access</h3>
                         <ul class="links">
-                            <li><a href="jvascript:void(0)">Sign in as Employee</a></li>
-                            <li><a href="jvascript:void(0)">Sign is as Company</a></li>
-                            <li><a href="jvascript:void(0)">Sign up for Company</a></li>
+                            <li><a asp-controller="Auth" asp-action="SignInAsEmployee">Sign in as Employee</a></li>
+                            <li><a asp-controller="Auth" asp-action="SignInAsCompany">Sign is as Company</a></li>
+                            <li><a asp-controller="Auth" asp-action="SignUp">Sign up for Company</a></li>
                         </ul>
                     </div>
                 </div>
