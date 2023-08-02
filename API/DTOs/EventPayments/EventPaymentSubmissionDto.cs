@@ -1,6 +1,6 @@
 ﻿namespace API.DTOs.EventPayments;
 
-public class EventPaymentSubmission
+public class EventPaymentSubmissionDto
 {
     public Guid Guid { get; set; }
 
