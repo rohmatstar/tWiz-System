@@ -96,6 +96,14 @@ namespace Client.Controllers
                 if(type == role)
                 {
                     HttpContext.Session.SetString("JWTToken", token!);
+
+                    if (role == RoleLevel.Employee.ToString())
+                    {
+                        return RedirectToAction("Index", "Event");
+                    }
+
+                    // Need Adjust add dashboard for sysadmin
+
                     return RedirectToAction("Index", "Dashboard");
                 }
                 else
