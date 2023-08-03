@@ -24,6 +24,7 @@ public class RegisterPaymentController : ControllerBase
 
 
     [HttpGet]
+    [Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}")]
     public IActionResult GetAll()
     {
         var entities = _service.GetRegisterPayments();
