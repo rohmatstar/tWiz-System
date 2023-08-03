@@ -49,6 +49,7 @@ public class RegisterPaymentController : ControllerBase
     }
 
     [HttpGet("{guid}")]
+    [Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}, {nameof(RoleLevel.Company)}")]
     public IActionResult GetByGuid(Guid guid)
     {
         var registerpayment = _service.GetRegisterPayment(guid);

@@ -39,17 +39,6 @@ public class RegisterPaymentService
         {
             return null; // No RegisterPayment Found
         }
-        //var toDto = registerPayments.Select(registerPayments => new GetRegisterPaymentDto
-        //{
-        //    Guid = registerPayments.Guid,
-        //    CompanyGuid = registerPayments.CompanyGuid,
-        //    VaNumber = registerPayments.VaNumber,
-        //    Price = registerPayments.Price,
-        //    PaymentImage = registerPayments.PaymentImage,
-        //    IsValid = registerPayments.IsValid,
-        //    BankGuid = registerPayments.BankGuid,
-        //    StatusPayment = registerPayments.StatusPayment
-        //}).ToList();
 
         var companies = _companyRepository.GetAll();
         var banks = _bankRepository.GetAll();
@@ -88,24 +77,60 @@ public class RegisterPaymentService
 
     public GetRegisterPaymentDto? GetRegisterPayment(Guid guid)
     {
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        if (accountGuid is null)
+        {
+            return null;
+        }
+
         var registerPayments = _registerPaymentRepository.GetByGuid(guid);
         if (registerPayments is null)
         {
             return null;
         }
+
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.Guid == registerPayments.CompanyGuid);
+
+        if (company is null)
+        {
+            return null;
+        }
+
+        // jika user bukan sysadmin atau company yang punya register payment ini
+        if (userRole != nameof(RoleLevel.SysAdmin) && Guid.Parse(accountGuid) != company.AccountGuid)
+        {
+            return null;
+        }
+
+        var accountCompany = _accountRepository.GetAll().FirstOrDefault(acc => acc.Guid == company.AccountGuid);
+
+
+        var bank = _bankRepository.GetAll().FirstOrDefault(b => b.Guid == registerPayments.BankGuid);
+
+        var statusPayment = "";
+        if (registerPayments.StatusPayment == StatusPayment.Pending) statusPayment = "pending";
+        if (registerPayments.StatusPayment == StatusPayment.Checking) statusPayment = "checking";
+        if (registerPayments.StatusPayment == StatusPayment.Paid) statusPayment = "paid";
+        if (registerPayments.StatusPayment == StatusPayment.Rejected) statusPayment = "rejected";
+
         var toDto = new GetRegisterPaymentDto
         {
             Guid = registerPayments.Guid,
-            //CompanyGuid = registerPayments.CompanyGuid,
             VaNumber = registerPayments.VaNumber,
-            Price = registerPayments.Price,
+            CompanyEmail = accountCompany?.Email ?? "",
+            CompanyName = company?.Name ?? "",
             PaymentImage = registerPayments.PaymentImage,
-            //IsValid = registerPayments.IsValid,
-            //BankGuid = registerPayments.BankGuid,
-            //StatusPayment = registerPayments.StatusPayment
+            Price = registerPayments.Price,
+            StatusPayment = statusPayment,
+            ValidationStatus = registerPayments.IsValid == true ? "valid" : "invalid",
+            BankName = bank?.Name ?? ""
         };
-        return toDto;
 
+        return toDto;
     }
 
     public GetRegisterPaymentDto? CreateRegisterPayment(CreateRegisterPaymentDto newRegisterPaymentDto)
@@ -272,24 +297,6 @@ public class RegisterPaymentService
             {
                 await paymentSubmissionDto.PaymentImage.CopyToAsync(stream);
             }
-
-            //// update payment image
-            //bool paymentImageUpdated = _registerPaymentRepository.UpdatePaymentImage(paymentSubmissionDto.Guid, imageUrl);
-            //if (!paymentImageUpdated)
-            //{
-
-            //    FileHandler.DeleteFileIfExist(filePath);
-            //    return -4;
-            //}
-
-            //// update status payment
-            //bool statusPaymentUpdated = _registerPaymentRepository.ChangeStatusRegisterPayment(paymentSubmissionDto.Guid, StatusPayment.Checking);
-
-            //if (!statusPaymentUpdated)
-            //{
-            //    FileHandler.DeleteFileIfExist(filePath);
-            //    return -5;
-            //}
 
             registerPaymentByGuid.PaymentImage = imageUrl;
             registerPaymentByGuid.StatusPayment = StatusPayment.Checking;
