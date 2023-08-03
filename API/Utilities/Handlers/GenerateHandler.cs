@@ -11,7 +11,21 @@ public static class GenerateHandler
             .ToArray());
     }
 
-    public static int RandomVa()
+    public static int GenerateVa()
+    {
+        Random random = new Random();
+        int va = 0;
+
+        for (int i = 0; i < 10; i++)
+        {
+            int digit = random.Next(0, 10);
+            va = va * 10 + digit;
+        }
+
+        return Math.Abs(va);
+    }
+
+    public static int GenerateToken()
     {
         Random random = new Random();
         HashSet<int> uniqueDigits = new HashSet<int>();

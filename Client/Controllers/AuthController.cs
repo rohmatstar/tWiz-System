@@ -9,6 +9,9 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using NuGet.Protocol.Core.Types;
+using API.DTOs.RegisterPayments;
+using System.Net;
+using Client.Contracts;
 
 namespace Client.Controllers
 {
@@ -17,11 +20,13 @@ namespace Client.Controllers
 
         private readonly ICompanyRepository _companyRepository;
         private readonly IAuthRepository _authRepository;
+        private readonly IPaymentRepository _paymentRepository;
 
-        public AuthController(ICompanyRepository companyRepository, IAuthRepository authRepository)
+        public AuthController(ICompanyRepository companyRepository, IAuthRepository authRepository, IPaymentRepository paymentRepository)
         {
             _companyRepository = companyRepository;
             _authRepository = authRepository;
+            _paymentRepository = paymentRepository;
         }
 
         /* ===== General =======*/
@@ -89,13 +94,6 @@ namespace Client.Controllers
             }
         }
 
-        /*[HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SignUp(SignUpDto signUpDto)
-        {
-            
-        }*/
-
         [HttpGet]
         public IActionResult SignInAsCompany()
         {
@@ -108,13 +106,28 @@ namespace Client.Controllers
             return View("SignIn");
         }
 
+        /* SysAdmin*/
+        [HttpGet]
+        public IActionResult SysAdmin()
+        {
+            TempData["type"] = RoleLevel.SysAdmin.ToString();
+            return View("SignIn");
+        }
+        public IActionResult SignoutSysAdmin()
+        {
+            HttpContext.Session.Remove("JWTToken");
+            return Redirect("/Auth/SysAdmin");
+        }
+
+        /* General Sign In*/
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SignIn(SignInDto signDto)
+        public async Task<IActionResult> SignIn(SignInDto signInDto)
         {
             var type = Request.Form["type"].ToString();
 
-            var result = await _authRepository.SignIn(signDto);
+            var result = await _authRepository.SignIn(signInDto);
             if (result.Code == 200)
             {
                 // Role match checking
@@ -125,7 +138,7 @@ namespace Client.Controllers
                 var roles = jwtToken.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
                 string role = roles!.FirstOrDefault()!;
 
-                if(type == role)
+                if (type == role)
                 {
                     HttpContext.Session.SetString("JWTToken", token!);
 
@@ -133,8 +146,6 @@ namespace Client.Controllers
                     {
                         return RedirectToAction("Index", "Event");
                     }
-
-                    // Need Adjust add dashboard for sysadmin
 
                     return RedirectToAction("Index", "Dashboard");
                 }
@@ -150,6 +161,10 @@ namespace Client.Controllers
                     TempData["type"] = type;
                     return View("SignIn");
                 }
+            }
+            else if (result.Code == 402)
+            {
+                return RedirectToAction("PaymentRequired", "Payment", new { email = signInDto.Email });
             }
             else
             {

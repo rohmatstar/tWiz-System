@@ -11,6 +11,8 @@ namespace API.Services;
 
 public class RegisterPaymentService
 {
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
     private readonly IRegisterPaymentRepository _registerPaymentRepository;
     private readonly ICompanyRepository _companyRepository;
     private readonly IAccountRepository _accountRepository;
@@ -18,13 +20,12 @@ public class RegisterPaymentService
     private readonly IEmailHandler _emailHandler;
     private readonly AccountService _accountService;
     private readonly TwizDbContext _twizDbContext;
-
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    public RegisterPaymentService(IRegisterPaymentRepository registerPaymentRepository, ICompanyRepository companyRepository, IAccountRepository accountRepository, IEmailHandler emailHandler, AccountService accountService, TwizDbContext twizDbContext, IHttpContextAccessor httpContextAccessor, IBankRepository bankRepository)
+    public RegisterPaymentService(IRegisterPaymentRepository registerPaymentRepository, ICompanyRepository companyRepository, IAccountRepository accountRepository, IBankRepository bankRepository, IEmailHandler emailHandler, AccountService accountService, TwizDbContext twizDbContext, IHttpContextAccessor httpContextAccessor)
     {
         _registerPaymentRepository = registerPaymentRepository;
         _companyRepository = companyRepository;
         _accountRepository = accountRepository;
+        _bankRepository = bankRepository;
         _emailHandler = emailHandler;
         _accountService = accountService;
         _twizDbContext = twizDbContext;
@@ -131,6 +132,40 @@ public class RegisterPaymentService
         };
 
         return toDto;
+    }
+
+    public PaymentSummaryDto? GetPaymentSummary(string email)
+    {
+        var account = _accountRepository.GetByEmail(email);
+        if (account is null)
+        {
+            return null;
+        }
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == account!.Guid);
+        if (company is null)
+        {
+            return null;
+        }
+        var payment = _registerPaymentRepository.GetAll().FirstOrDefault(c => c.CompanyGuid == company!.Guid);
+        if (payment is null)
+        {
+            return null;
+        }
+        var bank = _bankRepository.GetAll().FirstOrDefault(c => c.Guid == payment!.BankGuid);
+        if (bank is null)
+        {
+            return null;
+        }
+
+        var toDto = new PaymentSummaryDto
+        {
+            VaNumber = payment.VaNumber,
+            Price = payment.Price,
+            BankCode = bank.Code,
+            BankName = bank.Name
+        };
+        return toDto;
+
     }
 
     public GetRegisterPaymentDto? CreateRegisterPayment(CreateRegisterPaymentDto newRegisterPaymentDto)

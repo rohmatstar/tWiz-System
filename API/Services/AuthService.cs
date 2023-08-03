@@ -118,8 +118,8 @@ public class AuthService
             RegisterPayment registerPayment = new RegisterPayment
             {
                 CompanyGuid = createdCompany.Guid,
-                VaNumber = GenerateHandler.RandomVa(),
-                Price = 100000,
+                VaNumber = GenerateHandler.GenerateVa(),
+                Price = 14998000,
                 PaymentImage = "",
                 IsValid = false,
                 CreatedDate = DateTime.Now,
@@ -197,6 +197,12 @@ public class AuthService
         if (company is not null)
         {
             claims.Add(new Claim(ClaimTypes.Name, company.Name));
+            var payment = _registerPaymentRepository.GetAll().FirstOrDefault(c => c.CompanyGuid == company.Guid);
+
+            if (payment == null || payment.StatusPayment == 0)
+            {
+                return "-3";
+            }
         }
         else if (employee is not null)
         {
@@ -209,6 +215,9 @@ public class AuthService
         else
         {
             return "0";
+
+            claims.Add(new Claim(ClaimTypes.Name, company.Name));
+            claims.Add(new Claim("UserGuid", company.Guid.ToString())); // Add Company Guid to Check Register Payment when signed in
         }
 
         var getAccountRole = _accountRoleRepository.GetByGuidCompany(account.Guid);
@@ -286,7 +295,7 @@ public class AuthService
         var toDto = new ForgotPasswordDto
         {
             Email = account.Email,
-            Token = GenerateHandler.RandomVa(),
+            Token = GenerateHandler.GenerateToken(),
             TokenExpiration = DateTime.Now.AddMinutes(5)
         };
 
