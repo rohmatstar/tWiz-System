@@ -16,13 +16,16 @@ public class EventPaymentService
     private readonly ICompanyRepository _companyRepository;
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IEventRepository _eventRepository;
+    private readonly IAccountRepository _accountRepository;
+    private readonly ICompanyParticipantRepository _companyParticipantRepository;
+    private readonly IEmployeeParticipantRepository _employeeParticipantRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly TwizDbContext _twizDbContext;
     private readonly AccountService _accountService;
 
     private readonly IEmailHandler _emailHandler;
 
-    public EventPaymentService(IEventPaymentRepository eventPaymentRepository, IBankRepository bankRepository, ICompanyRepository companyRepository, IEmployeeRepository employeeRepository, IEventRepository eventRepository, IHttpContextAccessor httpContextAccessor, TwizDbContext twizDbContext, AccountService accountService, IEmailHandler emailHandler)
+    public EventPaymentService(IEventPaymentRepository eventPaymentRepository, IBankRepository bankRepository, ICompanyRepository companyRepository, IEmployeeRepository employeeRepository, IEventRepository eventRepository, IHttpContextAccessor httpContextAccessor, TwizDbContext twizDbContext, AccountService accountService, IEmailHandler emailHandler, ICompanyParticipantRepository companyParticipantRepository, IEmployeeParticipantRepository employeeParticipantRepository, IAccountRepository accountRepository)
     {
         _eventPaymentRepository = eventPaymentRepository;
         _bankRepository = bankRepository;
@@ -33,6 +36,9 @@ public class EventPaymentService
         _twizDbContext = twizDbContext;
         _accountService = accountService;
         _emailHandler = emailHandler;
+        _companyParticipantRepository = companyParticipantRepository;
+        _employeeParticipantRepository = employeeParticipantRepository;
+        _accountRepository = accountRepository;
     }
 
     public IEnumerable<GetEventPaymentDto>? GetEventPayments()
@@ -213,6 +219,38 @@ public class EventPaymentService
 
     public async Task<int> UploadEventPaymentSubmission(EventPaymentSubmissionDto paymentSubmissionDto)
     {
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+        var accountName = "";
+
+        if (accountGuid == null)
+        {
+            return 0;
+        }
+
+        var account = _accountRepository.GetByGuid(Guid.Parse(accountGuid));
+
+        if (account == null)
+        {
+            return 0;
+        }
+
+        var eventPaymentByGuid = _eventPaymentRepository.GetByGuid(paymentSubmissionDto.Guid);
+
+        if (eventPaymentByGuid is null)
+        {
+            return -7;
+        }
+
+        var getEvent = _eventRepository.GetByGuid(eventPaymentByGuid.EventGuid);
+
+        if (getEvent is null)
+        {
+            return -7;
+        }
+
         var folderPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\event_payments");
 
         if (!Directory.Exists(folderPath))
@@ -242,7 +280,6 @@ public class EventPaymentService
             return -3;
         }
 
-        var eventPaymentByGuid = _eventPaymentRepository.GetByGuid(paymentSubmissionDto.Guid);
         var oldImageUrl = "";
 
         if (eventPaymentByGuid != null && eventPaymentByGuid.PaymentImage != "")
@@ -264,26 +301,9 @@ public class EventPaymentService
                 await paymentSubmissionDto.PaymentImageFile.CopyToAsync(stream);
             }
 
-            //// update payment image
-            //bool paymentImageUpdated = _eventPaymentRepository.UpdatePaymentImage(paymentSubmissionDto.Guid, imageUrl);
-            //if (!paymentImageUpdated)
-            //{
-
-            //    FileHandler.DeleteFileIfExist(filePath);
-            //    return -4;
-            //}
-
-            //// update status payment
-            //bool statusPaymentUpdated = _eventPaymentRepository.ChangeStatusEventPayment(paymentSubmissionDto.Guid, StatusPayment.Checking);
-
-            //if (!statusPaymentUpdated)
-            //{
-            //    FileHandler.DeleteFileIfExist(filePath);
-            //    return -5;
-            //}
-
             eventPaymentByGuid!.PaymentImage = imageUrl;
             eventPaymentByGuid.StatusPayment = StatusPayment.Checking;
+            eventPaymentByGuid.IsValid = false;
             bool updatedEventPayment = _eventPaymentRepository.Update(eventPaymentByGuid);
 
             if (updatedEventPayment == false)
@@ -300,6 +320,74 @@ public class EventPaymentService
                 var filePathOldImage = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", oldImageUrl.Replace("/", "\\"));
                 FileHandler.DeleteFileIfExist(filePathOldImage);
             }
+
+            if (userRole == nameof(RoleLevel.Company))
+            {
+                var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == account.Guid);
+
+                if (company is null)
+                {
+                    FileHandler.DeleteFileIfExist(filePath);
+                    return -7;
+                }
+
+                accountName = company.Name;
+
+                var companyParticipant = _companyParticipantRepository.GetAll().FirstOrDefault(cp => cp.CompanyGuid == company.Guid && cp.EventGuid == getEvent.Guid);
+
+                if (companyParticipant is null)
+                {
+                    FileHandler.DeleteFileIfExist(filePath);
+                    return 0;
+                }
+
+                companyParticipant.Status = InviteStatusLevel.Checking;
+
+                var updatedCompanyParticipant = _companyParticipantRepository.Update(companyParticipant);
+
+                if (updatedCompanyParticipant is false)
+                {
+                    FileHandler.DeleteFileIfExist(filePath);
+                    return 0;
+                }
+            }
+            else if (userRole == nameof(RoleLevel.Employee))
+            {
+                var employee = _employeeRepository.GetAll().FirstOrDefault(c => c.AccountGuid == account.Guid);
+
+                if (employee is null)
+                {
+                    FileHandler.DeleteFileIfExist(filePath);
+                    return 0;
+                }
+
+                accountName = employee.FullName;
+
+                var employeeParticipant = _employeeParticipantRepository.GetAll().FirstOrDefault(ep => ep.EmployeeGuid == employee.Guid && ep.EventGuid == getEvent.Guid);
+
+                if (employeeParticipant is null)
+                {
+                    FileHandler.DeleteFileIfExist(filePath);
+                    return 0;
+                }
+
+                employeeParticipant.Status = InviteStatusLevel.Checking;
+
+                var updatedEmployeeParticipant = _employeeParticipantRepository.Update(employeeParticipant);
+
+                if (updatedEmployeeParticipant is false)
+                {
+                    FileHandler.DeleteFileIfExist(filePath);
+                    return 0;
+                }
+            }
+            else
+            {
+                transaction.Rollback();
+
+                FileHandler.DeleteFileIfExist(filePath);
+                return -4;
+            }
         }
         catch
         {
@@ -313,14 +401,28 @@ public class EventPaymentService
         {
             var contentEmail = $"" +
                 $"<h1>Event Payment Submission</h1>" +
-                $"<p>Participant Name : {paymentSubmissionDto.AccountName}</p>" +
+                $"<p>Participant Name : {accountName}</p>" +
                 $"<p>Virtual Account : {eventPaymentByGuid.VaNumber}</p>" +
                 $"<p>Now you can check it</p>";
 
-            var emailAdmin = _accountService.GetEmailSysAdmin();
+            var eventMaker = _companyRepository.GetByGuid(getEvent.CreatedBy);
+
+            if (eventMaker is null)
+            {
+                FileHandler.DeleteFileIfExist(filePath);
+                return -7;
+            }
+
+            var emailEventMaker = _accountRepository.GetByGuid(eventMaker.AccountGuid)?.Email ?? null;
+
+            if (emailEventMaker is null)
+            {
+                FileHandler.DeleteFileIfExist(filePath);
+                return -7;
+            }
 
 
-            _emailHandler.SendEmail(_accountService.GetEmailSysAdmin(), "Event Payment Submission", contentEmail);
+            _emailHandler.SendEmail(emailEventMaker, "Event Payment Submission", contentEmail);
         }
         catch
         {
@@ -331,6 +433,112 @@ public class EventPaymentService
 
         transaction.Commit();
 
+
+        return 1;
+    }
+
+    public int AproveEventPayment(AproveEventPaymentDto aproveEventPaymentDto)
+    {
+        using var transaction = _twizDbContext.Database.BeginTransaction();
+
+        var getEventPayment = _eventPaymentRepository.GetByGuid(aproveEventPaymentDto.Guid);
+
+
+        if (getEventPayment == null)
+        {
+            return 0;
+        }
+        var getEvent = _eventRepository.GetByGuid(getEventPayment.EventGuid);
+
+        if (getEvent is null)
+        {
+            return 0;
+        }
+
+        var account = _accountRepository.GetByEmail(aproveEventPaymentDto.AccountEmail);
+
+        if (account is null)
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == account.Guid);
+        var employee = _employeeRepository.GetAll().FirstOrDefault(e => e.AccountGuid == account.Guid);
+
+        // check who owns the account (company or employee)
+        if (company is not null)
+        {
+            var companyParticipant = _companyParticipantRepository.GetAll().FirstOrDefault(cp => cp.CompanyGuid == company.Guid && cp.EventGuid == getEvent.Guid);
+
+            if (companyParticipant is null)
+            {
+                return 0;
+            }
+
+            companyParticipant.Status = InviteStatusLevel.Accepted;
+
+            var updatedCompanyParticipant = _companyParticipantRepository.Update(companyParticipant);
+
+            if (updatedCompanyParticipant is false)
+            {
+                return 0;
+            }
+        }
+        else if (employee is not null)
+        {
+            var employeeParticipant = _employeeParticipantRepository.GetAll().FirstOrDefault(cp => cp.EmployeeGuid == employee.Guid && cp.EventGuid == getEvent.Guid);
+
+            if (employeeParticipant is null)
+            {
+                return 0;
+            }
+
+            employeeParticipant.Status = InviteStatusLevel.Accepted;
+
+            var updatedCompanyParticipant = _employeeParticipantRepository.Update(employeeParticipant);
+
+            if (updatedCompanyParticipant is false)
+            {
+                return 0;
+            }
+        }
+        else
+        {
+            return 0;
+        }
+
+        getEventPayment.IsValid = true;
+        getEventPayment.StatusPayment = StatusPayment.Paid;
+        getEventPayment.ModifiedDate = DateTime.Now;
+
+        var eventPaymentUpdated = _eventPaymentRepository.Update(getEventPayment);
+
+        if (eventPaymentUpdated is false)
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
+        try
+        {
+            var contentEmail = $"<h1>Congratulation Your Event Payment Submission Has Been Verified</h1>" +
+                $"<h2>{getEvent.Name.ToUpper()}</h2>" +
+                $"<p>{getEvent.Description}</p>" +
+                $"<p>{getEvent.StartDate}</p>" +
+                $"<p>{getEvent.EndDate} </p>"
+                ;
+
+
+            _emailHandler.SendEmail(aproveEventPaymentDto.AccountEmail, "Aproved event payment submission", contentEmail);
+
+            transaction.Commit();
+        }
+        catch
+        {
+            transaction.Rollback();
+            return 0;
+        }
 
         return 1;
     }

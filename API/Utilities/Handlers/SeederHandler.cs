@@ -492,11 +492,27 @@ public class SeederHandler
 
 
             // Febri testing seeder
+            var companyParticipant_ev3_c1a1_2 = new CompanyParticipant
+            {
+                Guid = new Guid(),
+                EventGuid = event3.Guid,
+                CompanyGuid = company1.Guid,
+                Status = InviteStatusLevel.Pending,
+                IsPresent = false,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            _context.Set<CompanyParticipant>().AddRange(new List<CompanyParticipant> { companyParticipant_ev3_c1a1_2 });
+
+            _context.SaveChanges();
+
+
             var eventPayment_ev3_c2a2_1 = new EventPayment
             {
                 Guid = new Guid(),
                 EventGuid = event3.Guid,
-                AccountGuid = account2.Guid,
+                AccountGuid = account1.Guid,
                 BankGuid = GetRandomBank()!.Guid,
                 VaNumber = GenerateHandler.GenerateVa(),
                 CreatedDate = DateTime.Now,

@@ -6,6 +6,5 @@ public class EventPaymentSubmissionDto
 
     public IFormFile PaymentImageFile { get; set; }
 
-    public string AccountName { get; set; }
 }
 
