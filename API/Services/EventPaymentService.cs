@@ -327,7 +327,8 @@ public class EventPaymentService
 
                 if (company is null)
                 {
-                    return 0;
+                    FileHandler.DeleteFileIfExist(filePath);
+                    return -7;
                 }
 
                 accountName = company.Name;
@@ -336,6 +337,7 @@ public class EventPaymentService
 
                 if (companyParticipant is null)
                 {
+                    FileHandler.DeleteFileIfExist(filePath);
                     return 0;
                 }
 
@@ -345,6 +347,7 @@ public class EventPaymentService
 
                 if (updatedCompanyParticipant is false)
                 {
+                    FileHandler.DeleteFileIfExist(filePath);
                     return 0;
                 }
             }
@@ -354,6 +357,7 @@ public class EventPaymentService
 
                 if (employee is null)
                 {
+                    FileHandler.DeleteFileIfExist(filePath);
                     return 0;
                 }
 
@@ -363,6 +367,7 @@ public class EventPaymentService
 
                 if (employeeParticipant is null)
                 {
+                    FileHandler.DeleteFileIfExist(filePath);
                     return 0;
                 }
 
@@ -372,6 +377,7 @@ public class EventPaymentService
 
                 if (updatedEmployeeParticipant is false)
                 {
+                    FileHandler.DeleteFileIfExist(filePath);
                     return 0;
                 }
             }
@@ -399,10 +405,24 @@ public class EventPaymentService
                 $"<p>Virtual Account : {eventPaymentByGuid.VaNumber}</p>" +
                 $"<p>Now you can check it</p>";
 
-            var emailAdmin = _accountService.GetEmailSysAdmin();
+            var eventMaker = _companyRepository.GetByGuid(getEvent.CreatedBy);
+
+            if (eventMaker is null)
+            {
+                FileHandler.DeleteFileIfExist(filePath);
+                return -7;
+            }
+
+            var emailEventMaker = _accountRepository.GetByGuid(eventMaker.AccountGuid)?.Email ?? null;
+
+            if (emailEventMaker is null)
+            {
+                FileHandler.DeleteFileIfExist(filePath);
+                return -7;
+            }
 
 
-            _emailHandler.SendEmail(_accountService.GetEmailSysAdmin(), "Event Payment Submission", contentEmail);
+            _emailHandler.SendEmail(emailEventMaker, "Event Payment Submission", contentEmail);
         }
         catch
         {
@@ -508,6 +528,7 @@ public class EventPaymentService
                 $"<p>{getEvent.StartDate}</p>" +
                 $"<p>{getEvent.EndDate} </p>"
                 ;
+
 
             _emailHandler.SendEmail(aproveEventPaymentDto.AccountEmail, "Aproved event payment submission", contentEmail);
 
