@@ -51,6 +51,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
           rel="stylesheet" />
 
+    <!-- Animate CSS -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
     <link rel="stylesheet" href="../assets/vendor/fonts/boxicons.css" />
 
     <link rel="stylesheet" href="../assets/vendor/css/core.css" class="template-customizer-core-css" />
@@ -97,7 +101,7 @@
 
                         </span>
                         <span class="app-brand-text demo menu-text fw-bolder ms-2">
-                            <img class="logo" src="../landing/img/icon-white.png" alt="" />tWiz
+                            <img class="logo" src="../landing/img/icon-white.png" alt="" style="margin-right: 10px" />tWiz
                         </span>
                     </a>
 
@@ -148,19 +152,24 @@
                             </ul>
                         </li>
 
-                        <li class="menu-item">
+                        <li class="menu-item @(active == "employee" || active == "create_employee" || active == "import_employee" ? "active open" : "")">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-group"></i>
                                 <div>Employees</div>
                             </a>
 
                             <ul class="menu-sub">
-                                <li class="menu-item">
+                                <li class="menu-item @(active == "import_employee" ? "active" : "")">
+                                    <a asp-controller="Employee" asp-action="Import" class="menu-link">
+                                        <div>Import Employee</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item @(active == "create_employee" ? "active" : "")">
                                     <a asp-controller="Employee" asp-action="Create" class="menu-link">
                                         <div>Create Employee</div>
                                     </a>
                                 </li>
-                                <li class="menu-item">
+                                <li class="menu-item @(active == "employee" ? "active" : "")">
                                     <a asp-controller="Employee" asp-action="Index" class="menu-link">
                                         <div>Employees List</div>
                                     </a>
@@ -338,7 +347,7 @@
 
                         <div class="row mb-3">
                             <div class="col">
-                                <h4 class="fw-bold py-3 mb-0">@ViewData["Title"]</h4>
+                                <h4 class="fw-bold pb-2 mb-0">@ViewData["Title"]</h4>
                             </div>
 
                             @await RenderSectionAsync("Filter", required: false)
