@@ -3,6 +3,7 @@ using API.DTOs.RegisterPayments;
 using API.Services;
 using API.Utilities.Enums;
 using API.Utilities.Handlers;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -80,17 +81,27 @@ public class RegisterPaymentController : ControllerBase
     {
         var payment = _paymentService.GetPaymentSummary(email);
 
-        if (payment is null)
+        if (payment == null)
         {
             return StatusCode(StatusCodes.Status402PaymentRequired, new ResponseHandler<PaymentSummaryDto>
             {
-                Code = StatusCodes.Status204NoContent,
-                Status = HttpStatusCode.NoContent.ToString(),
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
                 Message = "Payment of this registered account is not found",
             });
         }
         else
         {
+            if (payment.VaNumber == 0)
+            {
+                return StatusCode(StatusCodes.Status200OK, new ResponseHandler<PaymentSummaryDto>
+                {
+                    Code = StatusCodes.Status200OK,
+                    Status = HttpStatusCode.OK.ToString(),
+                    Message = "Payment of this registered account is Paid",
+                });
+            }
+
             return StatusCode(StatusCodes.Status402PaymentRequired, new ResponseHandler<PaymentSummaryDto>
             {
                 Code = StatusCodes.Status402PaymentRequired,
