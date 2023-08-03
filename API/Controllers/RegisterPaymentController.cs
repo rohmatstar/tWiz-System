@@ -1,5 +1,4 @@
-﻿using API.DTOs.Auths;
-using API.DTOs.Banks;
+﻿using API.DTOs.Banks;
 using API.DTOs.RegisterPayments;
 using API.Services;
 using API.Utilities.Enums;
@@ -201,7 +200,7 @@ public class RegisterPaymentController : ControllerBase
 
 
     [HttpPut("payment-submission")]
-    [Authorize(Roles = $"{nameof(RoleLevel.Company)}")]
+    [AllowAnonymous]
     public async Task<IActionResult> PaymentSubmission([FromForm] PaymentSubmissionDto paymentSubmissionDto)
     {
 
@@ -291,7 +290,7 @@ public class RegisterPaymentController : ControllerBase
         {
             Code = StatusCodes.Status200OK,
             Status = HttpStatusCode.OK.ToString(),
-            Message = "Successfully update data"
+            Message = "Successfully upload payment submission"
         });
 
     }

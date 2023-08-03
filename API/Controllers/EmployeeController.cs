@@ -1,6 +1,7 @@
 ﻿using API.DTOs.Companies;
 using API.DTOs.Employees;
 using API.Services;
+using API.Utilities.Enums;
 using API.Utilities.Handlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,7 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("api/employees")]
+[Authorize]
 public class EmployeeController : ControllerBase
 {
     private readonly EmployeeService _service;
@@ -21,64 +23,15 @@ public class EmployeeController : ControllerBase
         _service = service;
     }
 
-    [HttpGet("get-all-master")]
-
-    public IActionResult GetMaster()
-    {
-        var master = _service.GetMasters();
-        if (master is null)
-        {
-            return NotFound(new ResponseHandler<GetMasterEmployeeDto>
-            {
-                Code = StatusCodes.Status404NotFound,
-                Status = HttpStatusCode.NotFound.ToString(),
-                Message = "Data Not Found"
-            });
-        }
-
-        return Ok(new ResponseHandler<IEnumerable<GetMasterEmployeeDto>>
-        {
-            Code = StatusCodes.Status200OK,
-            Status = HttpStatusCode.OK.ToString(),
-            Message = "Data Found",
-            Data = master
-        });
-    }
-
-    [HttpGet("get-master/{guid}")]
-
-    public IActionResult GetMasterByGuid(Guid guid)
-    {
-        var masterGuid = _service.GetMasterByGuid(guid);
-        if (masterGuid is null)
-        {
-            return NotFound(new ResponseHandler<GetMasterEmployeeDto>
-            {
-                Code = StatusCodes.Status404NotFound,
-                Status = HttpStatusCode.NotFound.ToString(),
-                Message = "Data Not Found"
-            });
-        }
-
-        return Ok(new ResponseHandler<GetMasterEmployeeDto>
-        {
-            Code = StatusCodes.Status200OK,
-            Status = HttpStatusCode.OK.ToString(),
-            Message = "Data Found",
-            Data = masterGuid
-        });
-    }
-
-
-
     [HttpGet]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}")]
     public IActionResult GetAll()
     {
         var entities = _service.GetEmployees();
 
         if (entities == null)
         {
-            return NotFound(new ResponseHandler<GetEmployeeDto>
+            return NotFound(new ResponseHandler<string>
             {
                 Code = StatusCodes.Status404NotFound,
                 Status = HttpStatusCode.NotFound.ToString(),
@@ -86,7 +39,7 @@ public class EmployeeController : ControllerBase
             });
         }
 
-        return Ok(new ResponseHandler<IEnumerable<GetEmployeeDto>>
+        return Ok(new ResponseHandler<IEnumerable<GetMasterEmployeeDto>>
         {
             Code = StatusCodes.Status200OK,
             Status = HttpStatusCode.OK.ToString(),
@@ -96,13 +49,13 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet("{guid}")]
-    [AllowAnonymous]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}, {nameof(RoleLevel.Employee)}")]
     public IActionResult GetByGuid(Guid guid)
     {
         var employee = _service.GetEmployee(guid);
         if (employee is null)
         {
-            return NotFound(new ResponseHandler<GetEmployeeDto>
+            return NotFound(new ResponseHandler<string>
             {
                 Code = StatusCodes.Status404NotFound,
                 Status = HttpStatusCode.NotFound.ToString(),
@@ -110,7 +63,7 @@ public class EmployeeController : ControllerBase
             });
         }
 
-        return Ok(new ResponseHandler<GetEmployeeDto>
+        return Ok(new ResponseHandler<GetMasterEmployeeDto>
         {
             Code = StatusCodes.Status200OK,
             Status = HttpStatusCode.OK.ToString(),
@@ -120,12 +73,13 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}")]
     public IActionResult Create(CreateEmployeeDto newEmployeeDto)
     {
         var createEmployee = _service.CreateEmployee(newEmployeeDto);
         if (createEmployee is null)
         {
-            return BadRequest(new ResponseHandler<GetEmployeeDto>
+            return BadRequest(new ResponseHandler<string>
             {
                 Code = StatusCodes.Status400BadRequest,
                 Status = HttpStatusCode.BadRequest.ToString(),
@@ -133,7 +87,7 @@ public class EmployeeController : ControllerBase
             });
         }
 
-        return Ok(new ResponseHandler<GetEmployeeDto>
+        return Ok(new ResponseHandler<GetMasterEmployeeDto>
         {
             Code = StatusCodes.Status200OK,
             Status = HttpStatusCode.OK.ToString(),
@@ -143,6 +97,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}")]
     public IActionResult Update(UpdateEmployeeDto updateEmployeeDto)
     {
         var update = _service.UpdateEmployee(updateEmployeeDto);
@@ -155,6 +110,17 @@ public class EmployeeController : ControllerBase
                 Message = "Id not found"
             });
         }
+
+        if (update is -2)
+        {
+            return NotFound(new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status403Forbidden,
+                Status = HttpStatusCode.Forbidden.ToString(),
+                Message = "you cannot access it"
+            });
+        }
+
         if (update is 0)
         {
             return BadRequest(new ResponseHandler<UpdateEmployeeDto>
@@ -173,6 +139,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpDelete]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}")]
     public IActionResult Delete(Guid guid)
     {
         var delete = _service.DeleteEmployee(guid);
@@ -205,6 +172,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPost("import")]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}")]
     public async Task<IActionResult> ImportEmployees([FromForm] ImportEmployeesDto importEmployeesDto)
     {
         var importedEmployeesStatus = await _service.ImportEmployees(importEmployeesDto);
