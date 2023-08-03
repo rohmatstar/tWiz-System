@@ -492,6 +492,40 @@ public class SeederHandler
 
 
             // Febri testing seeder
+
+            var registerPayment_c1 = new RegisterPayment
+            {
+                Guid = new Guid(),
+                CompanyGuid = company1.Guid,
+                IsValid = true,
+                Price = 5000,
+                VaNumber = GenerateHandler.GenerateVa(),
+                BankGuid = GetRandomBank()!.Guid,
+                PaymentImage = "",
+                StatusPayment = StatusPayment.Paid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now,
+            };
+
+            var registerPayment_c2 = new RegisterPayment
+            {
+                Guid = new Guid(),
+                CompanyGuid = company2.Guid,
+                IsValid = true,
+                Price = 5000,
+                VaNumber = GenerateHandler.GenerateVa(),
+                BankGuid = GetRandomBank()!.Guid,
+                PaymentImage = "",
+                StatusPayment = StatusPayment.Paid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now,
+            };
+
+            _context.Set<RegisterPayment>().AddRange(new List<RegisterPayment> { registerPayment_c1, registerPayment_c2 });
+
+            _context.SaveChanges();
+
+
             var companyParticipant_ev3_c1a1_2 = new CompanyParticipant
             {
                 Guid = new Guid(),

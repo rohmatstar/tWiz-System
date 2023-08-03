@@ -123,6 +123,7 @@ public class EventPaymentService
 
             getEventPayment.AccountName = employee.FullName;
         }
+        else if (userRole == nameof(RoleLevel.SysAdmin)) { }
         else
         {
             return null;
@@ -437,7 +438,7 @@ public class EventPaymentService
         return 1;
     }
 
-    public int AproveEventPayment(AproveEventPaymentDto aproveEventPaymentDto)
+    public int ValidationEventPayment(AproveEventPaymentDto aproveEventPaymentDto, string status)
     {
         var getEventPayment = _eventPaymentRepository.GetByGuid(aproveEventPaymentDto.Guid);
 
@@ -472,8 +473,14 @@ public class EventPaymentService
             {
                 return 0;
             }
-
-            companyParticipant.Status = InviteStatusLevel.Accepted;
+            if (status == "approve")
+            {
+                companyParticipant.Status = InviteStatusLevel.Accepted;
+            }
+            else
+            {
+                companyParticipant.Status = InviteStatusLevel.Rejected;
+            }
 
             var updatedCompanyParticipant = _companyParticipantRepository.Update(companyParticipant);
 
@@ -491,7 +498,14 @@ public class EventPaymentService
                 return 0;
             }
 
-            employeeParticipant.Status = InviteStatusLevel.Accepted;
+            if (status == "approve")
+            {
+                employeeParticipant.Status = InviteStatusLevel.Accepted;
+            }
+            else
+            {
+                employeeParticipant.Status = InviteStatusLevel.Accepted;
+            }
 
             var updatedCompanyParticipant = _employeeParticipantRepository.Update(employeeParticipant);
 
@@ -505,9 +519,19 @@ public class EventPaymentService
             return 0;
         }
 
-        getEventPayment.IsValid = true;
-        getEventPayment.StatusPayment = StatusPayment.Paid;
-        getEventPayment.ModifiedDate = DateTime.Now;
+        if (status == "approve")
+        {
+            getEventPayment.IsValid = true;
+            getEventPayment.StatusPayment = StatusPayment.Paid;
+            getEventPayment.ModifiedDate = DateTime.Now;
+        }
+        else
+        {
+            getEventPayment.IsValid = false;
+            getEventPayment.StatusPayment = StatusPayment.Rejected;
+            getEventPayment.ModifiedDate = DateTime.Now;
+        }
+
 
         var eventPaymentUpdated = _eventPaymentRepository.Update(getEventPayment);
 
@@ -519,13 +543,22 @@ public class EventPaymentService
 
         try
         {
-            var contentEmail = $"<h1>Congratulation Your Event Payment Submission Has Been Verified</h1>" +
-                $"<h2>{getEvent.Name.ToUpper()}</h2>" +
-                $"<p>{getEvent.Description}</p>" +
-                $"<p>{getEvent.StartDate}</p>" +
-                $"<p>{getEvent.EndDate} </p>"
-                ;
+            var contentEmail = "";
 
+            if (status == "approve")
+            {
+                contentEmail = $"<h1>Congratulation Your Event Payment Submission Has Been Verified</h1>" +
+                                $"<h2>{getEvent.Name.ToUpper()}</h2>" +
+                                $"<p>{getEvent.Description}</p>" +
+                                $"<p>{getEvent.StartDate}</p>" +
+                                $"<p>{getEvent.EndDate} </p>"
+                                ;
+            }
+            else
+            {
+                contentEmail = "<h1>Your Event Payment Submission is Not Valid</h1>" +
+                                $"<p>please re-upload the correct proof of payment</p>";
+            }
 
             _emailHandler.SendEmail(account.Email, "Aproved event payment submission", contentEmail);
 

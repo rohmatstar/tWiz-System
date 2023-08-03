@@ -265,6 +265,8 @@ public class EventService
                 {
                     var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
 
+
+                    // jika event maker mengedit event, maka hanya bisa mengedit employeenya saja
                     if (usedfor == "edit")
                     {
                         var isEmployeeCompany = employee?.CompanyGuid == company.Guid;
