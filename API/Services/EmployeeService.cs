@@ -172,43 +172,118 @@ public class EmployeeService
 
     }
 
-    public GetEmployeeDto? CreateEmployee(CreateEmployeeDto newEmployeeDto)
+    public GetMasterEmployeeDto? CreateEmployee(CreateEmployeeDto newEmployeeDto)
     {
-        var employee = new Employee
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        if (accountGuid == null)
+        {
+            return null;
+        }
+        var transaction = _twizDbContext.Database.BeginTransaction();
+        var account = new Account()
         {
             Guid = new Guid(),
-            Nik = newEmployeeDto.Nik,
-            FullName = newEmployeeDto.FullName,
-            BirthDate = newEmployeeDto.BirthDate,
-            Gender = newEmployeeDto.Gender,
-            HiringDate = newEmployeeDto.HiringDate,
-            PhoneNumber = newEmployeeDto.PhoneNumber,
-            AccountGuid = newEmployeeDto.AccountGuid,
-            CompanyGuid = newEmployeeDto.CompanyGuid,
+            Email = newEmployeeDto.Email,
+            Password = HashingHandler.HashPassword("s4n64tr4h45i4"),
+            IsActive = true,
+            Token = null,
+            TokenIsUsed = null,
+            TokenExpiration = null,
+            CreatedDate = DateTime.Now,
+            ModifiedDate = DateTime.Now,
+        };
+
+        var createdAccount = _accountRepository.Create(account);
+
+        if (createdAccount is null)
+        {
+            transaction.Rollback();
+            // gagal insert data 
+            return null;
+        }
+
+        var employeeRole = _roleRepository.GetByName(nameof(RoleLevel.Employee));
+
+        if (employeeRole is null)
+        {
+            transaction.Rollback();
+            return null;
+        }
+
+        var accountRole = new AccountRole()
+        {
+            Guid = new Guid(),
+            AccountGuid = createdAccount.Guid,
+            RoleGuid = employeeRole.Guid,
             CreatedDate = DateTime.Now,
             ModifiedDate = DateTime.Now
         };
 
-        var createdEmployee = _employeeRepository.Create(employee);
-        if (createdEmployee is null)
+        var createdAccountRole = _accountRoleRepository.Create(accountRole);
+
+        if (createdAccountRole is null)
         {
-            return null; // Employee Not Created
+            transaction.Rollback();
+            // gagal insert data 
+            return null;
         }
 
-        var toDto = new GetEmployeeDto
+        if (userRole == nameof(RoleLevel.Company))
         {
-            Guid = createdEmployee.Guid,
-            Nik = createdEmployee.Nik,
-            FullName = createdEmployee.FullName,
-            BirthDate = createdEmployee.BirthDate,
-            Gender = createdEmployee.Gender,
-            HiringDate = createdEmployee.HiringDate,
-            PhoneNumber = createdEmployee.PhoneNumber,
-            AccountGuid = createdEmployee.AccountGuid,
-            CompanyGuid = createdEmployee.CompanyGuid
-        };
+            var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid));
 
-        return toDto; // Employee Created
+            if (company is null)
+            {
+                transaction.Rollback();
+                return null;
+            }
+
+            var employee = new Employee
+            {
+                Guid = new Guid(),
+                Nik = newEmployeeDto.Nik,
+                FullName = newEmployeeDto.FullName,
+                BirthDate = newEmployeeDto.BirthDate,
+                Gender = newEmployeeDto.Gender.ToLower() == "male" ? GenderEnum.Male : GenderEnum.Female,
+                HiringDate = newEmployeeDto.HiringDate,
+                PhoneNumber = newEmployeeDto.PhoneNumber,
+                AccountGuid = createdAccount.Guid,
+                CompanyGuid = company.Guid,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var createdEmployee = _employeeRepository.Create(employee);
+            if (createdEmployee is null)
+            {
+                transaction.Rollback();
+                return null; // Employee Not Created
+            }
+
+            var toDto = new GetMasterEmployeeDto
+            {
+                Guid = createdEmployee.Guid,
+                Nik = createdEmployee.Nik,
+                FullName = createdEmployee.FullName,
+                BirthDate = createdEmployee.BirthDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+                Gender = createdEmployee.Gender == GenderEnum.Male ? "male" : "female",
+                HiringDate = createdEmployee.HiringDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+                PhoneNumber = createdEmployee.PhoneNumber,
+                Email = newEmployeeDto.Email,
+                CompanyName = company.Name,
+            };
+            transaction.Commit();
+            return toDto; // Employee Created
+        }
+        else
+        {
+            return null;
+        }
+
     }
 
     public int UpdateEmployee(UpdateEmployeeDto UpdateEmployeeDto)
@@ -310,10 +385,7 @@ public class EmployeeService
 
         if (employeeRoleGuid == null)
         {
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
+            FileHandler.DeleteFileIfExist(filePath);
             // data role name employee belum di buat
             return -4;
         }

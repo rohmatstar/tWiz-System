@@ -73,7 +73,7 @@ public class EmployeeController : ControllerBase
         var createEmployee = _service.CreateEmployee(newEmployeeDto);
         if (createEmployee is null)
         {
-            return BadRequest(new ResponseHandler<GetEmployeeDto>
+            return BadRequest(new ResponseHandler<string>
             {
                 Code = StatusCodes.Status400BadRequest,
                 Status = HttpStatusCode.BadRequest.ToString(),
@@ -81,7 +81,7 @@ public class EmployeeController : ControllerBase
             });
         }
 
-        return Ok(new ResponseHandler<GetEmployeeDto>
+        return Ok(new ResponseHandler<GetMasterEmployeeDto>
         {
             Code = StatusCodes.Status200OK,
             Status = HttpStatusCode.OK.ToString(),
