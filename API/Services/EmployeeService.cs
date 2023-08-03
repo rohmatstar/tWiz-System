@@ -93,26 +93,82 @@ public class EmployeeService
         }
     }
 
-    public GetEmployeeDto? GetEmployee(Guid guid)
+    public GetMasterEmployeeDto? GetEmployee(Guid guid)
     {
         var employee = _employeeRepository.GetByGuid(guid);
         if (employee is null)
         {
             return null;
         }
-        var toDto = new GetEmployeeDto
+
+        var account = _accountRepository.GetAll().FirstOrDefault(acc => acc.Guid == employee.AccountGuid);
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.Guid == employee.CompanyGuid);
+
+
+        var toDto = new GetMasterEmployeeDto
         {
             Guid = employee.Guid,
             Nik = employee.Nik,
             FullName = employee.FullName,
-            BirthDate = employee.BirthDate,
-            Gender = employee.Gender,
-            HiringDate = employee.HiringDate,
+            Gender = employee.Gender == GenderEnum.Male ? "male" : "female",
+            BirthDate = employee.BirthDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+            HiringDate = employee.HiringDate.ToString("dd MMMM yyyy, HH:mm WIB"),
             PhoneNumber = employee.PhoneNumber,
-            AccountGuid = employee.AccountGuid,
-            CompanyGuid = employee.CompanyGuid
+            CompanyName = company?.Name ?? "",
+            Email = account?.Email ?? "",
         };
-        return toDto;
+
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        if (accountGuid == null)
+        {
+            return null;
+        }
+
+        if (userRole == nameof(RoleLevel.Company))
+        {
+            var companySigned = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid));
+
+            if (companySigned is null)
+            {
+                return null;
+            }
+
+            if (companySigned.Guid != company!.Guid)
+            {
+                return null;
+            }
+
+
+            return toDto;
+        }
+        else if (userRole == nameof(RoleLevel.Employee))
+        {
+            var employeeSigned = _companyRepository.GetAll().FirstOrDefault(e => e.AccountGuid == Guid.Parse(accountGuid));
+
+            if (employeeSigned is null)
+            {
+                return null;
+            }
+
+            if (employeeSigned.Guid != toDto.Guid)
+            {
+                return null;
+            }
+
+            return toDto;
+        }
+        else if (userRole == nameof(RoleLevel.SysAdmin))
+        {
+            return toDto;
+        }
+        else
+        {
+            return null;
+        }
 
     }
 

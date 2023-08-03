@@ -50,7 +50,7 @@ public class EmployeeController : ControllerBase
         var employee = _service.GetEmployee(guid);
         if (employee is null)
         {
-            return NotFound(new ResponseHandler<GetEmployeeDto>
+            return NotFound(new ResponseHandler<string>
             {
                 Code = StatusCodes.Status404NotFound,
                 Status = HttpStatusCode.NotFound.ToString(),
@@ -58,7 +58,7 @@ public class EmployeeController : ControllerBase
             });
         }
 
-        return Ok(new ResponseHandler<GetEmployeeDto>
+        return Ok(new ResponseHandler<GetMasterEmployeeDto>
         {
             Code = StatusCodes.Status200OK,
             Status = HttpStatusCode.OK.ToString(),
