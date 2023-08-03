@@ -5,6 +5,7 @@ using API.Models;
 using API.Utilities.Enums;
 using API.Utilities.Handlers;
 using API.Utilities.Validations;
+using System.Security.Claims;
 
 namespace API.Services;
 
@@ -16,7 +17,9 @@ public class RegisterPaymentService
     private readonly IEmailHandler _emailHandler;
     private readonly AccountService _accountService;
     private readonly TwizDbContext _twizDbContext;
-    public RegisterPaymentService(IRegisterPaymentRepository registerPaymentRepository, ICompanyRepository companyRepository, IAccountRepository accountRepository, IEmailHandler emailHandler, AccountService accountService, TwizDbContext twizDbContext)
+
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    public RegisterPaymentService(IRegisterPaymentRepository registerPaymentRepository, ICompanyRepository companyRepository, IAccountRepository accountRepository, IEmailHandler emailHandler, AccountService accountService, TwizDbContext twizDbContext, IHttpContextAccessor httpContextAccessor)
     {
         _registerPaymentRepository = registerPaymentRepository;
         _companyRepository = companyRepository;
@@ -24,6 +27,7 @@ public class RegisterPaymentService
         _emailHandler = emailHandler;
         _accountService = accountService;
         _twizDbContext = twizDbContext;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public IEnumerable<GetRegisterPaymentDto>? GetRegisterPayments()
@@ -64,6 +68,7 @@ public class RegisterPaymentService
             PaymentImage = registerPayments.PaymentImage,
             IsValid = registerPayments.IsValid,
             BankGuid = registerPayments.BankGuid,
+            StatusPayment = registerPayments.StatusPayment
         };
         return toDto;
 
@@ -155,6 +160,29 @@ public class RegisterPaymentService
 
     public async Task<int> UploadPaymentSubmission(PaymentSubmissionDto paymentSubmissionDto)
     {
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        if (accountGuid is null)
+        {
+            return 0;
+        }
+
+        var companyName = "";
+
+        if (userRole == nameof(RoleLevel.Company))
+        {
+            var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid));
+
+            companyName = company?.Name ?? "";
+        }
+        else
+        {
+            return 0;
+        }
+
         var folderPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\register_payments");
 
         if (!Directory.Exists(folderPath))
@@ -184,12 +212,17 @@ public class RegisterPaymentService
             return -3;
         }
 
-        var paymentRegisterByGuid = _registerPaymentRepository.GetByGuid(paymentSubmissionDto.Guid);
+        var registerPaymentByGuid = _registerPaymentRepository.GetByGuid(paymentSubmissionDto.Guid);
         var oldImageUrl = "";
 
-        if (paymentRegisterByGuid != null && paymentRegisterByGuid.PaymentImage != "")
+        if (registerPaymentByGuid == null)
         {
-            oldImageUrl = paymentRegisterByGuid.PaymentImage;
+            return -7;
+        }
+
+        if (registerPaymentByGuid.PaymentImage != "")
+        {
+            oldImageUrl = registerPaymentByGuid.PaymentImage;
         }
 
 
@@ -206,23 +239,35 @@ public class RegisterPaymentService
                 await paymentSubmissionDto.PaymentImage.CopyToAsync(stream);
             }
 
-            // update payment image
-            bool paymentImageUpdated = _registerPaymentRepository.UpdatePaymentImage(paymentSubmissionDto.Guid, imageUrl);
-            if (!paymentImageUpdated)
-            {
+            //// update payment image
+            //bool paymentImageUpdated = _registerPaymentRepository.UpdatePaymentImage(paymentSubmissionDto.Guid, imageUrl);
+            //if (!paymentImageUpdated)
+            //{
 
-                FileHandler.DeleteFileIfExist(filePath);
-                return -4;
-            }
+            //    FileHandler.DeleteFileIfExist(filePath);
+            //    return -4;
+            //}
 
-            // update status payment
-            bool statusPaymentUpdated = _registerPaymentRepository.ChangeStatusRegisterPayment(paymentSubmissionDto.Guid, StatusPayment.Checking);
+            //// update status payment
+            //bool statusPaymentUpdated = _registerPaymentRepository.ChangeStatusRegisterPayment(paymentSubmissionDto.Guid, StatusPayment.Checking);
 
-            if (!statusPaymentUpdated)
+            //if (!statusPaymentUpdated)
+            //{
+            //    FileHandler.DeleteFileIfExist(filePath);
+            //    return -5;
+            //}
+
+            registerPaymentByGuid.PaymentImage = imageUrl;
+            registerPaymentByGuid.StatusPayment = StatusPayment.Checking;
+
+            var updatedRegisterPayment = _registerPaymentRepository.Update(registerPaymentByGuid);
+
+            if (updatedRegisterPayment == false)
             {
                 FileHandler.DeleteFileIfExist(filePath);
                 return -5;
-            }
+            };
+
 
             // hapus foto lama jika ada
             if (oldImageUrl != "")
@@ -243,8 +288,8 @@ public class RegisterPaymentService
         {
             var contentEmail = $"" +
                 $"<h1>Register Payment Submission</h1>" +
-                $"<p>Company Name : {paymentSubmissionDto.CompanyName}</p>" +
-                $"<p>Virtual Account : {paymentRegisterByGuid.VaNumber}</p>" +
+                $"<p>Company Name : {companyName}</p>" +
+                $"<p>Virtual Account : {registerPaymentByGuid.VaNumber}</p>" +
                 $"<p>Now you can check it</p>";
 
             var emailAdmin = _accountService.GetEmailSysAdmin();

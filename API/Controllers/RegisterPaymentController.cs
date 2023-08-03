@@ -1,6 +1,7 @@
 ﻿using API.DTOs.Banks;
 using API.DTOs.RegisterPayments;
 using API.Services;
+using API.Utilities.Enums;
 using API.Utilities.Handlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("api/register-payments")]
+[Authorize]
 public class RegisterPaymentController : ControllerBase
 {
     private readonly RegisterPaymentService _service;
@@ -46,7 +48,6 @@ public class RegisterPaymentController : ControllerBase
     }
 
     [HttpGet("{guid}")]
-    [AllowAnonymous]
     public IActionResult GetByGuid(Guid guid)
     {
         var registerpayment = _service.GetRegisterPayment(guid);
@@ -157,6 +158,7 @@ public class RegisterPaymentController : ControllerBase
 
 
     [HttpPut("payment-submission")]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}")]
     public async Task<IActionResult> PaymentSubmission([FromForm] PaymentSubmissionDto paymentSubmissionDto)
     {
 
@@ -222,6 +224,26 @@ public class RegisterPaymentController : ControllerBase
             });
         }
 
+        if (paymentSubmissionStatus is -7)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Check your data"
+            });
+        }
+
+        if (paymentSubmissionStatus is 0)
+        {
+            return StatusCode(StatusCodes.Status401Unauthorized, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status401Unauthorized,
+                Status = HttpStatusCode.Unauthorized.ToString(),
+                Message = "Not Authenticated"
+            });
+        }
+
         return Ok(new ResponseHandler<string>
         {
             Code = StatusCodes.Status200OK,
@@ -232,6 +254,7 @@ public class RegisterPaymentController : ControllerBase
     }
 
     [HttpPut("aprove")]
+    [Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}")]
     public IActionResult Aprove(AproveRegisterPaymentDto aproveRegisterPaymentDto)
     {
         var aprovedRegisterPaymentStatus = _service.AproveRegisterPayment(aproveRegisterPaymentDto);
@@ -256,6 +279,7 @@ public class RegisterPaymentController : ControllerBase
     }
 
     [HttpPut("reject")]
+    [Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}")]
     public IActionResult Reject(AproveRegisterPaymentDto aproveRegisterPaymentDto)
     {
         var rejectedRegisterPaymentStatus = _service.RejectRegisterPayment(aproveRegisterPaymentDto);
