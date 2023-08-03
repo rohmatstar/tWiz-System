@@ -1,6 +1,28 @@
-﻿@{
-    var role = ViewBag.Role as string;
+﻿@using Client.Utilities.Enums;
+@using System.Security.Claims;
+@{
+    // JWT Parse
+    var username = User!.Claims!.FirstOrDefault(c => c.Type == ClaimTypes.Name)!.Value;
+    var role = User!.Claims!.FirstOrDefault(c => c.Type == ClaimTypes.Role)!.Value;
+    var navbarClass = "";
+    var taskbarClass = "";
+    if(role == RoleLevel.Company.ToString()){
+        navbarClass = role;
+    }
+    if(role == RoleLevel.SysAdmin.ToString()){
+        navbarClass = RoleLevel.Company.ToString() + " " + RoleLevel.SysAdmin.ToString();
+        taskbarClass = "sysadmin-style";
+    }
     var avatar = $"../assets/img/avatars/{role}.png";
+
+    var signout = "Auth/SignoutCompany";
+    if(role == RoleLevel.Employee.ToString()){
+        signout = "Auth/SignoutEmployee";
+    }
+    if (role == RoleLevel.SysAdmin.ToString())
+    {
+        signout = "Auth/SignoutSysAdmin";
+    }
 
     var active = ViewBag.Active as string;
 }
@@ -22,7 +44,7 @@
 
     <meta name="description" content="" />
 
-    <link rel="shortcut icon" href="~/img/tWiz-Logo.png" />
+    <link rel="shortcut icon" type="image/x-icon" href="../landing/img/icon.png" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -48,16 +70,35 @@
 <body>
     @await RenderSectionAsync("Toast", required: false)
 
+    @* Modals*@
+    <div class="modal fade" id="SignOutModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content text-center">
+                <div class="modal-body">
+                    <div class="h6 mb-0">Are you sure want to sign out?</div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                    <a href="@signout" class="btn btn-primary">Absolutely!</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
 
-            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme @role">
+            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme @navbarClass.ToLower()">
                 <div class="app-brand demo">
                     <a asp-asp-controller="Dashboard" asp-action="Index" class="app-brand-link">
                         <span class="app-brand-logo demo">
 
                         </span>
-                        <span class="app-brand-text demo menu-text fw-bolder ms-2">tWiz</span>
+                        <span class="app-brand-text demo menu-text fw-bolder ms-2">
+                            <img class="logo" src="../landing/img/icon-white.png" alt="" />tWiz
+                        </span>
                     </a>
 
                     <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
@@ -67,121 +108,166 @@
 
                 <div class="menu-inner-shadow"></div>
 
-                <ul class="menu-inner py-1">
-                    <li class="menu-item @(active == "dashboard" ? "active" : "")">
-                        <a asp-controller="Dashboard" asp-action="Index" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                            <div>Dashboard</div>
-                        </a>
-                    </li>
+                @if (role == RoleLevel.Company.ToString())
+                {
+                    <ul class="menu-inner py-1">
+                        <li class="menu-item @(active == "dashboard" ? "active" : "")">
+                            <a asp-controller="Dashboard" asp-action="Index" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                                <div>Dashboard</div>
+                            </a>
+                        </li>
 
-                    <li class="menu-item @(active == "event" || active == "create_event" || active == "invited_event" || active == "ticket" ? "active open" : "")">
-                        <a href="#" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-cube"></i>
-                            <div>Events</div>
-                        </a>
+                        <li class="menu-item @(active == "event" || active == "create_event" || active == "invited_event" || active == "ticket" ? "active open" : "")">
+                            <a href="#" class="menu-link menu-toggle">
+                                <i class="menu-icon tf-icons bx bx-cube"></i>
+                                <div>Events</div>
+                            </a>
 
-                        <ul class="menu-sub">
-                            <li class="menu-item @(active == "create_event" ? "active" : "")">
-                                <a asp-controller="Event" asp-action="Create" class="menu-link">
-                                    <div>Create Event</div>
-                                </a>
-                            </li>
-                            <li class="menu-item @(active == "event" ? "active" : "")">
-                                <a asp-controller="Event" asp-action="Index" class="menu-link">
-                                    <div>Events List</div>
-                                </a>
-                            </li>
-                            <li class="menu-item @(active == "invited_event" ? "active" : "")">
-                                <a asp-controller="Event" asp-action="Invited" class="menu-link">
-                                    <div>Invited Events</div>
-                                </a>
-                            </li>
-                            <li class="menu-item @(active == "ticket" ? "active" : "")">
-                                <a asp-controller="Event" asp-action="Ticket" class="menu-link">
-                                    <div>Ticket</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                            <ul class="menu-sub">
+                                <li class="menu-item @(active == "create_event" ? "active" : "")">
+                                    <a asp-controller="Event" asp-action="Create" class="menu-link">
+                                        <div>Create Event</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item @(active == "event" ? "active" : "")">
+                                    <a asp-controller="Event" asp-action="Index" class="menu-link">
+                                        <div>Events List</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item @(active == "invited_event" ? "active" : "")">
+                                    <a asp-controller="Event" asp-action="Invited" class="menu-link">
+                                        <div>Invited Events</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item @(active == "ticket" ? "active" : "")">
+                                    <a asp-controller="Event" asp-action="Ticket" class="menu-link">
+                                        <div>Ticket</div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
 
-                    <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-group"></i>
-                            <div>Employees</div>
-                        </a>
+                        <li class="menu-item">
+                            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                <i class="menu-icon tf-icons bx bx-group"></i>
+                                <div>Employees</div>
+                            </a>
 
-                        <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="#" class="menu-link">
-                                    <div>Create Employee</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="#" class="menu-link">
-                                    <div>Employees List</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                            <ul class="menu-sub">
+                                <li class="menu-item">
+                                    <a href="#" class="menu-link">
+                                        <div>Create Employee</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="#" class="menu-link">
+                                        <div>Employees List</div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
 
-                    <li class="menu-item">
-                        <a href="#" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-buildings"></i>
-                            <div>Companies</div>
-                        </a>
-                    </li>
+                        <li class="menu-item">
+                            <a href="#" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-buildings"></i>
+                                <div>Companies</div>
+                            </a>
+                        </li>
 
-                    <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-credit-card-alt"></i>
-                            <div>Transaction</div>
-                        </a>
+                        <li class="menu-item">
+                            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                <i class="menu-icon tf-icons bx bx-credit-card-alt"></i>
+                                <div>Transaction</div>
+                            </a>
 
-                        <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="#" class="menu-link">
-                                    <div>Transactions List</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="#" class="menu-link">
-                                    <div>Approved</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="#" class="menu-link">
-                                    <div>Rejected</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                            <ul class="menu-sub">
+                                <li class="menu-item">
+                                    <a href="#" class="menu-link">
+                                        <div>Transactions List</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="#" class="menu-link">
+                                        <div>Approved</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="#" class="menu-link">
+                                        <div>Rejected</div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
 
-                    <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-spreadsheet"></i>
-                            <div>Report</div>
-                        </a>
+                        <li class="menu-item">
+                            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                <i class="menu-icon tf-icons bx bx-spreadsheet"></i>
+                                <div>Report</div>
+                            </a>
 
-                        <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="#" class="menu-link">
-                                    <div>Events Reporting</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="#" class="menu-link">
-                                    <div>Payment Reporting</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+                            <ul class="menu-sub">
+                                <li class="menu-item">
+                                    <a href="#" class="menu-link">
+                                        <div>Events Reporting</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="#" class="menu-link">
+                                        <div>Payment Reporting</div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                }
+                else if(role == RoleLevel.Employee.ToString())
+                {
+                    <ul class="menu-inner py-1">
+                        <li class="menu-item @(active == "event" ? "active" : "")">
+                            <a asp-controller="Employee" asp-action="Event" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-cube"></i>
+                                <div>Events</div>
+                            </a>
+                        </li>
+
+                        <li class="menu-item @(active == "transaction" ? "active" : "")">
+                            <a asp-controller="Employee" asp-action="Transaction" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-credit-card-alt"></i>
+                                <div>Transactions</div>
+                            </a>
+                        </li>
+                    </ul>
+                }
+                else if (role == RoleLevel.SysAdmin.ToString())
+                {
+                    <ul class="menu-inner py-1">
+                        <li class="menu-item @(active == "dashboard" ? "active" : "")">
+                            <a asp-controller="Dashboard" asp-action="Index" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                                <div>Dashboard</div>
+                            </a>
+                        </li>
+                        <li class="menu-item @(active == "event" ? "active" : "")">
+                            <a asp-controller="Employee" asp-action="Event" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-cube"></i>
+                                <div>Events</div>
+                            </a>
+                        </li>
+
+                        <li class="menu-item @(active == "transaction" ? "active" : "")">
+                            <a asp-controller="Employee" asp-action="Transaction" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-credit-card-alt"></i>
+                                <div>Transactions</div>
+                            </a>
+                        </li>
+                    </ul>
+                }
             </aside>
             
             <div class="layout-page">
 
-                <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+                <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme @taskbarClass"
                      id="layout-navbar">
                     <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
                         <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
@@ -193,7 +279,10 @@
                         <div class="navbar-nav align-items-center">
                             <div class="nav-item d-flex align-items-center">
                                 <span class="me-2" id="greeting">Welcome Back!</span>
-                                <strong>@ViewData["Username"]</strong>
+                                <span class="text-uppercase"><strong>@username</strong></span>
+                                @if(role == RoleLevel.SysAdmin.ToString()){
+                                    <span>. You are SysAdmin</span>
+                                }
                             </div>
                         </div>
 
@@ -219,10 +308,10 @@
                                         <a class="dropdown-item" href="#">
                                             <div class="d-flex">
                                                 <div class="flex-grow-1">
-                                                    <span class="fw-semibold d-block">
-                                                        @ViewData["Username"]
+                                                    <span class="fw-semibold d-block text-uppercase">
+                                                        @username
                                                     </span>
-                                                    <small class="text-muted text-capitalize">@ViewData["Role"]</small>
+                                                    <small class="text-muted text-capitalize">@role</small>
                                                 </div>
                                             </div>
                                         </a>
@@ -233,10 +322,10 @@
                                     </li>
 
                                     <li>
-                                        <a class="dropdown-item text-danger" href="#">
+                                        <button class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#SignOutModal">
                                             <i class="bx bx-power-off me-2"></i>
-                                            <span class="align-middle">Log Out</span>
-                                        </a>
+                                            <span class="align-middle">Sign Out</span>
+                                        </button>
                                     </li>
                                 </ul>
                             </li>
@@ -301,7 +390,7 @@
     <script type="text/javascript">
         setTimeout(function () {
             $(".toast").addClass('show');
-        }, 1000);
+        }, 500);
 
         setTimeout(function () {
             $(".toast").removeClass('show');

@@ -1,100 +1,18 @@
-﻿<div class="container">
-    <div class="row align-items-center text-white py-3">
-        <div class="col-md-5">
-            <div class="h3">Get Service &<br />Control Your Corporate Events</div>
-            <p class="small">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-            tempor incididunt ut labore et dolore magna aliqua.</p>
-
-            <a class="text-white btn rounded-pill px-3 border-0 bg-3" asp-controller="Admin" asp-action="Login">
-                <i class="bi bi-key me-2"></i>
-                Access account
-            </a>
-        </div>
-        <div class="col text-end">
-            <img src="~/img/illustration.png" class="d-inline-block" width="500">
-        </div>
-    </div>
-</div>
-
-<div class="bg-artefact text-dark text-center" style="padding-top: 120px">
-    <div class="bg-white">
-        <h4>Our Services</h4>
-        <p class="small">Duis aute irure dolor in reprehenderit in<br/>voluptate velit esse
-        cillum dolore eu fugiat nulla pariatur</p>
-
-        <div class="container py-5">
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <div class="card border-0 bg-danger bg-opacity-10">
-                        <div class="card-body border-0 text-center">
-                            <i class="bi bi-tv text-danger fs-2"></i>
-                            <div class="h5">Event Management</div>
-                            <p class="small">
-                                Create and Manage All Your Events with some clicks
-                            </p>
-                        </div>
+﻿@{
+    Layout = "_LayoutLanding";
+    ViewData["Title"] = "tWiz - Corporate Events Arrangement";
+}
+<!-- ======== preloader ======== -->
+<div class="preloader">
+    <div class="loader">
+        <div class="spinner">
+            <div class="spinner-container">
+                <div class="spinner-rotator">
+                    <div class="spinner-left">
+                        <div class="spinner-circle"></div>
                     </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card border-0 bg-success bg-opacity-10">
-                        <div class="card-body border-0 text-center">
-                            <i class="bi bi-envelope-check text-success fs-2"></i>
-                            <div class="h5">Emailing</div>
-                            <p class="small">
-                                All the information and notification turn into your email
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card border-0 bg-warning bg-opacity-10">
-                        <div class="card-body border-0 text-center">
-                            <i class="bi bi-file-earmark-spreadsheet text-warning fs-2"></i>
-                            <div class="h5">Reporting</div>
-                            <p class="small">
-                                No worry, in one click you got the event report and statistics
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="card border-0 bg-info bg-opacity-10">
-                        <div class="card-body border-0 text-center">
-                            <i class="bi bi-wallet text-info fs-2"></i>
-                            <div class="h5">Easy Payments</div>
-                            <p class="small">
-                                With various bank, you got the tWiz account
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card border-0 bg-secondary bg-opacity-10">
-                        <div class="card-body border-0 text-center">
-                            <i class="bi bi-arrows-expand text-secondary fs-2"></i>
-                            <div class="h5">Import & Export</div>
-                            <p class="small">
-                                Upload your sheets file, relax and drink coffee
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card border-0 bg-primary bg-opacity-10">
-                        <div class="card-body border-0 text-center">
-                            <i class="bi bi-bell-slash text-primary fs-2"></i>
-                            <div class="h5">No Subscription</div>
-                            <p class="small">
-                                Pay once and you got lifetime account
-                            </p>
-                        </div>
+                    <div class="spinner-right">
+                        <div class="spinner-circle"></div>
                     </div>
                 </div>
             </div>
@@ -102,63 +20,214 @@
     </div>
 </div>
 
-<div class="bg-white">
-    <div class="container py-3">
+<!-- ======== header ======== -->
+<header class="header">
+    <div class="navbar-area">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-12">
+                    <nav class="navbar navbar-expand-lg">
+                        <a class="navbar-brand" href="#">
+                            <h1 class="text-white"><img class="logo" src="landing/img/icon.png" alt="" />tWiz</h1>
+                        </a>
+                        <button class="navbar-toggler"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#navbarSupportedContent"
+                                aria-controls="navbarSupportedContent"
+                                aria-expanded="false"
+                                aria-label="Toggle navigation">
+                            <span class="toggler-icon"></span>
+                            <span class="toggler-icon"></span>
+                            <span class="toggler-icon"></span>
+                        </button>
+
+                        <div class="collapse navbar-collapse sub-menu-bar"
+                                id="navbarSupportedContent">
+                            <ul id="nav" class="navbar-nav ms-auto">
+                                <li class="nav-item">
+                                    <a class="page-scroll active" href="#home">Home</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="page-scroll" href="#features">Features</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="page-scroll" href="#about">About</a>
+                                </li>
+
+                                <li class="nav-item btn-wrapper border-start ps-5">
+                                    <a asp-controller="Auth" asp-action="SignInAsEmployee" class="btn btn-sm bg-primary rounded-pill px-3 text-white">Sign in Employee</a>
+                                </li>
+                                <li class="nav-item btn-wrapper ms-2">
+                                    <a asp-controller="Auth" asp-action="SignInAsCompany" class="btn btn-sm bg-primary rounded-pill px-3 text-white">Sign in Company</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="home" class="hero-section">
+    <div class="container">
+        <div class="row align-items-center position-relative">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h2 class="wow fadeInUp text-white mb-4" data-wow-delay=".4s">
+                        <span style="color: #fdd446;">tWiz</span>, Your Ultimate Corporate Events Partner!
+                    </h2>
+                    <p class="small wow fadeInUp" data-wow-delay=".6s">
+                        At tWiz, we specialize in the seamless arrangement of corporate events that leave a lasting impression. Our unwavering commitment to excellence ensures that your business gatherings, conferences, and meetings are flawlessly executed, reflecting the highest standards of professionalism.
+                    </p>
+                    <a asp-controller="Auth" asp-action="SignUp"
+                        class="main-btn btn-sm border-btn btn-hover wow fadeInUp"
+                        data-wow-delay=".6s">Register Now!</a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-img wow fadeInUp" data-wow-delay=".5s">
+                    <img src="landing/img/hero/dashboard.png" alt="" style="display: block; width: 150%;" />
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="features" class="feature-section pt-120">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-4 col-md-8 col-sm-10">
+                <div class="single-feature">
+                    <div class="icon">
+                        <i class="lni lni-handshake"></i>
+                    </div>
+                    <div class="content">
+                        <h3>Expertise Beyond Compare</h3>
+                        <p>
+                            With years of industry experience, our dedicated team brings unmatched expertise to every event we handle.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-8 col-sm-10">
+                <div class="single-feature">
+                    <div class="icon">
+                        <i class="lni lni-invention"></i>
+                    </div>
+                    <div class="content">
+                        <h3>Crafting Success</h3>
+                        <p>
+                            Our meticulous planning and creative approach transform your vision into reality, crafting successful events that resonate with your brand.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-8 col-sm-10">
+                <div class="single-feature">
+                    <div class="icon">
+                        <i class="lni lni-sprout"></i>
+                    </div>
+                    <div class="content">
+                        <h3>Elevating Experiences</h3>
+                        <p>
+                            We believe that every corporate event should be a memorable experience. Our team goes above and beyond to create moments that inspire and engage.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="about" class="about-section pt-150">
+    <div class="container">
         <div class="row align-items-center">
-            <div class="col-md-6">
-                <div class="h4">
-                    You know about our digital agencies
-                </div>
-
-                <p>Believe it or not, all these groundbreaking features come at an unbelievable price! For a limited time, you can get access to our revolutionary app for just <b>$100 USD</b>. This unbeatable offer ensures that businesses of all sizes can take advantage of the opportunities it brings.</p>
-
-                <a class="text-white btn rounded-pill px-3 border-0 bg-3 mt-2" asp-controller="Home" asp-action="Register">Register Now!</a>
-            </div>
-
-            <div class="col-md text-center">
-                <img src="~/img/event-illustration.png" class="d-inline-block w-100">
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="bg-white pb-5">
-    <div class="container py-3 text-center">
-        <h3>Testimonials</h3>
-        <p class="small">What they says and what we do</p>
-
-        <div class="row align-items-center justify-content-center">
-            <div class="col-md-4">
-                <div class="card border-0">
-                    <div class="card-body border rounded-3 border-color-secondary border-opacity-10 p-3 text-center">
-                        <img src="~/img/man.png" class="d-inline-block" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; object-position: center; margin-bottom: 15px;">
-                        <div class="h6">William Johnson</div>
-                        <p class="small">As someone who has been in the event planning business for decades, I can confidently say that this event management application is a game-changer! It has made my life so much easier by automating tedious tasks and streamlining the entire planning process</p>
-                    </div>
+            <div class="col-xl-6 col-lg-6">
+                <div class="about-img">
+                    <img src="landing/img/hero/dashboard.png" alt="" class="w-100" />
+                    <img src="landing/img/about/about-left-shape.png"
+                            alt=""
+                            class="shape shape-1" />
+                    <img src="landing/img/about/left-dots.png"
+                            alt=""
+                            class="shape shape-2" />
                 </div>
             </div>
-
-            
-            <div class="col-md-4">
-                <div class="card border-0">
-                    <div class="card-body border rounded-3 border-color-secondary border-opacity-10 p-3 text-center">
-                        <img src="~/img/girl.png" class="d-inline-block" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; object-position: center; margin-bottom: 15px;">
-                        <div class="h6">Emily Adams</div>
-                        <p class="small">Being a busy event organizer and a mom, time is precious to me. This event management application has been a lifesaver! From creating event schedules to handling registrations and ticketing, it simplifies everything</p>
+            <div class="col-xl-6 col-lg-6">
+                <div class="about-content">
+                    <div class="section-title mb-30">
+                        <h2 class="mb-25 wow fadeInUp" data-wow-delay=".2s">
+                            Partner with tWiz for Corporate Events that Resonate
+                        </h2>
+                        <p class="wow fadeInUp" data-wow-delay=".4s">
+                            Your corporate success is our priority. Choose tWiz for your corporate events and experience the art of precision in event management. Only for <strong>IDR 14,998,000</strong> With our affordable and competitive pricing, trust tWiz to deliver exceptional event management services without compromising on quality. Let's collaborate to create an unforgettable corporate event that leaves a lasting impact on your guests. Contact us today to discuss your event requirements and receive a personalized quote.
+                        </p>
                     </div>
-                </div>
-            </div>
-
-
-            <div class="col-md-4">
-                <div class="card border-0">
-                    <div class="card-body border rounded-3 border-color-secondary border-opacity-10 p-3 text-center">
-                        <img src="~/img/boy.png" class="d-inline-block" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; object-position: center; margin-bottom: 15px;">
-                        <div class="h6">Jason Lee</div>
-                        <p class="small">Wow, this event management app is a game-changer! As a young event enthusiast, I'm always on the lookout for tools that can enhance my event planning skills. This app does it all! From its modern and sleek design to its powerful features, it's perfect for my generation</p>
-                    </div>
+                    <a asp-controller="Auth" asp-action="SignUp"
+                        class="main-btn btn-hover border-btn wow fadeInUp"
+                        data-wow-delay=".6s">Register Now!</a>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+    
+<!-- ======== footer ======== -->
+<footer class="footer">
+    <div class="container">
+        <div class="widget-wrapper">
+            <div class="row">
+                <div class="col-xl-4 col-lg-4 col-md-6">
+                    <div class="footer-widget">
+                        <div class="logo mb-30 text-center">
+                            <a href="#">
+                                <h1 class="text-white"><img class="logo" src="landing/img/icon-white.png" alt="" />tWiz</h1>
+                            </a>
+                        </div>
+                        <p class="text-center mb-30 text-white">
+                            Corporate Events Arrangement
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-xl-2 col-lg-2 col-md-6">
+                    <div class="footer-widget">
+                        <h3>About Us</h3>
+                        <ul class="links">
+                            <li><a href="#home">Home</a></li>
+                            <li><a href="#features">Feature</a></li>
+                            <li><a href="#about">About</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-lg-3 col-md-6">
+                    <div class="footer-widget">
+                        <h3>Policies</h3>
+                        <ul class="links">
+                            <li><a href="javascript:void(0)">Frequently Asked Questions</a></li>
+                            <li><a href="javascript:void(0)">Terms of service</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-lg-3 col-md-6">
+                    <div class="footer-widget">
+                        <h3>Access</h3>
+                        <ul class="links">
+                            <li><a asp-controller="Auth" asp-action="SignInAsEmployee">Sign in as Employee</a></li>
+                            <li><a asp-controller="Auth" asp-action="SignInAsCompany">Sign is as Company</a></li>
+                            <li><a asp-controller="Auth" asp-action="SignUp">Sign up for Company</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<a href="#" class="scroll-top btn-hover bg-primary">
+    <i class="lni lni-chevron-up"></i>
+</a>

@@ -1,0 +1,80 @@
+﻿@using System.Globalization;
+@{
+    var payment = TempData["payment"] as dynamic;
+    var toast = TempData["toast"] as dynamic;
+    ViewData["Title"] = "Payment Required";
+}
+
+@section Toast{
+    @if (toast != null)
+    {
+        var toastColor = toast.Color ?? "secondary";
+        var toastClass = $"bs-toast toast toast-placement-ex m-2 fade bg-{toastColor} top-0 start-50 translate-middle-x";
+
+        <div class="@toastClass" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+            <div class="toast-header">
+                <i class="bx bx-bell me-2"></i>
+                <div class="me-auto fw-semibold">@toast.Title</div>
+            </div>
+            <div class="toast-body">
+                @toast.Subtitle
+            </div>
+        </div>
+    }
+}
+
+<div class="container-xxl container-p-y">
+    <div class="misc-wrapper">
+        <div class="display-1 mb-2 mx-2 text-secondary">402</div>
+        <h2 class="mb-2 mx-2">Payment Required</h2>
+        <p class="mb-4 mx-2">Oh no! Your account is Inactive. Please make the payment to activate it<br />If you done the payment process, click button bellow to upload the proof of register payment</p>
+
+        <div class="card">
+            <div class="card-header text-center">
+                @{
+                    CultureInfo indonesianCulture = new CultureInfo("id-ID");
+                    string formattedPrice = ((decimal)payment?.Price).ToString("N0", indonesianCulture).Replace(",", "."); ;
+                }
+                <h2 class="mb-0">IDR @formattedPrice,-</h2>
+
+
+            </div>
+            <div class="card-body text-center">
+                <div class="fw-bold">Virtual Account Number</div>
+                <h1 class="mb-2 text-primary">
+                    @{
+                        string vaNumber = payment!.VaNumber.ToString();
+                        if (!string.IsNullOrEmpty(vaNumber) && vaNumber.Length >= 8)
+                        {
+                            vaNumber = vaNumber.Insert(2, " ");
+                            vaNumber = vaNumber.Insert(6, " ");
+                            vaNumber = vaNumber.Insert(8, " ");
+                        }
+                    }
+                    @vaNumber</h1>
+                <h5 class="mb-2">@payment?.BankCode @payment?.BankName</h5>
+
+                <div class=" mt-3 mb-0 alert alert-primary small alert-sm border border-primary" role="alert">
+                    Make Sure the Acquirer Name is <span class="fw-bold">PT Twiz Digital Solutions</span>
+                </div>
+
+                <form class="mt-3">
+                    <div class="row">
+                        <div class="col">
+                            <input class="form-control" type="file">
+                        </div>
+
+                        <div class="col-auto ps-0">
+                            <button type="submit" class="btn btn-primary">Send</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer border-top">
+                <div class="text-center">
+                    You have paid? Just <a asp-controller="Auth" asp-action="SignInAsCompany" class="text-primary">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

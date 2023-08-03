@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Unauthorized";
+}
+
+<div class="container-xxl container-p-y">
+    <div class="misc-wrapper">
+        <div class="display-1 mb-2 mx-2 text-secondary">500</div>
+        <h2 class="mb-2 mx-2">Internal Server Error</h2>
+        <p class="mb-4 mx-2">So sorry, our services are not available right now</p>
+
+        <div align="center">
+            <a href="#" class="btn btn-outline-primary bg-transparent text-primary" onclick="history.back()">
+                <i class="bx bx-arrow-back"></i> Retrace Your Steps
+            </a>
+
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Go to Home</a>
+        </div>
+    </div>
+</div>

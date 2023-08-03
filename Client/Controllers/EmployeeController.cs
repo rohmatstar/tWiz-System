@@ -1,7 +1,9 @@
 ﻿using Client.Contracts;
 using Client.DTOs;
+using Client.DTOs.Auths;
 using Client.DTOs.Employees;
 using Client.Models;
+using Client.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,19 +15,66 @@ namespace Client.Controllers;
 
 public class EmployeeController : Controller
 {
-    private readonly IEmployeeRepository repository;
+    private readonly IEmployeeRepository _employeeRepository;
+    private readonly IAuthRepository _authRepository;
 
-    public EmployeeController(IEmployeeRepository repository)
+    public EmployeeController(IEmployeeRepository employeeRepository, IAuthRepository authRepository)
     {
-        this.repository = repository;
+        _employeeRepository = employeeRepository;
+        _authRepository = authRepository;
     }
+
+    /* ================================= Authentication =================================== */
+    /*[Authorize]*/
+    [HttpGet]
+    public IActionResult SignUp()
+    {
+        return View();
+    }
+
+    /*[Authorize]*/
+    [HttpGet]
+    public IActionResult SignIn()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> SignIn(SignInDto signDto)
+    {
+
+        var result = await _authRepository.SignIn(signDto);
+        if (result.Code == 200)
+        {
+            var token = result?.Data;
+
+            ViewBag.Toast = new ToastDto
+            {
+                Color = "success",
+                Title = "Signed in",
+                Subtitle = "Welcome, you have signed in to tWiz!"
+            };
+
+            HttpContext.Session.SetString("JWToken", token!);
+            return RedirectToAction("Index", "Dashboard");
+        }
+
+        ViewBag.Toast = new ToastDto
+        {
+            Color = "danger",
+            Title = "Sign in Failed",
+            Subtitle = "So sorry, there is some mistake when signing in you"
+        };
+        return View();
+    }
+    /* ====================================== CRUD =================================== */
 
 
 
     public async Task<IActionResult> Index()
     {
 
-        var result = await repository.Get();
+        var result = await _employeeRepository.Get();
         var ListEmployee = new List<GetMasterEmployeeDtoClient>();
 
         if (result.Data != null)
@@ -44,7 +93,7 @@ public class EmployeeController : Controller
     [HttpPost]
     public async Task<IActionResult> Create(GetMasterEmployeeDtoClient newEmployee)
     {
-        var result = await repository.Post(newEmployee);
+        var result = await _employeeRepository.Post(newEmployee);
         if (result.Code == 200)
         {
             TempData["Success"] = "Data berhasil masuk";
@@ -80,7 +129,7 @@ public class EmployeeController : Controller
     [HttpGet]
     public async Task<IActionResult> Edit(Guid guid)
     {
-        var result = await repository.Get(guid);
+        var result = await _employeeRepository.Get(guid);
 
         if (result.Data?.Guid is null)
         {
@@ -108,7 +157,7 @@ public class EmployeeController : Controller
         {
             return View(employee);
         }
-        var result = await repository.Put(employee);
+        var result = await _employeeRepository.Put(employee);
         if (result.Code == 200)
         {
             TempData["Success"] = "Data Berhasil Diubah";

@@ -1,7 +1,26 @@
-﻿@model Client.DTOs.Auths.RegisterDto
+﻿@model Client.DTOs.Auths.SignUpDto
 @{
-    ViewData["Title"] = "Sign Up";
+    var toast = TempData["toast"] as dynamic;
+    ViewData["Title"] = "Sign up for Company";
     Layout = "_LayoutAuth";
+}
+
+@section Toast{
+    @if (toast != null)
+    {
+        var toastColor = toast.Color ?? "secondary";
+        var toastClass = $"bs-toast toast toast-placement-ex m-2 fade bg-{toastColor} top-0 start-50 translate-middle-x";
+
+        <div class="@toastClass" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+            <div class="toast-header">
+                <i class="bx bx-bell me-2"></i>
+                <div class="me-auto fw-semibold">@toast.Title</div>
+            </div>
+            <div class="toast-body">
+                @toast.Subtitle
+            </div>
+        </div>
+    }
 }
 
 <div class="card">
@@ -9,50 +28,123 @@
         <!-- Logo -->
         <div class="app-brand justify-content-center">
             <a asp-asp-controller="Home" asp-action="Index" class="app-brand-link gap-2">
-                <span class="app-brand-text demo text-body fw-bolder">tWiz</span>
+                <span class="app-brand-text demo text-body fw-bolder">
+                    <img class="logo" src="../landing/img/icon-white.png" alt="" />tWiz
+                </span>
             </a>
         </div>
         <!-- /Logo -->
         <h4 class="mb-2">Adventure starts here</h4>
-        <p class="mb-4">Make your event management easy and fun!</p>
+        <p class="mb-4">Make your event management quick and easy!</p>
 
-        <form id="formAuthentication" class="mb-3" asp-action="Register" method="POST">
-            <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="email"
-                       class="form-control"
-                       id="username"
-                       name="username"
-                       placeholder="Enter your username"
-                       autofocus />
-            </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="text" class="form-control" id="email" name="email" placeholder="Enter your email" />
-            </div>
-            <div class="mb-3 form-password-toggle">
-                <label class="form-label" for="password">Password</label>
-                <div class="input-group input-group-merge">
-                    <input type="password"
-                           id="password"
-                           class="form-control"
-                           name="password"
-                           placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                           aria-describedby="password" />
-                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
-                </div>
-            </div>
+        <form id="formAuthentication" class="mb-3" asp-action="SignUp" method="POST">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="mb-3">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="terms-conditions" name="terms" />
-                    <label class="form-check-label" for="terms-conditions">
-                        I agree to
-                        <a href="javascript:void(0);">Term & Condition</a>
-                    </label>
+            <div id="carouselExample" class="carousel slide" data-bs-ride="static" data-bs-interval="false">
+                <div class="carousel-inner">
+                    <!-- 1 -->
+                    <div class="carousel-item active">
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label">Company Name</label>
+                            <input type="text" asp-for="Name"
+                                   class="form-control"
+                                   id="name"
+                                   name="Name"
+                                   placeholder="Enter your Company Name"
+                                   autofocus />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">Email</label>
+                            <input type="email" class="form-control" asp-for="Email" id="email" name="Email" placeholder="Enter your email" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="PhoneNumber">Phone Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text" id="phone_number">+</span>
+                                <input type="number" min="1" step="1" length="15"
+                                       class="form-control"
+                                       placeholder="Phone Number"
+                                       asp-for="PhoneNumber"
+                                       name="PhoneNumber"
+                                       aria-label="Username"
+                                       aria-describedby="phone_number" />
+                            </div>
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+
+                        <a class="btn btn-primary d-block w-100" href="#carouselExample" role="button" data-bs-slide="next">
+                            Next <i class="bx bx-right-arrow-alt"></i>
+                        </a>
+                    </div>
+
+                    <!-- 2 -->
+                    <div class="carousel-item">
+                        <div class="mb-3">
+                            <label asp-for="Address" class="form-label">Address</label>
+                            <textarea class="form-control" id="address" name="Address" asp-for="Address" rows="3"></textarea>
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3 form-password-toggle">
+                                    <label class="form-label" asp-for="Password">Password</label>
+                                    <div class="input-group input-group-merge">
+                                        <input type="password"
+                                               id="password"
+                                               class="form-control"
+                                               name="Password"
+                                               asp-for="Password"
+                                               placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
+                                        <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                    </div>
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3 form-password-toggle">
+                                    <label class="form-label" asp-for="ConfirmPassword">Confirm Password</label>
+                                    <div class="input-group input-group-merge">
+                                        <input type="password"
+                                               id="confirm_password"
+                                               class="form-control"
+                                               name="ConfirmPassword"
+                                               asp-for="ConfirmPassword"
+                                               placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
+                                        <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                    </div>
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        @*<div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms-conditions" name="terms" />
+                                <label class="form-check-label" for="terms-conditions">
+                                    I agree to
+                                    <a href="javascript:void(0);">Term & Condition</a>
+                                </label>
+                            </div>
+                        </div>*@
+
+                        <div class="row">
+                            <div class="col-auto">
+                                <a class="btn btn-outline-primary bg-white text-primary d-inline-block" href="#carouselExample" role="button" data-bs-slide="prev">
+                                    <i class="bx bx-left-arrow-alt"></i>
+                                </a>
+                            </div>
+                            <div class="col ps-0">
+                                <button type="submit" class="btn btn-primary d-block w-100">Sign up</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <button class="btn btn-primary d-grid w-100">Sign up</button>
+            </div>  
         </form>
 
         <p class="text-center">
@@ -63,3 +155,15 @@
         </p>
     </div>
 </div>
+
+@section Scripts{
+    <script>
+        $("#name").on("input", function () {
+            if ($("#name").val() !== "") {
+                $("#name").addClass("text-uppercase");
+            } else {
+                $("#name").removeClass("text-uppercase");
+            }
+        });
+    </script>
+}

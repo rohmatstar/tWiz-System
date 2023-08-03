@@ -5,25 +5,32 @@ using API.Models;
 using API.Utilities.Enums;
 using API.Utilities.Handlers;
 using API.Utilities.Validations;
+using System.Security.Claims;
 
 namespace API.Services;
 
 public class RegisterPaymentService
 {
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
     private readonly IRegisterPaymentRepository _registerPaymentRepository;
     private readonly ICompanyRepository _companyRepository;
     private readonly IAccountRepository _accountRepository;
+    private readonly IBankRepository _bankRepository;
     private readonly IEmailHandler _emailHandler;
     private readonly AccountService _accountService;
     private readonly TwizDbContext _twizDbContext;
-    public RegisterPaymentService(IRegisterPaymentRepository registerPaymentRepository, ICompanyRepository companyRepository, IAccountRepository accountRepository, IEmailHandler emailHandler, AccountService accountService, TwizDbContext twizDbContext)
+    public RegisterPaymentService(IRegisterPaymentRepository registerPaymentRepository, ICompanyRepository companyRepository, IAccountRepository accountRepository, IBankRepository bankRepository, IEmailHandler emailHandler, AccountService accountService, TwizDbContext twizDbContext, IHttpContextAccessor httpContextAccessor)
     {
         _registerPaymentRepository = registerPaymentRepository;
         _companyRepository = companyRepository;
         _accountRepository = accountRepository;
+        _bankRepository = bankRepository;
         _emailHandler = emailHandler;
         _accountService = accountService;
         _twizDbContext = twizDbContext;
+        _httpContextAccessor = httpContextAccessor;
+        _bankRepository = bankRepository;
     }
 
     public IEnumerable<GetRegisterPaymentDto>? GetRegisterPayments()
@@ -33,37 +40,141 @@ public class RegisterPaymentService
         {
             return null; // No RegisterPayment Found
         }
-        var toDto = registerPayments.Select(registerPayments => new GetRegisterPaymentDto
+
+        var companies = _companyRepository.GetAll();
+        var banks = _bankRepository.GetAll();
+        var accounts = _accountRepository.GetAll();
+
+        var toDto = registerPayments.Select(rp =>
         {
-            Guid = registerPayments.Guid,
-            CompanyGuid = registerPayments.CompanyGuid,
-            VaNumber = registerPayments.VaNumber,
-            Price = registerPayments.Price,
-            PaymentImage = registerPayments.PaymentImage,
-            IsValid = registerPayments.IsValid,
-            BankGuid = registerPayments.BankGuid,
-            StatusPayment = registerPayments.StatusPayment
-        }).ToList();
+            var company = companies.FirstOrDefault(c => c.Guid == rp.CompanyGuid);
+            var accountCompany = accounts.FirstOrDefault(acc => acc.Guid == company.AccountGuid);
+            var bank = banks.FirstOrDefault(b => b.Guid == rp.BankGuid);
+
+            var statusPayment = "";
+            if (rp.StatusPayment == StatusPayment.Pending) statusPayment = "pending";
+            if (rp.StatusPayment == StatusPayment.Checking) statusPayment = "checking";
+            if (rp.StatusPayment == StatusPayment.Paid) statusPayment = "paid";
+            if (rp.StatusPayment == StatusPayment.Rejected) statusPayment = "rejected";
+
+
+            return new GetRegisterPaymentDto
+            {
+                Guid = rp.Guid,
+                VaNumber = rp.VaNumber,
+                CompanyEmail = accountCompany?.Email ?? "",
+                CompanyName = company?.Name ?? "",
+                PaymentImage = rp.PaymentImage,
+                Price = rp.Price,
+                StatusPayment = statusPayment,
+                ValidationStatus = rp.IsValid == true ? "valid" : "invalid",
+                BankName = bank?.Name ?? ""
+            };
+        });
+
 
         return toDto;
     }
 
     public GetRegisterPaymentDto? GetRegisterPayment(Guid guid)
     {
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        if (accountGuid is null)
+        {
+            return null;
+        }
+
         var registerPayments = _registerPaymentRepository.GetByGuid(guid);
         if (registerPayments is null)
         {
             return null;
         }
+
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.Guid == registerPayments.CompanyGuid);
+
+        if (company is null)
+        {
+            return null;
+        }
+
+        // jika user bukan sysadmin atau company yang punya register payment ini
+        if (userRole != nameof(RoleLevel.SysAdmin) && Guid.Parse(accountGuid) != company.AccountGuid)
+        {
+            return null;
+        }
+
+        var accountCompany = _accountRepository.GetAll().FirstOrDefault(acc => acc.Guid == company.AccountGuid);
+
+
+        var bank = _bankRepository.GetAll().FirstOrDefault(b => b.Guid == registerPayments.BankGuid);
+
+        var statusPayment = "";
+        if (registerPayments.StatusPayment == StatusPayment.Pending) statusPayment = "pending";
+        if (registerPayments.StatusPayment == StatusPayment.Checking) statusPayment = "checking";
+        if (registerPayments.StatusPayment == StatusPayment.Paid) statusPayment = "paid";
+        if (registerPayments.StatusPayment == StatusPayment.Rejected) statusPayment = "rejected";
+
         var toDto = new GetRegisterPaymentDto
         {
             Guid = registerPayments.Guid,
-            CompanyGuid = registerPayments.CompanyGuid,
             VaNumber = registerPayments.VaNumber,
-            Price = registerPayments.Price,
+            CompanyEmail = accountCompany?.Email ?? "",
+            CompanyName = company?.Name ?? "",
             PaymentImage = registerPayments.PaymentImage,
-            IsValid = registerPayments.IsValid,
-            BankGuid = registerPayments.BankGuid,
+            Price = registerPayments.Price,
+            StatusPayment = statusPayment,
+            ValidationStatus = registerPayments.IsValid == true ? "valid" : "invalid",
+            BankName = bank?.Name ?? ""
+        };
+
+        return toDto;
+    }
+
+    public PaymentSummaryDto? GetPaymentSummary(string email)
+    {
+        var account = _accountRepository.GetByEmail(email);
+        if (account is null)
+        {
+            return null;
+        }
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == account!.Guid);
+        if (company is null)
+        {
+            return null;
+        }
+        var payment = _registerPaymentRepository.GetAll().FirstOrDefault(c => c.CompanyGuid == company!.Guid);
+        if (payment is null)
+        {
+            return null;
+        }
+        var bank = _bankRepository.GetAll().FirstOrDefault(c => c.Guid == payment!.BankGuid);
+        if (bank is null)
+        {
+            return null;
+        }
+
+        if (payment.StatusPayment == StatusPayment.Paid)
+        {
+            var paid = new PaymentSummaryDto
+            {
+                VaNumber = 0,
+                Price = 0,
+                BankCode = null,
+                BankName = null
+            };
+            return paid;
+        }
+
+        var toDto = new PaymentSummaryDto
+        {
+            VaNumber = payment.VaNumber,
+            Price = payment.Price,
+            BankCode = bank.Code,
+            BankName = bank.Name
         };
         return toDto;
 
@@ -93,12 +204,12 @@ public class RegisterPaymentService
         var toDto = new GetRegisterPaymentDto
         {
             Guid = createdRegisterPayment.Guid,
-            CompanyGuid = createdRegisterPayment.CompanyGuid,
+            //CompanyGuid = createdRegisterPayment.CompanyGuid,
             VaNumber = createdRegisterPayment.VaNumber,
             Price = createdRegisterPayment.Price,
             PaymentImage = createdRegisterPayment.PaymentImage,
-            IsValid = createdRegisterPayment.IsValid,
-            BankGuid = createdRegisterPayment.BankGuid,
+            //IsValid = createdRegisterPayment.IsValid,
+            //BankGuid = createdRegisterPayment.BankGuid,
         };
 
         return toDto; // RegisterPayment Created
@@ -184,12 +295,17 @@ public class RegisterPaymentService
             return -3;
         }
 
-        var paymentRegisterByGuid = _registerPaymentRepository.GetByGuid(paymentSubmissionDto.Guid);
+        var registerPaymentByGuid = _registerPaymentRepository.GetByGuid(paymentSubmissionDto.Guid);
         var oldImageUrl = "";
 
-        if (paymentRegisterByGuid != null && paymentRegisterByGuid.PaymentImage != "")
+        if (registerPaymentByGuid == null)
         {
-            oldImageUrl = paymentRegisterByGuid.PaymentImage;
+            return -7;
+        }
+
+        if (registerPaymentByGuid.PaymentImage != "")
+        {
+            oldImageUrl = registerPaymentByGuid.PaymentImage;
         }
 
 
@@ -206,23 +322,17 @@ public class RegisterPaymentService
                 await paymentSubmissionDto.PaymentImage.CopyToAsync(stream);
             }
 
-            // update payment image
-            bool paymentImageUpdated = _registerPaymentRepository.UpdatePaymentImage(paymentSubmissionDto.Guid, imageUrl);
-            if (!paymentImageUpdated)
-            {
+            registerPaymentByGuid.PaymentImage = imageUrl;
+            registerPaymentByGuid.StatusPayment = StatusPayment.Checking;
 
-                FileHandler.DeleteFileIfExist(filePath);
-                return -4;
-            }
+            var updatedRegisterPayment = _registerPaymentRepository.Update(registerPaymentByGuid);
 
-            // update status payment
-            bool statusPaymentUpdated = _registerPaymentRepository.ChangeStatusRegisterPayment(paymentSubmissionDto.Guid, StatusPayment.Checking);
-
-            if (!statusPaymentUpdated)
+            if (updatedRegisterPayment == false)
             {
                 FileHandler.DeleteFileIfExist(filePath);
                 return -5;
-            }
+            };
+
 
             // hapus foto lama jika ada
             if (oldImageUrl != "")
@@ -241,10 +351,19 @@ public class RegisterPaymentService
 
         try
         {
+            var company = _companyRepository.GetByGuid(registerPaymentByGuid.CompanyGuid);
+
+            if (company == null)
+            {
+                FileHandler.DeleteFileIfExist(filePath);
+                transaction.Rollback();
+                return -7;
+            }
+
             var contentEmail = $"" +
                 $"<h1>Register Payment Submission</h1>" +
-                $"<p>Company Name : {paymentSubmissionDto.CompanyName}</p>" +
-                $"<p>Virtual Account : {paymentRegisterByGuid.VaNumber}</p>" +
+                $"<p>Company Name : {company.Name}</p>" +
+                $"<p>Virtual Account : {registerPaymentByGuid.VaNumber}</p>" +
                 $"<p>Now you can check it</p>";
 
             var emailAdmin = _accountService.GetEmailSysAdmin();
@@ -276,6 +395,7 @@ public class RegisterPaymentService
             return 0;
         }
 
+
         getRegisterPayment.IsValid = true;
         getRegisterPayment.StatusPayment = StatusPayment.Paid;
         getRegisterPayment.ModifiedDate = DateTime.Now;
@@ -288,18 +408,26 @@ public class RegisterPaymentService
             return 0;
         }
 
-        var getAccountCompany = _accountRepository.GetByEmail(aproveRegisterPaymentDto.CompanyEmail);
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.Guid == getRegisterPayment.CompanyGuid);
 
-        if (getAccountCompany is null)
+        if (company is null)
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
+        var accountCompany = _accountRepository.GetAll().FirstOrDefault(acc => acc.Guid == company.AccountGuid);
+
+        if (accountCompany is null)
         {
             transaction.Rollback();
             return 0;
         }
 
         // aktivasi account
-        getAccountCompany.IsActive = true;
+        accountCompany.IsActive = true;
 
-        var accountUpdated = _accountRepository.Update(getAccountCompany);
+        var accountUpdated = _accountRepository.Update(accountCompany);
 
         if (accountUpdated is false)
         {
@@ -313,7 +441,7 @@ public class RegisterPaymentService
             var contentEmail = $"<h1>Conratulation Your Account Has Been Activated!!</h1>" +
                 $"<p>welcome to tWiz. Now you can fully use the services of our tWiz service. Don't hesitate to contact the support center if you have any problems using our tWiz service</p>";
 
-            _emailHandler.SendEmail(aproveRegisterPaymentDto.CompanyEmail, "Aproved tWiz Account", contentEmail);
+            _emailHandler.SendEmail(accountCompany.Email, "Aproved tWiz Account", contentEmail);
             transaction.Commit();
         }
         catch
@@ -348,18 +476,26 @@ public class RegisterPaymentService
             return 0;
         }
 
-        var getAccountCompany = _accountRepository.GetByEmail(aproveRegisterPaymentDto.CompanyEmail);
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.Guid == getRegisterPayment.CompanyGuid);
 
-        if (getAccountCompany is null)
+        if (company is null)
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
+        var accountCompany = _accountRepository.GetAll().FirstOrDefault(acc => acc.Guid == company.AccountGuid);
+
+        if (accountCompany is null)
         {
             transaction.Rollback();
             return 0;
         }
 
         // aktivasi account
-        getAccountCompany.IsActive = false;
+        accountCompany.IsActive = true;
 
-        var accountUpdated = _accountRepository.Update(getAccountCompany);
+        var accountUpdated = _accountRepository.Update(accountCompany);
 
         if (accountUpdated is false)
         {
@@ -372,7 +508,7 @@ public class RegisterPaymentService
             var contentEmail = $"<h1>Your Submission is Rejected</h1>" +
                 $"<p>For customers. Sorry, we still can't activate your tWiz account because the proof of payment that you uploaded is invalid</p>";
 
-            _emailHandler.SendEmail(aproveRegisterPaymentDto.CompanyEmail, "Reject activation tWiz Account", contentEmail);
+            _emailHandler.SendEmail(accountCompany.Email, "Reject activation tWiz Account", contentEmail);
             transaction.Commit();
         }
         catch

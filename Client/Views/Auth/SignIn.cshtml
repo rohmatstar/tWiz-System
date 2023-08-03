@@ -2,8 +2,9 @@
 
 @{
     var toast = TempData["toast"] as dynamic;
+    var type = TempData["type"] as string;
+    ViewData["Title"] = "Sign in as " + type;
 
-    ViewData["Title"] = "Sign In";
     Layout = "_LayoutAuth";
 }
 
@@ -30,14 +31,18 @@
         <!-- Logo -->
         <div class="app-brand justify-content-center">
             <a asp-controller="Home" asp-action="Index" class="app-brand-link gap-2">
-                <span class="app-brand-text demo text-body fw-bolder">tWiz</span>
+                <span class="app-brand-text demo text-body fw-bolder">
+                    <img class="logo" src="../landing/img/icon-white.png" alt="" />tWiz
+                </span>
             </a>
         </div>
         <!-- /Logo -->
         <h4 class="mb-2">Welcome to tWiz!</h4>
         <p class="mb-4">Please sign-in to your account and start the adventure</p>
 
-        <form id="formAuthentication" class="mb-3" asp-action="SignIn" method="POST">
+        <form id="formAuthentication" class="mb-3" asp-action="SignIn" method="post">
+            <input type="hidden" name="type" value="@type" />
+
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="mb-3">
                 <label asp-for="Email" class="control-label">Email</label>
@@ -45,18 +50,19 @@
                     type="email" class="form-control" id="email"
                     name="email"
                     placeholder="Enter your email"
-                    autofocus />
+                    autofocus
+                    tabindex="1"/>
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="mb-3 form-password-toggle">
                 <div class="d-flex justify-content-between">
                     <label asp-for="Password" class="control-label">Password</label>
-                    <a asp-asp-controller="Auth" asp-action="ForgetPassword">
+                    <a tabindex="-1" asp-asp-controller="Auth" asp-action="ForgetPassword">
                         <small>Forgot Password?</small>
                     </a>
                 </div>
                 <div class="input-group input-group-merge">
-                    <input asp-for="Password"  type="password"
+                    <input tabindex="2" asp-for="Password"  type="password"
                            id="password"
                            class="form-control"
                            name="password"
@@ -77,11 +83,14 @@
             </div>
         </form>
 
-        <p class="text-center">
-            <span>New on our platform?</span>
-            <a asp-asp-controller="Auth" asp-action="SignUp">
-                <span>Create an account</span>
-            </a>
-        </p>
+        @if (type == "Company")
+        {
+            <p class="text-center">
+                <span>New on our platform?</span>
+                <a asp-asp-controller="Auth" asp-action="SignUp">
+                    <span>Create an account</span>
+                </a>
+            </p>
+        }
     </div>
 </div>

@@ -1,5 +1,4 @@
-﻿using Client.Utilities.Enums;
-using Client.Utilities.Validations;
+﻿using Client.Utilities.Validations;
 using System.ComponentModel.DataAnnotations;
 
 namespace Client.DTOs.Auths

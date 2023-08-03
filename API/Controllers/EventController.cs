@@ -1,6 +1,5 @@
 ﻿using API.DTOs.Events;
 using API.Services;
-using API.Utilities.Enums;
 using API.Utilities.Handlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -45,12 +44,12 @@ public class EventController : ControllerBase
     }
 
     [HttpGet("{guid}")]
-    public IActionResult GetEvent(Guid guid)
+    public IActionResult GetEvent(Guid guid, [FromQuery] string? usedfor)
     {
-        var eventsData = _eventService.GetEvent(guid);
+        var eventsData = _eventService.GetEvent(guid, usedfor);
         if (eventsData != null)
         {
-            return Ok(new ResponseHandler<EventsDto>
+            return Ok(new ResponseHandler<GetEventMasterDto>
             {
                 Code = StatusCodes.Status200OK,
                 Status = HttpStatusCode.OK.ToString(),
@@ -61,9 +60,9 @@ public class EventController : ControllerBase
 
         return NotFound(new ResponseHandler<EventsDto>
         {
-            Code = StatusCodes.Status404NotFound,
-            Status = HttpStatusCode.NotFound.ToString(),
-            Message = "Not Found",
+            Code = StatusCodes.Status403Forbidden,
+            Status = HttpStatusCode.Forbidden.ToString(),
+            Message = "You cannot access it",
             Data = null
         });
     }
@@ -140,131 +139,105 @@ public class EventController : ControllerBase
         });
     }
 
-    [HttpGet("internal")]
-    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
-    public IActionResult GetInternalEvents([FromQuery] string? type)
-    {
-        // type = 'public' or 'personal'
-        var internalEvents = _eventService.GetInternalEvents(type);
-        if (internalEvents is not null)
-        {
-            return Ok(new ResponseHandler<List<EventsDto>>
-            {
-                Code = StatusCodes.Status200OK,
-                Status = HttpStatusCode.OK.ToString(),
-                Message = "Success",
-                Data = internalEvents
-            });
-        }
+    //[HttpGet("internal")]
+    //[Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
+    //public IActionResult GetInternalEvents([FromQuery] string? type)
+    //{
+    //    // type = 'public' or 'personal'
+    //    var internalEvents = _eventService.GetInternalEvents(type);
+    //    if (internalEvents is not null)
+    //    {
+    //        return Ok(new ResponseHandler<List<EventsDto>>
+    //        {
+    //            Code = StatusCodes.Status200OK,
+    //            Status = HttpStatusCode.OK.ToString(),
+    //            Message = "Success",
+    //            Data = internalEvents
+    //        });
+    //    }
 
-        return StatusCode(StatusCodes.Status403Forbidden, new ResponseHandler<string>
-        {
-            Code = StatusCodes.Status403Forbidden,
-            Status = HttpStatusCode.Forbidden.ToString(),
-            Message = "You cannot access!!"
-        });
-    }
+    //    return StatusCode(StatusCodes.Status403Forbidden, new ResponseHandler<string>
+    //    {
+    //        Code = StatusCodes.Status403Forbidden,
+    //        Status = HttpStatusCode.Forbidden.ToString(),
+    //        Message = "You cannot access!!"
+    //    });
+    //}
 
-    [HttpGet("external")]
-    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
-    public IActionResult GetExternalEvents([FromQuery] string? type)
-    {
-        // type = 'public' or 'personal'
-        var internalEvents = _eventService.GetExternalEvents(type);
-        if (internalEvents is not null)
-        {
-            return Ok(new ResponseHandler<List<EventsDto>>
-            {
-                Code = StatusCodes.Status200OK,
-                Status = HttpStatusCode.OK.ToString(),
-                Message = "Success",
-                Data = internalEvents
-            });
-        }
+    //[HttpGet("external")]
+    //[Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
+    //public IActionResult GetExternalEvents([FromQuery] string? type)
+    //{
+    //    // type = 'public' or 'personal'
+    //    var internalEvents = _eventService.GetExternalEvents(type);
+    //    if (internalEvents is not null)
+    //    {
+    //        return Ok(new ResponseHandler<List<EventsDto>>
+    //        {
+    //            Code = StatusCodes.Status200OK,
+    //            Status = HttpStatusCode.OK.ToString(),
+    //            Message = "Success",
+    //            Data = internalEvents
+    //        });
+    //    }
 
-        return StatusCode(StatusCodes.Status403Forbidden, new ResponseHandler<string>
-        {
-            Code = StatusCodes.Status403Forbidden,
-            Status = HttpStatusCode.Forbidden.ToString(),
-            Message = "You cannot access!!"
-        });
-    }
+    //    return StatusCode(StatusCodes.Status403Forbidden, new ResponseHandler<string>
+    //    {
+    //        Code = StatusCodes.Status403Forbidden,
+    //        Status = HttpStatusCode.Forbidden.ToString(),
+    //        Message = "You cannot access!!"
+    //    });
+    //}
 
-    [HttpGet("details/{event_guid}")]
-    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
-    public IActionResult GetDetailsEvents(Guid event_guid)
-    {
+    //[HttpGet("public")]
+    //[Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
+    //public IActionResult GetPublicEvents()
+    //{
 
-        var getDetailsEvent = _eventService.GetDetailsEvent(event_guid);
-        if (getDetailsEvent is not null)
-        {
-            return Ok(new ResponseHandler<GetMasterEventDto>
-            {
-                Code = StatusCodes.Status200OK,
-                Status = HttpStatusCode.OK.ToString(),
-                Message = "Success",
-                Data = getDetailsEvent
-            });
-        }
+    //    var publicEvents = _eventService.GetPublicEvents();
+    //    if (publicEvents is not null)
+    //    {
+    //        return Ok(new ResponseHandler<List<EventsDto>>
+    //        {
+    //            Code = StatusCodes.Status200OK,
+    //            Status = HttpStatusCode.OK.ToString(),
+    //            Message = "Success",
+    //            Data = publicEvents
+    //        });
+    //    }
 
-        return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
-        {
-            Code = StatusCodes.Status400BadRequest,
-            Status = HttpStatusCode.Forbidden.ToString(),
-            Message = "Your parameter is wrong"
-        });
-    }
+    //    return StatusCode(StatusCodes.Status403Forbidden, new ResponseHandler<string>
+    //    {
+    //        Code = StatusCodes.Status403Forbidden,
+    //        Status = HttpStatusCode.Forbidden.ToString(),
+    //        Message = "You cannot access!!"
+    //    });
+    //}
 
+    //[HttpGet("personal")]
+    //[Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
+    //public IActionResult GetPersonalEvents()
+    //{
 
-    [HttpGet("public")]
-    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
-    public IActionResult GetPublicEvents()
-    {
+    //    var personalEvents = _eventService.GetPersonalEvents();
+    //    if (personalEvents is not null)
+    //    {
+    //        return Ok(new ResponseHandler<List<EventsDto>>
+    //        {
+    //            Code = StatusCodes.Status200OK,
+    //            Status = HttpStatusCode.OK.ToString(),
+    //            Message = "Success",
+    //            Data = personalEvents
+    //        });
+    //    }
 
-        var publicEvents = _eventService.GetPublicEvents();
-        if (publicEvents is not null)
-        {
-            return Ok(new ResponseHandler<List<EventsDto>>
-            {
-                Code = StatusCodes.Status200OK,
-                Status = HttpStatusCode.OK.ToString(),
-                Message = "Success",
-                Data = publicEvents
-            });
-        }
-
-        return StatusCode(StatusCodes.Status403Forbidden, new ResponseHandler<string>
-        {
-            Code = StatusCodes.Status403Forbidden,
-            Status = HttpStatusCode.Forbidden.ToString(),
-            Message = "You cannot access!!"
-        });
-    }
-
-    [HttpGet("personal")]
-    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
-    public IActionResult GetPersonalEvents()
-    {
-
-        var personalEvents = _eventService.GetPersonalEvents();
-        if (personalEvents is not null)
-        {
-            return Ok(new ResponseHandler<List<EventsDto>>
-            {
-                Code = StatusCodes.Status200OK,
-                Status = HttpStatusCode.OK.ToString(),
-                Message = "Success",
-                Data = personalEvents
-            });
-        }
-
-        return StatusCode(StatusCodes.Status403Forbidden, new ResponseHandler<string>
-        {
-            Code = StatusCodes.Status403Forbidden,
-            Status = HttpStatusCode.Forbidden.ToString(),
-            Message = "You cannot access!!"
-        });
-    }
+    //    return StatusCode(StatusCodes.Status403Forbidden, new ResponseHandler<string>
+    //    {
+    //        Code = StatusCodes.Status403Forbidden,
+    //        Status = HttpStatusCode.Forbidden.ToString(),
+    //        Message = "You cannot access!!"
+    //    });
+    //}
 
     [HttpGet("tickets")]
     public IActionResult GetTickets([FromQuery] QueryParamGetTicketDto queryParams)

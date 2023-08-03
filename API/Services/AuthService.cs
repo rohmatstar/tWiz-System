@@ -4,7 +4,6 @@ using API.DTOs.Auths;
 using API.Models;
 using API.Utilities.Enums;
 using API.Utilities.Handlers;
-using System.Linq;
 using System.Security.Claims;
 
 namespace API.Services;
@@ -17,6 +16,7 @@ public class AuthService
     private readonly IRegisterPaymentRepository _registerPaymentRepository;
     private readonly IAccountRoleRepository _accountRoleRepository;
     private readonly IRoleRepository _roleRepository;
+    private readonly ISysAdminRepository _sysAdminRepository;
     private readonly ITokenHandlers _tokenHandler;
     private readonly TwizDbContext _twizDbContext;
     private readonly IEmailHandler _emailHandler;
@@ -31,7 +31,8 @@ public class AuthService
         ITokenHandlers tokenHandler,
         TwizDbContext twizDbContext,
         IEmailHandler emailHandler,
-        IBankRepository bankRepository)
+        IBankRepository bankRepository,
+        ISysAdminRepository sysAdminRepository)
     {
         _accountRepository = accountRepository;
         _companyRepository = companyRepository;
@@ -43,6 +44,7 @@ public class AuthService
         _twizDbContext = twizDbContext;
         _emailHandler = emailHandler;
         _bankRepository = bankRepository;
+        _sysAdminRepository = sysAdminRepository;
     }
 
     public RegisterDto? Register(RegisterDto registerDto)
@@ -116,8 +118,8 @@ public class AuthService
             RegisterPayment registerPayment = new RegisterPayment
             {
                 CompanyGuid = createdCompany.Guid,
-                VaNumber = GenerateHandler.RandomVa(),
-                Price = 100000,
+                VaNumber = GenerateHandler.GenerateVa(),
+                Price = 14998000,
                 PaymentImage = "",
                 IsValid = false,
                 CreatedDate = DateTime.Now,
@@ -179,14 +181,44 @@ public class AuthService
             new Claim("Email", loginDto.Email)
         };
 
-        /*var getAccountName = _companyRepository.GetName(account.Guid);
-        if (getAccountName is null)
-        {
-            getAccountName = (IEnumerable<Company>?)_employeeRepository.GetName(account.Guid);
-        }
-        var accountName = (from an in getAccountName select an.Name);
+        //var getAccountName = _companyRepository.GetName(account.Guid);
+        //if (getAccountName is null)
+        //{
+        //    getAccountName = (IEnumerable<Company>?)_employeeRepository.GetName(account.Guid);
+        //}
+        //var accountName = (from an in getAccountName select an.Name);
 
-        claims.AddRange(accountName.Select(name => new Claim(ClaimTypes.Name, accountName)));*/
+        //claims.AddRange(accountName.Select(name => new Claim(ClaimTypes.Name, name)));
+
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == account.Guid);
+        var employee = _employeeRepository.GetAll().FirstOrDefault(e => e.AccountGuid == account.Guid);
+        var sysAdmin = _sysAdminRepository.GetAll().FirstOrDefault(sa => sa.AccountGuid == account.Guid);
+
+        if (company is not null)
+        {
+            claims.Add(new Claim(ClaimTypes.Name, company.Name));
+            var payment = _registerPaymentRepository.GetAll().FirstOrDefault(c => c.CompanyGuid == company.Guid);
+
+            if (payment == null || payment.StatusPayment == 0)
+            {
+                return "-3";
+            }
+        }
+        else if (employee is not null)
+        {
+            claims.Add(new Claim(ClaimTypes.Name, employee.FullName));
+        }
+        else if (sysAdmin is not null)
+        {
+            claims.Add(new Claim(ClaimTypes.Name, sysAdmin.Name));
+        }
+        else
+        {
+            return "0";
+
+            claims.Add(new Claim(ClaimTypes.Name, company.Name));
+            claims.Add(new Claim("UserGuid", company.Guid.ToString())); // Add Company Guid to Check Register Payment when signed in
+        }
 
         var getAccountRole = _accountRoleRepository.GetByGuidCompany(account.Guid);
 
@@ -263,7 +295,7 @@ public class AuthService
         var toDto = new ForgotPasswordDto
         {
             Email = account.Email,
-            Token = GenerateHandler.RandomVa(),
+            Token = GenerateHandler.GenerateToken(),
             TokenExpiration = DateTime.Now.AddMinutes(5)
         };
 

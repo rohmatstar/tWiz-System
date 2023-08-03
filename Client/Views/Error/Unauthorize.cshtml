@@ -7,6 +7,13 @@
         <div class="display-1 mb-2 mx-2 text-secondary">401</div>
         <h2 class="mb-2 mx-2">Unauthorized</h2>
         <p class="mb-4 mx-2">Oops! It seems you've wandered into an exclusive area.<br />To access this page, you'll need to show some credentials.<br />Please sign in to continue your journey.</p>
-        <a asp-controller="Auth" asp-action="SignIn" class="btn btn-primary">Sign in</a>
+
+        <div align="center">
+            <a href="#" class="btn btn-outline-primary bg-transparent text-primary" onclick="history.back()">
+                <i class="bx bx-arrow-back"></i> Retrace Your Steps
+            </a>
+
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Go to Home</a>
+        </div>
     </div>
 </div>

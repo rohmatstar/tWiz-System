@@ -1,7 +1,9 @@
 ﻿using API.DTOs.Banks;
 using API.DTOs.RegisterPayments;
 using API.Services;
+using API.Utilities.Enums;
 using API.Utilities.Handlers;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -10,18 +12,22 @@ namespace API.Controllers;
 
 
 [ApiController]
-[Route("api/registerpayments")]
+[Route("api/register-payments")]
+[Authorize]
 public class RegisterPaymentController : ControllerBase
 {
     private readonly RegisterPaymentService _service;
+    private readonly RegisterPaymentService _paymentService;
 
-    public RegisterPaymentController(RegisterPaymentService service)
+    public RegisterPaymentController(RegisterPaymentService service, RegisterPaymentService paymentService)
     {
         _service = service;
+        _paymentService = paymentService;
     }
 
 
     [HttpGet]
+    [Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}")]
     public IActionResult GetAll()
     {
         var entities = _service.GetRegisterPayments();
@@ -46,7 +52,7 @@ public class RegisterPaymentController : ControllerBase
     }
 
     [HttpGet("{guid}")]
-    [AllowAnonymous]
+    [Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}, {nameof(RoleLevel.Company)}")]
     public IActionResult GetByGuid(Guid guid)
     {
         var registerpayment = _service.GetRegisterPayment(guid);
@@ -67,6 +73,43 @@ public class RegisterPaymentController : ControllerBase
             Message = "Data found",
             Data = registerpayment
         });
+    }
+
+    [HttpGet("summary/{email}")]
+    [AllowAnonymous]
+    public IActionResult GetPaymentSummary(string email)
+    {
+        var payment = _paymentService.GetPaymentSummary(email);
+
+        if (payment == null)
+        {
+            return StatusCode(StatusCodes.Status402PaymentRequired, new ResponseHandler<PaymentSummaryDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Payment of this registered account is not found",
+            });
+        }
+        else
+        {
+            if (payment.VaNumber == 0)
+            {
+                return StatusCode(StatusCodes.Status200OK, new ResponseHandler<PaymentSummaryDto>
+                {
+                    Code = StatusCodes.Status200OK,
+                    Status = HttpStatusCode.OK.ToString(),
+                    Message = "Payment of this registered account is Paid",
+                });
+            }
+
+            return StatusCode(StatusCodes.Status402PaymentRequired, new ResponseHandler<PaymentSummaryDto>
+            {
+                Code = StatusCodes.Status402PaymentRequired,
+                Status = HttpStatusCode.PaymentRequired.ToString(),
+                Message = "Sorry your account is inactive, please do the payment to activate",
+                Data = payment
+            });
+        }
     }
 
     [HttpPost]
@@ -157,6 +200,7 @@ public class RegisterPaymentController : ControllerBase
 
 
     [HttpPut("payment-submission")]
+    [AllowAnonymous]
     public async Task<IActionResult> PaymentSubmission([FromForm] PaymentSubmissionDto paymentSubmissionDto)
     {
 
@@ -222,16 +266,37 @@ public class RegisterPaymentController : ControllerBase
             });
         }
 
+        if (paymentSubmissionStatus is -7)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Check your data"
+            });
+        }
+
+        if (paymentSubmissionStatus is 0)
+        {
+            return StatusCode(StatusCodes.Status401Unauthorized, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status401Unauthorized,
+                Status = HttpStatusCode.Unauthorized.ToString(),
+                Message = "Not Authenticated"
+            });
+        }
+
         return Ok(new ResponseHandler<string>
         {
             Code = StatusCodes.Status200OK,
             Status = HttpStatusCode.OK.ToString(),
-            Message = "Successfully update data"
+            Message = "Successfully upload payment submission"
         });
 
     }
 
     [HttpPut("aprove")]
+    [Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}")]
     public IActionResult Aprove(AproveRegisterPaymentDto aproveRegisterPaymentDto)
     {
         var aprovedRegisterPaymentStatus = _service.AproveRegisterPayment(aproveRegisterPaymentDto);
@@ -256,6 +321,7 @@ public class RegisterPaymentController : ControllerBase
     }
 
     [HttpPut("reject")]
+    [Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}")]
     public IActionResult Reject(AproveRegisterPaymentDto aproveRegisterPaymentDto)
     {
         var rejectedRegisterPaymentStatus = _service.RejectRegisterPayment(aproveRegisterPaymentDto);

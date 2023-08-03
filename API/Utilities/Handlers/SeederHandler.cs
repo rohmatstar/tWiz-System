@@ -6928,5 +6928,20 @@ public class SeederHandler
 
 
     }
+
+    public Bank? GetRandomBank()
+    {
+        var getBanks = _context.Set<Bank>().ToList();
+        if (getBanks is null || getBanks.Count() == 0)
+        {
+            return null; // Atau tindakan lain jika daftar kosong.
+        }
+
+        Random random = new Random();
+        int randomIndex = random.Next(0, getBanks.Count() - 1); // Mendapatkan indeks acak dalam rentang [0, count-1].
+        var randomBank = getBanks[randomIndex]; // Mendapatkan bank secara acak.
+
+        return randomBank ?? null;
+    }
 }
 

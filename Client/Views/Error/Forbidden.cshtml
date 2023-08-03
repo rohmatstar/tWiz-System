@@ -7,6 +7,13 @@
         <div class="display-1 mb-2 mx-2 text-secondary">403</div>
         <h2 class="mb-2 mx-2">Forbidden</h2>
         <p class="mb-4 mx-2">Oh no! The door to this page seems to be locked.<br />It's a restricted area, and you're not invited.<br />If you think this is a mistake, kindly seek the assistance of the page administrator.</p>
-        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Back to home</a>
+        
+        <div align="center">
+            <a href="#" class="btn btn-outline-primary bg-transparent text-primary" onclick="history.back()">
+                <i class="bx bx-arrow-back"></i> Retrace Your Steps
+            </a>
+
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Go to Home</a>
+        </div>
     </div>
 </div>

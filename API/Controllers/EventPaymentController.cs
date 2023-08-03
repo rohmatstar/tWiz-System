@@ -1,5 +1,6 @@
 ﻿using API.DTOs.EventPayments;
 using API.Services;
+using API.Utilities.Enums;
 using API.Utilities.Handlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,8 @@ namespace API.Controllers;
 
 
 [ApiController]
-[Route("api/eventpayments")]
+[Route("api/event-payments")]
+[Authorize]
 public class EventPaymentController : ControllerBase
 {
     private readonly EventPaymentService _service;
@@ -44,7 +46,7 @@ public class EventPaymentController : ControllerBase
     }
 
     [HttpGet("{guid}")]
-    [AllowAnonymous]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
     public IActionResult GetByGuid(Guid guid)
     {
         var eventpayment = _service.GetEventPayment(guid);
@@ -149,6 +151,125 @@ public class EventPaymentController : ControllerBase
             Code = StatusCodes.Status200OK,
             Status = HttpStatusCode.OK.ToString(),
             Message = "Successfully deleted"
+        });
+    }
+
+    [HttpPut("payment-submission")]
+    public async Task<IActionResult> EventPaymentSubmission([FromForm] EventPaymentSubmissionDto paymentSubmissionDto)
+    {
+
+        var paymentSubmissionStatus = await _service.UploadEventPaymentSubmission(paymentSubmissionDto);
+
+        if (paymentSubmissionStatus is -1)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Failed create folder image"
+            });
+        }
+
+        if (paymentSubmissionStatus is -2)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "File size cannot be more than 2mb"
+            });
+        }
+
+        if (paymentSubmissionStatus is -3)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "your uploaded file is not image file"
+            });
+        }
+
+        if (paymentSubmissionStatus is -4)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Failed to update image payment"
+            });
+        }
+
+        if (paymentSubmissionStatus is -5)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Failed to update status payment"
+            });
+        }
+
+        if (paymentSubmissionStatus is -6)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Check your internet connection"
+            });
+        }
+
+        if (paymentSubmissionStatus is -7)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Check your data"
+            });
+        }
+
+        if (paymentSubmissionStatus is 0)
+        {
+            return StatusCode(StatusCodes.Status401Unauthorized, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status401Unauthorized,
+                Status = HttpStatusCode.Unauthorized.ToString(),
+                Message = "Not Authenticated"
+            });
+        }
+
+        return Ok(new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Successfully update data"
+        });
+
+    }
+
+    [HttpPut("aprove")]
+    public IActionResult Aprove(AproveEventPaymentDto aproveEventPaymentDto)
+    {
+        var aprovedEventPaymentStatus = _service.AproveEventPayment(aproveEventPaymentDto);
+
+        if (aprovedEventPaymentStatus is 0)
+        {
+            return BadRequest(new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "Check your data"
+            });
+        }
+
+
+        return Ok(new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Successfully aprove event payment submission"
         });
     }
 }

@@ -18,6 +18,7 @@ builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 /*builder.Services.AddScoped<IEventRepository, EventRepository>();*/
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -69,6 +70,14 @@ app.UseStatusCodePages(async context =>
     {
         response.Redirect("/Error/Forbidden");
     }
+    else if (response.StatusCode.Equals((int)HttpStatusCode.MethodNotAllowed))
+    {
+        response.Redirect("/Error/MethodNotAllowed");
+    }
+    else if (response.StatusCode.Equals((int)HttpStatusCode.InternalServerError))
+    {
+        response.Redirect("/Error/InternalServerError");
+    }
 });
 
 app.UseSession();
@@ -89,9 +98,27 @@ app.Use(async (context, next) =>
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.UseEndpoints(endpoints =>
+{
+    /*endpoints.MapControllerRoute(
+        name: "signIn",
+        pattern: "Auth/SignIn/{loginType}",
+        defaults: new { controller = "Auth", action = "SignIn" }
+    );
+
+    endpoints.MapControllerRoute(
+        name: "signOut",
+        pattern: "Auth/SignOut/{logoutType}",
+        defaults: new { controller = "Auth", action = "SignOut" }
+    );*/
+
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}"
+    );
+
+    // Add other routes if needed
+});
 
 app.Run();
 
