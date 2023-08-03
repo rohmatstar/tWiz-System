@@ -322,13 +322,13 @@ public class EmployeeService
 
     public int DeleteEmployee(Guid guid)
     {
-        var isExist = _employeeRepository.IsExist(guid);
-        if (!isExist)
+        var employee = _employeeRepository.GetByGuid(guid);
+
+        if (employee is null)
         {
-            return -1; // Employee Not Found
+            return -1;
         }
 
-        var employee = _employeeRepository.GetByGuid(guid);
         var isDelete = _employeeRepository.Delete(employee);
         if (!isDelete)
         {
