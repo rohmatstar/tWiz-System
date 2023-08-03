@@ -4,6 +4,15 @@
     // JWT Parse
     var username = User!.Claims!.FirstOrDefault(c => c.Type == ClaimTypes.Name)!.Value;
     var role = User!.Claims!.FirstOrDefault(c => c.Type == ClaimTypes.Role)!.Value;
+    var navbarClass = "";
+    var taskbarClass = "";
+    if(role == RoleLevel.Company.ToString()){
+        navbarClass = role;
+    }
+    if(role == RoleLevel.SysAdmin.ToString()){
+        navbarClass = RoleLevel.Company.ToString() + " " + RoleLevel.SysAdmin.ToString();
+        taskbarClass = "sysadmin-style";
+    }
     var avatar = $"../assets/img/avatars/{role}.png";
 
     var signout = "Auth/SignoutCompany";
@@ -81,7 +90,7 @@
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
 
-            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme @role.ToLower()">
+            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme @navbarClass.ToLower()">
                 <div class="app-brand demo">
                     <a asp-asp-controller="Dashboard" asp-action="Index" class="app-brand-link">
                         <span class="app-brand-logo demo">
@@ -212,9 +221,33 @@
                         </li>
                     </ul>
                 }
-                else
+                else if(role == RoleLevel.Employee.ToString())
                 {
                     <ul class="menu-inner py-1">
+                        <li class="menu-item @(active == "event" ? "active" : "")">
+                            <a asp-controller="Employee" asp-action="Event" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-cube"></i>
+                                <div>Events</div>
+                            </a>
+                        </li>
+
+                        <li class="menu-item @(active == "transaction" ? "active" : "")">
+                            <a asp-controller="Employee" asp-action="Transaction" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-credit-card-alt"></i>
+                                <div>Transactions</div>
+                            </a>
+                        </li>
+                    </ul>
+                }
+                else if (role == RoleLevel.SysAdmin.ToString())
+                {
+                    <ul class="menu-inner py-1">
+                        <li class="menu-item @(active == "dashboard" ? "active" : "")">
+                            <a asp-controller="Dashboard" asp-action="Index" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                                <div>Dashboard</div>
+                            </a>
+                        </li>
                         <li class="menu-item @(active == "event" ? "active" : "")">
                             <a asp-controller="Employee" asp-action="Event" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-cube"></i>
@@ -234,7 +267,7 @@
             
             <div class="layout-page">
 
-                <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+                <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme @taskbarClass"
                      id="layout-navbar">
                     <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
                         <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
@@ -247,6 +280,9 @@
                             <div class="nav-item d-flex align-items-center">
                                 <span class="me-2" id="greeting">Welcome Back!</span>
                                 <span class="text-uppercase"><strong>@username</strong></span>
+                                @if(role == RoleLevel.SysAdmin.ToString()){
+                                    <span>. You are SysAdmin</span>
+                                }
                             </div>
                         </div>
 
