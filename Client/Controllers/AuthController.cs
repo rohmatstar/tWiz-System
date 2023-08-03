@@ -94,13 +94,6 @@ namespace Client.Controllers
             }
         }
 
-        /*[HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SignUp(SignUpDto signUpDto)
-        {
-            
-        }*/
-
         [HttpGet]
         public IActionResult SignInAsCompany()
         {
@@ -112,6 +105,21 @@ namespace Client.Controllers
             TempData["type"] = RoleLevel.Company.ToString();
             return View("SignIn");
         }
+
+        /* SysAdmin*/
+        [HttpGet]
+        public IActionResult SysAdmin()
+        {
+            TempData["type"] = RoleLevel.SysAdmin.ToString();
+            return View("SignIn");
+        }
+        public IActionResult SignoutSysAdmin()
+        {
+            HttpContext.Session.Remove("JWTToken");
+            return Redirect("/Auth/SysAdmin");
+        }
+
+        /* General Sign In*/
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -138,12 +146,6 @@ namespace Client.Controllers
                     {
                         return RedirectToAction("Index", "Event");
                     }
-                    else if (role == RoleLevel.SysAdmin.ToString())
-                    {
-                        return RedirectToAction("Index", "Dashboard");
-                    }
-
-                    // Need Adjust add dashboard for sysadmin
 
                     return RedirectToAction("Index", "Dashboard");
                 }
