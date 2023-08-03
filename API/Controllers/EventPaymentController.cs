@@ -220,6 +220,26 @@ public class EventPaymentController : ControllerBase
             });
         }
 
+        if (paymentSubmissionStatus is -7)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Check your data"
+            });
+        }
+
+        if (paymentSubmissionStatus is 0)
+        {
+            return StatusCode(StatusCodes.Status401Unauthorized, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status401Unauthorized,
+                Status = HttpStatusCode.Unauthorized.ToString(),
+                Message = "Not Authenticated"
+            });
+        }
+
         return Ok(new ResponseHandler<string>
         {
             Code = StatusCodes.Status200OK,
@@ -227,5 +247,29 @@ public class EventPaymentController : ControllerBase
             Message = "Successfully update data"
         });
 
+    }
+
+    [HttpPut("aprove")]
+    public IActionResult Aprove(AproveEventPaymentDto aproveEventPaymentDto)
+    {
+        var aprovedEventPaymentStatus = _service.AproveEventPayment(aproveEventPaymentDto);
+
+        if (aprovedEventPaymentStatus is 0)
+        {
+            return BadRequest(new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "Check your data"
+            });
+        }
+
+
+        return Ok(new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Successfully aprove event payment submission"
+        });
     }
 }
