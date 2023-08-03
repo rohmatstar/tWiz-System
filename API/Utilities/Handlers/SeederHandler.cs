@@ -498,7 +498,7 @@ public class SeederHandler
                 EventGuid = event3.Guid,
                 AccountGuid = account2.Guid,
                 BankGuid = GetRandomBank()!.Guid,
-                VaNumber = GenerateHandler.RandomVa(),
+                VaNumber = GenerateHandler.GenerateVa(),
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now,
                 IsValid = false,

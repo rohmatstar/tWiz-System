@@ -115,8 +115,8 @@ public class AuthService
             RegisterPayment registerPayment = new RegisterPayment
             {
                 CompanyGuid = createdCompany.Guid,
-                VaNumber = GenerateHandler.RandomVa(),
-                Price = 100000,
+                VaNumber = GenerateHandler.GenerateVa(),
+                Price = 14998000,
                 PaymentImage = "",
                 IsValid = false,
                 CreatedDate = DateTime.Now,
@@ -290,7 +290,7 @@ public class AuthService
         var toDto = new ForgotPasswordDto
         {
             Email = account.Email,
-            Token = GenerateHandler.RandomVa(),
+            Token = GenerateHandler.GenerateToken(),
             TokenExpiration = DateTime.Now.AddMinutes(5)
         };
 
