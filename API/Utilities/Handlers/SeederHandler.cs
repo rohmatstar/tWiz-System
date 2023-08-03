@@ -5030,18 +5030,6 @@ public class SeederHandler
             _context.SaveChanges();
 
 
-            var eventpayment1 = new EventPayment
-            {
-                Guid = new Guid(),
-                AccountGuid = account1.Guid,
-                EventGuid = event3.Guid,
-                VaNumber = GenerateHandler.RandomVa(),
-                PaymentImage = "",
-                IsValid = true,
-                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
-                StatusPayment = StatusPayment.Pending
-
-            };
 
 
             var eventpayment2 = new EventPayment
@@ -5148,18 +5136,6 @@ public class SeederHandler
 
             };
 
-            var eventpayment10 = new EventPayment
-            {
-                Guid = new Guid(),
-                AccountGuid = account1.Guid,
-                EventGuid = event6.Guid,
-                VaNumber = GenerateHandler.RandomVa(),
-                PaymentImage = "",
-                IsValid = true,
-                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
-                StatusPayment = StatusPayment.Pending
-
-            };
 
             var eventpayment11 = new EventPayment
             {
@@ -5256,19 +5232,6 @@ public class SeederHandler
                 Guid = new Guid(),
                 AccountGuid = account26.Guid,
                 EventGuid = event6.Guid,
-                VaNumber = GenerateHandler.RandomVa(),
-                PaymentImage = "",
-                IsValid = true,
-                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
-                StatusPayment = StatusPayment.Pending
-
-            };
-
-            var eventpayment19 = new EventPayment
-            {
-                Guid = new Guid(),
-                AccountGuid = account1.Guid,
-                EventGuid = event7.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5382,18 +5345,6 @@ public class SeederHandler
 
             };
 
-            var eventpayment28 = new EventPayment
-            {
-                Guid = new Guid(),
-                AccountGuid = account1.Guid,
-                EventGuid = event9.Guid,
-                VaNumber = GenerateHandler.RandomVa(),
-                PaymentImage = "",
-                IsValid = true,
-                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
-                StatusPayment = StatusPayment.Pending
-
-            };
 
             var eventpayment29 = new EventPayment
             {
@@ -5502,18 +5453,6 @@ public class SeederHandler
 
             };
 
-            var eventpayment37 = new EventPayment
-            {
-                Guid = new Guid(),
-                AccountGuid = account1.Guid,
-                EventGuid = event10.Guid,
-                VaNumber = GenerateHandler.RandomVa(),
-                PaymentImage = "",
-                IsValid = true,
-                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
-                StatusPayment = StatusPayment.Pending
-
-            };
 
             var eventpayment38 = new EventPayment
             {
@@ -5636,18 +5575,6 @@ public class SeederHandler
             };
 
 
-            var eventpayment47 = new EventPayment
-            {
-                Guid = new Guid(),
-                AccountGuid = account2.Guid,
-                EventGuid = event13.Guid,
-                VaNumber = GenerateHandler.RandomVa(),
-                PaymentImage = "",
-                IsValid = true,
-                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
-                StatusPayment = StatusPayment.Pending
-
-            };
 
             var eventpayment48 = new EventPayment
             {
@@ -5753,18 +5680,6 @@ public class SeederHandler
 
             };
 
-            var eventpayment56 = new EventPayment
-            {
-                Guid = new Guid(),
-                AccountGuid = account2.Guid,
-                EventGuid = event16.Guid,
-                VaNumber = GenerateHandler.RandomVa(),
-                PaymentImage = "",
-                IsValid = true,
-                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
-                StatusPayment = StatusPayment.Pending
-
-            };
 
             var eventpayment57 = new EventPayment
             {
@@ -5869,18 +5784,6 @@ public class SeederHandler
 
             };
 
-            var eventpayment65 = new EventPayment
-            {
-                Guid = new Guid(),
-                AccountGuid = account2.Guid,
-                EventGuid = event17.Guid,
-                VaNumber = GenerateHandler.RandomVa(),
-                PaymentImage = "",
-                IsValid = true,
-                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
-                StatusPayment = StatusPayment.Pending
-
-            };
 
             var eventpayment66 = new EventPayment
             {
@@ -5987,18 +5890,6 @@ public class SeederHandler
 
             };
 
-            var eventpayment74 = new EventPayment
-            {
-                Guid = new Guid(),
-                AccountGuid = account2.Guid,
-                EventGuid = event19.Guid,
-                VaNumber = GenerateHandler.RandomVa(),
-                PaymentImage = "",
-                IsValid = true,
-                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
-                StatusPayment = StatusPayment.Pending
-
-            };
 
             var eventpayment75 = new EventPayment
             {
@@ -6107,18 +5998,6 @@ public class SeederHandler
 
             };
 
-            var eventpayment83 = new EventPayment
-            {
-                Guid = new Guid(),
-                AccountGuid = account2.Guid,
-                EventGuid = event20.Guid,
-                VaNumber = GenerateHandler.RandomVa(),
-                PaymentImage = "",
-                IsValid = true,
-                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
-                StatusPayment = StatusPayment.Pending
-
-            };
 
             var eventpayment84 = new EventPayment
             {
@@ -6241,19 +6120,6 @@ public class SeederHandler
 
             };
 
-            var eventpayment93 = new EventPayment
-            {
-                Guid = new Guid(),
-                AccountGuid = account12.Guid,
-                EventGuid = event23.Guid,
-                VaNumber = GenerateHandler.RandomVa(),
-                PaymentImage = "",
-                IsValid = true,
-                BankGuid = GetRandomBankGuid(),
-                StatusPayment = StatusPayment.Pending
-
-            };
-
             var eventpayment94 = new EventPayment
             {
                 Guid = new Guid(),
@@ -6358,18 +6224,7 @@ public class SeederHandler
 
             };
 
-            var eventpayment102 = new EventPayment
-            {
-                Guid = new Guid(),
-                AccountGuid = account12.Guid,
-                EventGuid = event26.Guid,
-                VaNumber = GenerateHandler.RandomVa(),
-                PaymentImage = "",
-                IsValid = true,
-                BankGuid = GetRandomBankGuid(),
-                StatusPayment = StatusPayment.Pending
 
-            };
 
             var eventpayment103 = new EventPayment
             {
@@ -6474,18 +6329,7 @@ public class SeederHandler
 
             };
 
-            var eventpayment111 = new EventPayment
-            {
-                Guid = new Guid(),
-                AccountGuid = account12.Guid,
-                EventGuid = event27.Guid,
-                VaNumber = GenerateHandler.RandomVa(),
-                PaymentImage = "",
-                IsValid = true,
-                BankGuid = GetRandomBankGuid(),
-                StatusPayment = StatusPayment.Pending
 
-            };
 
             var eventpayment112 = new EventPayment
             {
@@ -6592,19 +6436,7 @@ public class SeederHandler
 
             };
 
-            var eventpayment120 = new EventPayment
-            {
 
-                Guid = new Guid(),
-                AccountGuid = account12.Guid,
-                EventGuid = event29.Guid,
-                VaNumber = GenerateHandler.RandomVa(),
-                PaymentImage = "",
-                IsValid = true,
-                BankGuid = GetRandomBankGuid(),
-                StatusPayment = StatusPayment.Pending
-
-            };
 
 
             var eventpayment121 = new EventPayment
@@ -6712,19 +6544,6 @@ public class SeederHandler
 
             };
 
-            var eventpayment129 = new EventPayment
-            {
-
-                Guid = new Guid(),
-                AccountGuid = account12.Guid,
-                EventGuid = event30.Guid,
-                VaNumber = GenerateHandler.RandomVa(),
-                PaymentImage = "",
-                IsValid = true,
-                BankGuid = GetRandomBankGuid(),
-                StatusPayment = StatusPayment.Pending
-
-            };
 
 
             var eventpayment130 = new EventPayment
@@ -6808,7 +6627,7 @@ public class SeederHandler
 
 
             _context.Set<EventPayment>().AddRange(new List<EventPayment>
-            { eventpayment1, eventpayment2, eventpayment3, eventpayment4, eventpayment5, eventpayment6, eventpayment7, eventpayment8, eventpayment9, eventpayment10, eventpayment11, eventpayment12, eventpayment13, eventpayment14, eventpayment15, eventpayment16, eventpayment17, eventpayment18, eventpayment19, eventpayment20, eventpayment21, eventpayment22, eventpayment23, eventpayment24, eventpayment25, eventpayment26, eventpayment27, eventpayment28, eventpayment29, eventpayment30, eventpayment31, eventpayment32, eventpayment33, eventpayment34, eventpayment35, eventpayment36, eventpayment37, eventpayment38, eventpayment39, eventpayment40, eventpayment41,  eventpayment42, eventpayment43, eventpayment44, eventpayment45, eventpayment46, eventpayment47, eventpayment48, eventpayment49, eventpayment50, eventpayment51, eventpayment52, eventpayment53, eventpayment54, eventpayment55, eventpayment56, eventpayment57, eventpayment58, eventpayment59, eventpayment60, eventpayment61, eventpayment62, eventpayment63, eventpayment64, eventpayment65, eventpayment66, eventpayment67, eventpayment68, eventpayment69, eventpayment70, eventpayment71, eventpayment72, eventpayment73, eventpayment74, eventpayment75, eventpayment76, eventpayment77, eventpayment78, eventpayment79, eventpayment80, eventpayment81, eventpayment82, eventpayment83, eventpayment84, eventpayment85, eventpayment86, eventpayment87, eventpayment88, eventpayment89, eventpayment90, eventpayment91, eventpayment92, eventpayment93, eventpayment94, eventpayment95, eventpayment96, eventpayment97, eventpayment98, eventpayment99, eventpayment100, eventpayment101,  eventpayment102, eventpayment103, eventpayment104, eventpayment105, eventpayment106, eventpayment107, eventpayment108, eventpayment109, eventpayment110, eventpayment111, eventpayment112, eventpayment113, eventpayment114, eventpayment115, eventpayment116, eventpayment117, eventpayment118, eventpayment119, eventpayment120, eventpayment121, eventpayment122, eventpayment123, eventpayment124, eventpayment125, eventpayment126, eventpayment127, eventpayment128, eventpayment129, eventpayment130, eventpayment131, eventpayment132, eventpayment133, eventpayment134, eventpayment135});
+            { eventpayment2, eventpayment3, eventpayment4, eventpayment5, eventpayment6, eventpayment7, eventpayment8, eventpayment9,  eventpayment11, eventpayment12, eventpayment13, eventpayment14, eventpayment15, eventpayment16, eventpayment17, eventpayment18,  eventpayment20, eventpayment21, eventpayment22, eventpayment23, eventpayment24, eventpayment25, eventpayment26, eventpayment27, eventpayment29, eventpayment30, eventpayment31, eventpayment32, eventpayment33, eventpayment34, eventpayment35, eventpayment36,  eventpayment38, eventpayment39, eventpayment40, eventpayment41,  eventpayment42, eventpayment43, eventpayment44, eventpayment45, eventpayment46, eventpayment48, eventpayment49, eventpayment50, eventpayment51, eventpayment52, eventpayment53, eventpayment54, eventpayment55,  eventpayment57, eventpayment58, eventpayment59, eventpayment60, eventpayment61, eventpayment62, eventpayment63, eventpayment64,  eventpayment66, eventpayment67, eventpayment68, eventpayment69, eventpayment70, eventpayment71, eventpayment72, eventpayment73,  eventpayment75, eventpayment76, eventpayment77, eventpayment78, eventpayment79, eventpayment80, eventpayment81, eventpayment82, eventpayment84, eventpayment85, eventpayment86, eventpayment87, eventpayment88, eventpayment89, eventpayment90, eventpayment91, eventpayment92,  eventpayment94, eventpayment95, eventpayment96, eventpayment97, eventpayment98, eventpayment99, eventpayment100, eventpayment101,   eventpayment103, eventpayment104, eventpayment105, eventpayment106, eventpayment107, eventpayment108, eventpayment109, eventpayment110,  eventpayment112, eventpayment113, eventpayment114, eventpayment115, eventpayment116, eventpayment117, eventpayment118, eventpayment119,  eventpayment121, eventpayment122, eventpayment123, eventpayment124, eventpayment125, eventpayment126, eventpayment127, eventpayment128,  eventpayment130, eventpayment131, eventpayment132, eventpayment133, eventpayment134, eventpayment135});
 
             _context.SaveChanges();
 
