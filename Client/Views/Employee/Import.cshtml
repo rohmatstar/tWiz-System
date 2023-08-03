@@ -1,0 +1,71 @@
+﻿@{
+    var toast = TempData["toast"] as dynamic;
+
+    ViewData["Title"] = "Import Employee";
+    Layout = "_LayoutUser";
+}
+
+@section Filter{
+    
+}
+
+@section Toast{
+    @if (toast != null)
+    {
+        var toastColor = toast.Color ?? "secondary";
+        var toastClass = $"bs-toast toast toast-placement-ex m-2 fade bg-{toastColor} top-0 start-50 translate-middle-x";
+
+        <div class="@toastClass" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+            <div class="toast-header">
+                <i class="bx bx-bell me-2"></i>
+                <div class="me-auto fw-semibold">@toast.Title</div>
+            </div>
+            <div class="toast-body">
+                @toast.Subtitle
+            </div>
+        </div>
+    }
+}
+
+<div class="col-12">
+    <form id="import_form" method="post" action="" enctype="multipart/form-data">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Import Employees</h5>
+                <div class="card-subtitle text-muted mb-3">Upload your Excel file below to add multiple employees simultaneously</div>
+
+                <input type="hidden" id="company_guid" name="company_guid"/>
+                <input type="file" id="employee_excel" name="employee_excel" accept=".xlsx, .xls, .csv" class="d-none">
+                <a type"button" onclick="$('#employee_excel').click()" class="bg-white d-block w-100 text-secondary rounded-3 text-center py-5 px-3 border-3 border-primary" style="border-style: dashed; cursor: pointer;">
+                <div class="text-secondary">
+                    <i class="bx bx-upload display-1 me-2"></i>
+
+                    <div class="mb-3">Click to start upload file</div>
+                </div>
+                </a>
+            </div>
+
+            <div class="card-footer">
+                <div class="row justify-content-center align-items-center">
+                
+                    <div class="col">
+                        <div class="bg-light small text-warning">
+                        <i class="bx bx-error me-2"></i>
+                        Ensure the uploaded Excel file adheres to the provided format to avoid data failures. Download the template <a class="text-underlined" href="#"><u>here</u></a>.
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <button id="import_btn" type="submit" class="btn btn-primary">
+                            <span>Import</span>
+                            <i class="bx bx-arrow-from-left"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts{
+
+}

@@ -33,6 +33,22 @@ public class EmployeeController : Controller
         return View();
     }
 
+    [HttpGet]
+    public IActionResult Import()
+    {
+        var active = "import_employee";
+        ViewBag.Active = active;
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult Create()
+    {
+        var active = "create_employee";
+        ViewBag.Active = active;
+        return View();
+    }
+
     /* =========== Crud ============== */
     /*public async Task<IActionResult> Index()
     {
@@ -46,12 +62,6 @@ public class EmployeeController : Controller
         }
         return View(ListEmployee);
     }*/
-
-    [HttpGet]
-    public IActionResult Create()
-    {
-        return View();
-    }
 
     [HttpPost]
     public async Task<IActionResult> Create(GetMasterEmployeeDtoClient newEmployee)
