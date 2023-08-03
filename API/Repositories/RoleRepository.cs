@@ -11,6 +11,6 @@ public class RoleRepository : GeneralRepository<Role>, IRoleRepository
     }
     public Role? GetByName(string name)
     {
-        return _context.Set<Role>().FirstOrDefault(x => x.Name == name);
+        return _context.Set<Role>().FirstOrDefault(r => r.Name == name);
     }
 }

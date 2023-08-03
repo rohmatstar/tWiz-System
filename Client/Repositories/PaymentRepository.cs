@@ -1,9 +1,7 @@
-﻿using API.DTOs.Auths;
-using API.DTOs.RegisterPayments;
-using Client.Contracts;
+﻿using Client.Contracts;
 using Client.DTOs;
 using Client.DTOs.Auths;
-using Client.Models;
+using Client.DTOs.RegisterPayments;
 using Newtonsoft.Json;
 using System.Text;
 
