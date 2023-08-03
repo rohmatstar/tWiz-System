@@ -1,4 +1,5 @@
-﻿@{
+﻿@using System.Globalization;
+@{
     var payment = TempData["payment"] as dynamic;
     var toast = TempData["toast"] as dynamic;
     ViewData["Title"] = "Payment Required";
@@ -30,11 +31,27 @@
 
         <div class="card">
             <div class="card-header text-center">
-                <h2 class="mb-0">IDR @payment?.Price,-</h2>
+                @{
+                    CultureInfo indonesianCulture = new CultureInfo("id-ID");
+                    string formattedPrice = ((decimal)payment?.Price).ToString("N0", indonesianCulture).Replace(",", "."); ;
+                }
+                <h2 class="mb-0">IDR @formattedPrice,-</h2>
+
+
             </div>
             <div class="card-body text-center">
                 <div class="fw-bold">Virtual Account Number</div>
-                <h1 class="mb-2 text-primary">@payment?.VaNumber</h1>
+                <h1 class="mb-2 text-primary">
+                    @{
+                        string vaNumber = payment!.VaNumber.ToString();
+                        if (!string.IsNullOrEmpty(vaNumber) && vaNumber.Length >= 8)
+                        {
+                            vaNumber = vaNumber.Insert(2, " ");
+                            vaNumber = vaNumber.Insert(6, " ");
+                            vaNumber = vaNumber.Insert(8, " ");
+                        }
+                    }
+                    @vaNumber</h1>
                 <h5 class="mb-2">@payment?.BankCode @payment?.BankName</h5>
             </div>
             <div class="card-footer">
