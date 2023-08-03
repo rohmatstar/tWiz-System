@@ -254,29 +254,6 @@ public class RegisterPaymentService
 
     public async Task<int> UploadPaymentSubmission(PaymentSubmissionDto paymentSubmissionDto)
     {
-        var claimUser = _httpContextAccessor.HttpContext?.User;
-
-        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
-        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
-
-        if (accountGuid is null)
-        {
-            return 0;
-        }
-
-        var companyName = "";
-
-        if (userRole == nameof(RoleLevel.Company))
-        {
-            var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid));
-
-            companyName = company?.Name ?? "";
-        }
-        else
-        {
-            return 0;
-        }
-
         var folderPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\register_payments");
 
         if (!Directory.Exists(folderPath))
@@ -362,9 +339,18 @@ public class RegisterPaymentService
 
         try
         {
+            var company = _companyRepository.GetByGuid(registerPaymentByGuid.CompanyGuid);
+
+            if (company == null)
+            {
+                FileHandler.DeleteFileIfExist(filePath);
+                transaction.Rollback();
+                return -7;
+            }
+
             var contentEmail = $"" +
                 $"<h1>Register Payment Submission</h1>" +
-                $"<p>Company Name : {companyName}</p>" +
+                $"<p>Company Name : {company.Name}</p>" +
                 $"<p>Virtual Account : {registerPaymentByGuid.VaNumber}</p>" +
                 $"<p>Now you can check it</p>";
 
