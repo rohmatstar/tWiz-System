@@ -24,54 +24,17 @@ public class EmployeeController : Controller
         _authRepository = authRepository;
     }
 
-    /* ================================= Authentication =================================== */
-    /*[Authorize]*/
+    /* =========== View ============== */
     [HttpGet]
-    public IActionResult SignUp()
+    public IActionResult Index()
     {
+        var active = "employee";
+        ViewBag.Active = active;
         return View();
     }
 
-    /*[Authorize]*/
-    [HttpGet]
-    public IActionResult SignIn()
-    {
-        return View();
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> SignIn(SignInDto signDto)
-    {
-
-        var result = await _authRepository.SignIn(signDto);
-        if (result.Code == 200)
-        {
-            var token = result?.Data;
-
-            ViewBag.Toast = new ToastDto
-            {
-                Color = "success",
-                Title = "Signed in",
-                Subtitle = "Welcome, you have signed in to tWiz!"
-            };
-
-            HttpContext.Session.SetString("JWToken", token!);
-            return RedirectToAction("Index", "Dashboard");
-        }
-
-        ViewBag.Toast = new ToastDto
-        {
-            Color = "danger",
-            Title = "Sign in Failed",
-            Subtitle = "So sorry, there is some mistake when signing in you"
-        };
-        return View();
-    }
-    /* ====================================== CRUD =================================== */
-
-
-
-    public async Task<IActionResult> Index()
+    /* =========== Crud ============== */
+    /*public async Task<IActionResult> Index()
     {
 
         var result = await _employeeRepository.Get();
@@ -82,7 +45,7 @@ public class EmployeeController : Controller
             ListEmployee = result.Data.ToList();
         }
         return View(ListEmployee);
-    }
+    }*/
 
     [HttpGet]
     public IActionResult Create()

@@ -7,16 +7,9 @@ namespace Client.Controllers
 {
     public class EventController : Controller
     {
-        private void SetCommonViewBagData()
-        {
-            ViewBag.Role = "company";
-            ViewBag.Username = "PT Mitra Integrasi Informatika";
-        }
-
         /*[Authorize]*/
         public IActionResult Index()
         {
-            SetCommonViewBagData();
             var active = "event";
             ViewBag.Active = active;
 
@@ -26,7 +19,6 @@ namespace Client.Controllers
         /*[Authorize]*/
         public IActionResult Create()
         {
-            SetCommonViewBagData();
             var active = "create_event";
             ViewBag.Active = active;
             return View();
@@ -35,7 +27,6 @@ namespace Client.Controllers
         /*[Authorize]*/
         public IActionResult Invited()
         {
-            SetCommonViewBagData();
             var active = "invited_event";
             ViewBag.Active = active;
             return View();
@@ -44,7 +35,6 @@ namespace Client.Controllers
         /*[Authorize]*/
         public IActionResult Ticket()
         {
-            SetCommonViewBagData();
             var active = "ticket";
             ViewBag.Active = active;
             return View();

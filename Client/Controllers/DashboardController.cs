@@ -13,7 +13,8 @@ namespace Client.Controllers
             ViewBag.Role = "company";
             ViewBag.Username = "PT Mitra Integrasi Informatika";
         }
-        [Authorize]
+
+        /*[Authorize]*/
         public IActionResult Index()
         {
             SetCommonViewBagData();

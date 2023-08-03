@@ -160,6 +160,8 @@ void SeedData(IHost app)
         service.RemoveAllData();
         service.GenerateBanks();
         service.GenerateEventMaster();
+        service.GeneratePayments();
+          
     }
 }
 
