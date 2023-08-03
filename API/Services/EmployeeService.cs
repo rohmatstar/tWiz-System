@@ -32,48 +32,6 @@ public class EmployeeService
         _httpContextAccessor = httpContextAccessor;
     }
 
-
-    //public IEnumerable<GetMasterEmployeeDto>? GetMasters()
-    //{
-    //    var master = (from e in _employeeRepository.GetAll()
-    //                  join acoount in _accountRepository.GetAll()
-    //                  on e.AccountGuid equals acoount.Guid
-    //                  join company in _companyRepository.GetAll()
-    //                  on e.CompanyGuid equals company.Guid
-    //                  join acc in _accountRepository.GetAll()
-    //                  on company.AccountGuid equals acc.Guid
-
-    //                  select new GetMasterEmployeeDto
-    //                  {
-    //                      Guid = e.Guid,
-    //                      Nik = e.Nik,
-    //                      FullName = e.FullName,
-    //                      BirthDate = e.BirthDate,
-    //                      Email = acoount.Email,
-    //                      HiringDate = e.HiringDate,
-    //                      Gender = e.Gender,
-    //                      PhoneNumber = e.PhoneNumber,
-    //                      CompanyName = company.Name,
-    //                      CompanyEmail = acc.Email
-    //                  }).ToList();
-
-    //    if (master.Count == 0)
-    //    {
-    //        return null;
-    //    }
-
-    //    return master;
-    //}
-
-    //public GetMasterEmployeeDto? GetMasterByGuid(Guid guid)
-    //{
-    //    var master = GetMasters();
-
-    //    var masterByGuid = master.FirstOrDefault(master => master.Guid == guid);
-
-    //    return masterByGuid;
-    //}
-
     public IEnumerable<GetMasterEmployeeDto>? GetEmployees()
     {
         var employees = _employeeRepository.GetAll();

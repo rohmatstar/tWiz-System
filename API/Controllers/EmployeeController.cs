@@ -2,7 +2,6 @@
 using API.DTOs.Employees;
 using API.Services;
 using API.Utilities.Handlers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -20,56 +19,6 @@ public class EmployeeController : ControllerBase
     {
         _service = service;
     }
-
-    //[HttpGet("get-all-master")]
-
-    //public IActionResult GetMaster()
-    //{
-    //    var master = _service.GetMasters();
-    //    if (master is null)
-    //    {
-    //        return NotFound(new ResponseHandler<GetMasterEmployeeDto>
-    //        {
-    //            Code = StatusCodes.Status404NotFound,
-    //            Status = HttpStatusCode.NotFound.ToString(),
-    //            Message = "Data Not Found"
-    //        });
-    //    }
-
-    //    return Ok(new ResponseHandler<IEnumerable<GetMasterEmployeeDto>>
-    //    {
-    //        Code = StatusCodes.Status200OK,
-    //        Status = HttpStatusCode.OK.ToString(),
-    //        Message = "Data Found",
-    //        Data = master
-    //    });
-    //}
-
-    //[HttpGet("get-master/{guid}")]
-
-    //public IActionResult GetMasterByGuid(Guid guid)
-    //{
-    //    var masterGuid = _service.GetMasterByGuid(guid);
-    //    if (masterGuid is null)
-    //    {
-    //        return NotFound(new ResponseHandler<GetMasterEmployeeDto>
-    //        {
-    //            Code = StatusCodes.Status404NotFound,
-    //            Status = HttpStatusCode.NotFound.ToString(),
-    //            Message = "Data Not Found"
-    //        });
-    //    }
-
-    //    return Ok(new ResponseHandler<GetMasterEmployeeDto>
-    //    {
-    //        Code = StatusCodes.Status200OK,
-    //        Status = HttpStatusCode.OK.ToString(),
-    //        Message = "Data Found",
-    //        Data = masterGuid
-    //    });
-    //}
-
-
 
     [HttpGet]
     public IActionResult GetAll()
@@ -96,7 +45,6 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet("{guid}")]
-    [AllowAnonymous]
     public IActionResult GetByGuid(Guid guid)
     {
         var employee = _service.GetEmployee(guid);
