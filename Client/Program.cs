@@ -84,9 +84,13 @@ app.UseSession();
 
 //Add JWToken to all incoming HTTP Request Header
 app.Use(async (context, next) =>
-{
-    var JWToken = context.Session.GetString("JWTToken");
+{   
+    // Disable cache to prevent reaccess page after sign out
+    context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+    context.Response.Headers["Pragma"] = "no-cache";
+    context.Response.Headers["Expires"] = "0";
 
+    var JWToken = context.Session.GetString("JWTToken");
     if (!string.IsNullOrEmpty(JWToken))
     {
         context.Request.Headers.Add("Authorization", "Bearer " + JWToken);
