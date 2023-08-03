@@ -383,6 +383,7 @@ public class RegisterPaymentService
             return 0;
         }
 
+
         getRegisterPayment.IsValid = true;
         getRegisterPayment.StatusPayment = StatusPayment.Paid;
         getRegisterPayment.ModifiedDate = DateTime.Now;
@@ -395,18 +396,26 @@ public class RegisterPaymentService
             return 0;
         }
 
-        var getAccountCompany = _accountRepository.GetByEmail(aproveRegisterPaymentDto.CompanyEmail);
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.Guid == getRegisterPayment.CompanyGuid);
 
-        if (getAccountCompany is null)
+        if (company is null)
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
+        var accountCompany = _accountRepository.GetAll().FirstOrDefault(acc => acc.Guid == company.AccountGuid);
+
+        if (accountCompany is null)
         {
             transaction.Rollback();
             return 0;
         }
 
         // aktivasi account
-        getAccountCompany.IsActive = true;
+        accountCompany.IsActive = true;
 
-        var accountUpdated = _accountRepository.Update(getAccountCompany);
+        var accountUpdated = _accountRepository.Update(accountCompany);
 
         if (accountUpdated is false)
         {
@@ -420,7 +429,7 @@ public class RegisterPaymentService
             var contentEmail = $"<h1>Conratulation Your Account Has Been Activated!!</h1>" +
                 $"<p>welcome to tWiz. Now you can fully use the services of our tWiz service. Don't hesitate to contact the support center if you have any problems using our tWiz service</p>";
 
-            _emailHandler.SendEmail(aproveRegisterPaymentDto.CompanyEmail, "Aproved tWiz Account", contentEmail);
+            _emailHandler.SendEmail(accountCompany.Email, "Aproved tWiz Account", contentEmail);
             transaction.Commit();
         }
         catch
@@ -455,18 +464,26 @@ public class RegisterPaymentService
             return 0;
         }
 
-        var getAccountCompany = _accountRepository.GetByEmail(aproveRegisterPaymentDto.CompanyEmail);
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.Guid == getRegisterPayment.CompanyGuid);
 
-        if (getAccountCompany is null)
+        if (company is null)
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
+        var accountCompany = _accountRepository.GetAll().FirstOrDefault(acc => acc.Guid == company.AccountGuid);
+
+        if (accountCompany is null)
         {
             transaction.Rollback();
             return 0;
         }
 
         // aktivasi account
-        getAccountCompany.IsActive = false;
+        accountCompany.IsActive = true;
 
-        var accountUpdated = _accountRepository.Update(getAccountCompany);
+        var accountUpdated = _accountRepository.Update(accountCompany);
 
         if (accountUpdated is false)
         {
@@ -479,7 +496,7 @@ public class RegisterPaymentService
             var contentEmail = $"<h1>Your Submission is Rejected</h1>" +
                 $"<p>For customers. Sorry, we still can't activate your tWiz account because the proof of payment that you uploaded is invalid</p>";
 
-            _emailHandler.SendEmail(aproveRegisterPaymentDto.CompanyEmail, "Reject activation tWiz Account", contentEmail);
+            _emailHandler.SendEmail(accountCompany.Email, "Reject activation tWiz Account", contentEmail);
             transaction.Commit();
         }
         catch

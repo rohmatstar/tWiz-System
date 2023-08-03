@@ -1,7 +1,6 @@
-﻿using API.DTOs.Auths;
-using API.DTOs.RegisterPayments;
-using Client.DTOs;
+﻿using Client.DTOs;
 using Client.DTOs.Auths;
+using Client.DTOs.RegisterPayments;
 
 namespace Client.Contracts
 {

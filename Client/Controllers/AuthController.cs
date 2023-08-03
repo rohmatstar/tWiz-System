@@ -6,12 +6,7 @@ using Client.Utilities.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
-using NuGet.Protocol.Core.Types;
-using API.DTOs.RegisterPayments;
-using System.Net;
-using Client.Contracts;
 
 namespace Client.Controllers
 {
