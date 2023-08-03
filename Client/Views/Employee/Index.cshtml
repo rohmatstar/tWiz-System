@@ -1,101 +1,380 @@
-﻿@*@model IEnumerable<API.DTOs.Employees.GetMasterEmployeeDto>
+﻿@{
+    var toast = TempData["toast"] as dynamic;
 
-@{
-    ViewData["Title"] = "Index";
-
-    Layout = "_LayoutEmployee";
-
-
+    ViewData["Title"] = "Employee List";
+    Layout = "_LayoutUser";
 }
 
+@section Filter{
+    
+}
 
-<h1>Employee</h1>
+@section Toast{
+    @if (toast != null)
+    {
+        var toastColor = toast.Color ?? "secondary";
+        var toastClass = $"bs-toast toast toast-placement-ex m-2 fade bg-{toastColor} top-0 start-50 translate-middle-x";
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table id="data-table" class="table table-striped" style="width:100%">
-    <thead>
-        <tr>
-                        <th>
-            @Html.DisplayNameFor(model => model.Guid)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Nik)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FullName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.BirthDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Gender)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.HiringDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PhoneNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CompanyName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CompanyEmail)
-            </th>
-                        <th>
-            @Html.DisplayNameFor(model => model.AccountGuid)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                            <td>
-            @Html.DisplayFor(modelItem => item.Guid)
-            </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Nik)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FullName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Email)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.BirthDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Gender)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.HiringDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PhoneNumber)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CompanyName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CompanyEmail)
-                </td>
-                @*            <td>
-            @Html.DisplayFor(modelItem => item.AccountGuid)
-            </td>*@
-                @*<td>
-                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-                </td>
-            </tr>
+        <div class="@toastClass" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+            <div class="toast-header">
+                <i class="bx bx-bell me-2"></i>
+                <div class="me-auto fw-semibold">@toast.Title</div>
+            </div>
+            <div class="toast-body">
+                @toast.Subtitle
+            </div>
+        </div>
+    }
+}
+
+<div class="col-12">
+    <div class="alert alert-warning border border-warning" role="alert">The <strong>Published Event</strong> cannot be changed at all, even deletion. Once an event is published, all its details and content are considered final and cannot be change any way.</div>
+</div>
+
+<div class="modal fade" id="event-detail" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header align-items-center">
+                <h5 class="mb-0" id="event-detail-name"></h5>
+
+                <div class="col text-end">
+                    <span class="badge bg-danger text-capitalize" id="event-detail-type"></span>
+                    <span class="badge bg-warning text-capitalize" id="event-detail-category"></span>
+                    <span class="badge bg-success text-capitalize" id="event-detail-status"></span>
+                    <span class="badge bg-info text-capitalize" id="event-detail-payment"></span>
+                </div>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="col-md">
+                    <div class="card shadow-none mb-3">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img class="card-img mb-3" src="" alt="" id="event-detail-thumbnail" />
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body py-0">
+                                    <p class="card-text mb-3" id="event-detail-description"></p>
+                                    <p class="card-text mb-3">
+                                        <span id="event-detail-startdate"></span> - <span id="event-detail-enddate"></span>
+                                    </p>
+                                    <p class="card-text mb-1">
+                                        Held by <strong><span id="event-detail-organizer"></span></strong>
+                                    </p>
+                                    <p class="card-text mb-3">
+                                        On <strong><span id="event-detail-place"></span></strong>
+                                    </p>
+                                    <div class="card-text fw-bold mb-1">
+                                        <span id="event-detail-joined">0</span> Participants Joined
+                                    </div>
+                                    <div class="card-text fw-bold text-success mb-1">
+                                        <span id="event-detail-quota">0</span> Quota Available
+                                    </div>
+                                    <div class="h6 mb-3">
+                                        <del>Rp. <span id="event-detail-promo">0</span>,-</del>
+                                        <span class="text-danger">Rp. <span id="event-detail-price">0</span>,-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="edit-participants" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header align-items-center">
+                <h5 class="mb-0">Edit Participants</h5>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Type company or your employee name" />
+                    <button class="btn btn-outline-primary" type="button" id="">Add</button>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="fw-semibold text-primary">Companies</div>
+                        <div class="demo-inline-spacing mt-3">
+                            <div class="list-group">
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Apple Inc.
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Microsoft Corporation
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Amazon.com Inc.
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Alphabet Inc. (Google)
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Facebook, Inc.
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Tencent Holdings Limited
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Tesla, Inc.
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Samsung Electronics Co., Ltd.
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Walmart Inc.
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Visa Inc.
+                                </label>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="fw-semibold text-primary">Employees</div>
+                        <div class="demo-inline-spacing mt-3">
+                            <div class="list-group">
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    John Doe
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Jane Smith
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Michael Johnson
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Emily Brown
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    David Lee
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Sarah Wang
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Robert Garcia
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Laura Martinez
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Christopher Kim
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Amanda Wilson
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer justify-content-between border-top py-3">
+                <div class="col">
+                    <button type="button" class="btn btn-text text-danger bg-light">Delete selected</button>
+                </div>
+                <div class="col text-end">
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        const eventData = [
+            {
+                "name": "Annual Gala Dinner",
+                "thumbnail": "../assets/img/elements/4.jpg",
+                "description": "Event Description is a comprehensive and detailed narrative that provides essential information about an upcoming event. This description serves as a means to inform potential attendees, participants, or interested parties about the event's purpose, content, and key features.",
+                "type": "Public",
+                "category": "MoU",
+                "status": "Online",
+                "payment": "Free",
+                "price": 0,
+                "quota": 100,
+                "joined": 88,
+                "startDate": "21 Agustus 2023, 16.00 WIB",
+                "endDate": "21 Agustus 2023, 18.00 WIB",
+                "organizer": "PT Metrodata Electronics Tbk.",
+                "place": "Google Meet",
+                "published": true
+            },
+            {
+                "name": "MII Stars",
+                "thumbnail": "../assets/img/elements/3.jpg",
+                "description": "Join us for an exciting and memorable event that celebrates art and culture! This event, titled 'Colors of Creativity,' will showcase a diverse array of artists from various disciplines, including painting, sculpture, photography, and more. Attendees will have the opportunity to immerse themselves in a vibrant atmosphere, surrounded by inspiring works of art. The event will also feature live performances, interactive workshops, and engaging discussions with the artists. Whether you're an art enthusiast or just curious about different forms of creativity, 'Colors of Creativity' promises to be an enriching experience for all. Come and be a part of this extraordinary celebration of artistic expression!",
+                "type": "Public",
+                "category": "Party",
+                "status": "Offline",
+                "payment": "Paid",
+                "price": 250000,
+                "quota": 1000,
+                "joined": 124,
+                "startDate": "22 Agustus 2023, 16.00 WIB",
+                "endDate": "22 Agustus 2023, 18.00 WIB",
+                "organizer": "PT Metrodata Electronics Tbk.",
+                "place": "Aston Villa",
+                "published": false
+            }
+        ];
+        const upperPrice = 100000;
+
+        function renderEvent(index, event) {
+            let eventDescription = event.description.length > 100 ? event.description.substr(0, 100) + "..." : event.description;
+
+            let eventElement = `
+                          <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100">
+                              <img class="card-img-obj card-img-top" src="${event.thumbnail}" alt="${event.name} by ${event.organizer}" />
+                              <div class="card-body">
+                                <div class="mb-3">
+                                  <span class="badge bg-danger text-capitalize">${event.type}</span>
+                                  <span class="badge bg-warning text-capitalize">${event.category}</span>
+                                  <span class="badge bg-success text-capitalize">${event.status}</span>
+                                  <span class="badge bg-info text-capitalize">${event.payment}</span>
+                                </div>`;
+
+            if (event.published) {
+                eventElement += `<h5 class="card-title">${event.name}<button type="button" class="badge ms-2 badge-center rounded-pill bg-info border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true" title="Published"> <i class="bx bx-check"></i> </button></h5>`;
+            }
+            else {
+                eventElement += `<h5 class="card-title">${event.name}</h5>`;
+            }
+
+            eventElement += ` <h6 class="small">${event.startDate}</h6>
+                                                        <p class="card-text">${eventDescription}</p>
+                                        <div class="row align-items-center justify-content-center">
+                                          <div class="col">
+                                                            <div class="h6 mb-1"><del>Rp. ${event.price + upperPrice},-</del></div>
+                                            <div class="h5 text-danger mb-0">Rp. ${event.price},-</div>
+                                          </div>
+                                          <div class="col-auto">`;
+
+            if (!event.published) {
+                eventElement += `
+                                        <div class="btn-group" id="modify-btn">
+                                              <button type="button" class="btn btn-outline-primary bg-white text-primary">Options</button>
+                                              <button
+                                                type="button"
+                                                class="btn btn-outline-primary text-primary bg-white dropdown-toggle dropdown-toggle-split"
+                                                id="dropdownMenuReference"
+                                                data-bs-toggle="dropdown"
+                                                aria-expanded="false"
+                                                data-bs-reference="parent"
+                                              >
+                                              </button>
+                                              <ul class="dropdown-menu" aria-labelledby="dropdownMenuReference">
+                                                        <li><a class="dropdown-item" href="#" onclick="showEvent(${index})">
+                                                    <i class="bx bx-detail me-2"></i> See Details</a></li>
+                                                <li><a class="dropdown-item" href="#">
+                                                    <i class="bx bx-pencil me-2"></i> Edit Event</a></li>
+                                                <li><a href="#" class="dropdown-item" onclick="showParticipants(${index})"><i class="bx bx-group me-2"></i> Edit Participant</a></li>
+                                                <li>
+                                                  <div class="dropdown-item">
+                                                    <a class="btn btn-primary text-white btn-block w-100">Publish</a>
+                                                  </div>
+                                                </li>
+                                                <li>
+                                                  <hr class="dropdown-divider" />
+                                                </li>
+                                                <li><a class="dropdown-item text-danger" href="javascript:void(0)"><i class="bx bx-trash me-2"></i>Delete Event</a></li>
+                                              </ul>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                            `;
+            }
+            else {
+                eventElement += `<a href="#" onclick="showEvent(${index})" class="btn btn-primary">Details</a>`;
+            }
+
+            $("#render-body").append(eventElement);
         }
-    </tbody>
-</table>*@
+
+        function renderEvents() {
+            $.each(eventData, function (index, data) {
+                console.log(data[index])
+                renderEvent(index, data);
+            });
+        }
+        renderEvents();
+
+        function showEvent(index) {
+            const event = eventData[index];
+
+            let eventName = event.name;
+
+            if (event.published) {
+                eventName = event.name + `<button type="button" class="badge ms-2 badge-center rounded-pill bg-info border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true" title="Published"> <i class="bx bx-check"></i> </button>`;
+            }
+
+            $("#event-detail-name").html(eventName);
+            $("#event-detail-thumbnail").attr("src", event.thumbnail).attr("alt", event.name + " by " + event.organizer);
+            $("#event-detail-description").text(event.description);
+            $("#event-detail-startdate").text(event.startDate);
+            $("#event-detail-enddate").text(event.endDate);
+            $("#event-detail-organizer").text(event.organizer);
+            $("#event-detail-place").text(event.place);
+            $("#event-detail-joined").text(event.joined);
+            $("#event-detail-promo").text(event.price + upperPrice);
+            $("#event-detail-price").text(event.price);
+
+            $("#event-detail-type").text(event.type);
+            $("#event-detail-category").text(event.category);
+            $("#event-detail-status").text(event.status);
+            $("#event-detail-payment").text(event.payment);
+
+            if (event.published) {
+                $("#event-detail-joined").parent().hide();
+                $("#event-detail-quota").text(event.quota);
+            }
+            else {
+                $("#event-detail-joined").parent().show();
+                $("#event-detail-quota").text(event.quota - event.joined);
+            }
+
+            $("#event-detail").modal('show');
+        }
+
+        function showParticipants(index) {
+            $("#edit-participants").modal('show');
+        }
+
+    </script>
+}

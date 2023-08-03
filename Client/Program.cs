@@ -98,27 +98,9 @@ app.Use(async (context, next) =>
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints =>
-{
-    /*endpoints.MapControllerRoute(
-        name: "signIn",
-        pattern: "Auth/SignIn/{loginType}",
-        defaults: new { controller = "Auth", action = "SignIn" }
-    );
-
-    endpoints.MapControllerRoute(
-        name: "signOut",
-        pattern: "Auth/SignOut/{logoutType}",
-        defaults: new { controller = "Auth", action = "SignOut" }
-    );*/
-
-    endpoints.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}"
-    );
-
-    // Add other routes if needed
-});
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
 
