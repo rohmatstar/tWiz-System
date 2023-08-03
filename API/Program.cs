@@ -160,6 +160,7 @@ void SeedData(IHost app)
         service.GenerateBanks();
         service.GenerateEventMaster();
         service.GeneratePayments();
+          
     }
 }
 

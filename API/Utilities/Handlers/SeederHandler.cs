@@ -1,6 +1,8 @@
 ﻿using API.Data;
 using API.Models;
 using API.Utilities.Enums;
+using DocumentFormat.OpenXml.InkML;
+using Microsoft.Extensions.Logging;
 
 namespace API.Utilities.Handlers;
 
@@ -160,7 +162,7 @@ public class SeederHandler
             {
                 Guid = new Guid(),
                 Email = "kagemonji@gmail.com",
-                Password = HashingHandler.HashPassword("!Employee123"),
+                Password = HashingHandler.HashPassword("!Company123"),
                 IsActive = true,
                 Token = null,
                 TokenIsUsed = null,
@@ -5031,7 +5033,7 @@ public class SeederHandler
             var eventpayment1 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account3.Guid,
+                AccountGuid = account1.Guid,
                 EventGuid = event3.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
@@ -5045,7 +5047,7 @@ public class SeederHandler
             var eventpayment2 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account4.Guid,
+                AccountGuid = account2.Guid,
                 EventGuid = event3.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
@@ -5058,8 +5060,8 @@ public class SeederHandler
             var eventpayment3 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account5.Guid,
-                EventGuid = event6.Guid,
+                AccountGuid = account12.Guid,
+                EventGuid = event3.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5071,8 +5073,8 @@ public class SeederHandler
             var eventpayment4 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account6.Guid,
-                EventGuid = event6.Guid,
+                AccountGuid = account3.Guid,
+                EventGuid = event3.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5084,8 +5086,8 @@ public class SeederHandler
             var eventpayment5 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account7.Guid,
-                EventGuid = event7.Guid,
+                AccountGuid = account4.Guid,
+                EventGuid = event3.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5097,8 +5099,8 @@ public class SeederHandler
             var eventpayment6 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account8.Guid,
-                EventGuid = event7.Guid,
+                AccountGuid = account15.Guid,
+                EventGuid = event3.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5110,8 +5112,8 @@ public class SeederHandler
             var eventpayment7 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account9.Guid,
-                EventGuid = event9.Guid,
+                AccountGuid = account16.Guid,
+                EventGuid = event3.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5123,8 +5125,8 @@ public class SeederHandler
             var eventpayment8 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account10.Guid,
-                EventGuid = event9.Guid,
+                AccountGuid = account25.Guid,
+                EventGuid = event3.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5136,8 +5138,8 @@ public class SeederHandler
             var eventpayment9 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account13.Guid,
-                EventGuid = event10.Guid,
+                AccountGuid = account26.Guid,
+                EventGuid = event3.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5149,8 +5151,8 @@ public class SeederHandler
             var eventpayment10 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account14.Guid,
-                EventGuid = event10.Guid,
+                AccountGuid = account1.Guid,
+                EventGuid = event6.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5162,8 +5164,8 @@ public class SeederHandler
             var eventpayment11 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account15.Guid,
-                EventGuid = event13.Guid,
+                AccountGuid = account2.Guid,
+                EventGuid = event6.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5175,8 +5177,8 @@ public class SeederHandler
             var eventpayment12 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account16.Guid,
-                EventGuid = event13.Guid,
+                AccountGuid = account12.Guid,
+                EventGuid = event6.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5188,8 +5190,8 @@ public class SeederHandler
             var eventpayment13 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account17.Guid,
-                EventGuid = event16.Guid,
+                AccountGuid = account3.Guid,
+                EventGuid = event6.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5200,8 +5202,8 @@ public class SeederHandler
             var eventpayment14 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account18.Guid,
-                EventGuid = event16.Guid,
+                AccountGuid = account4.Guid,
+                EventGuid = event6.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5213,8 +5215,8 @@ public class SeederHandler
             var eventpayment15 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account19.Guid,
-                EventGuid = event17.Guid,
+                AccountGuid = account15.Guid,
+                EventGuid = event6.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5226,8 +5228,8 @@ public class SeederHandler
             var eventpayment16 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account20.Guid,
-                EventGuid = event17.Guid,
+                AccountGuid = account16.Guid,
+                EventGuid = event6.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5239,8 +5241,8 @@ public class SeederHandler
             var eventpayment17 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account21.Guid,
-                EventGuid = event19.Guid,
+                AccountGuid = account25.Guid,
+                EventGuid = event6.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5252,8 +5254,8 @@ public class SeederHandler
             var eventpayment18 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account22.Guid,
-                EventGuid = event19.Guid,
+                AccountGuid = account26.Guid,
+                EventGuid = event6.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5265,8 +5267,8 @@ public class SeederHandler
             var eventpayment19 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account23.Guid,
-                EventGuid = event20.Guid,
+                AccountGuid = account1.Guid,
+                EventGuid = event7.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5278,8 +5280,8 @@ public class SeederHandler
             var eventpayment20 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account24.Guid,
-                EventGuid = event20.Guid,
+                AccountGuid = account2.Guid,
+                EventGuid = event7.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5291,8 +5293,8 @@ public class SeederHandler
             var eventpayment21 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account25.Guid,
-                EventGuid = event23.Guid,
+                AccountGuid = account12.Guid,
+                EventGuid = event7.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5304,8 +5306,8 @@ public class SeederHandler
             var eventpayment22 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account26.Guid,
-                EventGuid = event23.Guid,
+                AccountGuid = account3.Guid,
+                EventGuid = event7.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5317,8 +5319,8 @@ public class SeederHandler
             var eventpayment23 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account27.Guid,
-                EventGuid = event26.Guid,
+                AccountGuid = account4.Guid,
+                EventGuid = event7.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5331,8 +5333,8 @@ public class SeederHandler
             var eventpayment24 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account28.Guid,
-                EventGuid = event26.Guid,
+                AccountGuid = account15.Guid,
+                EventGuid = event7.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5344,8 +5346,8 @@ public class SeederHandler
             var eventpayment25 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account29.Guid,
-                EventGuid = event27.Guid,
+                AccountGuid = account16.Guid,
+                EventGuid = event7.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5357,8 +5359,8 @@ public class SeederHandler
             var eventpayment26 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account30.Guid,
-                EventGuid = event27.Guid,
+                AccountGuid = account25.Guid,
+                EventGuid = event7.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5370,8 +5372,8 @@ public class SeederHandler
             var eventpayment27 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account31.Guid,
-                EventGuid = event29.Guid,
+                AccountGuid = account26.Guid,
+                EventGuid = event7.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5383,8 +5385,8 @@ public class SeederHandler
             var eventpayment28 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account32.Guid,
-                EventGuid = event29.Guid,
+                AccountGuid = account1.Guid,
+                EventGuid = event9.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5396,8 +5398,8 @@ public class SeederHandler
             var eventpayment29 = new EventPayment
             {
                 Guid = new Guid(),
-                AccountGuid = account33.Guid,
-                EventGuid = event30.Guid,
+                AccountGuid = account2.Guid,
+                EventGuid = event9.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5410,8 +5412,8 @@ public class SeederHandler
             {
 
                 Guid = new Guid(),
-                AccountGuid = account34.Guid,
-                EventGuid = event30.Guid,
+                AccountGuid = account12.Guid,
+                EventGuid = event9.Guid,
                 VaNumber = GenerateHandler.RandomVa(),
                 PaymentImage = "",
                 IsValid = true,
@@ -5421,8 +5423,1447 @@ public class SeederHandler
             };
 
 
+            var eventpayment31 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account3.Guid,
+                EventGuid = event9.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment32 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account4.Guid,
+                EventGuid = event9.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+
+            var eventpayment33 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account15.Guid,
+                EventGuid = event9.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment34 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account16.Guid,
+                EventGuid = event9.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment35 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account25.Guid,
+                EventGuid = event9.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment36 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account26.Guid,
+                EventGuid = event9.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment37 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account1.Guid,
+                EventGuid = event10.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment38 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account2.Guid,
+                EventGuid = event10.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment39 = new EventPayment
+            {
+
+                Guid = new Guid(),
+                AccountGuid = account12.Guid,
+                EventGuid = event10.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+
+            var eventpayment40 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account3.Guid,
+                EventGuid = event10.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment41 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account4.Guid,
+                EventGuid = event10.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+
+            var eventpayment42 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account15.Guid,
+                EventGuid = event10.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment43 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account16.Guid,
+                EventGuid = event10.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment44 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account25.Guid,
+                EventGuid = event10.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment45 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account26.Guid,
+                EventGuid = event10.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment46 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account1.Guid,
+                EventGuid = event13.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+
+            var eventpayment47 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account2.Guid,
+                EventGuid = event13.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment48 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account12.Guid,
+                EventGuid = event13.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment49 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account13.Guid,
+                EventGuid = event13.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment50 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account4.Guid,
+                EventGuid = event13.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment51 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account15.Guid,
+                EventGuid = event13.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment52 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account16.Guid,
+                EventGuid = event13.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment53 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account25.Guid,
+                EventGuid = event13.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment54 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account26.Guid,
+                EventGuid = event13.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment55 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account1.Guid,
+                EventGuid = event16.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment56 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account2.Guid,
+                EventGuid = event16.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment57 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account12.Guid,
+                EventGuid = event16.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment58 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account3.Guid,
+                EventGuid = event16.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+            };
+
+            var eventpayment59 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account4.Guid,
+                EventGuid = event16.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment60 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account15.Guid,
+                EventGuid = event16.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment61 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account16.Guid,
+                EventGuid = event16.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment62 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account25.Guid,
+                EventGuid = event16.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment63 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account26.Guid,
+                EventGuid = event16.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment64 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account1.Guid,
+                EventGuid = event17.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment65 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account2.Guid,
+                EventGuid = event17.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment66 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account12.Guid,
+                EventGuid = event17.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment67 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account3.Guid,
+                EventGuid = event17.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment68 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account4.Guid,
+                EventGuid = event17.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+
+            var eventpayment69 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account15.Guid,
+                EventGuid = event17.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment70 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account16.Guid,
+                EventGuid = event17.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment71 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account25.Guid,
+                EventGuid = event17.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment72 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account26.Guid,
+                EventGuid = event17.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment73 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account1.Guid,
+                EventGuid = event19.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment74 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account2.Guid,
+                EventGuid = event19.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment75 = new EventPayment
+            {
+
+                Guid = new Guid(),
+                AccountGuid = account12.Guid,
+                EventGuid = event19.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+
+            var eventpayment76 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account3.Guid,
+                EventGuid = event19.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment77 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account4.Guid,
+                EventGuid = event19.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+
+            var eventpayment78 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account15.Guid,
+                EventGuid = event19.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment79 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account16.Guid,
+                EventGuid = event19.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment80 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account25.Guid,
+                EventGuid = event19.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment81 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account26.Guid,
+                EventGuid = event19.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment82 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account1.Guid,
+                EventGuid = event20.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment83 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account2.Guid,
+                EventGuid = event20.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment84 = new EventPayment
+            {
+
+                Guid = new Guid(),
+                AccountGuid = account12.Guid,
+                EventGuid = event20.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+
+            var eventpayment85 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account3.Guid,
+                EventGuid = event20.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment86 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account4.Guid,
+                EventGuid = event20.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+
+            var eventpayment87 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account15.Guid,
+                EventGuid = event20.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment88 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account16.Guid,
+                EventGuid = event20.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment89 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account25.Guid,
+                EventGuid = event20.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment90 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account26.Guid,
+                EventGuid = event20.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = _context.Set<Bank>().FirstOrDefault(b => b.Code == "BSI").Guid,
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment91 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account1.Guid,
+                EventGuid = event23.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+
+            var eventpayment92 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account2.Guid,
+                EventGuid = event23.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment93 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account12.Guid,
+                EventGuid = event23.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment94 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account13.Guid,
+                EventGuid = event23.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment95 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account4.Guid,
+                EventGuid = event23.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment96 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account15.Guid,
+                EventGuid = event23.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment97 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account16.Guid,
+                EventGuid = event23.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment98 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account25.Guid,
+                EventGuid = event23.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment99 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account26.Guid,
+                EventGuid = event23.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment100 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account1.Guid,
+                EventGuid = event26.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment101 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account2.Guid,
+                EventGuid = event26.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment102 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account12.Guid,
+                EventGuid = event26.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment103 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account3.Guid,
+                EventGuid = event26.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+            };
+
+            var eventpayment104 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account4.Guid,
+                EventGuid = event26.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment105 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account15.Guid,
+                EventGuid = event26.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment106 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account16.Guid,
+                EventGuid = event26.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment107 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account25.Guid,
+                EventGuid = event26.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment108 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account26.Guid,
+                EventGuid = event26.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment109 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account1.Guid,
+                EventGuid = event27.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment110 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account2.Guid,
+                EventGuid = event27.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment111 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account12.Guid,
+                EventGuid = event27.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment112 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account3.Guid,
+                EventGuid = event27.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment113 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account4.Guid,
+                EventGuid = event27.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+
+            var eventpayment114 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account15.Guid,
+                EventGuid = event27.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment115 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account16.Guid,
+                EventGuid = event27.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment116 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account25.Guid,
+                EventGuid = event27.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment117 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account26.Guid,
+                EventGuid = event27.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment118 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account1.Guid,
+                EventGuid = event29.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment119 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account2.Guid,
+                EventGuid = event29.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment120 = new EventPayment
+            {
+
+                Guid = new Guid(),
+                AccountGuid = account12.Guid,
+                EventGuid = event29.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+
+            var eventpayment121 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account3.Guid,
+                EventGuid = event29.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment122 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account4.Guid,
+                EventGuid = event29.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+
+            var eventpayment123 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account15.Guid,
+                EventGuid = event29.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment124 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account16.Guid,
+                EventGuid = event29.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment125 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account25.Guid,
+                EventGuid = event29.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment126 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account26.Guid,
+                EventGuid = event29.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment127 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account1.Guid,
+                EventGuid = event30.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment128 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account2.Guid,
+                EventGuid = event30.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment129 = new EventPayment
+            {
+
+                Guid = new Guid(),
+                AccountGuid = account12.Guid,
+                EventGuid = event30.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+
+            var eventpayment130 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account3.Guid,
+                EventGuid = event30.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment131 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account4.Guid,
+                EventGuid = event30.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+
+            var eventpayment132 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account15.Guid,
+                EventGuid = event30.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment133 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account16.Guid,
+                EventGuid = event30.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment134 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account25.Guid,
+                EventGuid = event30.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+            var eventpayment135 = new EventPayment
+            {
+                Guid = new Guid(),
+                AccountGuid = account26.Guid,
+                EventGuid = event30.Guid,
+                VaNumber = GenerateHandler.RandomVa(),
+                PaymentImage = "",
+                IsValid = true,
+                BankGuid = GetRandomBankGuid(),
+                StatusPayment = StatusPayment.Pending
+
+            };
+
+
             _context.Set<EventPayment>().AddRange(new List<EventPayment>
-            { eventpayment1, eventpayment2, eventpayment3, eventpayment4, eventpayment5, eventpayment6, eventpayment7, eventpayment8, eventpayment9, eventpayment10, eventpayment11, eventpayment12, eventpayment13, eventpayment14, eventpayment15, eventpayment16, eventpayment17, eventpayment18, eventpayment19, eventpayment20, eventpayment21, eventpayment22, eventpayment23, eventpayment24, eventpayment25, eventpayment26, eventpayment27, eventpayment28, eventpayment29, eventpayment30});
+            { eventpayment1, eventpayment2, eventpayment3, eventpayment4, eventpayment5, eventpayment6, eventpayment7, eventpayment8, eventpayment9, eventpayment10, eventpayment11, eventpayment12, eventpayment13, eventpayment14, eventpayment15, eventpayment16, eventpayment17, eventpayment18, eventpayment19, eventpayment20, eventpayment21, eventpayment22, eventpayment23, eventpayment24, eventpayment25, eventpayment26, eventpayment27, eventpayment28, eventpayment29, eventpayment30, eventpayment31, eventpayment32, eventpayment33, eventpayment34, eventpayment35, eventpayment36, eventpayment37, eventpayment38, eventpayment39, eventpayment40, eventpayment41,  eventpayment42, eventpayment43, eventpayment44, eventpayment45, eventpayment46, eventpayment47, eventpayment48, eventpayment49, eventpayment50, eventpayment51, eventpayment52, eventpayment53, eventpayment54, eventpayment55, eventpayment56, eventpayment57, eventpayment58, eventpayment59, eventpayment60, eventpayment61, eventpayment62, eventpayment63, eventpayment64, eventpayment65, eventpayment66, eventpayment67, eventpayment68, eventpayment69, eventpayment70, eventpayment71, eventpayment72, eventpayment73, eventpayment74, eventpayment75, eventpayment76, eventpayment77, eventpayment78, eventpayment79, eventpayment80, eventpayment81, eventpayment82, eventpayment83, eventpayment84, eventpayment85, eventpayment86, eventpayment87, eventpayment88, eventpayment89, eventpayment90, eventpayment91, eventpayment92, eventpayment93, eventpayment94, eventpayment95, eventpayment96, eventpayment97, eventpayment98, eventpayment99, eventpayment100, eventpayment101,  eventpayment102, eventpayment103, eventpayment104, eventpayment105, eventpayment106, eventpayment107, eventpayment108, eventpayment109, eventpayment110, eventpayment111, eventpayment112, eventpayment113, eventpayment114, eventpayment115, eventpayment116, eventpayment117, eventpayment118, eventpayment119, eventpayment120, eventpayment121, eventpayment122, eventpayment123, eventpayment124, eventpayment125, eventpayment126, eventpayment127, eventpayment128, eventpayment129, eventpayment130, eventpayment131, eventpayment132, eventpayment133, eventpayment134, eventpayment135});
+
+            _context.SaveChanges();
+
+            var sysadmin1 = new SysAdmin
+            {
+                Guid = new Guid(),
+                Name = "SysAdmin1",
+                BankAccountNumber = "12345678910",
+                AccountGuid = account11.Guid
+            };
+
+
+            _context.Set<SysAdmin>().AddRange(new List<SysAdmin> { sysadmin1 });
+
+            _context.SaveChanges();
+
+            var eventdoc1 = new EventDoc
+            {
+                Guid = new Guid(),
+                Documentation = "Event Ini Merupakan Event Seminar Cyber Security",
+                EventGuid = event1.Guid
+
+            };
+
+            var eventdoc2 = new EventDoc
+            {
+                Guid = new Guid(),
+                Documentation = "Event Ini Merupakan Event Seminar Kemerdekaan",
+                EventGuid = event2.Guid
+
+            };
+
+            var eventdoc3 = new EventDoc
+            {
+                Guid = new Guid(),
+                Documentation = "Event Ini Merupakan Event Workshop Create A Good Branding",
+                EventGuid = event3.Guid
+            };
+
+            var eventdoc4 = new EventDoc
+            {
+                Guid = new Guid(),
+                Documentation = "Event Ini Merupakan Event Interview PT.JKI",
+                EventGuid = event4.Guid
+            };
+
+            var eventdoc5 = new EventDoc
+            {
+                Guid = new Guid(),
+                Documentation = "Event Ini Merupakan Event Interview PT.KLM",
+                EventGuid = event5.Guid
+
+            };
+
+            _context.Set<EventDoc>().AddRange(new List<EventDoc> { eventdoc1, eventdoc2, eventdoc3, eventdoc4, eventdoc5 });
 
             _context.SaveChanges();
 
@@ -5444,6 +6885,14 @@ public class SeederHandler
         using var transaction = _context.Database.BeginTransaction();
         try
         {
+            var sysadmins = _context.Set<SysAdmin>().Where(sa => sa.Guid != new Guid());
+            _context.Set<SysAdmin>().RemoveRange(sysadmins);
+            _context.SaveChanges();
+
+            var eventdocs = _context.Set<EventDoc>().Where(ed => ed.Guid != new Guid());
+            _context.Set<EventDoc>().RemoveRange(eventdocs);
+            _context.SaveChanges();
+
             var eventpayments = _context.Set<EventPayment>().Where(evp => evp.Guid != new Guid());
             _context.Set<EventPayment>().RemoveRange(eventpayments);
             _context.SaveChanges();
@@ -5497,6 +6946,21 @@ public class SeederHandler
 
     }
 
+    public Guid GetRandomBankGuid()
+    {
+        var random = new Random();
+        var banks = _context.Set<Bank>().ToList();
+
+        if (banks.Count == 0)
+        {
+            // If there are no banks in the database, return Guid.Empty or throw an exception.
+            // Here, we return Guid.Empty as a default value (you can modify this).
+            return Guid.Empty;
+        }
+
+        var randomIndex = random.Next(0, banks.Count-1);
+        return banks[randomIndex].Guid;
+    }
 
     public string GenerateNik()
     {
@@ -5642,7 +7106,6 @@ public class SeederHandler
         {
             transaction.Rollback();
         }
-
 
 
     }
