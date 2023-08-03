@@ -140,7 +140,7 @@ public class EventPaymentService
             AccountGuid = newEventPaymentDto.AccountGuid,
             EventGuid = newEventPaymentDto.EventGuid,
             VaNumber = newEventPaymentDto.VaNumber,
-            PaymentImage = newEventPaymentDto.PaymentImage,
+            PaymentImage = newEventPaymentDto.PaymentImage ?? "",
             IsValid = newEventPaymentDto.IsValid,
             BankGuid = newEventPaymentDto.BankGuid,
             CreatedDate = DateTime.Now,
@@ -439,10 +439,7 @@ public class EventPaymentService
 
     public int AproveEventPayment(AproveEventPaymentDto aproveEventPaymentDto)
     {
-        using var transaction = _twizDbContext.Database.BeginTransaction();
-
         var getEventPayment = _eventPaymentRepository.GetByGuid(aproveEventPaymentDto.Guid);
-
 
         if (getEventPayment == null)
         {
@@ -455,16 +452,16 @@ public class EventPaymentService
             return 0;
         }
 
-        var account = _accountRepository.GetByEmail(aproveEventPaymentDto.AccountEmail);
+        var account = _accountRepository.GetByGuid(getEventPayment.AccountGuid);
 
         if (account is null)
         {
-            transaction.Rollback();
             return 0;
         }
 
         var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == account.Guid);
         var employee = _employeeRepository.GetAll().FirstOrDefault(e => e.AccountGuid == account.Guid);
+        using var transaction = _twizDbContext.Database.BeginTransaction();
 
         // check who owns the account (company or employee)
         if (company is not null)
@@ -530,7 +527,7 @@ public class EventPaymentService
                 ;
 
 
-            _emailHandler.SendEmail(aproveEventPaymentDto.AccountEmail, "Aproved event payment submission", contentEmail);
+            _emailHandler.SendEmail(account.Email, "Aproved event payment submission", contentEmail);
 
             transaction.Commit();
         }
