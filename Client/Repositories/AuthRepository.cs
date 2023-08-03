@@ -25,7 +25,8 @@ public class AuthRepository : GeneralRepository<Account, string>, IAuthRepositor
     {
         ResponseDto<string> entity = null!;
         StringContent content = new StringContent(JsonConvert.SerializeObject(loginDto), Encoding.UTF8, "application/json");
-        using (var response = httpClient.PostAsync(request + "login", content).Result)
+        var response = httpClient.PostAsync(request + "login", content).Result;
+        using (response)
         {
             string apiResponse = await response.Content.ReadAsStringAsync();
             entity = JsonConvert.DeserializeObject<ResponseDto<string>>(apiResponse)!;

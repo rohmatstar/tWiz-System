@@ -1,5 +1,6 @@
 ﻿using API.DTOs.Auths;
 using API.DTOs.Companies;
+using API.DTOs.RegisterPayments;
 using API.Services;
 using API.Utilities.Handlers;
 using Microsoft.AspNetCore.Authorization;
@@ -14,10 +15,12 @@ namespace API.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly AuthService _authService;
+    private readonly RegisterPaymentService _paymentService;
 
-    public AuthController(AuthService authService)
+    public AuthController(AuthService authService, RegisterPaymentService paymentService)
     {
         _authService = authService;
+        _paymentService = paymentService;
     }
 
     [HttpPost("register")]
@@ -66,6 +69,31 @@ public class AuthController : ControllerBase
                 Status = HttpStatusCode.InternalServerError.ToString(),
                 Message = "Internal server error"
             });
+        }
+
+        if (login is "-3")
+        {
+            var payment = _paymentService.GetPaymentSummary(loginDto.Email);
+
+            if (payment is null)
+            {
+                return StatusCode(StatusCodes.Status402PaymentRequired, new ResponseHandler<PaymentSummaryDto>
+                {
+                    Code = StatusCodes.Status204NoContent,
+                    Status = HttpStatusCode.NoContent.ToString(),
+                    Message = "Payment of this registered account is not found",
+                });
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status402PaymentRequired, new ResponseHandler<PaymentSummaryDto>
+                {
+                    Code = StatusCodes.Status402PaymentRequired,
+                    Status = HttpStatusCode.PaymentRequired.ToString(),
+                    Message = "Sorry your account is inactive, please do the payment to activate",
+                    /*Data = payment*/
+                });
+            }
         }
 
         return Ok(new ResponseHandler<String>

@@ -41,6 +41,8 @@
 </head>
 
 <body>
+    @await RenderSectionAsync("Toast", required: false)
+
     @RenderBody()
 
     <script src="../assets/vendor/libs/jquery/jquery.js"></script>

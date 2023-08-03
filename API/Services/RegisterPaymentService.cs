@@ -13,14 +13,16 @@ public class RegisterPaymentService
     private readonly IRegisterPaymentRepository _registerPaymentRepository;
     private readonly ICompanyRepository _companyRepository;
     private readonly IAccountRepository _accountRepository;
+    private readonly IBankRepository _bankRepository;
     private readonly IEmailHandler _emailHandler;
     private readonly AccountService _accountService;
     private readonly TwizDbContext _twizDbContext;
-    public RegisterPaymentService(IRegisterPaymentRepository registerPaymentRepository, ICompanyRepository companyRepository, IAccountRepository accountRepository, IEmailHandler emailHandler, AccountService accountService, TwizDbContext twizDbContext)
+    public RegisterPaymentService(IRegisterPaymentRepository registerPaymentRepository, ICompanyRepository companyRepository, IAccountRepository accountRepository, IBankRepository bankRepository, IEmailHandler emailHandler, AccountService accountService, TwizDbContext twizDbContext)
     {
         _registerPaymentRepository = registerPaymentRepository;
         _companyRepository = companyRepository;
         _accountRepository = accountRepository;
+        _bankRepository = bankRepository;
         _emailHandler = emailHandler;
         _accountService = accountService;
         _twizDbContext = twizDbContext;
@@ -64,6 +66,40 @@ public class RegisterPaymentService
             PaymentImage = registerPayments.PaymentImage,
             IsValid = registerPayments.IsValid,
             BankGuid = registerPayments.BankGuid,
+        };
+        return toDto;
+
+    }
+
+    public PaymentSummaryDto? GetPaymentSummary(string email)
+    {
+        var account = _accountRepository.GetByEmail(email);
+        if (account is null)
+        {
+            return null;
+        }
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == account!.Guid);
+        if (company is null)
+        {
+            return null;
+        }
+        var payment = _registerPaymentRepository.GetAll().FirstOrDefault(c => c.CompanyGuid == company!.Guid);
+        if (payment is null)
+        {
+            return null;
+        }
+        var bank = _bankRepository.GetAll().FirstOrDefault(c => c.Guid == payment!.BankGuid);
+        if (bank is null)
+        {
+            return null;
+        }
+
+        var toDto = new PaymentSummaryDto
+        {
+            VaNumber = payment.VaNumber,
+            Price = payment.Price,
+            BankCode = bank.Code,
+            BankName = bank.Name
         };
         return toDto;
 

@@ -609,10 +609,10 @@ p {
 .sticky .navbar {
   padding: 10px 0;
 }
-.navbar-brand img, img.logo{
-  height: 45px;
-  margin-right: 15px;
-  margin-top: -10px;
+.navbar-brand img, img.logo {
+    height: 45px !important;
+    margin-right: 15px !important;
+    margin-top: -10px !important;
 }
 
 .sticky .navbar-brand h1 {
