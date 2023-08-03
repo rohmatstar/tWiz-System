@@ -286,33 +286,50 @@ public class EmployeeService
 
     }
 
-    public int UpdateEmployee(UpdateEmployeeDto UpdateEmployeeDto)
+    public int UpdateEmployee(UpdateEmployeeDto updateEmployeeDto)
     {
-        var isExist = _employeeRepository.IsExist(UpdateEmployeeDto.Guid);
-        if (!isExist)
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        if (accountGuid == null)
         {
-            return -1; // Employee Not Found
+            return -2;
         }
 
-        var getEmployee = _employeeRepository.GetByGuid(UpdateEmployeeDto.Guid);
+        var getEmployee = _employeeRepository.GetByGuid(updateEmployeeDto.Guid);
 
-        var employee = new Employee
+        if (getEmployee is null)
         {
-            Guid = UpdateEmployeeDto.Guid,
-            Nik = UpdateEmployeeDto.Nik,
-            FullName = UpdateEmployeeDto.FullName,
-            BirthDate = UpdateEmployeeDto.BirthDate,
-            Gender = UpdateEmployeeDto.Gender,
-            HiringDate = UpdateEmployeeDto.HiringDate,
-            PhoneNumber = UpdateEmployeeDto.PhoneNumber,
-            AccountGuid = UpdateEmployeeDto.AccountGuid,
-            CompanyGuid = UpdateEmployeeDto.CompanyGuid,
-            ModifiedDate = DateTime.Now,
-            CreatedDate = getEmployee!.CreatedDate
-        };
+            return -1;
+        }
 
-        var isUpdate = _employeeRepository.Update(employee);
-        if (!isUpdate)
+        getEmployee.Nik = updateEmployeeDto.Nik;
+        getEmployee.FullName = updateEmployeeDto.FullName;
+        getEmployee.BirthDate = updateEmployeeDto.BirthDate;
+        getEmployee.HiringDate = updateEmployeeDto.HiringDate;
+        getEmployee.Gender = updateEmployeeDto.Gender.ToLower() == "male" ? GenderEnum.Male : GenderEnum.Female;
+        getEmployee.PhoneNumber = updateEmployeeDto.PhoneNumber;
+        getEmployee.ModifiedDate = DateTime.Now;
+
+        if (userRole == nameof(RoleLevel.Company))
+        {
+            var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid));
+
+            if (company is null || company.Guid != getEmployee.CompanyGuid)
+            {
+                return -2;
+            }
+        }
+        else if (userRole == nameof(RoleLevel.SysAdmin)) { }
+        else
+        {
+            return -2;
+        }
+
+        var isUpdated = _employeeRepository.Update(getEmployee);
+        if (!isUpdated)
         {
             return 0; // Employee Not Updated
         }

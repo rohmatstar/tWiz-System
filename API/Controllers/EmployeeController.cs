@@ -103,6 +103,17 @@ public class EmployeeController : ControllerBase
                 Message = "Id not found"
             });
         }
+
+        if (update is -2)
+        {
+            return NotFound(new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status403Forbidden,
+                Status = HttpStatusCode.Forbidden.ToString(),
+                Message = "you cannot access it"
+            });
+        }
+
         if (update is 0)
         {
             return BadRequest(new ResponseHandler<UpdateEmployeeDto>
