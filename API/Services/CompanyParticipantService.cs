@@ -1,21 +1,22 @@
 ﻿using API.Contracts;
 using API.DTOs.CompanyParticipants;
 using API.Models;
+using API.Utilities.Enums;
 
 namespace API.Services;
 
 public class CompanyParticipantService
 {
-    private readonly ICompanyParticipantRepository _repository;
+    private readonly ICompanyParticipantRepository _companyParticipantRepository;
 
     public CompanyParticipantService(ICompanyParticipantRepository repository)
     {
-        _repository = repository;
+        _companyParticipantRepository = repository;
     }
 
     public IEnumerable<CompanyParticipantsDto>? GetCompanyParticipants()
     {
-        var model = _repository.GetAll();
+        var model = _companyParticipantRepository.GetAll();
 
         if (model is null)
         {
@@ -36,7 +37,7 @@ public class CompanyParticipantService
 
     public CompanyParticipantsDto? GetCompanyParticipant(Guid guid)
     {
-        var model = _repository.GetByGuid(guid);
+        var model = _companyParticipantRepository.GetByGuid(guid);
 
         if (model is null)
         {
@@ -68,7 +69,7 @@ public class CompanyParticipantService
             IsPresent = create.IsPresent
         };
 
-        var created = _repository.Create(model);
+        var created = _companyParticipantRepository.Create(model);
         if (created is null)
         {
             return null;
@@ -89,7 +90,7 @@ public class CompanyParticipantService
 
     public CompanyParticipantsDto? UpdateCompanyParticipant(CompanyParticipantsDto update)
     {
-        var single = _repository.GetByGuid(update.Guid);
+        var single = _companyParticipantRepository.GetByGuid(update.Guid);
         if (single == null)
         {
             return null;
@@ -104,7 +105,7 @@ public class CompanyParticipantService
             IsPresent = update!.IsPresent
         };
 
-        var isUpdate = _repository.Update(model);
+        var isUpdate = _companyParticipantRepository.Update(model);
         if (!isUpdate)
         {
             return null;
@@ -124,13 +125,13 @@ public class CompanyParticipantService
 
     public CompanyParticipantsDto? DeleteCompanyParticipant(Guid guid)
     {
-        var model = _repository.GetByGuid(guid);
+        var model = _companyParticipantRepository.GetByGuid(guid);
         if (model == null)
         {
             return null;
         }
 
-        var isDelete = _repository.Delete(model!);
+        var isDelete = _companyParticipantRepository.Delete(model!);
         if (!isDelete)
         {
             return null;
@@ -148,8 +149,42 @@ public class CompanyParticipantService
         return deleted;
     }
 
-    public int RemoveThenCreateCompanyParticipant(GetCompanyParticipantsDto companyParticipants)
+    public int RemoveThenCreateCompanyParticipant(GetCompanyParticipantsDto companyParticipantsDto)
     {
+        var companyParticipantsInEvent = _companyParticipantRepository.GetAll().Where(cp => cp.EventGuid == companyParticipantsDto.EventGuid).ToList();
+
+        if (companyParticipantsInEvent.Count() == 0)
+        {
+            return 0;
+        }
+
+        var deletedCompanyParticipants = _companyParticipantRepository.Deletes(companyParticipantsInEvent);
+
+        if (deletedCompanyParticipants == false)
+        {
+            return 0;
+        }
+
+        var companyParticipants = companyParticipantsDto.CompanyParticipantGuids.Select(cp =>
+        {
+            return new CompanyParticipant
+            {
+                Guid = new Guid(),
+                EventGuid = companyParticipantsDto.EventGuid,
+                CompanyGuid = cp,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now,
+                IsPresent = false,
+                Status = InviteStatusLevel.Pending
+            };
+        }).ToList();
+
+        var createdCompanyParticipants = _companyParticipantRepository.Creates(companyParticipants);
+
+        if (createdCompanyParticipants == false)
+        {
+            return 0;
+        }
 
         return 1;
     }
