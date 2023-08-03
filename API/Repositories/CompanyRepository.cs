@@ -10,8 +10,8 @@ public class CompanyRepository : GeneralRepository<Company>, ICompanyRepository
     {
     }
 
-    //public IEnumerable<Company> GetName(Guid fkAccountGuid)
-    //{
-    //    return _context.Set<Company>().Where(company => company.AccountGuid == fkAccountGuid);
-    //}
+    public Company? GetByName(string name)
+    {
+        return _context.Set<Company>().FirstOrDefault(company => company.Name == name);
+    }
 }

@@ -14,12 +14,13 @@ public class RegisterPaymentService
     private readonly IRegisterPaymentRepository _registerPaymentRepository;
     private readonly ICompanyRepository _companyRepository;
     private readonly IAccountRepository _accountRepository;
+    private readonly IBankRepository _bankRepository;
     private readonly IEmailHandler _emailHandler;
     private readonly AccountService _accountService;
     private readonly TwizDbContext _twizDbContext;
 
     private readonly IHttpContextAccessor _httpContextAccessor;
-    public RegisterPaymentService(IRegisterPaymentRepository registerPaymentRepository, ICompanyRepository companyRepository, IAccountRepository accountRepository, IEmailHandler emailHandler, AccountService accountService, TwizDbContext twizDbContext, IHttpContextAccessor httpContextAccessor)
+    public RegisterPaymentService(IRegisterPaymentRepository registerPaymentRepository, ICompanyRepository companyRepository, IAccountRepository accountRepository, IEmailHandler emailHandler, AccountService accountService, TwizDbContext twizDbContext, IHttpContextAccessor httpContextAccessor, IBankRepository bankRepository)
     {
         _registerPaymentRepository = registerPaymentRepository;
         _companyRepository = companyRepository;
@@ -28,6 +29,7 @@ public class RegisterPaymentService
         _accountService = accountService;
         _twizDbContext = twizDbContext;
         _httpContextAccessor = httpContextAccessor;
+        _bankRepository = bankRepository;
     }
 
     public IEnumerable<GetRegisterPaymentDto>? GetRegisterPayments()
@@ -37,17 +39,49 @@ public class RegisterPaymentService
         {
             return null; // No RegisterPayment Found
         }
-        var toDto = registerPayments.Select(registerPayments => new GetRegisterPaymentDto
+        //var toDto = registerPayments.Select(registerPayments => new GetRegisterPaymentDto
+        //{
+        //    Guid = registerPayments.Guid,
+        //    CompanyGuid = registerPayments.CompanyGuid,
+        //    VaNumber = registerPayments.VaNumber,
+        //    Price = registerPayments.Price,
+        //    PaymentImage = registerPayments.PaymentImage,
+        //    IsValid = registerPayments.IsValid,
+        //    BankGuid = registerPayments.BankGuid,
+        //    StatusPayment = registerPayments.StatusPayment
+        //}).ToList();
+
+        var companies = _companyRepository.GetAll();
+        var banks = _bankRepository.GetAll();
+        var accounts = _accountRepository.GetAll();
+
+        var toDto = registerPayments.Select(rp =>
         {
-            Guid = registerPayments.Guid,
-            CompanyGuid = registerPayments.CompanyGuid,
-            VaNumber = registerPayments.VaNumber,
-            Price = registerPayments.Price,
-            PaymentImage = registerPayments.PaymentImage,
-            IsValid = registerPayments.IsValid,
-            BankGuid = registerPayments.BankGuid,
-            StatusPayment = registerPayments.StatusPayment
-        }).ToList();
+            var company = companies.FirstOrDefault(c => c.Guid == rp.CompanyGuid);
+            var accountCompany = accounts.FirstOrDefault(acc => acc.Guid == company.AccountGuid);
+            var bank = banks.FirstOrDefault(b => b.Guid == rp.BankGuid);
+
+            var statusPayment = "";
+            if (rp.StatusPayment == StatusPayment.Pending) statusPayment = "pending";
+            if (rp.StatusPayment == StatusPayment.Checking) statusPayment = "checking";
+            if (rp.StatusPayment == StatusPayment.Paid) statusPayment = "paid";
+            if (rp.StatusPayment == StatusPayment.Rejected) statusPayment = "rejected";
+
+
+            return new GetRegisterPaymentDto
+            {
+                Guid = rp.Guid,
+                VaNumber = rp.VaNumber,
+                CompanyEmail = accountCompany?.Email ?? "",
+                CompanyName = company?.Name ?? "",
+                PaymentImage = rp.PaymentImage,
+                Price = rp.Price,
+                StatusPayment = statusPayment,
+                ValidationStatus = rp.IsValid == true ? "valid" : "invalid",
+                BankName = bank?.Name ?? ""
+            };
+        });
+
 
         return toDto;
     }
@@ -62,13 +96,13 @@ public class RegisterPaymentService
         var toDto = new GetRegisterPaymentDto
         {
             Guid = registerPayments.Guid,
-            CompanyGuid = registerPayments.CompanyGuid,
+            //CompanyGuid = registerPayments.CompanyGuid,
             VaNumber = registerPayments.VaNumber,
             Price = registerPayments.Price,
             PaymentImage = registerPayments.PaymentImage,
-            IsValid = registerPayments.IsValid,
-            BankGuid = registerPayments.BankGuid,
-            StatusPayment = registerPayments.StatusPayment
+            //IsValid = registerPayments.IsValid,
+            //BankGuid = registerPayments.BankGuid,
+            //StatusPayment = registerPayments.StatusPayment
         };
         return toDto;
 
@@ -98,12 +132,12 @@ public class RegisterPaymentService
         var toDto = new GetRegisterPaymentDto
         {
             Guid = createdRegisterPayment.Guid,
-            CompanyGuid = createdRegisterPayment.CompanyGuid,
+            //CompanyGuid = createdRegisterPayment.CompanyGuid,
             VaNumber = createdRegisterPayment.VaNumber,
             Price = createdRegisterPayment.Price,
             PaymentImage = createdRegisterPayment.PaymentImage,
-            IsValid = createdRegisterPayment.IsValid,
-            BankGuid = createdRegisterPayment.BankGuid,
+            //IsValid = createdRegisterPayment.IsValid,
+            //BankGuid = createdRegisterPayment.BankGuid,
         };
 
         return toDto; // RegisterPayment Created
