@@ -21,53 +21,53 @@ public class EmployeeController : ControllerBase
         _service = service;
     }
 
-    [HttpGet("get-all-master")]
+    //[HttpGet("get-all-master")]
 
-    public IActionResult GetMaster()
-    {
-        var master = _service.GetMasters();
-        if (master is null)
-        {
-            return NotFound(new ResponseHandler<GetMasterEmployeeDto>
-            {
-                Code = StatusCodes.Status404NotFound,
-                Status = HttpStatusCode.NotFound.ToString(),
-                Message = "Data Not Found"
-            });
-        }
+    //public IActionResult GetMaster()
+    //{
+    //    var master = _service.GetMasters();
+    //    if (master is null)
+    //    {
+    //        return NotFound(new ResponseHandler<GetMasterEmployeeDto>
+    //        {
+    //            Code = StatusCodes.Status404NotFound,
+    //            Status = HttpStatusCode.NotFound.ToString(),
+    //            Message = "Data Not Found"
+    //        });
+    //    }
 
-        return Ok(new ResponseHandler<IEnumerable<GetMasterEmployeeDto>>
-        {
-            Code = StatusCodes.Status200OK,
-            Status = HttpStatusCode.OK.ToString(),
-            Message = "Data Found",
-            Data = master
-        });
-    }
+    //    return Ok(new ResponseHandler<IEnumerable<GetMasterEmployeeDto>>
+    //    {
+    //        Code = StatusCodes.Status200OK,
+    //        Status = HttpStatusCode.OK.ToString(),
+    //        Message = "Data Found",
+    //        Data = master
+    //    });
+    //}
 
-    [HttpGet("get-master/{guid}")]
+    //[HttpGet("get-master/{guid}")]
 
-    public IActionResult GetMasterByGuid(Guid guid)
-    {
-        var masterGuid = _service.GetMasterByGuid(guid);
-        if (masterGuid is null)
-        {
-            return NotFound(new ResponseHandler<GetMasterEmployeeDto>
-            {
-                Code = StatusCodes.Status404NotFound,
-                Status = HttpStatusCode.NotFound.ToString(),
-                Message = "Data Not Found"
-            });
-        }
+    //public IActionResult GetMasterByGuid(Guid guid)
+    //{
+    //    var masterGuid = _service.GetMasterByGuid(guid);
+    //    if (masterGuid is null)
+    //    {
+    //        return NotFound(new ResponseHandler<GetMasterEmployeeDto>
+    //        {
+    //            Code = StatusCodes.Status404NotFound,
+    //            Status = HttpStatusCode.NotFound.ToString(),
+    //            Message = "Data Not Found"
+    //        });
+    //    }
 
-        return Ok(new ResponseHandler<GetMasterEmployeeDto>
-        {
-            Code = StatusCodes.Status200OK,
-            Status = HttpStatusCode.OK.ToString(),
-            Message = "Data Found",
-            Data = masterGuid
-        });
-    }
+    //    return Ok(new ResponseHandler<GetMasterEmployeeDto>
+    //    {
+    //        Code = StatusCodes.Status200OK,
+    //        Status = HttpStatusCode.OK.ToString(),
+    //        Message = "Data Found",
+    //        Data = masterGuid
+    //    });
+    //}
 
 
 
@@ -78,7 +78,7 @@ public class EmployeeController : ControllerBase
 
         if (entities == null)
         {
-            return NotFound(new ResponseHandler<GetEmployeeDto>
+            return NotFound(new ResponseHandler<string>
             {
                 Code = StatusCodes.Status404NotFound,
                 Status = HttpStatusCode.NotFound.ToString(),
@@ -86,7 +86,7 @@ public class EmployeeController : ControllerBase
             });
         }
 
-        return Ok(new ResponseHandler<IEnumerable<GetEmployeeDto>>
+        return Ok(new ResponseHandler<IEnumerable<GetMasterEmployeeDto>>
         {
             Code = StatusCodes.Status200OK,
             Status = HttpStatusCode.OK.ToString(),

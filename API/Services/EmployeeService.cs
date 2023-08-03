@@ -7,6 +7,7 @@ using API.Utilities.Enums;
 using API.Utilities.Handlers;
 using API.Utilities.Validations;
 using ClosedXML.Excel;
+using System.Security.Claims;
 
 namespace API.Services;
 
@@ -17,10 +18,10 @@ public class EmployeeService
     private readonly IAccountRepository _accountRepository;
     private readonly IAccountRoleRepository _accountRoleRepository;
     private readonly IRoleRepository _roleRepository;
-
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly TwizDbContext _twizDbContext;
 
-    public EmployeeService(IEmployeeRepository employeeRepository, IAccountRepository accountRepository, ICompanyRepository companyRepository, IAccountRoleRepository accountRoleRepository, IRoleRepository roleRepository, TwizDbContext twizDbContext)
+    public EmployeeService(IEmployeeRepository employeeRepository, IAccountRepository accountRepository, ICompanyRepository companyRepository, IAccountRoleRepository accountRoleRepository, IRoleRepository roleRepository, TwizDbContext twizDbContext, IHttpContextAccessor httpContextAccessor)
     {
         _employeeRepository = employeeRepository;
         _accountRepository = accountRepository;
@@ -28,72 +29,110 @@ public class EmployeeService
         _roleRepository = roleRepository;
         _accountRoleRepository = accountRoleRepository;
         _twizDbContext = twizDbContext;
+        _httpContextAccessor = httpContextAccessor;
     }
 
 
-    public IEnumerable<GetMasterEmployeeDto>? GetMasters()
-    {
-        var master = (from e in _employeeRepository.GetAll()
-                      join acoount in _accountRepository.GetAll()
-                      on e.AccountGuid equals acoount.Guid
-                      join company in _companyRepository.GetAll()
-                      on e.CompanyGuid equals company.Guid
-                      join acc in _accountRepository.GetAll()
-                      on company.AccountGuid equals acc.Guid
+    //public IEnumerable<GetMasterEmployeeDto>? GetMasters()
+    //{
+    //    var master = (from e in _employeeRepository.GetAll()
+    //                  join acoount in _accountRepository.GetAll()
+    //                  on e.AccountGuid equals acoount.Guid
+    //                  join company in _companyRepository.GetAll()
+    //                  on e.CompanyGuid equals company.Guid
+    //                  join acc in _accountRepository.GetAll()
+    //                  on company.AccountGuid equals acc.Guid
 
-                      select new GetMasterEmployeeDto
-                      {
-                          Guid = e.Guid,
-                          Nik = e.Nik,
-                          FullName = e.FullName,
-                          BirthDate = e.BirthDate,
-                          Email = acoount.Email,
-                          HiringDate = e.HiringDate,
-                          Gender = e.Gender,
-                          PhoneNumber = e.PhoneNumber,
-                          CompanyName = company.Name,
-                          CompanyEmail = acc.Email
-                      }).ToList();
+    //                  select new GetMasterEmployeeDto
+    //                  {
+    //                      Guid = e.Guid,
+    //                      Nik = e.Nik,
+    //                      FullName = e.FullName,
+    //                      BirthDate = e.BirthDate,
+    //                      Email = acoount.Email,
+    //                      HiringDate = e.HiringDate,
+    //                      Gender = e.Gender,
+    //                      PhoneNumber = e.PhoneNumber,
+    //                      CompanyName = company.Name,
+    //                      CompanyEmail = acc.Email
+    //                  }).ToList();
 
-        if (master.Count == 0)
-        {
-            return null;
-        }
+    //    if (master.Count == 0)
+    //    {
+    //        return null;
+    //    }
 
-        return master;
-    }
+    //    return master;
+    //}
 
-    public GetMasterEmployeeDto? GetMasterByGuid(Guid guid)
-    {
-        var master = GetMasters();
+    //public GetMasterEmployeeDto? GetMasterByGuid(Guid guid)
+    //{
+    //    var master = GetMasters();
 
-        var masterByGuid = master.FirstOrDefault(master => master.Guid == guid);
+    //    var masterByGuid = master.FirstOrDefault(master => master.Guid == guid);
 
-        return masterByGuid;
-    }
+    //    return masterByGuid;
+    //}
 
-    public IEnumerable<GetEmployeeDto>? GetEmployees()
+    public IEnumerable<GetMasterEmployeeDto>? GetEmployees()
     {
         var employees = _employeeRepository.GetAll();
         if (employees is null)
         {
             return null; // No Employee Found
         }
-        var toDto = employees.Select(employee => new GetEmployeeDto
-        {
-            Guid = employee.Guid,
-            Nik = employee.Nik,
-            FullName = employee.FullName,
-            BirthDate = employee.BirthDate,
-            Gender = employee.Gender,
-            HiringDate = employee.HiringDate,
-            PhoneNumber = employee.PhoneNumber,
-            AccountGuid = employee.AccountGuid,
-            CompanyGuid = employee.CompanyGuid
 
+        var companies = _companyRepository.GetAll();
+        var accounts = _accountRepository.GetAll();
+
+        var toDto = employees.Select(e =>
+        {
+            var account = accounts.FirstOrDefault(acc => acc.Guid == e.AccountGuid);
+            var company = companies.FirstOrDefault(c => c.Guid == e.CompanyGuid);
+            return new GetMasterEmployeeDto
+            {
+                Guid = e.Guid,
+                Nik = e.Nik,
+                FullName = e.FullName,
+                Gender = e.Gender == GenderEnum.Male ? "male" : "female",
+                BirthDate = e.BirthDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+                HiringDate = e.HiringDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+                PhoneNumber = e.PhoneNumber,
+                CompanyName = company?.Name ?? "",
+                Email = account?.Email ?? "",
+            };
         }).ToList();
 
-        return toDto;
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        if (accountGuid == null)
+        {
+            return null;
+        }
+
+        if (userRole == nameof(RoleLevel.Company))
+        {
+            var company = companies.FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid));
+
+            if (company is null)
+            {
+                return null;
+            }
+
+            toDto = toDto.Where(e => e.CompanyName == company.Name).ToList();
+            return toDto;
+        }
+        else if (userRole == nameof(RoleLevel.SysAdmin))
+        {
+            return toDto;
+        }
+        else
+        {
+            return null;
+        }
     }
 
     public GetEmployeeDto? GetEmployee(Guid guid)
