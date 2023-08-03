@@ -1,7 +1,9 @@
 ﻿using API.DTOs.Companies;
 using API.DTOs.Employees;
 using API.Services;
+using API.Utilities.Enums;
 using API.Utilities.Handlers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -11,6 +13,7 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("api/employees")]
+[Authorize]
 public class EmployeeController : ControllerBase
 {
     private readonly EmployeeService _service;
@@ -21,6 +24,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}")]
     public IActionResult GetAll()
     {
         var entities = _service.GetEmployees();
@@ -45,6 +49,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet("{guid}")]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}, {nameof(RoleLevel.Employee)}")]
     public IActionResult GetByGuid(Guid guid)
     {
         var employee = _service.GetEmployee(guid);
@@ -68,6 +73,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}")]
     public IActionResult Create(CreateEmployeeDto newEmployeeDto)
     {
         var createEmployee = _service.CreateEmployee(newEmployeeDto);
@@ -91,6 +97,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}")]
     public IActionResult Update(UpdateEmployeeDto updateEmployeeDto)
     {
         var update = _service.UpdateEmployee(updateEmployeeDto);
@@ -132,6 +139,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpDelete]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}")]
     public IActionResult Delete(Guid guid)
     {
         var delete = _service.DeleteEmployee(guid);
@@ -164,6 +172,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPost("import")]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}")]
     public async Task<IActionResult> ImportEmployees([FromForm] ImportEmployeesDto importEmployeesDto)
     {
         var importedEmployeesStatus = await _service.ImportEmployees(importEmployeesDto);
