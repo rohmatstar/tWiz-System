@@ -22,12 +22,12 @@ namespace Client.Controllers
         public async Task<IActionResult> PaymentRequired(string email)
         {
             var payment = await _paymentRepository.GetPaymentSummary(email);
-            if (payment is not null)
+            if (payment == null || payment.Data == null || payment.Data.VaNumber == 0)
             {
-                TempData["payment"] = payment.Data;
-                return View();
+                return RedirectToAction("SignInAsCompany", "Auth");
             }
-            return RedirectToAction("InternalServerError", "Error");
+            TempData["payment"] = payment.Data;
+            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

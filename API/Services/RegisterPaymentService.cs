@@ -157,6 +157,18 @@ public class RegisterPaymentService
             return null;
         }
 
+        if (payment.StatusPayment == StatusPayment.Paid)
+        {
+            var paid = new PaymentSummaryDto
+            {
+                VaNumber = 0,
+                Price = 0,
+                BankCode = null,
+                BankName = null
+            };
+            return paid;
+        }
+
         var toDto = new PaymentSummaryDto
         {
             VaNumber = payment.VaNumber,
