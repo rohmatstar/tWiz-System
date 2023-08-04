@@ -1,7 +1,10 @@
-﻿@using Client.Utilities.Enums;
+﻿@model IEnumerable<Client.DTOs.Events.GetEventDto>;
+@using Client.Utilities.Enums;
 @using System.Security.Claims
 @{
     var role = User!.Claims!.FirstOrDefault(c => c.Type == ClaimTypes.Role)!.Value;
+
+    var IMAGE_URL = "https://localhost:7249/api/";
 
     var toast = TempData["toast"] as dynamic;
 
@@ -108,6 +111,95 @@
         <div class="alert alert-warning border border-warning" role="alert">The <strong>Published Event</strong> cannot be changed at all, even deletion. Once an event is published, all its details and content are considered final and cannot be change any way.</div>
     </div>
 }
+
+
+@if (Model is not null)
+{
+    foreach (var getEvent in Model)
+    {
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card h-100">
+                <img class="card-img-obj card-img-top" src="@(getEvent.Thumbnail ?? "../assets/img/elements/4.jpg")" alt="@(getEvent.Name) by @(getEvent.Organizer)" />
+                <div class="card-body">
+                    <div class="mb-3">
+                        <span class="badge bg-danger text-capitalize">@(getEvent.Visibility)</span>
+                        <span class="badge bg-warning text-capitalize">@(getEvent.Category)</span>
+                        <span class="badge bg-success text-capitalize">@(getEvent.PlaceType)</span>
+                        <span class="badge bg-info text-capitalize">@(getEvent.Payment)</span>
+                    </div>
+                    @if (getEvent.PublicationStatus == "published")
+                    {
+                        <h5 class="card-title">@(getEvent.Name)<button type="button" class="badge ms-2 badge-center rounded-pill bg-info border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true" title="Published"> <i class="bx bx-check"></i> </button></h5>
+                    }
+                    else
+                    {
+                        <h5 class="card-title">@(getEvent.Name)</h5>
+                    }
+
+                    <h6 class="small">@(getEvent.StartDate)</h6>
+                    <p class="card-text">@(getEvent.Description)</p>
+                    <div class="row align-items-center justify-content-center align-self-auto">
+                        <div class="col">
+                            <div class="h6 mb-1"><del>Rp. @(getEvent.Price + 100000),-</del></div>
+                            <div class="h5 text-danger mb-0">Rp. @(getEvent.Price),-</div>
+                        </div>
+                        <div class="col-auto">
+
+                            @if (getEvent.PublicationStatus != "published")
+                            {
+                                <div class="btn-group" id="modify-btn">
+                                    <button type="button" class="btn btn-outline-primary bg-white text-primary">Options</button>
+                                    <button
+                                    type="button"
+                                    class="btn btn-outline-primary text-primary bg-white dropdown-toggle dropdown-toggle-split"
+                                    id="dropdownMenuReference"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    data-bs-reference="parent"
+                                    >
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuReference">
+                                        <li><a class="dropdown-item" href="#" onclick="showEvent(${index})">
+                                                <i class="bx bx-detail me-2"></i> See Details</a></li>
+                                        <li><a class="dropdown-item" href="#">
+                                                <i class="bx bx-pencil me-2"></i> Edit Event</a></li>
+                                        <li><a href="#" class="dropdown-item" onclick="showParticipants(${index})"><i class="bx bx-group me-2"></i> Edit Participant</a></li>
+                                        <li>
+                                            <div class="dropdown-item">
+                                                <a class="btn btn-primary text-white btn-block w-100">Publish</a>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider" />
+                                        </li>
+                                        <li><a class="dropdown-item text-danger" href="javascript:void(0)"><i class="bx bx-trash me-2"></i>Delete Event</a></li>
+                                    </ul>
+                                </div>
+
+                            }
+                            else
+                            {
+                                <a href="#" onclick="showEvent(${index})" class="btn btn-primary">Details</a>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
 
 <div class="modal fade" id="event-detail" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -453,6 +545,7 @@
         function showParticipants(index) {
             $("#edit-participants").modal('show');
         }
+     
 
     </script>
 }

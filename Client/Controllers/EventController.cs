@@ -1,52 +1,64 @@
-﻿using Client.Models;
+﻿using Client.Contracts;
+using Client.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace Client.Controllers
+namespace Client.Controllers;
+
+public class EventController : Controller
 {
-    public class EventController : Controller
+
+    private readonly IEventRepository _eventRepository;
+
+    public EventController(IEventRepository eventRepository)
     {
-        /*[Authorize]*/
-        public IActionResult Index()
-        {
-            var active = "event";
-            ViewBag.Active = active;
+        _eventRepository = eventRepository;
+    }
+    public IActionResult Index()
+    {
+        var active = "event";
+        ViewBag.Active = active;
 
-            return View();
-        }
+        var token = HttpContext?.Session.GetString("JWTToken") ?? "";
+        ViewData["token"] = token;
 
-        /*[Authorize]*/
-        public IActionResult Create()
-        {
-            var active = "create_event";
-            ViewBag.Active = active;
+        var events = _eventRepository.Getall();
+        Console.WriteLine(events.Result);
 
-            var token = HttpContext?.Session.GetString("JWTToken") ?? "";
-            ViewData["token"] = token;
+        return View(events.Result.Data);
+    }
 
-            return View();
-        }
+    /*[Authorize]*/
+    public IActionResult Create()
+    {
+        var active = "create_event";
+        ViewBag.Active = active;
 
-        /*[Authorize]*/
-        public IActionResult Invited()
-        {
-            var active = "invited_event";
-            ViewBag.Active = active;
-            return View();
-        }
+        var token = HttpContext?.Session.GetString("JWTToken") ?? "";
+        ViewData["token"] = token;
 
-        /*[Authorize]*/
-        public IActionResult Ticket()
-        {
-            var active = "ticket";
-            ViewBag.Active = active;
-            return View();
-        }
+        return View();
+    }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+    /*[Authorize]*/
+    public IActionResult Invited()
+    {
+        var active = "invited_event";
+        ViewBag.Active = active;
+        return View();
+    }
+
+    /*[Authorize]*/
+    public IActionResult Ticket()
+    {
+        var active = "ticket";
+        ViewBag.Active = active;
+        return View();
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
