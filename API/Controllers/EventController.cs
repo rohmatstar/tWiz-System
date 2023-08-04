@@ -68,26 +68,54 @@ public class EventController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Create(CreateEventDto createEventsDto)
+    public async Task<IActionResult> Create([FromForm] CreateEventDto createEventsDto)
     {
-        var created = _eventService.CreateEvent(createEventsDto);
-        if (created is not null)
+        var createdEvent = await _eventService.CreateEvent(createEventsDto);
+        if (createdEvent is -1)
         {
-            return Ok(new ResponseHandler<EventsDto>
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<string>
             {
-                Code = StatusCodes.Status200OK,
-                Status = HttpStatusCode.OK.ToString(),
-                Message = "Success",
-                Data = created
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Failed create folder image"
             });
         }
 
-        return NotFound(new ResponseHandler<EventsDto>
+        if (createdEvent is -2)
         {
-            Code = StatusCodes.Status404NotFound,
-            Status = HttpStatusCode.NotFound.ToString(),
-            Message = "Not Found",
-            Data = null
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "File size cannot be more than 2mb"
+            });
+        }
+
+        if (createdEvent is -3)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "your uploaded file is not image file"
+            });
+        }
+
+        if (createdEvent is 0)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.Unauthorized.ToString(),
+                Message = "Not Authenticated"
+            });
+        }
+
+        return Ok(new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Successfully created event"
         });
     }
 

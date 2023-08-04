@@ -4,6 +4,8 @@ using API.DTOs.EmployeeParticipants;
 using API.DTOs.Events;
 using API.Models;
 using API.Utilities.Enums;
+using API.Utilities.Handlers;
+using API.Utilities.Validations;
 using System.Globalization;
 using System.Security.Claims;
 
@@ -367,52 +369,103 @@ public class EventService
         return detailsEvent;
     }
 
-    public EventsDto? CreateEvent(CreateEventDto createEventDto)
+    public async Task<int> CreateEvent(CreateEventDto createEventDto)
     {
+        var imageUrl = "";
+        if (createEventDto.ThumbnailFile != null)
+        {
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\events\thumbnails");
+
+            if (!Directory.Exists(folderPath))
+            {
+                try
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+                catch (Exception ex)
+                {
+                    return -1;
+                }
+            }
+
+            var size = createEventDto.ThumbnailFile.Length;
+
+            // jika ukuran gambar lebih dari 2mb
+            if (size > 2000000)
+            {
+                return -2;
+            }
+
+            bool isImage = FileValidation.IsValidImageExtension(createEventDto.ThumbnailFile);
+
+            if (!isImage)
+            {
+                return -3;
+            }
+
+            var randomName = GenerateHandler.GenerateRandomString();
+            var fileName = randomName + createEventDto.ThumbnailFile.FileName;
+            imageUrl = $"images/events/thumbnails/{fileName}";
+
+            var filePath = $"{folderPath}\\{fileName}";
+
+            try
+            {
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await createEventDto.ThumbnailFile.CopyToAsync(stream);
+                }
+            }
+            catch
+            {
+                return -3;
+            }
+        }
+
+
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+        Console.WriteLine("Hello World 1");
+        if (accountGuid is null)
+        {
+            return 0;
+        }
+
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid));
+        Console.WriteLine("Hello World 2");
+
+        if (company is null)
+        {
+            return 0;
+        }
+
         var eventModel = new Event
         {
             Guid = new Guid(),
-            Name = createEventDto.Name!,
-            Thumbnail = createEventDto.Thumbnail,
-            Description = createEventDto.Description!,
-            IsPublished = (bool)createEventDto.IsPublished!,
-            IsPaid = (bool)createEventDto.IsPaid!,
+            Name = createEventDto.Name,
+            Thumbnail = imageUrl,
+            Description = createEventDto.Description,
+            IsPublished = createEventDto.Visibility == "public" ? true : false,
+            IsPaid = createEventDto.Payment == "paid" ? true : false,
             Price = createEventDto.Price,
             Category = createEventDto.Category!,
-            Status = createEventDto.Status,
+            Status = createEventDto.PlaceType == "offline" ? EventStatus.Offline : EventStatus.Online,
             StartDate = createEventDto.StartDate,
             EndDate = createEventDto.EndDate,
-            Quota = (int)createEventDto.Quota!,
-            Place = createEventDto.Place!,
-            CreatedBy = createEventDto.CreatedBy
+            Quota = createEventDto.Quota,
+            Place = createEventDto.Place,
+            CreatedBy = company.Guid
         };
 
         var created = _eventRepository.Create(eventModel);
         if (created is null)
         {
-            return null;
+            return 0;
         }
 
-
-        var createdEvent = new EventsDto
-        {
-            Guid = eventModel.Guid,
-            Name = eventModel.Name!,
-            Thumbnail = eventModel.Thumbnail,
-            Description = eventModel.Description!,
-            IsPublished = (bool)eventModel.IsPublished!,
-            IsPaid = (bool)eventModel.IsPaid!,
-            Price = eventModel.Price,
-            Category = eventModel.Category!,
-            Status = eventModel.Status,
-            StartDate = eventModel.StartDate,
-            EndDate = eventModel.EndDate,
-            Quota = (int)eventModel.Quota!,
-            Place = eventModel.Place!,
-            CreatedBy = eventModel.CreatedBy
-        };
-
-        return createdEvent;
+        return 1;
     }
 
     public EventsDto? UpdateEvent(EventsDto eventsDto)

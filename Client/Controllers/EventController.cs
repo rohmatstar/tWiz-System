@@ -1,5 +1,4 @@
-﻿using Client.DTOs;
-using Client.Models;
+﻿using Client.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -21,6 +20,10 @@ namespace Client.Controllers
         {
             var active = "create_event";
             ViewBag.Active = active;
+
+            var token = HttpContext?.Session.GetString("JWTToken") ?? "";
+            ViewData["token"] = token;
+
             return View();
         }
 
