@@ -139,7 +139,7 @@ namespace Client.Controllers
 
                     if (role == RoleLevel.Employee.ToString())
                     {
-                        return RedirectToAction("Index", "Event");
+                        return RedirectToAction("Invited", "Event");
                     }
 
                     return RedirectToAction("Index", "Dashboard");

@@ -5,13 +5,12 @@
     var username = User!.Claims!.FirstOrDefault(c => c.Type == ClaimTypes.Name)!.Value;
     var role = User!.Claims!.FirstOrDefault(c => c.Type == ClaimTypes.Role)!.Value;
     var navbarClass = "";
-    var taskbarClass = "";
+    var dropdownClass = "";
     if(role == RoleLevel.Company.ToString()){
         navbarClass = role;
     }
     if(role == RoleLevel.SysAdmin.ToString()){
         navbarClass = RoleLevel.Company.ToString() + " " + RoleLevel.SysAdmin.ToString();
-        taskbarClass = "sysadmin-style";
     }
     var avatar = $"../assets/img/avatars/{role}.png";
 
@@ -50,6 +49,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
           rel="stylesheet" />
+
+    <!-- Animate CSS -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <!-- DataTable JS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
 
     <link rel="stylesheet" href="../assets/vendor/fonts/boxicons.css" />
 
@@ -97,7 +103,7 @@
 
                         </span>
                         <span class="app-brand-text demo menu-text fw-bolder ms-2">
-                            <img class="logo" src="../landing/img/icon-white.png" alt="" />tWiz
+                            <img class="logo" src="../landing/img/icon-white.png" alt="" style="margin-right: 10px" />tWiz
                         </span>
                     </a>
 
@@ -132,12 +138,12 @@
                                 </li>
                                 <li class="menu-item @(active == "event" ? "active" : "")">
                                     <a asp-controller="Event" asp-action="Index" class="menu-link">
-                                        <div>Events List</div>
+                                        <div>Events Control</div>
                                     </a>
                                 </li>
                                 <li class="menu-item @(active == "invited_event" ? "active" : "")">
                                     <a asp-controller="Event" asp-action="Invited" class="menu-link">
-                                        <div>Invited Events</div>
+                                        <div>Invitations</div>
                                     </a>
                                 </li>
                                 <li class="menu-item @(active == "ticket" ? "active" : "")">
@@ -148,21 +154,26 @@
                             </ul>
                         </li>
 
-                        <li class="menu-item">
+                        <li class="menu-item @(active == "employee" || active == "create_employee" || active == "import_employee" ? "active open" : "")">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-group"></i>
                                 <div>Employees</div>
                             </a>
 
                             <ul class="menu-sub">
-                                <li class="menu-item">
-                                    <a href="#" class="menu-link">
+                                <li class="menu-item @(active == "import_employee" ? "active" : "")">
+                                    <a asp-controller="Employee" asp-action="Import" class="menu-link">
+                                        <div>Import</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item @(active == "create_employee" ? "active" : "")">
+                                    <a asp-controller="Employee" asp-action="Create" class="menu-link">
                                         <div>Create Employee</div>
                                     </a>
                                 </li>
-                                <li class="menu-item">
-                                    <a href="#" class="menu-link">
-                                        <div>Employees List</div>
+                                <li class="menu-item @(active == "employee" ? "active" : "")">
+                                    <a asp-controller="Employee" asp-action="Index" class="menu-link">
+                                        <div>Employees Control</div>
                                     </a>
                                 </li>
                             </ul>
@@ -184,17 +195,12 @@
                             <ul class="menu-sub">
                                 <li class="menu-item">
                                     <a href="#" class="menu-link">
-                                        <div>Transactions List</div>
+                                        <div>Event Transaction</div>
                                     </a>
                                 </li>
                                 <li class="menu-item">
                                     <a href="#" class="menu-link">
-                                        <div>Approved</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="#" class="menu-link">
-                                        <div>Rejected</div>
+                                        <div>Purchase</div>
                                     </a>
                                 </li>
                             </ul>
@@ -209,7 +215,12 @@
                             <ul class="menu-sub">
                                 <li class="menu-item">
                                     <a href="#" class="menu-link">
-                                        <div>Events Reporting</div>
+                                        <div>Event Reporting</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="#" class="menu-link">
+                                        <div>Employee Reporting</div>
                                     </a>
                                 </li>
                                 <li class="menu-item">
@@ -224,17 +235,30 @@
                 else if(role == RoleLevel.Employee.ToString())
                 {
                     <ul class="menu-inner py-1">
-                        <li class="menu-item @(active == "event" ? "active" : "")">
-                            <a asp-controller="Employee" asp-action="Event" class="menu-link">
+                        <li class="menu-item @(active == "invited_event" || active == "ticket" ? "active open" : "")">
+                            <a href="#" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-cube"></i>
                                 <div>Events</div>
                             </a>
+
+                            <ul class="menu-sub">
+                                <li class="menu-item @(active == "invited_event" ? "active" : "")">
+                                    <a asp-controller="Event" asp-action="Invited" class="menu-link">
+                                        <div>Invitations</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item @(active == "ticket" ? "active" : "")">
+                                    <a asp-controller="Event" asp-action="Ticket" class="menu-link">
+                                        <div>Ticket</div>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
 
-                        <li class="menu-item @(active == "transaction" ? "active" : "")">
-                            <a asp-controller="Employee" asp-action="Transaction" class="menu-link">
+                        <li class="menu-item @(active == "purchase" ? "active" : "")">
+                            <a asp-controller="Employee" asp-action="Purchase" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-credit-card-alt"></i>
-                                <div>Transactions</div>
+                                <div>Purchase</div>
                             </a>
                         </li>
                     </ul>
@@ -248,18 +272,74 @@
                                 <div>Dashboard</div>
                             </a>
                         </li>
-                        <li class="menu-item @(active == "event" ? "active" : "")">
-                            <a asp-controller="Employee" asp-action="Event" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-cube"></i>
-                                <div>Events</div>
+                        <li class="menu-item @(active == "company" || active == "activated_commpany" || active == "deactivated_company" ? "active open" : "")">
+                            <a href="#" class="menu-link menu-toggle">
+                                <i class="menu-icon tf-icons bx bx-building"></i>
+                                <div>Company</div>
                             </a>
+
+                            <ul class="menu-sub">
+                                <li class="menu-item @(active == "company" ? "active" : "")">
+                                    <a asp-controller="Company" asp-action="Index" class="menu-link">
+                                        <div>Company Control</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item @(active == "activated_commpany" ? "active" : "")">
+                                    <a asp-controller="Company" asp-action="Activated" class="menu-link">
+                                        <div>Activated</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item @(active == "deactivated_company" ? "active" : "")">
+                                    <a asp-controller="Company" asp-action="Deactivated" class="menu-link">
+                                        <div>Deactivated</div>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
 
-                        <li class="menu-item @(active == "transaction" ? "active" : "")">
-                            <a asp-controller="Employee" asp-action="Transaction" class="menu-link">
+                        <li class="menu-item">
+                            <a href="javascript:void(0);" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-credit-card-alt"></i>
-                                <div>Transactions</div>
+                                <div>Transaction</div>
                             </a>
+
+                            <ul class="menu-sub">
+                                <li class="menu-item">
+                                    <a href="#" class="menu-link">
+                                        <div>Register Transaction</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="#" class="menu-link">
+                                        <div>Need Approvals</div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="menu-item">
+                            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                <i class="menu-icon tf-icons bx bx-spreadsheet"></i>
+                                <div>Report</div>
+                            </a>
+
+                            <ul class="menu-sub">
+                                <li class="menu-item">
+                                    <a href="#" class="menu-link">
+                                        <div>Event Reporting</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="#" class="menu-link">
+                                        <div>Company Reporting</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="#" class="menu-link">
+                                        <div>Payment Reporting</div>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                 }
@@ -267,7 +347,7 @@
             
             <div class="layout-page">
 
-                <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme @taskbarClass"
+                <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
                      id="layout-navbar">
                     <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
                         <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
@@ -288,7 +368,7 @@
 
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
                             <li class="nav-item navbar-dropdown dropdown-user dropdown me-2">
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item @dropdownClass" href="#">
                                     <span class="d-flex align-items-center align-middle">
                                         <i class="flex-shrink-0 bx bx-bell me-2"></i>
                                         <span class="flex-grow-1 align-middle me-2">Notification</span>
@@ -338,7 +418,7 @@
 
                         <div class="row mb-3">
                             <div class="col">
-                                <h4 class="fw-bold py-3 mb-0">@ViewData["Title"]</h4>
+                                <h4 class="fw-bold pb-2 mb-0">@ViewData["Title"]</h4>
                             </div>
 
                             @await RenderSectionAsync("Filter", required: false)
@@ -380,6 +460,10 @@
     <script src="../assets/vendor/js/menu.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.8.0/dist/JsBarcode.all.min.js"></script>
+
+    <!-- DataTable JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
 
     <script src="../assets/vendor/libs/apex-charts/apexcharts.js"></script>
 
