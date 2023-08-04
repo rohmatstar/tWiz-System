@@ -652,9 +652,6 @@ a:hover {
     background: linear-gradient(-45deg, #ff3d3d, #7f00cf) !important;
     color: #ffffff !important;
 }
-.sysadmin-style .dropdown-item {
-    color: #ffffff !important;
-}
 
 .bg-menu-theme.company {
     background: linear-gradient(-45deg, #2126ff, #00abcf) !important;
