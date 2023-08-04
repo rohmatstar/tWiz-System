@@ -12,7 +12,7 @@ public class PaymentRepository : GeneralRepository<RegisterDto, string>, IPaymen
     private readonly HttpClient httpClient;
     private readonly string request;
 
-    public PaymentRepository(string request = "register-payments/summary") : base(request)
+    public PaymentRepository(string request = "register-payments/") : base(request)
     {
         httpClient = new HttpClient
         {
@@ -25,7 +25,7 @@ public class PaymentRepository : GeneralRepository<RegisterDto, string>, IPaymen
     {
         ResponseDto<PaymentSummaryDto> entity = null!;
         StringContent content = new StringContent(JsonConvert.SerializeObject(email), Encoding.UTF8, "application/json");
-        var response = httpClient.GetAsync(request + "/" + email).Result;
+        var response = httpClient.GetAsync(request + "summary/" + email).Result;
         using (response)
         {
             string apiResponse = await response.Content.ReadAsStringAsync();
@@ -33,5 +33,18 @@ public class PaymentRepository : GeneralRepository<RegisterDto, string>, IPaymen
         }
         return entity;
     }
+
+    public async Task<ResponseListDto<GetRegisterPaymentDto>> GetRegisterPayments()
+    {
+        ResponseListDto<GetRegisterPaymentDto> entity = null!;
+        var response = httpClient.GetAsync(request).Result;
+        using (response)
+        {
+            string apiResponse = await response.Content.ReadAsStringAsync();
+            entity = JsonConvert.DeserializeObject<ResponseListDto<GetRegisterPaymentDto>>(apiResponse)!;
+        }
+        return entity;
+    }
+
 
 }

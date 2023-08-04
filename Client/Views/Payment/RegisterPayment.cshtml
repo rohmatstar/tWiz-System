@@ -1,0 +1,120 @@
+﻿@using Newtonsoft.Json;
+@model List<Client.DTOs.RegisterPayments.GetRegisterPaymentDto>
+@{
+    var toast = TempData["toast"] as dynamic;
+
+    ViewData["Title"] = "Register Payment List";
+    Layout = "_LayoutUser";
+}
+
+@section Filter{
+    
+}
+
+@section Toast{
+    @if (toast != null)
+    {
+        var toastColor = toast.Color ?? "secondary";
+        var toastClass = $"bs-toast toast toast-placement-ex m-2 fade bg-{toastColor} top-0 start-50 translate-middle-x";
+
+        <div class="@toastClass" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+            <div class="toast-header">
+                <i class="bx bx-bell me-2"></i>
+                <div class="me-auto fw-semibold">@toast.Title</div>
+            </div>
+            <div class="toast-body">
+                @toast.Subtitle
+            </div>
+        </div>
+    }
+}
+
+<div class="col-12">
+    <div class="card">
+        <div class="px-3">
+            <div class="table-responsive text-nowrap">
+                <table id="data" class="table table-hover"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            const data = [
+                {
+                    "nik": "A123456",
+                    "fullName": "John Doe",
+                    "birthDate": "1995-05-10T00:00:00Z",
+                    "gender": "Male",
+                    "hiringDate": "2022-09-15T00:00:00Z",
+                    "phoneNumber": "081234567890",
+                    "email": "john.doe@example.com"
+                },
+                {
+                    "nik": "B987654",
+                    "fullName": "Jane Smith",
+                    "birthDate": "1990-12-28T00:00:00Z",
+                    "gender": "Female",
+                    "hiringDate": "2023-01-20T00:00:00Z",
+                    "phoneNumber": "087654321098",
+                    "email": "jane.smith@example.com"
+                },
+                {
+                    "nik": "C456789",
+                    "fullName": "Michael Johnson",
+                    "birthDate": "1988-09-03T00:00:00Z",
+                    "gender": "Male",
+                    "hiringDate": "2021-07-05T00:00:00Z",
+                    "phoneNumber": "089876543210",
+                    "email": "michael.johnson@example.com"
+                },
+                {
+                    "nik": "D246813",
+                    "fullName": "Emily Lee",
+                    "birthDate": "1992-04-15T00:00:00Z",
+                    "gender": "Female",
+                    "hiringDate": "2023-03-18T00:00:00Z",
+                    "phoneNumber": "082345678901",
+                    "email": "emily.lee@example.com"
+                },
+                {
+                    "nik": "E135792",
+                    "fullName": "Robert Williams",
+                    "birthDate": "1985-11-20T00:00:00Z",
+                    "gender": "Male",
+                    "hiringDate": "2020-12-10T00:00:00Z",
+                    "phoneNumber": "083210987654",
+                    "email": "robert.williams@example.com"
+                }
+            ];
+
+            //if (Model != null) {
+
+                $('#data').DataTable({
+                    data: @Html.Raw(JsonConvert.SerializeObject(Model)),
+                    columns: [
+                        { title: 'Company', data: 'CompanyName' },
+                        { title: 'Email', data: 'CompanyEmail' },
+                        { title: 'VA Number', data: 'VaNumber' },
+                        { title: 'Bank', data: 'BankName' },
+                        { title: 'Price', data: 'Price' },
+                        { title: 'Attachment', data: 'PaymentImage' },
+                        { title: 'Validation', data: 'ValidationStatus' },
+                        { title: 'Status', data: 'StatusPayment' },
+                        {
+                            title: 'Action',
+                            data: null,
+                            render: function (data, type, row) {
+                                return '<button class="btn btn-sm btn-success me-2" onclick="editData(\'' + data.guid + '\')">Approve</button>' +
+                                    '<button class="btn btn-sm btn-danger me-2" onclick="deleteData(\'' + data.guid + '\')">Reject</button>';
+                            }
+                        }
+                    ]
+                });
+
+            //}
+        });
+    </script>
+}

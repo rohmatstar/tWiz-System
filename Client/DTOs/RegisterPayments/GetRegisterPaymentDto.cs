@@ -8,8 +8,9 @@ public class GetRegisterPaymentDto
     [Required]
     public Guid Guid { get; set; }
 
-    [Required]
-    public Guid CompanyGuid { get; set; }
+    public string CompanyName { get; set; }
+
+    public string CompanyEmail { get; set; }
 
     [Required]
     public int VaNumber { get; set; }
@@ -19,12 +20,11 @@ public class GetRegisterPaymentDto
     public string? PaymentImage { get; set; }
 
     [Required]
-    public bool IsValid { get; set; }
+    public string ValidationStatus { get; set; }
 
     [Required]
-    public StatusPayment StatusPayment { get; set; }
+    public string StatusPayment { get; set; }
 
-    [Required]
-    public Guid BankGuid { get; set; }
+    public string BankName { get; set; }
 
 }
