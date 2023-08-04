@@ -29,7 +29,7 @@
 <div class="card">
     <div class="card-body">
         <!-- Logo -->
-        <div class="app-brand justify-content-center">
+        <div class="app-brand justify-content-center mb-4">
             <a asp-controller="Home" asp-action="Index" class="app-brand-link gap-2">
                 <span class="app-brand-text demo text-body fw-bolder">
                     <img class="logo" src="../landing/img/icon-white.png" alt="" />tWiz
@@ -85,12 +85,22 @@
 
         @if (type == "Company")
         {
-            <p class="text-center">
+            <p class="text-center mb-0">
                 <span>New on our platform?</span>
                 <a asp-asp-controller="Auth" asp-action="SignUp">
                     <span>Create an account</span>
                 </a>
             </p>
         }
+
+    </div>
+
+    <div class="card-footer border-top">
+        <div class="text-center">
+            <a asp-controller="Home" asp-action="Index" class="d-flex align-items-center justify-content-center">
+                <i class="bx bx-chevron-left scaleX-n1-rtl bx-sm"></i>
+                Back to Home
+            </a>
+        </div>
     </div>
 </div>

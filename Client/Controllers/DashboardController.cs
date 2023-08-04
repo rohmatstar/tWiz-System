@@ -8,15 +8,9 @@ namespace Client.Controllers
 {
     public class DashboardController : Controller
     {
-        private void SetCommonViewBagData()
-        {
-            ViewBag.Role = "company";
-            ViewBag.Username = "PT Mitra Integrasi Informatika";
-        }
         [Authorize]
         public IActionResult Index()
         {
-            SetCommonViewBagData();
             var active = "dashboard";
             ViewBag.Active = active;
 

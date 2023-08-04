@@ -26,7 +26,7 @@
 <div class="card">
     <div class="card-body">
         <!-- Logo -->
-        <div class="app-brand justify-content-center">
+        <div class="app-brand justify-content-center mb-4">
             <a asp-asp-controller="Home" asp-action="Index" class="app-brand-link gap-2">
                 <span class="app-brand-text demo text-body fw-bolder">
                     <img class="logo" src="../landing/img/icon-white.png" alt="" />tWiz
@@ -122,15 +122,14 @@
                             </div>
                         </div>
 
-                        @*<div class="mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="terms-conditions" name="terms" />
+                        <div class="mb-3">
+                            <div class="small">
                                 <label class="form-check-label" for="terms-conditions">
-                                    I agree to
+                                    With Sign Up, You are agree to our 
                                     <a href="javascript:void(0);">Term & Condition</a>
                                 </label>
                             </div>
-                        </div>*@
+                        </div>
 
                         <div class="row">
                             <div class="col-auto">
@@ -147,12 +146,21 @@
             </div>  
         </form>
 
-        <p class="text-center">
+        <p class="text-center mb-0">
             <span>Already have an account?</span>
             <a asp-action="SignIn">
                 <span>Sign in instead</span>
             </a>
         </p>
+    </div>
+
+    <div class="card-footer border-top">
+        <div class="text-center">
+            <a asp-controller="Home" asp-action="Index" class="d-flex align-items-center justify-content-center">
+                <i class="bx bx-chevron-left scaleX-n1-rtl bx-sm"></i>
+                Back to Home
+            </a>
+        </div>
     </div>
 </div>
 
