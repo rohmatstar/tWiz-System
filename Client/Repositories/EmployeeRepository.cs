@@ -3,7 +3,7 @@ using Client.DTOs.Employees;
 
 namespace Client.Repositories
 {
-    public class EmployeeRepository : GeneralRepository<GetMasterEmployeeDtoClient, Guid>, IEmployeeRepository
+    public class EmployeeRepository : GeneralRepository<GetMasterEmployeeDto, Guid>, IEmployeeRepository
     {
 
         public EmployeeRepository(string request = "employees/") : base(request)

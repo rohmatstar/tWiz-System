@@ -127,7 +127,7 @@ else
                 $("#activate-deactive-btn-" + guid).html('<i class="bx bx-loader-alt animate__loading"></i>').prop("disabled", true);
 
                 $.ajax({
-                url: 'https://localhost:7249/api/accounts/activate_deactivate/' + guid,
+                    url: 'https://localhost:7249/api/accounts/activate_deactivate/' + guid,
                     method: 'PUT',
                     contentType: 'application/json',
                     success: function (response) {

@@ -63,8 +63,8 @@ public class EmployeeController : Controller
         return View(ListEmployee);
     }*/
 
-    [HttpPost]
-    public async Task<IActionResult> Create(GetMasterEmployeeDtoClient newEmployee)
+    /*[HttpPost]
+    public async Task<IActionResult> Create(GetMasterEmployeeDto newEmployee)
     {
         var result = await _employeeRepository.Post(newEmployee);
         if (result.Code == 200)
@@ -80,7 +80,7 @@ public class EmployeeController : Controller
         return RedirectToAction(nameof(Index));
 
 
-    }
+    }*/
 
     /*[HttpPost]
     public async Task<IActionResult> Delete(Guid guid)
@@ -99,7 +99,7 @@ public class EmployeeController : Controller
 
     }*/
 
-    [HttpGet]
+    /*[HttpGet]
     public async Task<IActionResult> Edit(Guid guid)
     {
         var result = await _employeeRepository.Get(guid);
@@ -116,15 +116,15 @@ public class EmployeeController : Controller
             BirthDate = result.Data.BirthDate,
             HiringDate = result.Data.HiringDate,
             PhoneNumber = result.Data.PhoneNumber,
-/*            CompanyGuid = result.Data.CompanyGuid,
-            AccountGuid = result.Data.AccountGuid*/
+*//*            CompanyGuid = result.Data.CompanyGuid,
+            AccountGuid = result.Data.AccountGuid*//*
         };
 
         return View(employee);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Edit(GetMasterEmployeeDtoClient employee)
+    public async Task<IActionResult> Edit(GetMasterEmployeeDto employee)
     {
         if (!ModelState.IsValid)
         {
@@ -140,5 +140,5 @@ public class EmployeeController : Controller
             TempData["Error"] = "Gagal mengubah data";
         }
         return RedirectToAction(nameof(Index));
-    }
+    }*/
 }
