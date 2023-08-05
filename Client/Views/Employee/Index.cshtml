@@ -1,4 +1,8 @@
-﻿@{
+﻿@using Client.Utilities.Enums;
+@using System.Security.Claims;
+@{
+    var jwtToken = Context.Session.GetString("JWTToken")!.ToString();
+    var companyGuid = User!.Claims!.FirstOrDefault(c => c.Type == "companyGuid")!.Value;
     var toast = TempData["toast"] as dynamic;
 
     ViewData["Title"] = "Employee List";
@@ -29,11 +33,9 @@
 
 <div class="col-12">
     <div class="card">
-        <h5 class="card-header">Employees List</h5>
-
-        <div class="px-3">
-            <div class="table-responsive text-nowrap">
-                <table id="data" class="table table-hover"></table>
+        <div class="p-3">
+            <div class="table-responsive">
+                <table id="data" class="table w-100 table-hover"></table>
             </div>
         </div>
     </div>
@@ -42,73 +44,80 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            const data = [
-                {
-                    "nik": "A123456",
-                    "fullName": "John Doe",
-                    "birthDate": "1995-05-10T00:00:00Z",
-                    "gender": "Male",
-                    "hiringDate": "2022-09-15T00:00:00Z",
-                    "phoneNumber": "081234567890",
-                    "email": "john.doe@example.com"
+            var companyGuid = "@companyGuid";
+            $.ajax({
+                url: 'https://localhost:7249/api/employees/company/' + companyGuid,
+                method: 'GET',
+                contentType: 'application/json',
+                headers: {
+                    'Authorization': 'Bearer ' + "@jwtToken"
                 },
-                {
-                    "nik": "B987654",
-                    "fullName": "Jane Smith",
-                    "birthDate": "1990-12-28T00:00:00Z",
-                    "gender": "Female",
-                    "hiringDate": "2023-01-20T00:00:00Z",
-                    "phoneNumber": "087654321098",
-                    "email": "jane.smith@example.com"
+                success: function(response) {
+                    $('#data').DataTable({
+                        data: response.data,
+                        columns: [
+                            { title: 'NIK', data: 'nik' },
+                            {
+                                title: 'Name',
+                                data: null,
+                                render: function (data, type, row){
+                                    return '<div class="text-capitalize">' +data.fullName+ '</div>';
+                                }
+                            },
+                            //{ title: 'Birth Date', data: 'birthDate' },
+                            {
+                                title: 'Gender',
+                                data: null,
+                                render: function (data, type, row) {
+                                    return '<div class="text-capitalize">' + data.gender + '</div>';
+                                }
+                            },
+                            {
+                                title: 'Hired Date',
+                                data: null, 
+                                render: function (data, type, row){
+                                    return data.hiringDate.split(",")[0];
+                                }
+                            },
+                            //{ title: 'Phone Number', data: 'phoneNumber' },
+                            {
+                                title: 'Contact',
+                                data: null,
+                                render: function (data, type, row){
+                                    return '<div><i class="bx bx-phone"></i> <a href="tel:' + data.phoneNumber +
+                                        '">+' +data.phoneNumber+ '</a></div><div><i class="bx bx-envelope"></i> <a href="mailto:' + data.email + '">'+data.email+'</a></div>';
+                                }
+                            },
+                            {
+                                title: 'Action',
+                                data: null,
+                                render: function (data, type, row) {
+                                    return `<div class="btn-group">
+                              <button
+                                type="button"
+                                class="btn btn-outline-primary text-primary bg-white btn-sm dropdown-toggle"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                              >
+                                Options
+                              </button>
+                              <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt"></i> Edit</a></li>
+                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash"></i> Delete</a></li>
+                                <li>
+                                  <hr class="dropdown-divider" />
+                                </li>
+                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-dots-horizontal"></i> Details</a></li>
+                              </ul>
+                            </div>`;
+                                }
+                            }
+                        ]
+                    });
                 },
-                {
-                    "nik": "C456789",
-                    "fullName": "Michael Johnson",
-                    "birthDate": "1988-09-03T00:00:00Z",
-                    "gender": "Male",
-                    "hiringDate": "2021-07-05T00:00:00Z",
-                    "phoneNumber": "089876543210",
-                    "email": "michael.johnson@example.com"
-                },
-                {
-                    "nik": "D246813",
-                    "fullName": "Emily Lee",
-                    "birthDate": "1992-04-15T00:00:00Z",
-                    "gender": "Female",
-                    "hiringDate": "2023-03-18T00:00:00Z",
-                    "phoneNumber": "082345678901",
-                    "email": "emily.lee@example.com"
-                },
-                {
-                    "nik": "E135792",
-                    "fullName": "Robert Williams",
-                    "birthDate": "1985-11-20T00:00:00Z",
-                    "gender": "Male",
-                    "hiringDate": "2020-12-10T00:00:00Z",
-                    "phoneNumber": "083210987654",
-                    "email": "robert.williams@example.com"
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error("Error:", textStatus, errorThrown);
                 }
-            ];
-
-            $('#data').DataTable({
-                data: data,
-                columns: [
-                    { title: 'NIK', data: 'nik' },
-                    { title: 'Full Name', data: 'fullName' },
-                    { title: 'Birth Date', data: 'birthDate' },
-                    { title: 'Gender', data: 'gender' },
-                    { title: 'Hiring Date', data: 'hiringDate' },
-                    { title: 'Phone Number', data: 'phoneNumber' },
-                    { title: 'Email', data: 'email' },
-                    {
-                        title: 'Action',
-                        data: null,
-                        render: function (data, type, row) {
-                            return '<button class="btn btn-sm btn-success me-2" onclick="editData(\'' + data.nik + '\')"><i class="bx bx-edit-alt"></i></button>' +
-                                '<button class="btn btn-sm btn-danger me-2" onclick="deleteData(\'' + data.nik + '\')"><i class="bx bx-trash"></i></button>';
-                        }
-                    }
-                ]
             });
         });
     </script>

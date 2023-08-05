@@ -93,6 +93,68 @@ public class EmployeeService
         }
     }
 
+    public IEnumerable<GetMasterEmployeeDto>? GetByCompany(Guid guid)
+    {
+        var employees = _employeeRepository.GetAll();
+        if (employees is null)
+        {
+            return null; // No Employee Found
+        }
+
+        var companies = _companyRepository.GetAll();
+        var accounts = _accountRepository.GetAll();
+
+        var toDto = employees.Select(e =>
+        {
+            e.CompanyGuid = guid;
+            var account = accounts.FirstOrDefault(acc => acc.Guid == e.AccountGuid);
+            var company = companies.FirstOrDefault(c => c.Guid == e.CompanyGuid);
+            return new GetMasterEmployeeDto
+            {
+                Guid = e.Guid,
+                Nik = e.Nik,
+                FullName = e.FullName,
+                Gender = e.Gender == GenderEnum.Male ? "male" : "female",
+                BirthDate = e.BirthDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+                HiringDate = e.HiringDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+                PhoneNumber = e.PhoneNumber,
+                CompanyName = company?.Name ?? "",
+                Email = account?.Email ?? "",
+            };
+        }).OrderBy(e => e.FullName).ToList();
+
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        if (accountGuid == null)
+        {
+            return null;
+        }
+
+        if (userRole == nameof(RoleLevel.Company))
+        {
+            var company = companies.FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid));
+
+            if (company is null)
+            {
+                return null;
+            }
+
+            toDto = toDto.Where(e => e.CompanyName == company.Name).ToList();
+            return toDto;
+        }
+        else if (userRole == nameof(RoleLevel.SysAdmin))
+        {
+            return toDto;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     public GetMasterEmployeeDto? GetEmployee(Guid guid)
     {
         var employee = _employeeRepository.GetByGuid(guid);
