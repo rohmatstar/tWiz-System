@@ -181,8 +181,8 @@
                             </ul>
                         </li>
 
-                        <li class="menu-item">
-                            <a href="#" class="menu-link">
+                        <li class="menu-item @(active == "company" ? "active" : "")">
+                            <a asp-controller="Company" asp-action="Index" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-buildings"></i>
                                 <div>Companies</div>
                             </a>
@@ -299,7 +299,7 @@
                             </ul>
                         </li>
 
-                        <li class="menu-item @(active == "register_payment" || active == "need_approvals" ? "active open" : "")">
+                        <li class="menu-item @(active == "register_payment" || active == "need_approval" ? "active open" : "")">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-credit-card-alt"></i>
                                 <div>Payment</div>
@@ -311,8 +311,8 @@
                                         <div>Register Payment</div>
                                     </a>
                                 </li>
-                                <li class="menu-item @(active == "need_approvals" ? "active" : "")">
-                                    <a href="#" class="menu-link">
+                                <li class="menu-item @(active == "need_approval" ? "active" : "")">
+                                    <a asp-controller="Payment" asp-action="NeedApproval" class="menu-link">
                                         <div>Need Approvals</div>
                                     </a>
                                 </li>
