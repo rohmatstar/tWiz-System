@@ -4,13 +4,19 @@
 @{
     var role = User!.Claims!.FirstOrDefault(c => c.Type == ClaimTypes.Role)!.Value;
 
-    var IMAGE_URL = "https://localhost:7249/api/";
+    var sortByQuery = Context.Request.Query["sort_by"];
+    var visibilityQuery = Context.Request.Query["visibility"];
+    var placeTypeQuery = Context.Request.Query["place_type"];
+    var publicationStatusQuery = Context.Request.Query["publication_status"];
+
+    var IMAGE_URL = "https://localhost:7249/";
 
     var toast = TempData["toast"] as dynamic;
 
     ViewData["Title"] = "Events List";
     Layout = "_LayoutUser";
 }
+
 
 @section Filter{
     <div class="col-auto">
@@ -27,15 +33,15 @@
                     <div class="mb-3">
                         <label for="publication" class="form-label">Publication</label>
                         <div class="form-check">
-                            <input checked type="radio" class="form-check-input" id="publication-all" name="publication" value="all">
+                            <input checked type="radio" class="form-check-input" id="publication-all" name="publication_status" value="all" @(publicationStatusQuery == "all" ? "checked" : "")>
                             <label class="form-check-label" for="publication-all">All</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="publication-published" name="publication" value="published">
+                            <input type="radio" class="form-check-input" id="publication-published" name="publication_status" value="published" @(publicationStatusQuery == "published" ? "checked" : "")>
                             <label class="form-check-label" for="publication-published">Published</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="publication-draft" name="publication" value="draft">
+                            <input type="radio" class="form-check-input" id="publication-draft" name="publication_status" value="draft" @(publicationStatusQuery == "draft" ? "checked" : "")>
                             <label class="form-check-label" for="publication-draft">Draft</label>
                         </div>
                     </div>
@@ -43,15 +49,15 @@
                     <div class="mb-3">
                         <label for="visibility" class="form-label">Visibility</label>
                         <div class="form-check">
-                            <input checked type="radio" class="form-check-input" id="visibility-all" name="visibility" value="all">
+                            <input checked type="radio" class="form-check-input" id="visibility-all" name="visibility" value="all" @(visibilityQuery == "all" ? "checked" : "")>
                             <label class="form-check-label" for="visibility-all">All</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="visibility-public" name="visibility" value="public">
+                            <input type="radio" class="form-check-input" id="visibility-public" name="visibility" value="public" @(visibilityQuery == "public" ? "checked" : "")>
                             <label class="form-check-label" for="visibility-public">Public</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="visibility-private" name="visibility" value="private">
+                            <input type="radio" class="form-check-input" id="visibility-private" name="visibility" value="private" @(visibilityQuery == "private" ? "checked" : "")>
                             <label class="form-check-label" for="visibility-private">Private</label>
                         </div>
                     </div>
@@ -59,33 +65,37 @@
                     <div class="mb-3">
                         <label for="type" class="form-label">Type</label>
                         <div class="form-check">
-                            <input checked type="radio" class="form-check-input" id="type-all" name="type" value="all">
+                            <input checked type="radio" class="form-check-input" id="type-all" name="place_type" value="all" @(placeTypeQuery == "all"?"checked" : "")>
                             <label class="form-check-label" for="type-all">All</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="type-online" name="type" value="online">
+                            <input type="radio" class="form-check-input" id="type-online" name="place_type" value="online" @(placeTypeQuery == "online" ? "checked" : "")>
                             <label class="form-check-label" for="type-online">Online</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="type-offline" name="type" value="offline">
-                            <label class="form-check-label" for="type-offline">Offline</label>
+                            <input type="radio" class="form-check-input" id="type-offline" name="place_type" value="offline">
+                            <label class="form-check-label" for="type-offline" @(placeTypeQuery == "offline" ? "checked" : "")>Offline</label>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="sort-by" class="form-label">Sort by</label>
-                        <select class="form-select" id="sort-by" name="sort-by">
-                            <option selected value="newest">Newest</option>
-                            <option value="oldest">Oldest</option>
+                        <select class="form-select" id="sort-by" name="sort_by">
+                            <option  value="newest">Newest</option>
+                            <option  value="older">Oldest</option>
                         </select>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Apply</button>
+                    
+
+                    <button type="submit" class="btn btn-primary" id="btn-apply">Apply</button>
                     <button type="reset" class="btn btn-text bg-white text-primary">Use Default</button>
                 </form>
             </div>
         </div>
     </div>
+
+    
 }
 
 @section Toast{
@@ -117,9 +127,19 @@
 {
     foreach (var getEvent in Model)
     {
+            var imageUrl = "";
+            @if(getEvent.Thumbnail is null || getEvent.Thumbnail == "")
+            {
+                imageUrl = "../assets/img/elements/4.jpg";
+            }
+            else
+            {
+                imageUrl = $"{IMAGE_URL}{getEvent.Thumbnail}";
+            }
+
         <div class="col-md-6 col-lg-4 mb-3">
             <div class="card h-100">
-                <img class="card-img-obj card-img-top" src="@(getEvent.Thumbnail ?? "../assets/img/elements/4.jpg")" alt="@(getEvent.Name) by @(getEvent.Organizer)" />
+                <img class="card-img-obj card-img-top" src="@(imageUrl)" alt="@(getEvent.Name) by @(getEvent.Organizer)" />
                 <div class="card-body">
                     <div class="mb-3">
                         <span class="badge bg-danger text-capitalize">@(getEvent.Visibility)</span>
@@ -570,5 +590,23 @@
         }
      
 
+    </script>
+
+    <script>
+        $("#btn-apply").on("click", function(e){
+            //e.preventDefault();
+            //const publication = $("input[name='publication']:checked").val() ?? "";
+            //const visibility = $("input[name='visibility']:checked").val() ?? "";
+            //const placeType = $("input[name='type']:checked").val() ?? "";
+            //const sortBy = $("#sort-by").val() ?? "";
+
+            //const queryUrl = `?publication_status=${publication}&visibility=${visibility}&place_type=${placeType}&sort_by=${sortBy}`;
+            //console.log(queryUrl);
+        })
+        
+    </script>
+
+    <script>
+        $("#sort-by").val("@sortByQuery")
     </script>
 }
