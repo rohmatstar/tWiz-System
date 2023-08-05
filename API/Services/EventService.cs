@@ -184,7 +184,47 @@ public class EventService
         return userEvents;
     }
 
-    public GetEventMasterDto? GetEvent(Guid guid, string? usedfor)
+    public GetEventDto? GetEvent(Guid guid)
+    {
+        var singleEvent = _eventRepository.GetByGuid(guid);
+
+        if (singleEvent is null)
+        {
+            return null;
+        }
+
+        var makerEvent = _companyRepository.GetAll().FirstOrDefault(c => c.Guid == singleEvent.CreatedBy);
+
+        if (makerEvent is null)
+        {
+            return null;
+        }
+
+        var detailsEvent = new GetEventDto
+        {
+            Guid = singleEvent.Guid,
+            Name = singleEvent.Name,
+            Thumbnail = singleEvent.Thumbnail,
+            Description = singleEvent.Description,
+            Category = singleEvent.Category,
+            Organizer = makerEvent.Name,
+            Payment = singleEvent.IsPaid == true ? "paid" : "free",
+            Price = singleEvent.Price,
+            Place = singleEvent.Place,
+            PlaceType = singleEvent.Status == 0 ? "offline" : "online",
+            StartDate = singleEvent.StartDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+            EndDate = singleEvent.EndDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+            Quota = singleEvent.Quota,
+            Joined = singleEvent.UsedQuota,
+            Visibility = singleEvent.IsPublished == true ? "public" : "private",
+            PublicationStatus = singleEvent.IsActive == true ? "published" : "draft",
+        };
+
+        return detailsEvent;
+
+    }
+
+    public GetEventMasterDto? GetDetailEvent(Guid guid, string? usedfor)
     {
         var singleEvent = _eventRepository.GetByGuid(guid);
 

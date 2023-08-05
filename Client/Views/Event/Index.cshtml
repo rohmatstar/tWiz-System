@@ -183,7 +183,7 @@
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuReference">
                                         <li><a class="dropdown-item" href="#" onclick="showEvent(@(i))">
                                                 <i class="bx bx-detail me-2"></i> See Details</a></li>
-                                        <li><a class="dropdown-item" href="#">
+                                        <li><a class="dropdown-item" asp-action="Edit" asp-route-guid="@getEvent.Guid">
                                                 <i class="bx bx-pencil me-2"></i> Edit Event</a></li>
                                         <li><a href="#" class="dropdown-item" onclick="showParticipants('@(getEvent.Guid)', '@(i)')"><i class="bx bx-group me-2"></i> Edit Participant</a></li>
                                         <li>

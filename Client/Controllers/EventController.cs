@@ -3,6 +3,7 @@ using Client.DTOs.Events;
 using Client.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text.Json;
 
 namespace Client.Controllers;
@@ -54,6 +55,34 @@ public class EventController : Controller
         ViewData["token"] = token;
 
         return View();
+    }
+
+    [HttpGet("Edit/{guid}")]
+    public async Task<IActionResult> Edit(Guid guid)
+    {
+        var active = "event";
+        ViewBag.Active = active;
+
+        var response = await _eventRepository.GetEvent(guid);
+
+        var singleEvent = new GetEventDto();
+
+        if (response != null)
+        {
+            singleEvent = response.Data;
+
+            string format = "dd MMMM yyyy, HH:mm 'WIB'";
+            string outputFormat = "yyyy-MM-ddTHH:mm";
+            var startDateTimeLocal = DateTime.ParseExact(singleEvent.StartDate, format, CultureInfo.InvariantCulture);
+            var endDateTimeLocal = DateTime.ParseExact(singleEvent.EndDate, format, CultureInfo.InvariantCulture);
+
+            singleEvent.StartDate = startDateTimeLocal.ToString(outputFormat);
+            singleEvent.EndDate = endDateTimeLocal.ToString(outputFormat);
+
+        }
+
+
+        return View(singleEvent);
     }
 
     /*[Authorize]*/

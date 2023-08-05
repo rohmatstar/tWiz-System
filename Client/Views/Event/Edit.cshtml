@@ -1,33 +1,18 @@
-﻿@model Client.DTOs.Events.CreateEventDto;
+﻿@model Client.DTOs.Events.GetEventDto;
 
 @{
-    var toast = TempData["toast"] as dynamic;
-
-    ViewData["Title"] = "Create Event";
+    ViewData["Title"] = "Edit Event";
     Layout = "_LayoutUser";
 }
 
-@section Filter{
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item "><a asp-action="Index" class="text-primary">Events Control</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Edit</li>
+    </ol>
+</nav>
 
-}
 
-@section Toast{
-    @if (toast != null)
-    {
-        var toastColor = toast.Color ?? "secondary";
-        var toastClass = $"bs-toast toast toast-placement-ex m-2 fade bg-{toastColor} top-0 start-50 translate-middle-x";
-
-        <div class="@toastClass" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
-            <div class="toast-header">
-                <i class="bx bx-bell me-2"></i>
-                <div class="me-auto fw-semibold">@toast.Title</div>
-            </div>
-            <div class="toast-body">
-                @toast.Subtitle
-            </div>
-        </div>
-    }
-}
 
 <div class="col-12">
     <div class="card mb-4">
@@ -38,7 +23,7 @@
                     <div class="mb-3 row">
                         <label for="event-name" class="col-md-4 col-form-label">Event Name</label>
                         <div class="col-md-8">
-                            <input class="form-control" autofocus type="text" value="" id="event-name" />
+                            <input class="form-control" autofocus type="text" value="@Model.Name" id="event-name" />
                         </div>
                     </div>
 
@@ -52,7 +37,7 @@
                     <div class="mb-3 row">
                         <label for="description" class="col-md-4 col-form-label">Description</label>
                         <div class="col-md-8">
-                            <textarea class="form-control" id="description" rows="4"></textarea>
+                            <textarea class="form-control" id="description" rows="4" value="">@Model.Description</textarea>
                         </div>
                     </div>
 
@@ -72,14 +57,14 @@
                     <div class="mb-3 row">
                         <label for="category" class="col-md-4 col-form-label">Category</label>
                         <div class="col-md-8">
-                            <input class="form-control" type="text" value="" id="category" />
+                            <input class="form-control" type="text" value="@Model.Category" id="category" />
                         </div>
                     </div>
 
                     <div class="mb-3 row">
                         <label for="quota" class="col-md-4 col-form-label">Quota</label>
                         <div class="col-md-8">
-                            <input class="form-control" type="number" min="0" value="0" id="quota" />
+                            <input class="form-control" type="number" min="0" value="@(Model.Quota)" id="quota" />
                         </div>
                     </div>
                 </div>
@@ -89,14 +74,14 @@
                     <div class="mb-3 row">
                         <label for="start-date" class="col-md-4 col-form-label">Start Date</label>
                         <div class="col-md-8">
-                            <input class="form-control" type="datetime-local" id="start-date" />
+                            <input class="form-control" type="datetime-local" id="start-date" value="@(Model.StartDate)" />
                         </div>
                     </div>
 
                     <div class="mb-5 row">
                         <label for="end-date" class="col-md-4 col-form-label">End Date</label>
                         <div class="col-md-8">
-                            <input class="form-control" type="datetime-local" id="end-date" />
+                            <input class="form-control" type="datetime-local" id="end-date" value="@(Model.EndDate)" />
                         </div>
                     </div>
 
@@ -105,11 +90,11 @@
                         <label class="col-md-4 col-form-label">Payment</label>
                         <div class="col-md-8">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="event-pay" id="event-pay-free" value="free" checked>
+                                <input class="form-check-input" type="radio" name="event-pay" id="event-pay-free" value="free" @(Model.Payment == "free"? "checked":"")>
                                 <label class="form-check-label" for="event-pay-free">Free</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="event-pay" id="event-pay-paid" value="paid">
+                                <input class="form-check-input" type="radio" name="event-pay" id="event-pay-paid" value="paid" @(Model.Payment == "paid" ? "checked" : "")>
                                 <label class="form-check-label" for="event-pay-paid">Paid</label>
                             </div>
                         </div>
@@ -118,7 +103,7 @@
                     <div class="mb-3 row">
                         <label for="price" class="col-md-4 col-form-label">Price</label>
                         <div class="col-md-8">
-                            <input class="form-control" type="number" min="0" value="0" id="price" disabled />
+                            <input class="form-control" type="number" min="0" value="@((int)Model.Price)" id="price" @(Model.Payment == "paid" ? "" : "disabled") />
                         </div>
                     </div>
 
@@ -135,7 +120,7 @@
                     <div class="mb-3 row">
                         <label for="place" class="col-md-4 col-form-label">Place</label>
                         <div class="col-md-8">
-                            <input class="form-control" type="text" id="place" />
+                            <input class="form-control" type="text" id="place" value="@Model.Place" />
                         </div>
                     </div>
 
@@ -143,7 +128,7 @@
             </div>
             <div class="card-footer border-top p-0 pt-3 text-end">
                 <div class="btn-group">
-                    <button type="submit" class="btn btn-outline-primary bg-white text-primary" id="btn-submit">Save as Draft</button>
+                    <button type="submit" class="btn btn-outline-primary bg-white text-primary" id="btn-submit">Update</button>
                     <!--
                         <button type="button"
                             class="btn btn-outline-primary bg-white text-primary dropdown-toggle dropdown-toggle-split"
@@ -174,7 +159,7 @@
 
         console.log("@(ViewData["token"])");
 
-        
+
 
         $('input[type="radio"][name="event-pay"]').on('change', function () {
             // Get the value of the selected radio button
@@ -185,9 +170,10 @@
 
             // Toggle the disabled attribute based on the selected radio button value
             if (selectedValue === 'free') {
-                textInput.prop('disabled', true); 
+                textInput.prop('disabled', true);
+                textInput.val("0");
             } else {
-                textInput.prop('disabled', false); 
+                textInput.prop('disabled', false);
             }
         });
         btnSubmitElem.addEventListener("click", function (e) {
@@ -197,19 +183,6 @@
 
             const fileElem = document.getElementById("thumbnail");
             const file = fileElem.files[0];
-            //const file2 = $('input[type=file]').files[0];
-
-            //console.log("name : ", $("#Name").val());
-            //console.log("description : ", $("#Description").val());
-            //console.log("visibility : ", $("#Visibility").val());
-            //console.log("payment : ", $("input[name='payment']:checked").val());
-            //console.log("price : ", $("#Price").val());
-            //console.log("category : ", $("#Category").val());
-            //console.log("place type : ", $("#PlaceType").val());
-            //console.log("startdate : ", $("#StartDate").val());
-            //console.log("enddate : ", $("#EndDate").val());
-            //console.log("quota : ", $("#Quota").val());
-            //console.log("place : ", $("#Place").val());
 
             console.log($("input[name='event-pay']:checked").val());
 
@@ -226,7 +199,9 @@
             formData.append("EndDate", $("#end-date").val());
             formData.append("Quota", $("#quota").val());
             formData.append("Place", $("#place").val());
-            
+            //formData.append("Name", "asdasd");
+            //formData.append("Age", "123");
+            //formData.append("Times", "10/02/2000");
 
             fetch('https://localhost:7249/api/events', {
                 method: 'POST',
@@ -247,21 +222,15 @@
                         })
                     }
 
-                    if(responseJson.code == 200){
+                    if (responseJson.code == 200) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Event Created',
                             text: "Now you can modify event participant at event controls menu",
                         })
                     }
-                    $("#event-name").val("")
-                    $("#description").val("")
-                    $("#price").val("")
-                    $("#category").val("0")
-                    $("#start-date").val("")
-                    $("#end-date").val("")
-                    $("#quota").val("0")
-                    $("#place").val("")
+
+
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -270,16 +239,14 @@
                         title: 'Create Event Failed',
                         text: "Please check your data" ?? "",
                     })
-
-                    $("#event-name").val("")
-                    $("#description").val("")
-                    $("#price").val("0")
-                    $("#category").val("")
-                    $("#start-date").val("")
-                    $("#end-date").val("")
-                    $("#quota").val("0")
-                    $("#place").val("")
                 });
         })
+    </script>
+
+    <script>
+        $("#place-type").val("@Model.PlaceType");
+        $("#visibility").val("@Model.Visibility");
+
+
     </script>
 }
