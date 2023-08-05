@@ -20,9 +20,11 @@ public class EventService
     private readonly ICompanyParticipantRepository _companyParticipantRepository;
     private readonly IEventPaymentRepository _eventPaymentRepository;
     private readonly ICompanyRepository _companyRepository;
+    private readonly IAccountRepository _accountRepository;
+    private readonly IBankRepository _bankRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly TwizDbContext _twizDbContext;
-    public EventService(IEventRepository eventRepository, IHttpContextAccessor httpContextAccessor, IEmployeeParticipantRepository employeeParticipantRepository, ICompanyParticipantRepository companyParticipantRepository, IEventPaymentRepository eventPaymentRepository, ICompanyRepository companyRepository, IEmployeeRepository employeeRepository, TwizDbContext twizDbContext)
+    public EventService(IEventRepository eventRepository, IHttpContextAccessor httpContextAccessor, IEmployeeParticipantRepository employeeParticipantRepository, ICompanyParticipantRepository companyParticipantRepository, IEventPaymentRepository eventPaymentRepository, ICompanyRepository companyRepository, IEmployeeRepository employeeRepository, TwizDbContext twizDbContext, IAccountRepository accountRepository, IBankRepository bankRepository)
     {
         _eventRepository = eventRepository;
         _companyRepository = companyRepository;
@@ -32,6 +34,8 @@ public class EventService
         _eventPaymentRepository = eventPaymentRepository;
         _httpContextAccessor = httpContextAccessor;
         _twizDbContext = twizDbContext;
+        _accountRepository = accountRepository;
+        _bankRepository = bankRepository;
     }
 
     public List<GetEventDto>? GetEvents(QueryParamGetEventDto queryParams)
@@ -458,7 +462,9 @@ public class EventService
             EndDate = createEventDto.EndDate,
             Quota = createEventDto.Quota,
             Place = createEventDto.Place,
-            CreatedBy = company.Guid
+            CreatedBy = company.Guid,
+            CreatedDate = DateTime.Now,
+            ModifiedDate = DateTime.Now
         };
 
         var created = _eventRepository.Create(eventModel);
@@ -690,6 +696,13 @@ public class EventService
             return ep.EventGuid == eventGuid && employee.CompanyGuid == makerEvent.Guid;
         }).ToList();
 
+        var previousEventPayments = new List<EventPayment>();
+
+        if (getEvent.IsPaid)
+        {
+            previousEventPayments = _eventPaymentRepository.GetAll().Where(ep => ep.EventGuid == eventGuid).ToList();
+        }
+
         var transaction = _twizDbContext.Database.BeginTransaction();
 
         try
@@ -702,9 +715,22 @@ public class EventService
                 return 0;
             }
 
+            if (getEvent.IsPaid)
+            {
+                var deletedPreviousEventPaymets = _eventPaymentRepository.Deletes(previousEventPayments);
+
+                if (deletedPreviousEventPaymets == false)
+                {
+                    transaction.Rollback();
+                    return 0;
+                }
+            }
+
 
             var newCompanyParticipantsEvent = new List<CompanyParticipant>();
             var newEmployeeParticipantsEvent = new List<EmployeeParticipant>();
+
+            var newEventPaymentsEvent = new List<EventPayment>();
 
             if (companyParticipantsGuids is not null)
             {
@@ -722,6 +748,38 @@ public class EventService
                     };
 
                     newCompanyParticipantsEvent.Add(companyParticipant);
+
+                    if (getEvent.IsPaid)
+                    {
+                        var company = _companyRepository.GetByGuid(companyParticipantGuid);
+
+                        var getBanks = _bankRepository.GetAll().ToList();
+                        if (getBanks is null || getBanks.Count == 0)
+                        {
+                            return 0; // Atau tindakan lain jika daftar kosong.
+                        }
+
+                        Random random = new Random();
+                        int randomIndex = random.Next(0, getBanks.Count - 1); // Mendapatkan indeks acak dalam rentang [0, count-1].
+                        var randomBank = getBanks[randomIndex]; // Mendapatkan bank secara acak.
+
+                        var eventPayment = new EventPayment
+                        {
+                            Guid = new Guid(),
+                            EventGuid = eventGuid,
+                            AccountGuid = company.AccountGuid,
+                            BankGuid = randomBank.Guid,
+                            IsValid = false,
+                            PaymentImage = "",
+                            StatusPayment = StatusPayment.Pending,
+                            VaNumber = GenerateHandler.GenerateVa(),
+                            CreatedDate = DateTime.Now,
+                            ModifiedDate = DateTime.Now
+                        };
+
+
+                        newEventPaymentsEvent.Add(eventPayment);
+                    }
                 }
             }
 
@@ -741,6 +799,39 @@ public class EventService
                     };
 
                     newEmployeeParticipantsEvent.Add(employeeParticipant);
+
+                    if (getEvent.IsPaid)
+                    {
+                        var employee = _employeeRepository.GetByGuid(employeeParticipantGuid);
+
+                        var getBanks = _bankRepository.GetAll().ToList();
+                        if (getBanks is null || getBanks.Count == 0)
+                        {
+                            transaction.Rollback();
+                            return 0; // Atau tindakan lain jika daftar kosong.
+                        }
+
+                        Random random = new Random();
+                        int randomIndex = random.Next(0, getBanks.Count - 1); // Mendapatkan indeks acak dalam rentang [0, count-1].
+                        var randomBank = getBanks[randomIndex]; // Mendapatkan bank secara acak.
+
+                        var eventPayment = new EventPayment
+                        {
+                            Guid = new Guid(),
+                            EventGuid = eventGuid,
+                            AccountGuid = employee.AccountGuid,
+                            BankGuid = randomBank.Guid,
+                            IsValid = false,
+                            PaymentImage = "",
+                            StatusPayment = StatusPayment.Pending,
+                            VaNumber = GenerateHandler.GenerateVa(),
+                            CreatedDate = DateTime.Now,
+                            ModifiedDate = DateTime.Now
+                        };
+
+
+                        newEventPaymentsEvent.Add(eventPayment);
+                    }
                 }
             }
 
@@ -753,6 +844,17 @@ public class EventService
                 return 0;
             }
 
+            if (getEvent.IsPaid)
+            {
+                var createdEventPayments = _eventPaymentRepository.Creates(newEventPaymentsEvent);
+
+                if (createdEventPayments == false)
+                {
+                    transaction.Rollback();
+                    return 0;
+                }
+            }
+
             transaction.Commit();
 
         }
@@ -761,8 +863,6 @@ public class EventService
             transaction.Rollback();
             return 0;
         }
-
-
 
 
         return 1;

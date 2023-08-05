@@ -211,12 +211,14 @@
             //console.log("quota : ", $("#Quota").val());
             //console.log("place : ", $("#Place").val());
 
+            console.log($("input[name='event-pay']:checked").val());
+
             const formData = new FormData();
             formData.append('ThumbnailFile', file);
             formData.append("Name", $("#event-name").val());
             formData.append("Description", $("#description").val());
             formData.append("Visibility", $("#visibility").val());
-            formData.append("Payment", $("#input[name='event-pay']:checked").val());
+            formData.append("Payment", $("input[name='event-pay']:checked").val());
             formData.append("Price", $("#price").val() ?? "0");
             formData.append("Category", $("#category").val());
             formData.append("PlaceType", $("#place-type").val());
