@@ -409,9 +409,7 @@
             </div>
 
             <div class="modal-footer justify-content-between border-top py-3">
-                <div class="col">
-                    <button type="button" class="btn btn-text text-danger bg-light">Delete selected</button>
-                </div>
+                
                 <div class="col text-end">
                     <button type="button" class="btn btn-primary" id="btn-update-participants">Save changes</button>
                 </div>
@@ -421,8 +419,14 @@
 </div>
 
 
+<style>
+    .swal2-container {
+        z-index: 20000 !important;
+    }
+</style>
 
 @section Scripts {
+    
     <script type="text/javascript">
         const eventsJson = @Html.Raw(ViewData["eventsJson"]);
         const companiesJson = @Html.Raw(ViewData["companiesJson"]);
@@ -681,6 +685,11 @@
             console.log("btn update participants : ", btnUpdateParticipants)
 
             btnUpdateParticipants.onclick = async function(e){
+                this.innerHTML = `
+                    <div class="spinner-border text-info" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                `;
                 let companyParticipantsGuids = [];
                 let employeeParticipantsGuids = [];
 
@@ -709,13 +718,32 @@
 
                 const response = await UpdateParticipantsEvent(updateParticipantsEventDto);
                 console.log(response);
+
+                if (response.code == 200){
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Successfully update participants event',
+                    })
+
+                    
+                }
+
+                if (response.code == 400){
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Update Event Participants Failed',
+                        text: "Please check your data",
+                    })
+                }
+
+                this.innerHTML = "Save Changes";
             }
             //$("#btn-update-participants").on("click", async function(){
                 
             //})
 
         }
-
+        
         const API_URL = "https://localhost:7249/api";
 
         function GetCompanyParticipantEvent(eventGuid){
