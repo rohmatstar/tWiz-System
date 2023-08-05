@@ -520,13 +520,14 @@ public class EventService
 
     public async Task<int> UpdateEvent(UpdateEventDto updateEventDto)
     {
-        var singleEvent = _eventRepository.GetByGuid(updateEventDto.Guid);
-        if (singleEvent == null)
+        var getEvent = _eventRepository.GetByGuid(updateEventDto.Guid);
+        if (getEvent == null)
         {
             return -1;
         }
 
         var imageUrl = "";
+        var filePath = "";
         if (updateEventDto.ThumbnailFile != null)
         {
             var folderPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\events\thumbnails");
@@ -562,7 +563,7 @@ public class EventService
             var fileName = randomName + updateEventDto.ThumbnailFile.FileName;
             imageUrl = $"images/events/thumbnails/{fileName}";
 
-            var filePath = $"{folderPath}\\{fileName}";
+            filePath = $"{folderPath}\\{fileName}";
 
             try
             {
@@ -577,47 +578,62 @@ public class EventService
             }
         }
 
-        //var eventModel = new Event
-        //{
-        //    Guid = eventsDto!.Guid,
-        //    Name = eventsDto.Name!,
-        //    Thumbnail = eventsDto.Thumbnail,
-        //    Description = eventsDto.Description!,
-        //    IsPublished = (bool)eventsDto.IsPublished!,
-        //    IsPaid = (bool)eventsDto.IsPaid!,
-        //    Price = eventsDto.Price,
-        //    Category = eventsDto.Category!,
-        //    Status = eventsDto.Status,
-        //    StartDate = eventsDto.StartDate,
-        //    EndDate = eventsDto.EndDate,
-        //    Quota = (int)eventsDto.Quota!,
-        //    Place = eventsDto.Place!,
-        //    CreatedBy = eventsDto.CreatedBy
-        //};
+        var claimUser = _httpContextAccessor.HttpContext?.User;
 
-        //var isUpdate = _eventRepository.Update(eventModel);
-        //if (!isUpdate)
-        //{
-        //    return 0;
-        //}
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
 
-        //var updatedEvent = new EventsDto
-        //{
-        //    Guid = eventModel!.Guid,
-        //    Name = eventModel.Name!,
-        //    Thumbnail = eventModel.Thumbnail,
-        //    Description = eventModel.Description!,
-        //    IsPublished = (bool)eventModel.IsPublished!,
-        //    IsPaid = (bool)eventModel.IsPaid!,
-        //    Price = eventModel.Price,
-        //    Category = eventModel.Category!,
-        //    Status = eventModel.Status,
-        //    StartDate = eventModel.StartDate,
-        //    EndDate = eventModel.EndDate,
-        //    Quota = (int)eventModel.Quota!,
-        //    Place = eventModel.Place!,
-        //    CreatedBy = eventModel.CreatedBy
-        //};
+        if (accountGuid is null)
+        {
+            FileHandler.DeleteFileIfExist(filePath);
+            return 0;
+        }
+
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid));
+
+
+        if (company is null)
+        {
+            FileHandler.DeleteFileIfExist(filePath);
+            return 0;
+        }
+
+        var oldImageUrl = getEvent.Thumbnail;
+
+        getEvent.Name = updateEventDto.Name;
+        getEvent.Thumbnail = updateEventDto.ThumbnailFile is null || imageUrl == "" ? oldImageUrl : imageUrl;
+        getEvent.Description = updateEventDto.Description;
+        getEvent.IsPublished = updateEventDto.Visibility.ToLower() == "public" ? true : false;
+        getEvent.IsPaid = updateEventDto.Payment.ToLower() == "paid" ? true : false;
+        getEvent.Price = updateEventDto.Price;
+        getEvent.Category = updateEventDto.Category;
+        getEvent.Status = updateEventDto.PlaceType.ToLower() == "online" ? EventStatus.Online : EventStatus.Offline;
+        getEvent.StartDate = updateEventDto.StartDate;
+        getEvent.EndDate = updateEventDto.EndDate;
+        getEvent.Quota = updateEventDto.Quota;
+        getEvent.Place = updateEventDto.Place;
+        getEvent.CreatedBy = company.Guid;
+
+        var updated = _eventRepository.Update(getEvent);
+        if (updated is false)
+        {
+            FileHandler.DeleteFileIfExist(filePath);
+            return 0;
+        }
+
+        try
+        {
+            if (oldImageUrl != "")
+            {
+                var filePathOldImage = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", oldImageUrl.Replace("/", "\\"));
+                FileHandler.DeleteFileIfExist(filePathOldImage);
+            }
+        }
+        catch
+        {
+            FileHandler.DeleteFileIfExist(filePath);
+            return -4;
+        }
 
         return 1;
     }
