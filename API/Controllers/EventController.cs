@@ -121,24 +121,64 @@ public class EventController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(UpdateEventDto eventsDto)
+    public async Task<IActionResult> Update(UpdateEventDto updateEventDto)
     {
-        var updated = _eventService.UpdateEvent(eventsDto);
-        if (updated is not null)
+        var updatedEvent = await _eventService.UpdateEvent(updateEventDto);
+        if (updatedEvent is -1)
         {
-            return Ok(new ResponseHandler<string>
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<string>
             {
-                Code = StatusCodes.Status200OK,
-                Status = HttpStatusCode.OK.ToString(),
-                Message = "Successfully updated event"
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Failed create folder image"
             });
         }
 
-        return NotFound(new ResponseHandler<string>
+        if (updatedEvent is -2)
         {
-            Code = StatusCodes.Status404NotFound,
-            Status = HttpStatusCode.NotFound.ToString(),
-            Message = "Failed to Update",
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "File size cannot be more than 2mb"
+            });
+        }
+
+        if (updatedEvent is -3)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "your uploaded file is not image file"
+            });
+        }
+
+        if (updatedEvent is -4)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "failed to delete old event image"
+            });
+        }
+
+        if (updatedEvent is 0)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.Unauthorized.ToString(),
+                Message = "Not Authenticated"
+            });
+        }
+
+        return Ok(new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Successfully created event"
         });
     }
 
