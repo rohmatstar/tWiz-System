@@ -48,6 +48,31 @@ public class EmployeeController : ControllerBase
         });
     }
 
+    [HttpGet("company/{guid}")]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}")]
+    public IActionResult GetByCompany(Guid guid)
+    {
+        var entities = _service.GetByCompany(guid);
+
+        if (entities == null)
+        {
+            return NotFound(new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Data not found"
+            });
+        }
+
+        return Ok(new ResponseHandler<IEnumerable<GetMasterEmployeeDto>>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Data found",
+            Data = entities
+        });
+    }
+
     [HttpGet("{guid}")]
     [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}, {nameof(RoleLevel.Employee)}")]
     public IActionResult GetByGuid(Guid guid)
