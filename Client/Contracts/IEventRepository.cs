@@ -6,4 +6,5 @@ namespace Client.Contracts;
 public interface IEventRepository : IRepository<EventsDto, Guid>
 {
     public Task<ResponseListDto<GetEventDto>> Getall();
+    public Task<ResponseListDto<GetEventDto>> GetInternal(QueryParamGetEventDto queryParams);
 }

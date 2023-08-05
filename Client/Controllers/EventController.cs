@@ -1,7 +1,9 @@
 ﻿using Client.Contracts;
+using Client.DTOs.Events;
 using Client.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Text.Json;
 
 namespace Client.Controllers;
 
@@ -9,12 +11,18 @@ public class EventController : Controller
 {
 
     private readonly IEventRepository _eventRepository;
+    private readonly ICompanyRepository _companyRepository;
+    private readonly IEmployeeRepository _employeeRepository;
 
-    public EventController(IEventRepository eventRepository)
+    public EventController(IEventRepository eventRepository, ICompanyRepository companyRepository, IEmployeeRepository employeeRepository)
     {
         _eventRepository = eventRepository;
+        _companyRepository = companyRepository;
+        _employeeRepository = employeeRepository;
     }
-    public IActionResult Index()
+
+    // event controls
+    public IActionResult Index([FromQuery] QueryParamGetEventDto queryForms)
     {
         var active = "event";
         ViewBag.Active = active;
@@ -22,8 +30,16 @@ public class EventController : Controller
         var token = HttpContext?.Session.GetString("JWTToken") ?? "";
         ViewData["token"] = token;
 
-        var events = _eventRepository.Getall();
-        Console.WriteLine(events.Result);
+        var events = _eventRepository.GetInternal(queryForms);
+        var companies = _companyRepository.Get();
+        var employees = _employeeRepository.Get();
+
+        string eventsJson = JsonSerializer.Serialize(events.Result);
+        string companiesJson = JsonSerializer.Serialize(companies.Result);
+        string employeesJson = JsonSerializer.Serialize(employees.Result);
+        ViewData["eventsJson"] = eventsJson;
+        ViewData["companiesJson"] = companiesJson;
+        ViewData["employeesJson"] = employeesJson;
 
         return View(events.Result.Data);
     }
@@ -41,6 +57,7 @@ public class EventController : Controller
     }
 
     /*[Authorize]*/
+    // invitation events
     public IActionResult Invited()
     {
         var active = "invited_event";

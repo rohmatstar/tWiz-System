@@ -599,6 +599,7 @@ public class EventService
                                     PublicationStatus = e.IsActive == true ? "published" : "draft"
                                 }).ToList();
 
+
             if (filterEvents is null)
             {
                 return null;
@@ -636,6 +637,9 @@ public class EventService
                     filterEvents = filterEvents.Where(e => e.PlaceType == placeType).ToList();
                 }
             }
+
+            var companyParticipants = _companyParticipantRepository.GetAll();
+            var employeeParticipants = _employeeParticipantRepository.GetAll();
 
             string format = "dd MMMM yyyy, HH:mm 'WIB'";
             if (sortBy == "older")

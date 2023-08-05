@@ -112,7 +112,7 @@
     </div>
 }
 
-
+<div id="event-list" class="row">
 @if (Model is not null)
 {
     foreach (var getEvent in Model)
@@ -190,7 +190,7 @@
     }
 }
 
-
+</div>
 
 
 
@@ -268,14 +268,14 @@
                     <input type="text"
                            class="form-control"
                            placeholder="Type company or your employee name" />
-                    <button class="btn btn-outline-primary" type="button" id="">Add</button>
+                    <button class="btn btn-outline-primary" type="button" id="">Search</button>
                 </div>
 
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="fw-semibold text-primary">Companies</div>
                         <div class="demo-inline-spacing mt-3">
-                            <div class="list-group">
+                            <div class="list-group" style="height: 400px; overflow: auto;">
                                 <label class="list-group-item">
                                     <input class="form-check-input me-1" type="checkbox" value="" />
                                     Apple Inc.
@@ -316,6 +316,18 @@
                                     <input class="form-check-input me-1" type="checkbox" value="" />
                                     Visa Inc.
                                 </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Visa Inc.
+                                </label>
+                                 <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Visa Inc.
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Visa Inc.
+                                </label>
                             </div>
 
                         </div>
@@ -323,7 +335,7 @@
                     <div class="col-lg-6">
                         <div class="fw-semibold text-primary">Employees</div>
                         <div class="demo-inline-spacing mt-3">
-                            <div class="list-group">
+                            <div class="list-group" style="height: 400px; overflow: auto;">
                                 <label class="list-group-item">
                                     <input class="form-check-input me-1" type="checkbox" value="" />
                                     John Doe
@@ -382,8 +394,17 @@
     </div>
 </div>
 
+
+
 @section Scripts {
     <script type="text/javascript">
+        const eventsJson = @Html.Raw(ViewData["eventsJson"]);
+        const companiesJson = @Html.Raw(ViewData["companiesJson"]);
+        const employeesJson = @Html.Raw(ViewData["employeesJson"]);
+
+        console.log(eventsJson);
+        console.log(companiesJson);
+        console.log(employeesJson);
         const eventData = [
             {
                 "name": "Annual Gala Dinner",
@@ -483,18 +504,20 @@
                                         <li><a class="dropdown-item text-danger" href="javascript:void(0)"><i class="bx bx-trash me-2"></i>Delete Event</a></li>
                                       </ul>
                                     </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+                                  
                     `;
                 }
                 else{
                 eventElement += `<a href="#" onclick="showEvent(${index})" class="btn btn-primary">Details</a>`;
                 }
 
-            $("#render-body").append(eventElement);
+            eventElement += `</div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>`;
+
+            $("#event-list").append(eventElement);
         }
 
         function renderEvents() {

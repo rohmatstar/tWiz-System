@@ -38,7 +38,7 @@ public class CompanyService
             PhoneNumber = company.PhoneNumber,
             Address = company.Address,
             AccountGuid = company.AccountGuid,
-        }).ToList();
+        }).OrderBy(c => c.Name).ToList();
 
         return toDto;
     }
