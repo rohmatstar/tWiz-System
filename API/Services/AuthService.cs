@@ -199,7 +199,7 @@ public class AuthService
             claims.Add(new Claim(ClaimTypes.Name, company.Name));
             var payment = _registerPaymentRepository.GetAll().FirstOrDefault(c => c.CompanyGuid == company.Guid);
 
-            if (payment == null || payment.StatusPayment == 0)
+            if (payment == null || payment.StatusPayment != StatusPayment.Paid)
             {
                 return "-3";
             }
