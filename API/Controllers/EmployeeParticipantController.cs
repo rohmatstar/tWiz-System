@@ -1,6 +1,8 @@
 ﻿using API.DTOs.EmployeeParticipants;
 using API.Services;
+using API.Utilities.Enums;
 using API.Utilities.Handlers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -135,6 +137,31 @@ public class EmployeeParticipantController : ControllerBase
             Code = StatusCodes.Status404NotFound,
             Status = HttpStatusCode.NotFound.ToString(),
             Message = "Failed to Delete",
+            Data = null
+        });
+    }
+
+    [HttpGet("event")]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}")]
+    public IActionResult GetCompanyParticipantsByEvent([FromQuery] Guid guid)
+    {
+        var employeeParticipants = _service.GetEmployeeParticipantsByEvent(guid);
+        if (employeeParticipants is not null)
+        {
+            return Ok(new ResponseHandler<List<GetEmployeeParticipantDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Data found",
+                Data = employeeParticipants
+            });
+        }
+
+        return NotFound(new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status404NotFound,
+            Status = HttpStatusCode.NotFound.ToString(),
+            Message = "Data not found",
             Data = null
         });
     }

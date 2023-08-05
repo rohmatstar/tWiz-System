@@ -9,4 +9,35 @@ public class EventPaymentRepository : GeneralRepository<EventPayment>, IEventPay
     public EventPaymentRepository(TwizDbContext context) : base(context)
     {
     }
+
+    public bool Deletes(List<EventPayment> eventPayments)
+    {
+        try
+        {
+            _context.Set<EventPayment>().RemoveRange(eventPayments);
+            _context.SaveChanges();
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public bool Creates(List<EventPayment> eventPayments)
+    {
+
+        try
+        {
+            _context.Set<EventPayment>().AddRange(eventPayments);
+            _context.SaveChanges();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
 }

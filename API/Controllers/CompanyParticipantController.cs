@@ -1,6 +1,8 @@
 ﻿using API.DTOs.CompanyParticipants;
 using API.Services;
+using API.Utilities.Enums;
 using API.Utilities.Handlers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -155,6 +157,31 @@ public class CompanyParticipantController : ControllerBase
             Code = StatusCodes.Status400BadRequest,
             Status = HttpStatusCode.BadRequest.ToString(),
             Message = "Failed update company participants",
+        });
+    }
+
+    [HttpGet("event")]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}")]
+    public IActionResult GetCompanyParticipantsByEvent([FromQuery] Guid guid)
+    {
+        var companyParticipants = _service.GetCompanyParticipantsByEvent(guid);
+        if (companyParticipants is not null)
+        {
+            return Ok(new ResponseHandler<List<GetCompanyParticipantDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Data found",
+                Data = companyParticipants
+            });
+        }
+
+        return NotFound(new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status404NotFound,
+            Status = HttpStatusCode.NotFound.ToString(),
+            Message = "Data not found",
+            Data = null
         });
     }
 }

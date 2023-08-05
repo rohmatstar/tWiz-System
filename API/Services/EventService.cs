@@ -1,6 +1,5 @@
 ﻿using API.Contracts;
-using API.DTOs.CompanyParticipants;
-using API.DTOs.EmployeeParticipants;
+using API.Data;
 using API.DTOs.Events;
 using API.Models;
 using API.Utilities.Enums;
@@ -19,8 +18,11 @@ public class EventService
     private readonly ICompanyParticipantRepository _companyParticipantRepository;
     private readonly IEventPaymentRepository _eventPaymentRepository;
     private readonly ICompanyRepository _companyRepository;
+    private readonly IAccountRepository _accountRepository;
+    private readonly IBankRepository _bankRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    public EventService(IEventRepository eventRepository, IHttpContextAccessor httpContextAccessor, IEmployeeParticipantRepository employeeParticipantRepository, ICompanyParticipantRepository companyParticipantRepository, IEventPaymentRepository eventPaymentRepository, ICompanyRepository companyRepository, IEmployeeRepository employeeRepository)
+    private readonly TwizDbContext _twizDbContext;
+    public EventService(IEventRepository eventRepository, IHttpContextAccessor httpContextAccessor, IEmployeeParticipantRepository employeeParticipantRepository, ICompanyParticipantRepository companyParticipantRepository, IEventPaymentRepository eventPaymentRepository, ICompanyRepository companyRepository, IEmployeeRepository employeeRepository, TwizDbContext twizDbContext, IAccountRepository accountRepository, IBankRepository bankRepository)
     {
         _eventRepository = eventRepository;
         _companyRepository = companyRepository;
@@ -28,8 +30,10 @@ public class EventService
         _employeeParticipantRepository = employeeParticipantRepository;
         _companyParticipantRepository = companyParticipantRepository;
         _eventPaymentRepository = eventPaymentRepository;
-
         _httpContextAccessor = httpContextAccessor;
+        _twizDbContext = twizDbContext;
+        _accountRepository = accountRepository;
+        _bankRepository = bankRepository;
     }
 
     public List<GetEventDto>? GetEvents(QueryParamGetEventDto queryParams)
@@ -170,15 +174,15 @@ public class EventService
             }
 
         }
-        else
+        else if (userRole == nameof(RoleLevel.SysAdmin))
         {
-            return null;
+            userEvents = filterEvents;
         }
 
         return userEvents;
     }
 
-    public GetEventMasterDto? GetEvent(Guid guid, string? usedfor)
+    public GetEventDto? GetEvent(Guid guid)
     {
         var singleEvent = _eventRepository.GetByGuid(guid);
 
@@ -194,7 +198,7 @@ public class EventService
             return null;
         }
 
-        var detailsEvent = new GetEventMasterDto
+        var detailsEvent = new GetEventDto
         {
             Guid = singleEvent.Guid,
             Name = singleEvent.Name,
@@ -212,166 +216,207 @@ public class EventService
             Joined = singleEvent.UsedQuota,
             Visibility = singleEvent.IsPublished == true ? "public" : "private",
             PublicationStatus = singleEvent.IsActive == true ? "published" : "draft",
-
         };
 
-
-        var claimUser = _httpContextAccessor.HttpContext?.User;
-
-        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
-        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
-
-        var employees = _employeeRepository.GetAll();
-
-        if (userRole == nameof(RoleLevel.Company))
-        {
-            var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
-
-            if (company == null)
-            {
-                return null;
-            }
-
-            var companies = _companyRepository.GetAll();
-            var employeeParticipantsEvent = new List<GetEmployeeParticipantDto>();
-
-            var employeeParticipants = _employeeParticipantRepository.GetAll();
-
-            // jika company adalah si pembuat event
-            if (singleEvent.CreatedBy == company.Guid)
-            {
-                var companyParticipantsEvent = new List<GetCompanyParticipantDto>();
-
-                companyParticipantsEvent = _companyParticipantRepository.GetAll().Where(cp => cp.EventGuid == singleEvent.Guid && cp.CompanyGuid != company.Guid).Select(cp =>
-                {
-                    var companyName = companies.FirstOrDefault(c => c.Guid == cp.CompanyGuid);
-                    var invitataionStatus = "";
-
-                    if (cp.Status == InviteStatusLevel.Pending) invitataionStatus = "pending";
-                    if (cp.Status == InviteStatusLevel.Accepted) invitataionStatus = "accepted";
-                    if (cp.Status == InviteStatusLevel.Rejected) invitataionStatus = "rejected";
-
-
-                    return new GetCompanyParticipantDto
-                    {
-                        Guid = cp.Guid,
-                        EventName = singleEvent.Name,
-                        CompanyGuid = cp.CompanyGuid,
-                        CompanyName = companyName?.Name ?? "",
-                        InvitationStatus = invitataionStatus,
-                        IsPresent = cp.IsPresent,
-                    };
-                }).ToList();
-
-                var employeeParticipantsEvent2 = employeeParticipants.Where(ep =>
-                {
-                    var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
-
-
-                    // jika event maker mengedit event, maka hanya bisa mengedit employeenya saja
-                    if (usedfor == "edit")
-                    {
-                        var isEmployeeCompany = employee?.CompanyGuid == company.Guid;
-
-                        return ep.EventGuid == singleEvent.Guid && isEmployeeCompany;
-                    }
-
-                    return ep.EventGuid == singleEvent.Guid;
-                    //return true;
-
-                }).Select(ep =>
-                {
-                    var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
-                    var employeeName = employee?.FullName;
-
-                    var companyEmployeeName = companies.FirstOrDefault(c => c.Guid == employee?.CompanyGuid)?.Name;
-
-                    var invitataionStatus = "";
-
-                    if (ep.Status == InviteStatusLevel.Pending) invitataionStatus = "pending";
-                    if (ep.Status == InviteStatusLevel.Accepted) invitataionStatus = "accepted";
-                    if (ep.Status == InviteStatusLevel.Rejected) invitataionStatus = "rejected";
-
-                    return new GetEmployeeParticipantDto
-                    {
-                        Guid = ep.Guid,
-                        EventName = singleEvent.Name,
-                        EmployeeGuid = ep.EmployeeGuid,
-                        EmployeeName = employeeName ?? "",
-                        InvitationStatus = invitataionStatus,
-                        CompanyName = companyEmployeeName ?? "",
-                        IsPresent = ep.IsPresent,
-                    };
-                }).ToList();
-
-                detailsEvent.CompanyParticipants = companyParticipantsEvent;
-                detailsEvent.EmployeeParticipants = employeeParticipantsEvent2;
-            }
-            else
-            {
-                employeeParticipantsEvent = employeeParticipants.Where(ep =>
-                {
-                    var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
-                    var isEmployeeCompany = employee?.CompanyGuid == company.Guid;
-
-                    return ep.EventGuid == singleEvent.Guid && isEmployeeCompany;
-
-                }).Select(ep =>
-                {
-                    var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
-                    var employeeName = employee?.FullName;
-
-                    var companyEmployeeName = companies.FirstOrDefault(c => c.Guid == employee?.CompanyGuid)?.Name;
-
-                    var invitataionStatus = "";
-
-                    if (ep.Status == InviteStatusLevel.Pending) invitataionStatus = "pending";
-                    if (ep.Status == InviteStatusLevel.Accepted) invitataionStatus = "accepted";
-                    if (ep.Status == InviteStatusLevel.Rejected) invitataionStatus = "rejected";
-
-                    return new GetEmployeeParticipantDto
-                    {
-                        Guid = ep.Guid,
-                        EventName = singleEvent.Name,
-                        EmployeeGuid = ep.EmployeeGuid,
-                        EmployeeName = employeeName ?? "",
-                        CompanyName = companyEmployeeName ?? "",
-                        InvitationStatus = invitataionStatus,
-                        IsPresent = ep.IsPresent,
-                    };
-                }).ToList();
-
-                var paymentGuid = _eventPaymentRepository.GetAll().FirstOrDefault(ep => ep.EventGuid == singleEvent.Guid && ep.AccountGuid == company.AccountGuid)?.Guid;
-
-                detailsEvent.PaymentGuid = paymentGuid;
-
-                detailsEvent.EmployeeParticipants = employeeParticipantsEvent;
-            }
-        }
-        else if (userRole == nameof(RoleLevel.Employee))
-        {
-            var employee = employees.FirstOrDefault(e => e.AccountGuid == Guid.Parse(accountGuid!));
-
-            if (employee is null)
-            {
-                return null;
-            }
-
-            var paymentGuid = _eventPaymentRepository.GetAll().FirstOrDefault(ep => ep.EventGuid == singleEvent.Guid && ep.AccountGuid == employee.AccountGuid)?.Guid;
-
-            detailsEvent.PaymentGuid = paymentGuid;
-        }
-        else
-        {
-            return null;
-        }
-
         return detailsEvent;
+
     }
+
+    //public GetEventMasterDto? GetDetailEvent(Guid guid, string? usedfor)
+    //{
+    //    var singleEvent = _eventRepository.GetByGuid(guid);
+
+    //    if (singleEvent is null)
+    //    {
+    //        return null;
+    //    }
+
+    //    var makerEvent = _companyRepository.GetAll().FirstOrDefault(c => c.Guid == singleEvent.CreatedBy);
+
+    //    if (makerEvent is null)
+    //    {
+    //        return null;
+    //    }
+
+    //    var detailsEvent = new GetEventMasterDto
+    //    {
+    //        Guid = singleEvent.Guid,
+    //        Name = singleEvent.Name,
+    //        Thumbnail = singleEvent.Thumbnail,
+    //        Description = singleEvent.Description,
+    //        Category = singleEvent.Category,
+    //        Organizer = makerEvent.Name,
+    //        Payment = singleEvent.IsPaid == true ? "paid" : "free",
+    //        Price = singleEvent.Price,
+    //        Place = singleEvent.Place,
+    //        PlaceType = singleEvent.Status == 0 ? "offline" : "online",
+    //        StartDate = singleEvent.StartDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+    //        EndDate = singleEvent.EndDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+    //        Quota = singleEvent.Quota,
+    //        Joined = singleEvent.UsedQuota,
+    //        Visibility = singleEvent.IsPublished == true ? "public" : "private",
+    //        PublicationStatus = singleEvent.IsActive == true ? "published" : "draft",
+
+    //    };
+
+
+    //    var claimUser = _httpContextAccessor.HttpContext?.User;
+
+    //    var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+    //    var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+    //    var employees = _employeeRepository.GetAll();
+
+    //    if (userRole == nameof(RoleLevel.Company))
+    //    {
+    //        var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
+
+    //        if (company == null)
+    //        {
+    //            return null;
+    //        }
+
+    //        var companies = _companyRepository.GetAll();
+    //        var employeeParticipantsEvent = new List<GetEmployeeParticipantDto>();
+
+    //        var employeeParticipants = _employeeParticipantRepository.GetAll();
+
+    //        // jika company adalah si pembuat event
+    //        if (singleEvent.CreatedBy == company.Guid)
+    //        {
+    //            var companyParticipantsEvent = new List<GetCompanyParticipantDto>();
+
+    //            companyParticipantsEvent = _companyParticipantRepository.GetAll().Where(cp => cp.EventGuid == singleEvent.Guid && cp.CompanyGuid != company.Guid).Select(cp =>
+    //            {
+    //                var companyName = companies.FirstOrDefault(c => c.Guid == cp.CompanyGuid);
+    //                var invitataionStatus = "";
+
+    //                if (cp.Status == InviteStatusLevel.Pending) invitataionStatus = "pending";
+    //                if (cp.Status == InviteStatusLevel.Accepted) invitataionStatus = "accepted";
+    //                if (cp.Status == InviteStatusLevel.Rejected) invitataionStatus = "rejected";
+
+
+    //                return new GetCompanyParticipantDto
+    //                {
+    //                    Guid = cp.Guid,
+    //                    EventName = singleEvent.Name,
+    //                    CompanyGuid = cp.CompanyGuid,
+    //                    CompanyName = companyName?.Name ?? "",
+    //                    InvitationStatus = invitataionStatus,
+    //                    IsPresent = cp.IsPresent,
+    //                };
+    //            }).ToList();
+
+    //            var employeeParticipantsEvent2 = employeeParticipants.Where(ep =>
+    //            {
+    //                var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
+
+
+    //                // jika event maker mengedit event, maka hanya bisa mengedit employeenya saja
+    //                if (usedfor == "edit")
+    //                {
+    //                    var isEmployeeCompany = employee?.CompanyGuid == company.Guid;
+
+    //                    return ep.EventGuid == singleEvent.Guid && isEmployeeCompany;
+    //                }
+
+    //                return ep.EventGuid == singleEvent.Guid;
+    //                //return true;
+
+    //            }).Select(ep =>
+    //            {
+    //                var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
+    //                var employeeName = employee?.FullName;
+
+    //                var companyEmployeeName = companies.FirstOrDefault(c => c.Guid == employee?.CompanyGuid)?.Name;
+
+    //                var invitataionStatus = "";
+
+    //                if (ep.Status == InviteStatusLevel.Pending) invitataionStatus = "pending";
+    //                if (ep.Status == InviteStatusLevel.Accepted) invitataionStatus = "accepted";
+    //                if (ep.Status == InviteStatusLevel.Rejected) invitataionStatus = "rejected";
+
+    //                return new GetEmployeeParticipantDto
+    //                {
+    //                    Guid = ep.Guid,
+    //                    EventName = singleEvent.Name,
+    //                    EmployeeGuid = ep.EmployeeGuid,
+    //                    EmployeeName = employeeName ?? "",
+    //                    InvitationStatus = invitataionStatus,
+    //                    CompanyName = companyEmployeeName ?? "",
+    //                    IsPresent = ep.IsPresent,
+    //                };
+    //            }).ToList();
+
+    //            detailsEvent.CompanyParticipants = companyParticipantsEvent;
+    //            detailsEvent.EmployeeParticipants = employeeParticipantsEvent2;
+    //        }
+    //        else
+    //        {
+    //            employeeParticipantsEvent = employeeParticipants.Where(ep =>
+    //            {
+    //                var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
+    //                var isEmployeeCompany = employee?.CompanyGuid == company.Guid;
+
+    //                return ep.EventGuid == singleEvent.Guid && isEmployeeCompany;
+
+    //            }).Select(ep =>
+    //            {
+    //                var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
+    //                var employeeName = employee?.FullName;
+
+    //                var companyEmployeeName = companies.FirstOrDefault(c => c.Guid == employee?.CompanyGuid)?.Name;
+
+    //                var invitataionStatus = "";
+
+    //                if (ep.Status == InviteStatusLevel.Pending) invitataionStatus = "pending";
+    //                if (ep.Status == InviteStatusLevel.Accepted) invitataionStatus = "accepted";
+    //                if (ep.Status == InviteStatusLevel.Rejected) invitataionStatus = "rejected";
+
+    //                return new GetEmployeeParticipantDto
+    //                {
+    //                    Guid = ep.Guid,
+    //                    EventName = singleEvent.Name,
+    //                    EmployeeGuid = ep.EmployeeGuid,
+    //                    EmployeeName = employeeName ?? "",
+    //                    CompanyName = companyEmployeeName ?? "",
+    //                    InvitationStatus = invitataionStatus,
+    //                    IsPresent = ep.IsPresent,
+    //                };
+    //            }).ToList();
+
+    //            var paymentGuid = _eventPaymentRepository.GetAll().FirstOrDefault(ep => ep.EventGuid == singleEvent.Guid && ep.AccountGuid == company.AccountGuid)?.Guid;
+
+    //            detailsEvent.PaymentGuid = paymentGuid;
+
+    //            detailsEvent.EmployeeParticipants = employeeParticipantsEvent;
+    //        }
+    //    }
+    //    else if (userRole == nameof(RoleLevel.Employee))
+    //    {
+    //        var employee = employees.FirstOrDefault(e => e.AccountGuid == Guid.Parse(accountGuid!));
+
+    //        if (employee is null)
+    //        {
+    //            return null;
+    //        }
+
+    //        var paymentGuid = _eventPaymentRepository.GetAll().FirstOrDefault(ep => ep.EventGuid == singleEvent.Guid && ep.AccountGuid == employee.AccountGuid)?.Guid;
+
+    //        detailsEvent.PaymentGuid = paymentGuid;
+    //    }
+    //    else
+    //    {
+    //        return null;
+    //    }
+
+    //    return detailsEvent;
+    //}
 
     public async Task<int> CreateEvent(CreateEventDto createEventDto)
     {
         var imageUrl = "";
+        var filePath = "";
         if (createEventDto.ThumbnailFile != null)
         {
             var folderPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\events\thumbnails");
@@ -407,7 +452,7 @@ public class EventService
             var fileName = randomName + createEventDto.ThumbnailFile.FileName;
             imageUrl = $"images/events/thumbnails/{fileName}";
 
-            var filePath = $"{folderPath}\\{fileName}";
+            filePath = $"{folderPath}\\{fileName}";
 
             try
             {
@@ -427,17 +472,19 @@ public class EventService
 
         var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
         var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
-        Console.WriteLine("Hello World 1");
+
         if (accountGuid is null)
         {
+            FileHandler.DeleteFileIfExist(filePath);
             return 0;
         }
 
         var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid));
-        Console.WriteLine("Hello World 2");
+
 
         if (company is null)
         {
+            FileHandler.DeleteFileIfExist(filePath);
             return 0;
         }
 
@@ -456,102 +503,217 @@ public class EventService
             EndDate = createEventDto.EndDate,
             Quota = createEventDto.Quota,
             Place = createEventDto.Place,
-            CreatedBy = company.Guid
+            CreatedBy = company.Guid,
+            CreatedDate = DateTime.Now,
+            ModifiedDate = DateTime.Now
         };
 
         var created = _eventRepository.Create(eventModel);
         if (created is null)
         {
+            FileHandler.DeleteFileIfExist(filePath);
             return 0;
         }
 
         return 1;
     }
 
-    public EventsDto? UpdateEvent(EventsDto eventsDto)
+    public async Task<int> UpdateEvent(UpdateEventDto updateEventDto)
     {
-        var singleEvent = _eventRepository.GetByGuid(eventsDto.Guid);
-        if (singleEvent == null)
+        var getEvent = _eventRepository.GetByGuid(updateEventDto.Guid);
+        if (getEvent == null)
         {
-            return null;
+            return -1;
         }
 
-        var eventModel = new Event
+        var imageUrl = "";
+        var filePath = "";
+        if (updateEventDto.ThumbnailFile != null)
         {
-            Guid = eventsDto!.Guid,
-            Name = eventsDto.Name!,
-            Thumbnail = eventsDto.Thumbnail,
-            Description = eventsDto.Description!,
-            IsPublished = (bool)eventsDto.IsPublished!,
-            IsPaid = (bool)eventsDto.IsPaid!,
-            Price = eventsDto.Price,
-            Category = eventsDto.Category!,
-            Status = eventsDto.Status,
-            StartDate = eventsDto.StartDate,
-            EndDate = eventsDto.EndDate,
-            Quota = (int)eventsDto.Quota!,
-            Place = eventsDto.Place!,
-            CreatedBy = eventsDto.CreatedBy
-        };
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\events\thumbnails");
 
-        var isUpdate = _eventRepository.Update(eventModel);
-        if (!isUpdate)
-        {
-            return null;
+            if (!Directory.Exists(folderPath))
+            {
+                try
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+                catch (Exception ex)
+                {
+                    return -1;
+                }
+            }
+
+            var size = updateEventDto.ThumbnailFile.Length;
+
+            // jika ukuran gambar lebih dari 2mb
+            if (size > 2000000)
+            {
+                return -2;
+            }
+
+            bool isImage = FileValidation.IsValidImageExtension(updateEventDto.ThumbnailFile);
+
+            if (!isImage)
+            {
+                return -3;
+            }
+
+            var randomName = GenerateHandler.GenerateRandomString();
+            var fileName = randomName + updateEventDto.ThumbnailFile.FileName;
+            imageUrl = $"images/events/thumbnails/{fileName}";
+
+            filePath = $"{folderPath}\\{fileName}";
+
+            try
+            {
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await updateEventDto.ThumbnailFile.CopyToAsync(stream);
+                }
+            }
+            catch
+            {
+                return -3;
+            }
         }
 
-        var updatedEvent = new EventsDto
-        {
-            Guid = eventModel!.Guid,
-            Name = eventModel.Name!,
-            Thumbnail = eventModel.Thumbnail,
-            Description = eventModel.Description!,
-            IsPublished = (bool)eventModel.IsPublished!,
-            IsPaid = (bool)eventModel.IsPaid!,
-            Price = eventModel.Price,
-            Category = eventModel.Category!,
-            Status = eventModel.Status,
-            StartDate = eventModel.StartDate,
-            EndDate = eventModel.EndDate,
-            Quota = (int)eventModel.Quota!,
-            Place = eventModel.Place!,
-            CreatedBy = eventModel.CreatedBy
-        };
+        var claimUser = _httpContextAccessor.HttpContext?.User;
 
-        return updatedEvent;
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        if (accountGuid is null)
+        {
+            FileHandler.DeleteFileIfExist(filePath);
+            return 0;
+        }
+
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid));
+
+
+        if (company is null)
+        {
+            FileHandler.DeleteFileIfExist(filePath);
+            return 0;
+        }
+
+        var oldImageUrl = getEvent.Thumbnail;
+
+        getEvent.Name = updateEventDto.Name;
+        getEvent.Thumbnail = updateEventDto.ThumbnailFile is null || imageUrl == "" ? oldImageUrl : imageUrl;
+        getEvent.Description = updateEventDto.Description;
+        getEvent.IsPublished = updateEventDto.Visibility.ToLower() == "public" ? true : false;
+        getEvent.IsPaid = updateEventDto.Payment.ToLower() == "paid" ? true : false;
+        getEvent.Price = updateEventDto.Price;
+        getEvent.Category = updateEventDto.Category;
+        getEvent.Status = updateEventDto.PlaceType.ToLower() == "online" ? EventStatus.Online : EventStatus.Offline;
+        getEvent.StartDate = updateEventDto.StartDate;
+        getEvent.EndDate = updateEventDto.EndDate;
+        getEvent.Quota = updateEventDto.Quota;
+        getEvent.Place = updateEventDto.Place;
+        getEvent.CreatedBy = company.Guid;
+        getEvent.ModifiedDate = DateTime.Now;
+
+        var transaction = _twizDbContext.Database.BeginTransaction();
+
+        var updated = _eventRepository.Update(getEvent);
+        if (updated is false)
+        {
+            FileHandler.DeleteFileIfExist(filePath);
+            return 0;
+        }
+
+        try
+        {
+            if (oldImageUrl != "" && oldImageUrl != null)
+            {
+                var filePathOldImage = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", oldImageUrl.Replace("/", "\\"));
+                FileHandler.DeleteFileIfExist(filePathOldImage);
+            }
+        }
+        catch
+        {
+            transaction.Rollback();
+            FileHandler.DeleteFileIfExist(filePath);
+            return -4;
+        }
+
+        transaction.Commit();
+        return 1;
     }
 
     public EventsDto? DeleteEvent(Guid guid)
     {
-        var singleEvent = _eventRepository.GetByGuid(guid);
-        if (singleEvent == null)
+        var getEvent = _eventRepository.GetByGuid(guid);
+        if (getEvent == null)
         {
             return null;
         }
 
-        var isDelete = _eventRepository.Delete(singleEvent!);
-        if (!isDelete)
+
+        var transaction = _twizDbContext.Database.BeginTransaction();
+        // 1 delete all event payment if exist       
+        if (getEvent.IsPaid)
         {
+            var eventPayments = _eventPaymentRepository.GetAll().Where(ep => ep.EventGuid == getEvent.Guid).ToList();
+
+            var deletedEventPayments = _eventPaymentRepository.Deletes(eventPayments);
+
+            if (deletedEventPayments is false)
+            {
+                transaction.Rollback();
+                return null;
+            }
+        }
+
+        var companyParticipantsEvent = _companyParticipantRepository.GetAll().Where(cp => cp.EventGuid == getEvent.Guid).ToList();
+        var employeeParticipantsEvent = _employeeParticipantRepository.GetAll().Where(ep => ep.EventGuid == getEvent.Guid).ToList();
+
+
+        var deletedCompanyParticipants = _companyParticipantRepository.Deletes(companyParticipantsEvent);
+        var deletedEmployeeParticipants = _employeeParticipantRepository.Deletes(employeeParticipantsEvent);
+
+        if (deletedCompanyParticipants is false || deletedEmployeeParticipants is false)
+        {
+            transaction.Rollback();
             return null;
         }
+
+        if (getEvent.Thumbnail != null && getEvent.Thumbnail != "")
+        {
+            var filePathImage = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", getEvent.Thumbnail.Replace("/", "\\"));
+            FileHandler.DeleteFileIfExist(filePathImage);
+        }
+
+
+        var isDelete = _eventRepository.Delete(getEvent);
+        if (!isDelete)
+        {
+            transaction.Rollback();
+            return null;
+        }
+
 
         var deletedEvent = new EventsDto
         {
-            Guid = singleEvent.Guid,
-            Name = singleEvent.Name!,
-            Thumbnail = singleEvent.Thumbnail,
-            Description = singleEvent.Description!,
-            IsPublished = (bool)singleEvent.IsPublished!,
-            IsPaid = (bool)singleEvent.IsPaid!,
-            Price = singleEvent.Price,
-            Category = singleEvent.Category!,
-            Status = singleEvent.Status,
-            StartDate = singleEvent.StartDate,
-            EndDate = singleEvent.EndDate,
-            Quota = (int)singleEvent.Quota!,
-            Place = singleEvent.Place!,
-            CreatedBy = singleEvent.CreatedBy
+            Guid = getEvent.Guid,
+            Name = getEvent.Name!,
+            Thumbnail = getEvent.Thumbnail,
+            Description = getEvent.Description!,
+            IsPublished = (bool)getEvent.IsPublished!,
+            IsPaid = (bool)getEvent.IsPaid!,
+            Price = getEvent.Price,
+            Category = getEvent.Category!,
+            Status = getEvent.Status,
+            StartDate = getEvent.StartDate,
+            EndDate = getEvent.EndDate,
+            Quota = (int)getEvent.Quota!,
+            Place = getEvent.Place!,
+            CreatedBy = getEvent.CreatedBy
         };
+
+        transaction.Commit();
 
         return deletedEvent;
     }
@@ -660,9 +822,226 @@ public class EventService
         {
             return null;
         }
+    }
 
 
+    public int UpdateParticipantsEvent(UpdateParticipantsEventDto updateParticipantsEventDto)
+    {
+        var eventGuid = updateParticipantsEventDto.EventGuid;
+        var companyParticipantsGuids = updateParticipantsEventDto.CompanyParticipantsGuids;
+        var employeeParticipantsGuids = updateParticipantsEventDto.EmployeeParticipantsGuids;
 
+        var getEvent = _eventRepository.GetByGuid(eventGuid);
+        var makerEvent = _companyRepository.GetByGuid(getEvent.CreatedBy);
+
+        if (getEvent == null)
+        {
+            return 0;
+        }
+
+        var previousCompanyParticipantEvent = _companyParticipantRepository.GetAll().Where(cp => cp.EventGuid == eventGuid && cp.CompanyGuid != getEvent.CreatedBy).ToList();
+
+        var employees = _employeeRepository.GetAll();
+
+        // hanya karyawan perusahaan pembuat eventnya
+        var previousEmployeeParticipants = _employeeParticipantRepository.GetAll().Where(ep =>
+        {
+            var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
+            return ep.EventGuid == eventGuid && employee.CompanyGuid == makerEvent.Guid;
+        }).ToList();
+
+        var previousEventPayments = new List<EventPayment>();
+
+        if (getEvent.IsPaid)
+        {
+            previousEventPayments = _eventPaymentRepository.GetAll().Where(ep => ep.EventGuid == eventGuid).ToList();
+        }
+
+        var transaction = _twizDbContext.Database.BeginTransaction();
+
+        try
+        {
+            var deletedPreviousCompanyParticipantsEvent = _companyParticipantRepository.Deletes(previousCompanyParticipantEvent);
+            var deletedPreviousEmployeeParticipantsEvevnt = _employeeParticipantRepository.Deletes(previousEmployeeParticipants);
+            if (deletedPreviousCompanyParticipantsEvent is false || deletedPreviousEmployeeParticipantsEvevnt is false)
+            {
+                transaction.Rollback();
+                return 0;
+            }
+
+            if (getEvent.IsPaid)
+            {
+                var deletedPreviousEventPaymets = _eventPaymentRepository.Deletes(previousEventPayments);
+
+                if (deletedPreviousEventPaymets == false)
+                {
+                    transaction.Rollback();
+                    return 0;
+                }
+            }
+
+
+            var newCompanyParticipantsEvent = new List<CompanyParticipant>();
+            var newEmployeeParticipantsEvent = new List<EmployeeParticipant>();
+
+            var newEventPaymentsEvent = new List<EventPayment>();
+
+            if (companyParticipantsGuids is not null)
+            {
+                foreach (var companyParticipantGuid in companyParticipantsGuids)
+                {
+                    var companyParticipant = new CompanyParticipant
+                    {
+                        Guid = new Guid(),
+                        CompanyGuid = companyParticipantGuid,
+                        EventGuid = eventGuid,
+                        Status = InviteStatusLevel.Pending,
+                        IsPresent = false,
+                        CreatedDate = DateTime.Now,
+                        ModifiedDate = DateTime.Now,
+                    };
+
+                    newCompanyParticipantsEvent.Add(companyParticipant);
+
+                    if (getEvent.IsPaid)
+                    {
+                        var company = _companyRepository.GetByGuid(companyParticipantGuid);
+
+                        var getBanks = _bankRepository.GetAll().ToList();
+                        if (getBanks is null || getBanks.Count == 0)
+                        {
+                            return 0; // Atau tindakan lain jika daftar kosong.
+                        }
+
+                        Random random = new Random();
+                        int randomIndex = random.Next(0, getBanks.Count - 1); // Mendapatkan indeks acak dalam rentang [0, count-1].
+                        var randomBank = getBanks[randomIndex]; // Mendapatkan bank secara acak.
+
+                        var eventPayment = new EventPayment
+                        {
+                            Guid = new Guid(),
+                            EventGuid = eventGuid,
+                            AccountGuid = company.AccountGuid,
+                            BankGuid = randomBank.Guid,
+                            IsValid = false,
+                            PaymentImage = "",
+                            StatusPayment = StatusPayment.Pending,
+                            VaNumber = GenerateHandler.GenerateVa(),
+                            CreatedDate = DateTime.Now,
+                            ModifiedDate = DateTime.Now
+                        };
+
+
+                        newEventPaymentsEvent.Add(eventPayment);
+                    }
+                }
+            }
+
+            if (employeeParticipantsGuids is not null)
+            {
+                foreach (var employeeParticipantGuid in employeeParticipantsGuids)
+                {
+                    var employeeParticipant = new EmployeeParticipant
+                    {
+                        Guid = new Guid(),
+                        EmployeeGuid = employeeParticipantGuid,
+                        EventGuid = eventGuid,
+                        Status = InviteStatusLevel.Pending,
+                        IsPresent = false,
+                        CreatedDate = DateTime.Now,
+                        ModifiedDate = DateTime.Now,
+                    };
+
+                    newEmployeeParticipantsEvent.Add(employeeParticipant);
+
+                    if (getEvent.IsPaid)
+                    {
+                        var employee = _employeeRepository.GetByGuid(employeeParticipantGuid);
+
+                        var getBanks = _bankRepository.GetAll().ToList();
+                        if (getBanks is null || getBanks.Count == 0)
+                        {
+                            transaction.Rollback();
+                            return 0; // Atau tindakan lain jika daftar kosong.
+                        }
+
+                        Random random = new Random();
+                        int randomIndex = random.Next(0, getBanks.Count - 1); // Mendapatkan indeks acak dalam rentang [0, count-1].
+                        var randomBank = getBanks[randomIndex]; // Mendapatkan bank secara acak.
+
+                        var eventPayment = new EventPayment
+                        {
+                            Guid = new Guid(),
+                            EventGuid = eventGuid,
+                            AccountGuid = employee.AccountGuid,
+                            BankGuid = randomBank.Guid,
+                            IsValid = false,
+                            PaymentImage = "",
+                            StatusPayment = StatusPayment.Pending,
+                            VaNumber = GenerateHandler.GenerateVa(),
+                            CreatedDate = DateTime.Now,
+                            ModifiedDate = DateTime.Now
+                        };
+
+
+                        newEventPaymentsEvent.Add(eventPayment);
+                    }
+                }
+            }
+
+            var createdCompanyParticipants = _companyParticipantRepository.Creates(newCompanyParticipantsEvent);
+            var createdEmployeeParticipants = _employeeParticipantRepository.Creates(newEmployeeParticipantsEvent);
+
+            if (createdCompanyParticipants is false || createdEmployeeParticipants is false)
+            {
+                transaction.Rollback();
+                return 0;
+            }
+
+            if (getEvent.IsPaid)
+            {
+                var createdEventPayments = _eventPaymentRepository.Creates(newEventPaymentsEvent);
+
+                if (createdEventPayments == false)
+                {
+                    transaction.Rollback();
+                    return 0;
+                }
+            }
+
+            transaction.Commit();
+
+        }
+        catch
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
+
+        return 1;
+    }
+
+
+    public string PublishEvent(Guid eventGuid)
+    {
+        var getEvent = _eventRepository.GetByGuid(eventGuid);
+
+        if (getEvent is null)
+        {
+            return "0";
+        }
+
+        getEvent.IsActive = true;
+
+        var updatedEvent = _eventRepository.Update(getEvent);
+
+        if (updatedEvent is false)
+        {
+            return "0";
+        }
+
+        return getEvent.Name;
     }
 
     //public List<EventsDto>? GetExternalEvents(string type = "")
