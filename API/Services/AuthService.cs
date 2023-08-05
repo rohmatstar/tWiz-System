@@ -156,11 +156,6 @@ public class AuthService
 
     public string Login(LoginDto loginDto)
     {
-        /*var emailEmp = _employeeRepository.GetByEmail(login.Email);
-        if (emailEmp == null)
-        {
-            return "0";
-        }*/
 
         var account = _accountRepository.GetByEmail(loginDto.Email);
         if (account is null)
@@ -181,15 +176,6 @@ public class AuthService
             new Claim("Email", loginDto.Email)
         };
 
-        //var getAccountName = _companyRepository.GetName(account.Guid);
-        //if (getAccountName is null)
-        //{
-        //    getAccountName = (IEnumerable<Company>?)_employeeRepository.GetName(account.Guid);
-        //}
-        //var accountName = (from an in getAccountName select an.Name);
-
-        //claims.AddRange(accountName.Select(name => new Claim(ClaimTypes.Name, name)));
-
         var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == account.Guid);
         var employee = _employeeRepository.GetAll().FirstOrDefault(e => e.AccountGuid == account.Guid);
         var sysAdmin = _sysAdminRepository.GetAll().FirstOrDefault(sa => sa.AccountGuid == account.Guid);
@@ -199,7 +185,7 @@ public class AuthService
             claims.Add(new Claim(ClaimTypes.Name, company.Name));
             var payment = _registerPaymentRepository.GetAll().FirstOrDefault(c => c.CompanyGuid == company.Guid);
 
-            if (payment == null || payment.StatusPayment == 0)
+            if (payment == null || payment.StatusPayment != StatusPayment.Paid)
             {
                 return "-3";
             }
@@ -215,9 +201,6 @@ public class AuthService
         else
         {
             return "0";
-
-            claims.Add(new Claim(ClaimTypes.Name, company.Name));
-            claims.Add(new Claim("UserGuid", company.Guid.ToString())); // Add Company Guid to Check Register Payment when signed in
         }
 
         var getAccountRole = _accountRoleRepository.GetByGuidCompany(account.Guid);
