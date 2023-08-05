@@ -116,21 +116,23 @@
     }
 }
 
-@if(role == RoleLevel.Company.ToString()){
-    <div class="col-12">
-        <div class="alert alert-warning border border-warning" role="alert">The <strong>Published Event</strong> cannot be changed at all, even deletion. Once an event is published, all its details and content are considered final and cannot be change any way.</div>
-    </div>
+@if(role == RoleLevel.Company.ToString()){    
+        <div class="col-12">
+            <div class="alert alert-warning border border-warning" role="alert">The <strong>Published Event</strong> cannot be changed at all, even deletion. Once an event is published, all its details and content are considered final and cannot be change any way.</div>
+        </div>        
 }
 
 <div id="event-list" class="row">
 @if (Model is not null)
 {
-    foreach (var getEvent in Model)
+        var i = -1;
+        foreach (var getEvent in Model)
     {
+            i++;
             var imageUrl = "";
             @if(getEvent.Thumbnail is null || getEvent.Thumbnail == "")
             {
-                imageUrl = "../assets/img/elements/4.jpg";
+                imageUrl = "../assets/img/elements/12.jpg";
             }
             else
             {
@@ -179,7 +181,7 @@
                                     >
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuReference">
-                                        <li><a class="dropdown-item" href="#" onclick="showEvent(${index})">
+                                        <li><a class="dropdown-item" href="#" onclick="showEvent(@(i))">
                                                 <i class="bx bx-detail me-2"></i> See Details</a></li>
                                         <li><a class="dropdown-item" href="#">
                                                 <i class="bx bx-pencil me-2"></i> Edit Event</a></li>
@@ -199,7 +201,7 @@
                             }
                             else
                             {
-                                <a href="#" onclick="showEvent(${index})" class="btn btn-primary">Details</a>
+                                    <a href="#" onclick="showEvent(@(i))" class="btn btn-primary">Details</a>
                             }
 
                         </div>
@@ -549,37 +551,45 @@
         renderEvents();
 
         function showEvent(index) {
-            const event = eventData[index];
+            const event = eventsJson.Data[index];
 
-            let eventName = event.name;
+            let eventName = event.Name;
 
-            if (event.published) {
-                eventName = event.name + `<button type="button" class="badge ms-2 badge-center rounded-pill bg-info border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true" title="Published"> <i class="bx bx-check"></i> </button>`;
+            if (event.PublicationStatus) {
+                eventName = event.Name + `<button type="button" class="badge ms-2 badge-center rounded-pill bg-info border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true" title="Published"> <i class="bx bx-check"></i> </button>`;
+            }
+
+            let imageUrl = "";
+
+            if (event.Thumbnail == null || event.Thumbnail == ""){
+                imageUrl = "../assets/img/elements/12.jpg";
+            }else{
+                imageUrl = `@(IMAGE_URL)${event.Thumbnail}`;
             }
 
             $("#event-detail-name").html(eventName);
-            $("#event-detail-thumbnail").attr("src", event.thumbnail).attr("alt", event.name + " by " + event.organizer);
-            $("#event-detail-description").text(event.description);
-            $("#event-detail-startdate").text(event.startDate);
-            $("#event-detail-enddate").text(event.endDate);
-            $("#event-detail-organizer").text(event.organizer);
-            $("#event-detail-place").text(event.place);
-            $("#event-detail-joined").text(event.joined);
-            $("#event-detail-promo").text(event.price + upperPrice);
-            $("#event-detail-price").text(event.price);
+            $("#event-detail-thumbnail").attr("src", imageUrl).attr("alt", event.Name + " by " + event.Organizer);
+            $("#event-detail-description").text(event.Description);
+            $("#event-detail-startdate").text(event.StartDate);
+            $("#event-detail-enddate").text(event.EndDate);
+            $("#event-detail-organizer").text(event.Organizer);
+            $("#event-detail-place").text(event.Place);
+            $("#event-detail-joined").text(event.Joined);
+            $("#event-detail-promo").text(event.Price + upperPrice);
+            $("#event-detail-price").text(event.Price);
 
-            $("#event-detail-type").text(event.type);
-            $("#event-detail-category").text(event.category);
-            $("#event-detail-status").text(event.status);
-            $("#event-detail-payment").text(event.payment);
+            $("#event-detail-type").text(event.Visibility);
+            $("#event-detail-category").text(event.Category);
+            $("#event-detail-status").text(event.PlaceType);
+            $("#event-detail-payment").text(event.Payment);
 
-            if(event.published){
+            if(event.PublicationStatus == "published"){
                 $("#event-detail-joined").parent().hide();
-                $("#event-detail-quota").text(event.quota);
+                $("#event-detail-quota").text(event.Quota);
             }
             else{
                 $("#event-detail-joined").parent().show();
-                $("#event-detail-quota").text(event.quota - event.joined);
+                $("#event-detail-quota").text(event.Quota - event.Joined);
             }
 
             $("#event-detail").modal('show');
@@ -590,20 +600,6 @@
         }
      
 
-    </script>
-
-    <script>
-        $("#btn-apply").on("click", function(e){
-            //e.preventDefault();
-            //const publication = $("input[name='publication']:checked").val() ?? "";
-            //const visibility = $("input[name='visibility']:checked").val() ?? "";
-            //const placeType = $("input[name='type']:checked").val() ?? "";
-            //const sortBy = $("#sort-by").val() ?? "";
-
-            //const queryUrl = `?publication_status=${publication}&visibility=${visibility}&place_type=${placeType}&sort_by=${sortBy}`;
-            //console.log(queryUrl);
-        })
-        
     </script>
 
     <script>
