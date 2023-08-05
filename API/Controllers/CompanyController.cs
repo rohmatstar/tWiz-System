@@ -1,5 +1,6 @@
 ﻿using API.DTOs.Companies;
 using API.Services;
+using API.Utilities.Enums;
 using API.Utilities.Handlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("api/companies")]
+[Authorize]
 public class CompanyController : ControllerBase
 {
     private readonly CompanyService _service;
@@ -19,6 +21,7 @@ public class CompanyController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}")]
     public IActionResult GetAll()
     {
         var entities = _service.GetCompanies();
@@ -43,7 +46,6 @@ public class CompanyController : ControllerBase
     }
 
     [HttpGet("{guid}")]
-    [AllowAnonymous]
     public IActionResult GetByGuid(Guid guid)
     {
         var company = _service.GetCompany(guid);

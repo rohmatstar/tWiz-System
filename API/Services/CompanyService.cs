@@ -2,6 +2,8 @@
 using API.Data;
 using API.DTOs.Companies;
 using API.Models;
+using API.Utilities.Enums;
+using System.Security.Claims;
 
 namespace API.Services;
 
@@ -13,8 +15,9 @@ public class CompanyService
     private readonly IAccountRoleRepository _accountRoleRepository;
     private readonly IRoleRepository _roleRepository;
     private readonly TwizDbContext _twizDbContext;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public CompanyService(IEmployeeRepository employeeRepository, ICompanyRepository companyRepository, IAccountRepository accountRepository, IAccountRoleRepository accountRoleRepository, IRoleRepository roleRepository, TwizDbContext twizDbContext)
+    public CompanyService(IEmployeeRepository employeeRepository, ICompanyRepository companyRepository, IAccountRepository accountRepository, IAccountRoleRepository accountRoleRepository, IRoleRepository roleRepository, TwizDbContext twizDbContext, IHttpContextAccessor httpContextAccessor)
     {
         _employeeRepository = employeeRepository;
         _companyRepository = companyRepository;
@@ -22,6 +25,7 @@ public class CompanyService
         _accountRoleRepository = accountRoleRepository;
         _roleRepository = roleRepository;
         _twizDbContext = twizDbContext;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public IEnumerable<GetCompanyDto>? GetCompanies()
@@ -31,6 +35,30 @@ public class CompanyService
         {
             return null;
         }
+
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        if (accountGuid is null)
+        {
+            return null;
+        }
+
+        if (userRole == nameof(RoleLevel.Company))
+        {
+            var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid));
+
+            if (company is null)
+            {
+                return null;
+            }
+
+            companies = companies.Where(c => c.Guid != company.Guid).ToList();
+        }
+
+
         var toDto = companies.Select(company => new GetCompanyDto
         {
             Guid = company.Guid,
