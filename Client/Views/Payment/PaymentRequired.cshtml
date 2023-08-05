@@ -61,11 +61,11 @@
                 <form class="mt-3" action="">
                     <div class="row">
                         <div class="col">
-                            <input class="form-control" type="file">
+                            <input class="form-control" type="file" id="fileInput" required>
                         </div>
 
                         <div class="col-auto ps-0">
-                            <button type="submit" class="btn btn-primary">Send</button>
+                            <button type="submit" class="btn btn-primary" id="submitBtnrp">Send</button>
                         </div>
                     </div>
                 </form>
@@ -78,3 +78,83 @@
         </div>
     </div>
 </div>
+
+@section Scripts
+{
+    <script>
+        document.getElementById("submitBtnrp").addEventListener("click", function (e) {
+            e.preventDefault();
+            const fileInput = document.getElementById("fileInput");
+            const file = fileInput.files[0];
+
+            if (file) {
+                const formData = new FormData();
+                formData.append("PaymentImage", file);
+                formData.append("Guid", "@payment.Guid");
+
+                // Ganti "http://example.com/upload" dengan URL API Anda
+                const apiUrl = "https://localhost:7249/api/register-payments/payment-submission";
+
+                fetch(apiUrl, {
+                    method: "PUT",
+                    body: formData,
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        // Lakukan sesuatu dengan data respons dari API jika diperlukan
+                        console.log(data);
+                        console.log("helloworld1")
+                        let timerInterval
+                        Swal.fire({
+                            title: 'Auto close alert!',
+                            html: 'I will close in <b></b> milliseconds.',
+                            timer: 2000,
+                            timerProgressBar: true,
+                            didOpen: () => {
+                                Swal.showLoading()
+                                const b = Swal.getHtmlContainer().querySelector('b')
+                                timerInterval = setInterval(() => {
+                                    b.textContent = Swal.getTimerLeft()
+                                }, 100)
+                            },
+                            willClose: () => {
+                                clearInterval(timerInterval)
+                            }
+                        }).then((result) => {
+                            /* Read more about handling dismissals below */
+                            if (result.dismiss === Swal.DismissReason.timer) {
+                                console.log('I was closed by the timer')
+                            }
+                        })
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Oops...',
+                            text: 'File Success To Uploaded!',
+                        }).then((result)=>{
+                            if (result.isConfirmed) {
+                                redirectToSignIn();
+                            }
+                        });
+                        function redirectToSignIn() {
+                            window.location.href = 'https://localhost:7153/Auth/SignInAsCompany';
+                        }
+                    })
+                    .catch((error) => {
+                        // Tangani kesalahan jika terjadi
+                        console.error("Error:", error);
+                        console.log("helloworld2")
+                    });
+            } else {
+                // Tampilkan pesan kesalahan jika file belum dipilih
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please Upload Your File!',
+                    footer: '<a href="">Why do I have this issue?</a>'
+                })
+            }
+        });
+    </script>
+
+}
