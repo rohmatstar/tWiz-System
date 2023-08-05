@@ -1,4 +1,5 @@
-﻿@using Newtonsoft.Json;
+﻿@using Client.Utilities.Enums;
+@using Newtonsoft.Json;
 @model List<Client.DTOs.RegisterPayments.GetRegisterPaymentDto>
 @{
     var toast = TempData["toast"] as dynamic;
@@ -31,7 +32,7 @@
 
 <div class="col-12">
     <div class="card">
-        <div class="px-3">
+        <div class="p-3">
             <div class="table-responsive text-nowrap">
                 <table id="data" class="table table-hover"></table>
             </div>
@@ -39,82 +40,176 @@
     </div>
 </div>
 
+<div class="modal fade" id="paymentDetail" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="paymentDetailLabel">Register Payment Detail</h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table id="dataDetail" class="table w-100 table-hover"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
+        
+        const dataSource = @Html.Raw(JsonConvert.SerializeObject(Model));
+        let pending = "@StatusPayment.Pending.ToString().ToLower()";
+        let needSubmission = "Need Submission";
+        let checking = "@StatusPayment.Checking.ToString().ToLower()";
+        let needApproval = "Need Approval";
+        let paid = "@StatusPayment.Paid.ToString().ToLower()";
+
         $(document).ready(function () {
-            const data = [
-                {
-                    "nik": "A123456",
-                    "fullName": "John Doe",
-                    "birthDate": "1995-05-10T00:00:00Z",
-                    "gender": "Male",
-                    "hiringDate": "2022-09-15T00:00:00Z",
-                    "phoneNumber": "081234567890",
-                    "email": "john.doe@example.com"
-                },
-                {
-                    "nik": "B987654",
-                    "fullName": "Jane Smith",
-                    "birthDate": "1990-12-28T00:00:00Z",
-                    "gender": "Female",
-                    "hiringDate": "2023-01-20T00:00:00Z",
-                    "phoneNumber": "087654321098",
-                    "email": "jane.smith@example.com"
-                },
-                {
-                    "nik": "C456789",
-                    "fullName": "Michael Johnson",
-                    "birthDate": "1988-09-03T00:00:00Z",
-                    "gender": "Male",
-                    "hiringDate": "2021-07-05T00:00:00Z",
-                    "phoneNumber": "089876543210",
-                    "email": "michael.johnson@example.com"
-                },
-                {
-                    "nik": "D246813",
-                    "fullName": "Emily Lee",
-                    "birthDate": "1992-04-15T00:00:00Z",
-                    "gender": "Female",
-                    "hiringDate": "2023-03-18T00:00:00Z",
-                    "phoneNumber": "082345678901",
-                    "email": "emily.lee@example.com"
-                },
-                {
-                    "nik": "E135792",
-                    "fullName": "Robert Williams",
-                    "birthDate": "1985-11-20T00:00:00Z",
-                    "gender": "Male",
-                    "hiringDate": "2020-12-10T00:00:00Z",
-                    "phoneNumber": "083210987654",
-                    "email": "robert.williams@example.com"
-                }
-            ];
-
-            //if (Model != null) {
-
-                $('#data').DataTable({
-                    data: @Html.Raw(JsonConvert.SerializeObject(Model)),
-                    columns: [
-                        { title: 'Company', data: 'CompanyName' },
-                        { title: 'Email', data: 'CompanyEmail' },
-                        { title: 'VA Number', data: 'VaNumber' },
-                        { title: 'Bank', data: 'BankName' },
-                        { title: 'Price', data: 'Price' },
-                        { title: 'Attachment', data: 'PaymentImage' },
-                        { title: 'Validation', data: 'ValidationStatus' },
-                        { title: 'Status', data: 'StatusPayment' },
-                        {
-                            title: 'Action',
-                            data: null,
-                            render: function (data, type, row) {
-                                return '<button class="btn btn-sm btn-success me-2" onclick="editData(\'' + data.guid + '\')">Approve</button>' +
-                                    '<button class="btn btn-sm btn-danger me-2" onclick="deleteData(\'' + data.guid + '\')">Reject</button>';
+            var dataTable = $('#data').DataTable({
+                data: dataSource,
+                columns: [
+                    { title: 'Company', data: 'CompanyName' },
+                    { title: 'Email', data: 'CompanyEmail' },
+                    { title: 'Attachment', data: 'PaymentImage' },
+                    {
+                        title: 'Status',
+                        data: null,
+                        render: function (data, type, row) {
+                            let status = "";
+                            if(data.StatusPayment == pending){
+                                status = needSubmission;
                             }
+                            else if(data.StatusPayment == checking){
+                                status = needApproval;
+                            }
+                            else{
+                                status = paid;
+                            }
+                            return '<span class="text-capitalize" id="status-' +data.Guid+ '">' + status + '</span>';
                         }
-                    ]
-                });
+                    },
+                    {
+                        title: 'Action',
+                        data: null,
+                        render: function (data, type, row) {
+                            let actions = '<button class="btn btn-sm btn-secondary me-2" onclick="detailRegisterPayment(\'' + data.Guid + '\')"><i class="bx bx-dots-horizontal"></i></button>';
 
-            //}
+                            if(data.StatusPayment == checking){
+                                actions += '<button id="approve-btn-' + data.Guid + '" class="btn btn-sm btn-success me-2" onclick="approveRegisterPayment(this, \'' + data.Guid + '\')"><i class="bx bx-check"></i></button>' +
+                                    '<button id="reject-btn-' + data.Guid + '" class="btn btn-sm btn-danger me-2" onclick="rejectRegisterPayment(this, \'' + data.Guid + '\')"><i class="bx bx-x-circle"></i></button>';
+                            }
+
+                            return actions;
+                        }
+                    }
+                ]
+            });
         });
+
+        const dataTableDetail = $('#dataDetail').DataTable({
+            data: dataSource,
+            columns: [
+                { title: 'Company', data: 'CompanyName' },
+                { title: 'Email', data: 'CompanyEmail' },
+                { title: 'VA Number', data: 'VaNumber' },
+                { title: 'Bank', data: 'BankName' },
+                { title: 'Price', data: 'Price' },
+                { title: 'Attachment', data: 'PaymentImage' },
+                { title: 'Validation', data: 'ValidationStatus' },
+                {
+                    title: 'Status',
+                    data: null,
+                    render: function (data, type, row) {
+                        let status = "";
+                        if (data.StatusPayment == pending) {
+                            status = needSubmission;
+                        }
+                        else if (data.StatusPayment == checking) {
+                            status = needApproval;
+                        }
+                        else {
+                            status = paid;
+                        }
+                        return '<span class="text-capitalize" id="status-' + data.Guid + '">' + status + '</span>';
+                    }
+                },
+            ]
+        });
+
+        function detailRegisterPayment(guid) {
+            const filteredData = [];
+            for (let i = 0; i < dataSource.length; i++) {
+                if (dataSource[i].Guid === guid) {
+                    filteredData.push(dataSource[i]);
+
+                    dataTableDetail.clear().rows.add(filteredData).draw();
+
+                    $("#paymentDetail").modal("show");
+                }
+            }
+        }
+
+        function approveRegisterPayment(obj, guid){
+            var innerHTML = obj.innerHTML;
+            $("#approve-btn-" + guid).html('<i class="bx bx-loader-alt animate__loading"></i>');
+
+            $.ajax({
+                url: 'https://localhost:7249/api/register-payments/aprove',
+                method: 'PUT',
+                data: JSON.stringify({
+                    "guid": guid
+                }),
+                contentType: 'application/json',
+                success: function (response) {
+                    console.log("Request successful:", response);
+
+                    if (response.code === 200) {
+                        $("#approve-btn-" + guid + ", #reject-btn-" + guid).remove();
+                        $("#status-" + guid).text(paid);
+                    } else {
+                        console.log(response.message);
+                    }
+
+                    $("#approve-btn-" + guid).html(innerHTML);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("Error:", textStatus, errorThrown);
+                }
+            });
+        }
+
+        function rejectRegisterPayment(obj, guid) {
+            var innerHTML = obj.innerHTML;
+            $("#reject-btn-" + guid).html('<i class="bx bx-loader-alt animate__loading"></i>');
+
+            $.ajax({
+                url: 'https://localhost:7249/api/register-payments/reject',
+                method: 'PUT',
+                data: JSON.stringify({
+                    "guid": guid
+                }),
+                contentType: 'application/json',
+                success: function (response) {
+                    console.log("Request successful:", response);
+
+                    if (response.code === 200) {
+                        $("#approve-btn-" + guid + ", #reject-btn-" + guid).remove();
+                        $("#status-" + guid).text(needSubmission);
+                    } else {
+                        console.log(response.message);
+                    }
+
+                    $("#reject-btn-" + guid).html(innerHTML);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("Error:", textStatus, errorThrown);
+                }
+            });
+        }
     </script>
 }
