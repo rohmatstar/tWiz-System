@@ -128,6 +128,7 @@
         var i = -1;
         foreach (var getEvent in Model)
     {
+        
             i++;
             var imageUrl = "";
             @if(getEvent.Thumbnail is null || getEvent.Thumbnail == "")
@@ -185,7 +186,7 @@
                                                 <i class="bx bx-detail me-2"></i> See Details</a></li>
                                         <li><a class="dropdown-item" href="#">
                                                 <i class="bx bx-pencil me-2"></i> Edit Event</a></li>
-                                        <li><a href="#" class="dropdown-item" onclick="showParticipants(${index})"><i class="bx bx-group me-2"></i> Edit Participant</a></li>
+                                        <li><a href="#" class="dropdown-item" onclick="showParticipants('@(getEvent.Guid)', '@(i)')"><i class="bx bx-group me-2"></i> Edit Participant</a></li>
                                         <li>
                                             <div class="dropdown-item">
                                                 <a class="btn btn-primary text-white btn-block w-100">Publish</a>
@@ -595,8 +596,68 @@
             $("#event-detail").modal('show');
         }
 
-        function showParticipants(index) {
+        async function showParticipants(eventGuid, indexEvent) {
+            console.log(eventGuid);
+            const event = eventsJson.Data[indexEvent];
+
+            const responseCompanyParticipants = await GetCompanyParticipantEvent(eventGuid);
+            const responseEmployeeParticipants = await GetEmployeeParticipantEvent(eventGuid);
+            let companyParticipantsEvent = responseCompanyParticipants.data;
+            let employeeParticipantsEvent = responseEmployeeParticipants.data;
+
+            console.log(responseCompanyParticipants);
+            console.log(companyParticipantsEvent);
+
+            let companyParticipantEventGuids = companyParticipantsEvent.map(cpe => cpe.companyGuid);
+            let employeeParticipantEventGuids = employeeParticipantsEvent.map(epe => epe.employeeGuid);
+
+            console.log(companyParticipantEventGuids);
+            console.log(employeeParticipantEventGuids);
+
+
+            const companies = companiesJson.Data;
+            const employees = employeesJson.Data;
+
+            let listCompanyElem = "";
+
+            companies.forEach(company => {
+
+                console.log(company.Guid)
+                console.log(companyParticipantEventGuids.includes(company.Guid));
+                listCompanyElem += `
+                        <label class="list-group-item">
+                            <input class="form-check-input me-1" type="checkbox" value="${company.Guid}" ${companyParticipantEventGuids.includes(company.Guid) ? "checked" : ""} />
+                            Apple Inc.
+                        </label>
+                `
+            });
+
+            console.log(listCompanyElem);
+
+
             $("#edit-participants").modal('show');
+        }
+
+        const API_URL = "https://localhost:7249/api";
+
+        function GetCompanyParticipantEvent(eventGuid){
+            return  fetch(`${API_URL}/events/participants/companies/event?guid=${eventGuid}`,{
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer @(ViewData["token"])`,
+                },
+            }).then(response => response.json())
+            .catch(err => {message: "something error"});
+        }
+
+        function GetEmployeeParticipantEvent(eventGuid) {
+            return fetch(`${API_URL}/events/participants/employees/event?guid=${eventGuid}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer @(ViewData["token"])`,
+                },
+            }).then(response => response.json())
+                .catch(err => { message: "something error" });
         }
      
 
