@@ -614,6 +614,8 @@ public class EventService
         getEvent.Place = updateEventDto.Place;
         getEvent.CreatedBy = company.Guid;
 
+        var transaction = _twizDbContext.Database.BeginTransaction();
+
         var updated = _eventRepository.Update(getEvent);
         if (updated is false)
         {
@@ -623,7 +625,7 @@ public class EventService
 
         try
         {
-            if (oldImageUrl != "")
+            if (oldImageUrl != "" && oldImageUrl != null)
             {
                 var filePathOldImage = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", oldImageUrl.Replace("/", "\\"));
                 FileHandler.DeleteFileIfExist(filePathOldImage);
@@ -631,10 +633,12 @@ public class EventService
         }
         catch
         {
+            transaction.Rollback();
             FileHandler.DeleteFileIfExist(filePath);
             return -4;
         }
 
+        transaction.Commit();
         return 1;
     }
 

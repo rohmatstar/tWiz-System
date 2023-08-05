@@ -63,6 +63,9 @@ public class EventController : Controller
         var active = "event";
         ViewBag.Active = active;
 
+        var token = HttpContext?.Session.GetString("JWTToken") ?? "";
+        ViewData["token"] = token;
+
         var response = await _eventRepository.GetEvent(guid);
 
         var singleEvent = new GetEventDto();

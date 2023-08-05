@@ -121,7 +121,7 @@ public class EventController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(UpdateEventDto updateEventDto)
+    public async Task<IActionResult> Update([FromForm] UpdateEventDto updateEventDto)
     {
         var updatedEvent = await _eventService.UpdateEvent(updateEventDto);
         if (updatedEvent is -1)

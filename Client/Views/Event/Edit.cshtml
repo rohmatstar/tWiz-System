@@ -172,7 +172,22 @@
 
             console.log($("input[name='event-pay']:checked").val());
 
+            console.log("Guid : ", $("#eventGuid").val());
+
+            console.log("name : ", $("#event-name").val());
+            console.log("description : ", $("#description").val());
+            console.log("visibility : ", $("#visibility").val());
+            console.log("payment : ", $("input[name='event-pay']:checked").val());
+            console.log("price : ", $("#price").val());
+            console.log("category : ", $("#category").val());
+            console.log("place type : ", $("#place-type").val());
+            console.log("startdate : ", $("#start-date").val());
+            console.log("enddate : ", $("#end-date").val());
+            console.log("quota : ", $("#quota").val());
+            console.log("place : ", $("#place").val());
+
             const formData = new FormData();
+            formData.append("Guid", $("#eventGuid").val());
             formData.append('ThumbnailFile', file);
             formData.append("Name", $("#event-name").val());
             formData.append("Description", $("#description").val());
@@ -190,7 +205,7 @@
             //formData.append("Times", "10/02/2000");
 
             fetch('https://localhost:7249/api/events', {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Authorization': `Bearer @(ViewData["token"])`,
                 },
