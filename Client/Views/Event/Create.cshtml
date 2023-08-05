@@ -63,9 +63,7 @@
                                 <option value="public">Public</option>
                                 <option value="private">Private</option>
                             </select>
-                            <div class="form-text text-primary">
-                                If you choose 'Private', you'll have to insert the participant before publilshing
-                            </div>
+                            
                         </div>
                     </div>
 
@@ -185,7 +183,8 @@
 
             // Toggle the disabled attribute based on the selected radio button value
             if (selectedValue === 'free') {
-                textInput.prop('disabled', true); 
+                textInput.prop('disabled', true);
+                textInput.val("0");
             } else {
                 textInput.prop('disabled', false); 
             }

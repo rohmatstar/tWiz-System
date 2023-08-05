@@ -473,14 +473,14 @@ public class EventService
 
         var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
         var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
-        Console.WriteLine("Hello World 1");
+
         if (accountGuid is null)
         {
             return 0;
         }
 
         var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid));
-        Console.WriteLine("Hello World 2");
+
 
         if (company is null)
         {
