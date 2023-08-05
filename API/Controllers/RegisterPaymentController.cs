@@ -13,7 +13,7 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("api/register-payments")]
-[Authorize]
+/*[Authorize]*/
 public class RegisterPaymentController : ControllerBase
 {
     private readonly RegisterPaymentService _service;
@@ -27,7 +27,7 @@ public class RegisterPaymentController : ControllerBase
 
 
     [HttpGet]
-    [Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}")]
+    /*[Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}")]*/
     public IActionResult GetAll()
     {
         var entities = _service.GetRegisterPayments();
@@ -52,7 +52,7 @@ public class RegisterPaymentController : ControllerBase
     }
 
     [HttpGet("{guid}")]
-    [Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}, {nameof(RoleLevel.Company)}")]
+    /*[Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}, {nameof(RoleLevel.Company)}")]*/
     public IActionResult GetByGuid(Guid guid)
     {
         var registerpayment = _service.GetRegisterPayment(guid);
@@ -76,7 +76,7 @@ public class RegisterPaymentController : ControllerBase
     }
 
     [HttpGet("summary/{email}")]
-    [AllowAnonymous]
+    /*[AllowAnonymous]*/
     public IActionResult GetPaymentSummary(string email)
     {
         var payment = _paymentService.GetPaymentSummary(email);
@@ -296,7 +296,7 @@ public class RegisterPaymentController : ControllerBase
     }
 
     [HttpPut("aprove")]
-    [Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}")]
+    /*[Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}")]*/
     public IActionResult Aprove(AproveRegisterPaymentDto aproveRegisterPaymentDto)
     {
         var aprovedRegisterPaymentStatus = _service.AproveRegisterPayment(aproveRegisterPaymentDto);
@@ -321,7 +321,7 @@ public class RegisterPaymentController : ControllerBase
     }
 
     [HttpPut("reject")]
-    [Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}")]
+    /*[Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}")]*/
     public IActionResult Reject(AproveRegisterPaymentDto aproveRegisterPaymentDto)
     {
         var rejectedRegisterPaymentStatus = _service.RejectRegisterPayment(aproveRegisterPaymentDto);

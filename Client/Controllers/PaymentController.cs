@@ -19,6 +19,7 @@ namespace Client.Controllers
             _paymentRepository = paymentRepository;
         }
 
+        /* =========== View ============== */
         public async Task<IActionResult> PaymentRequired(string email)
         {
             var payment = await _paymentRepository.GetPaymentSummary(email);
@@ -29,6 +30,17 @@ namespace Client.Controllers
             TempData["payment"] = payment.Data;
             return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> RegisterPayment()
+        {
+            var active = "register_payment";
+            ViewBag.Active = active;
+
+            var payment = await _paymentRepository.GetRegisterPayments();
+            return View(payment.Data);
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

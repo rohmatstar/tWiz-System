@@ -156,11 +156,6 @@ public class AuthService
 
     public string Login(LoginDto loginDto)
     {
-        /*var emailEmp = _employeeRepository.GetByEmail(login.Email);
-        if (emailEmp == null)
-        {
-            return "0";
-        }*/
 
         var account = _accountRepository.GetByEmail(loginDto.Email);
         if (account is null)
@@ -180,15 +175,6 @@ public class AuthService
             new Claim("IsActive", account.IsActive.ToString()),
             new Claim("Email", loginDto.Email)
         };
-
-        //var getAccountName = _companyRepository.GetName(account.Guid);
-        //if (getAccountName is null)
-        //{
-        //    getAccountName = (IEnumerable<Company>?)_employeeRepository.GetName(account.Guid);
-        //}
-        //var accountName = (from an in getAccountName select an.Name);
-
-        //claims.AddRange(accountName.Select(name => new Claim(ClaimTypes.Name, name)));
 
         var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == account.Guid);
         var employee = _employeeRepository.GetAll().FirstOrDefault(e => e.AccountGuid == account.Guid);

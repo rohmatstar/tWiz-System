@@ -191,13 +191,13 @@
                         <li class="menu-item">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-credit-card-alt"></i>
-                                <div>Transaction</div>
+                                <div>Payment</div>
                             </a>
 
                             <ul class="menu-sub">
                                 <li class="menu-item">
                                     <a href="#" class="menu-link">
-                                        <div>Event Transaction</div>
+                                        <div>Event Payment</div>
                                     </a>
                                 </li>
                                 <li class="menu-item">
@@ -299,19 +299,19 @@
                             </ul>
                         </li>
 
-                        <li class="menu-item">
+                        <li class="menu-item @(active == "register_payment" || active == "need_approvals" ? "active open" : "")">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-credit-card-alt"></i>
-                                <div>Transaction</div>
+                                <div>Payment</div>
                             </a>
 
                             <ul class="menu-sub">
-                                <li class="menu-item">
-                                    <a href="#" class="menu-link">
-                                        <div>Register Transaction</div>
+                                <li class="menu-item @(active == "register_payment" ? "active" : "")">
+                                    <a asp-controller="Payment" asp-action="RegisterPayment" class="menu-link">
+                                        <div>Register Payment</div>
                                     </a>
                                 </li>
-                                <li class="menu-item">
+                                <li class="menu-item @(active == "need_approvals" ? "active" : "")">
                                     <a href="#" class="menu-link">
                                         <div>Need Approvals</div>
                                     </a>

@@ -7,5 +7,6 @@ namespace Client.Contracts
     public interface IPaymentRepository : IRepository<RegisterDto, string>
     {
         public Task<ResponseDto<PaymentSummaryDto>> GetPaymentSummary(string email);
+        public Task<ResponseListDto<GetRegisterPaymentDto>> GetRegisterPayments();
     }
 }
