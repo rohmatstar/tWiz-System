@@ -166,7 +166,7 @@ public class EventController : ControllerBase
 
         if (updatedEvent is 0)
         {
-            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            return StatusCode(StatusCodes.Status401Unauthorized, new ResponseHandler<string>
             {
                 Code = StatusCodes.Status400BadRequest,
                 Status = HttpStatusCode.Unauthorized.ToString(),
@@ -245,7 +245,7 @@ public class EventController : ControllerBase
             });
         }
 
-        return StatusCode(StatusCodes.Status403Forbidden, new ResponseHandler<string>
+        return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
         {
             Code = StatusCodes.Status400BadRequest,
             Status = HttpStatusCode.BadRequest.ToString(),
@@ -268,7 +268,7 @@ public class EventController : ControllerBase
             });
         }
 
-        return StatusCode(StatusCodes.Status403Forbidden, new ResponseHandler<string>
+        return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
         {
             Code = StatusCodes.Status400BadRequest,
             Status = HttpStatusCode.BadRequest.ToString(),
