@@ -679,13 +679,20 @@ public class EventService
             return null;
         }
 
+        if (getEvent.Thumbnail != null && getEvent.Thumbnail != "")
+        {
+            var filePathImage = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", getEvent.Thumbnail.Replace("/", "\\"));
+            FileHandler.DeleteFileIfExist(filePathImage);
+        }
 
-        var isDelete = _eventRepository.Delete(getEvent!);
+
+        var isDelete = _eventRepository.Delete(getEvent);
         if (!isDelete)
         {
             transaction.Rollback();
             return null;
         }
+
 
         var deletedEvent = new EventsDto
         {
@@ -704,6 +711,8 @@ public class EventService
             Place = getEvent.Place!,
             CreatedBy = getEvent.CreatedBy
         };
+
+        transaction.Commit();
 
         return deletedEvent;
     }
