@@ -613,6 +613,7 @@ public class EventService
         getEvent.Quota = updateEventDto.Quota;
         getEvent.Place = updateEventDto.Place;
         getEvent.CreatedBy = company.Guid;
+        getEvent.ModifiedDate = DateTime.Now;
 
         var transaction = _twizDbContext.Database.BeginTransaction();
 
@@ -1019,6 +1020,28 @@ public class EventService
 
 
         return 1;
+    }
+
+
+    public string PublishEvent(Guid eventGuid)
+    {
+        var getEvent = _eventRepository.GetByGuid(eventGuid);
+
+        if (getEvent is null)
+        {
+            return "0";
+        }
+
+        getEvent.IsActive = true;
+
+        var updatedEvent = _eventRepository.Update(getEvent);
+
+        if (updatedEvent is false)
+        {
+            return "0";
+        }
+
+        return getEvent.Name;
     }
 
     //public List<EventsDto>? GetExternalEvents(string type = "")

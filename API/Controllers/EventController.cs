@@ -237,7 +237,7 @@ public class EventController : ControllerBase
         var internalEvents = _eventService.UpdateParticipantsEvent(updateParticipantsEventDto);
         if (internalEvents != 0)
         {
-            return Ok(new ResponseHandler<List<GetEventDto>>
+            return Ok(new ResponseHandler<string>
             {
                 Code = StatusCodes.Status200OK,
                 Status = HttpStatusCode.OK.ToString(),
@@ -250,6 +250,30 @@ public class EventController : ControllerBase
             Code = StatusCodes.Status400BadRequest,
             Status = HttpStatusCode.BadRequest.ToString(),
             Message = "Check your data"
+        });
+    }
+
+    [HttpPut("publish")]
+    public IActionResult PublishEvent(Guid guid)
+    {
+        var result = _eventService.PublishEvent(guid);
+        if (result != "0")
+        {
+            return Ok(new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success",
+                Data = result // result = nama event
+            });
+        }
+
+        return StatusCode(StatusCodes.Status403Forbidden, new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status400BadRequest,
+            Status = HttpStatusCode.BadRequest.ToString(),
+            Message = "Check your data",
+            Data = null
         });
     }
 
