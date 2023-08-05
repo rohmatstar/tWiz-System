@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Client.DTOs.Employees.CreateEmployeeDto
+@{
+    var jwtToken = Context.Session.GetString("JWTToken")!.ToString();
     var toast = TempData["toast"] as dynamic;
 
     ViewData["Title"] = "Create Employee";
@@ -33,30 +35,36 @@
         <div class="card-body">
             <div class="row align-items-center">
                 <div class="col-6 border-end">
-                    <form method="post" action="">
-
+                    <form id="employeeForm" method="post" action="api/employees">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <div class="form-floating mb-3">
                             <input type="text"
                                    class="form-control"
                                    id="nik"
+                                   asp-for="Nik"
                                    placeholder="Enter NIK" />
-                            <label for="nik">NIK</label>
+                            <label asp-for="Nik">NIK</label>
+                            <span asp-validation-for="Nik" class="text-danger"></span>
                         </div>
 
                         <div class="form-floating mb-3">
                             <input type="text"
                                    class="form-control"
                                    id="fullName"
+                                   asp-for="FullName"
                                    placeholder="Enter Full Name" />
-                            <label for="fullName">Full Name</label>
+                            <label asp-for="FullName">Full Name</label>
+                            <span asp-validation-for="FullName" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label for="birthDate">Birth Date</label>
+                            <label asp-for="BirthDate">Birth Date</label>
                             <input type="date"
                                    class="form-control"
                                    id="birthDate"
-                                   value="1995-05-10" />
+                                   asp-for="BirthDate"
+                                   value="" />
+                            <span asp-validation-for="BirthDate" class="text-danger"></span>
                         </div>
 
                         <small class="text-light fw-semibold">Gender</small>
@@ -64,7 +72,8 @@
                             <input name="gender"
                                    class="form-check-input"
                                    type="radio"
-                                   value=""
+                                   value="Male"
+                                   asp-for="Gender"
                                    id="gender_male" />
                             <label class="form-check-label" for="gender_male"> Male </label>
                         </div>
@@ -72,30 +81,48 @@
                             <input name="gender"
                                    class="form-check-input"
                                    type="radio"
-                                   value=""
+                                   value="Female"
+                                   asp-for="Gender"
                                    id="gender_female" />
                             <label class="form-check-label" for="gender_female"> Female </label>
+
+                            <span asp-validation-for="Gender" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="HiringDate">Hired Date</label>
+                            <input type="date"
+                                   class="form-control"
+                                   id="hiringDate"
+                                   asp-for="HiringDate"
+                                   value="" />
+                            <span asp-validation-for="HiringDate" class="text-danger"></span>
                         </div>
 
                         <div class="form-floating mb-3">
                             <input type="number"
                                    class="form-control"
                                    id="phoneNumber"
+                                   asp-for="PhoneNumber"
                                    placeholder="Enter Phone Number"
                                    maxlength="15" />
-                            <label for="phoneNumber">Phone Number</label>
+                            <label asp-for="PhoneNumber">Phone Number</label>
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                         </div>
 
                         <div class="form-floating mb-3">
                             <input type="email"
                                    class="form-control"
                                    id="email"
+                                   asp-for="Email"
                                    placeholder="Enter Email Address" />
-                            <label for="email">Email</label>
+                            <label asp-for="Email">Email</label>
+                            <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
 
-                        <div class="text-end">
-                            <button type="submit" class="btn btn-primary">Save</button>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div id="invalid" class="text-danger"></div>
+                            <button id="save-btn" type="submit" class="btn btn-primary">Save</button>
                         </div>
 
                     </form>
@@ -120,5 +147,51 @@
 </div>
 
 @section Scripts{
+    <script>
+    $("#employeeForm").submit(function(e){
+        e.preventDefault();
+        $("#invalid").text("");
+        var innerHTML = $("#save-btn").html();
+        $("#save-btn").html('<i class="bx bx-loader-alt animate__loading"></i>').prop("disabled", true);
 
+        var formData = {};
+        $.each($(this).serializeArray(), function (index, field) {
+            formData[field.name] = field.value;
+        });
+        var jsonData = JSON.stringify(formData);
+
+        $.ajax({
+            url: 'https://localhost:7249/api/employees',
+            method: 'POST',
+            contentType: 'application/json',
+            data: jsonData,
+            headers: {
+                'Authorization': 'Bearer ' + "@jwtToken"
+            },
+            success: function (response) {
+                if (response.code === 200) {
+                    Swal.fire(
+                        'Changes Saved!',
+                        'Employee Data with NIK ' + $("#nik").val() + ' Successfully Store into Database',
+                        'success'
+                    );
+                        $("#employeeForm").trigger("reset");
+                } else {
+                    Swal.fire(
+                        'Failed to Save',
+                        'Error ' + response.code + '! ' + response.message,
+                        'error'
+                    );
+                }
+
+                    $("#save-btn").html(innerHTML).prop("disabled", false);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error:", jqXHR, textStatus, errorThrown);
+                $("#invalid").text("Failed to save, check your input and try again");
+                $("#save-btn").html(innerHTML).prop("disabled", false);
+            }
+        });
+    });
+    </script>
 }
