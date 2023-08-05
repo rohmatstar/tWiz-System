@@ -170,9 +170,9 @@ public class EventService
             }
 
         }
-        else
+        else if (userRole == nameof(RoleLevel.SysAdmin))
         {
-            return null;
+            userEvents = filterEvents;
         }
 
         return userEvents;

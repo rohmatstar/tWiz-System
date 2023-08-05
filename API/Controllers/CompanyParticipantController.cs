@@ -161,7 +161,7 @@ public class CompanyParticipantController : ControllerBase
     }
 
     [HttpGet("event")]
-    [Authorize(Roles = $"{nameof(RoleLevel.Company)}")]
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}")]
     public IActionResult GetCompanyParticipantsByEvent([FromQuery] Guid guid)
     {
         var companyParticipants = _service.GetCompanyParticipantsByEvent(guid);
