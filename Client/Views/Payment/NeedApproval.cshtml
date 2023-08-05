@@ -1,0 +1,233 @@
+﻿@using Client.Utilities.Enums;
+@using Newtonsoft.Json;
+@model List<Client.DTOs.RegisterPayments.GetRegisterPaymentDto>
+@{
+    var toast = TempData["toast"] as dynamic;
+
+    ViewData["Title"] = "Register Payment Need Approvals";
+    Layout = "_LayoutUser";
+}
+
+@section Filter{
+    
+}
+
+@section Toast{
+    @if (toast != null)
+    {
+        var toastColor = toast.Color ?? "secondary";
+        var toastClass = $"bs-toast toast toast-placement-ex m-2 fade bg-{toastColor} top-0 start-50 translate-middle-x";
+
+        <div class="@toastClass" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+            <div class="toast-header">
+                <i class="bx bx-bell me-2"></i>
+                <div class="me-auto fw-semibold">@toast.Title</div>
+            </div>
+            <div class="toast-body">
+                @toast.Subtitle
+            </div>
+        </div>
+    }
+}
+
+<div class="col-12">
+    <div class="card">
+        <div class="p-3">
+            <div class="table-responsive text-nowrap">
+                <table id="data" class="table table-hover"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="paymentDetail" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="paymentDetailLabel">Register Payment Detail</h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table id="dataDetail" class="table w-100 table-hover"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        
+        const dataSource = @Html.Raw(JsonConvert.SerializeObject(Model));
+        let pending = "@StatusPayment.Pending.ToString().ToLower()";
+        let needSubmission = "Need Submission";
+        let checking = "@StatusPayment.Checking.ToString().ToLower()";
+        let needApproval = "Need Approval";
+        let paid = "@StatusPayment.Paid.ToString().ToLower()";
+
+        $(document).ready(function () {
+            var dataTable = $('#data').DataTable({
+                data: dataSource,
+                columns: [
+                    { title: 'Company', data: 'CompanyName' },
+                    { title: 'Email', data: 'CompanyEmail' },
+                    { title: 'Attachment', data: 'PaymentImage' },
+                    {
+                        title: 'Status',
+                        data: null,
+                        render: function (data, type, row) {
+                            let status = "";
+                            if(data.StatusPayment == pending){
+                                status = needSubmission;
+                            }
+                            else if(data.StatusPayment == checking){
+                                status = needApproval;
+                            }
+                            else{
+                                status = paid;
+                            }
+                            return '<span class="text-capitalize" id="status-' +data.Guid+ '">' + status + '</span>';
+                        }
+                    },
+                    {
+                        title: 'Action',
+                        data: null,
+                        render: function (data, type, row) {
+                            let actions = '<button class="btn btn-sm btn-secondary me-2" onclick="detailRegisterPayment(\'' + data.Guid + '\')"><i class="bx bx-dots-horizontal"></i></button>';
+
+                            if(data.StatusPayment == checking){
+                                actions += '<button id="approve-btn-' + data.Guid + '" class="btn btn-sm btn-success me-2" onclick="approveRegisterPayment(this, \'' + data.Guid + '\')"><i class="bx bx-check"></i></button>' +
+                                    '<button id="reject-btn-' + data.Guid + '" class="btn btn-sm btn-danger me-2" onclick="rejectRegisterPayment(this, \'' + data.Guid + '\')"><i class="bx bx-x-circle"></i></button>';
+                            }
+
+                            return actions;
+                        }
+                    }
+                ]
+            });
+
+            const needApprovalData = [];
+            for (let i = 0; i < dataSource.length; i++) {
+                if (dataSource[i].StatusPayment === checking) {
+                    needApprovalData.push(dataSource[i]);
+                }
+            }
+            dataTable.clear().rows.add(needApprovalData).draw();
+        });
+
+        const dataTableDetail = $('#dataDetail').DataTable({
+            data: dataSource,
+            columns: [
+                { title: 'Company', data: 'CompanyName' },
+                { title: 'Email', data: 'CompanyEmail' },
+                { title: 'VA Number', data: 'VaNumber' },
+                { title: 'Bank', data: 'BankName' },
+                { title: 'Price', data: 'Price' },
+                { title: 'Attachment', data: 'PaymentImage' },
+                { title: 'Validation', data: 'ValidationStatus' },
+                {
+                    title: 'Status',
+                    data: null,
+                    render: function (data, type, row) {
+                        let status = "";
+                        if (data.StatusPayment == pending) {
+                            status = needSubmission;
+                        }
+                        else if (data.StatusPayment == checking) {
+                            status = needApproval;
+                        }
+                        else {
+                            status = paid;
+                        }
+                        return '<span class="text-capitalize" id="status-' + data.Guid + '">' + status + '</span>';
+                    }
+                },
+            ]
+        });
+
+        function detailRegisterPayment(guid) {
+            const filteredData = [];
+            for (let i = 0; i < dataSource.length; i++) {
+                if (dataSource[i].Guid === guid) {
+                    filteredData.push(dataSource[i]);
+
+                    dataTableDetail.clear().rows.add(filteredData).draw();
+
+                    $("#paymentDetail").modal("show");
+                }
+            }
+        }
+
+        function approveRegisterPayment(obj, guid){
+            var innerHTML = obj.innerHTML;
+            $("#approve-btn-" + guid).html('<i class="bx bx-loader-alt animate__loading"></i>');
+            $("#approve-btn-" + guid + ", #reject-btn-" + guid).prop("disabled", true);
+
+            $.ajax({
+                url: 'https://localhost:7249/api/register-payments/aprove',
+                method: 'PUT',
+                data: JSON.stringify({
+                    "guid": guid
+                }),
+                contentType: 'application/json',
+                success: function (response) {
+                    if (response.code === 200) {
+                        $("#approve-btn-" + guid + ", #reject-btn-" + guid).remove();
+                        $("#status-" + guid).text(paid);
+                    } else {
+                        Swal.fire(
+                            'Approve Failed',
+                            'Error ' + response.code + '! ' + response.message,
+                            'error'
+                        );
+                        $("#approve-btn-" + guid + ", #reject-btn-" + guid).prop("disabled", false);
+                    }
+
+                    $("#approve-btn-" + guid).html(innerHTML).prop("disabled", false);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("Error:", textStatus, errorThrown);
+                }
+            });
+        }
+
+        function rejectRegisterPayment(obj, guid) {
+            var innerHTML = obj.innerHTML;
+            $("#reject-btn-" + guid).html('<i class="bx bx-loader-alt animate__loading"></i>');
+            $("#approve-btn-" + guid + ", #reject-btn-" + guid).prop("disabled", true);
+
+            $.ajax({
+                url: 'https://localhost:7249/api/register-payments/reject',
+                method: 'PUT',
+                data: JSON.stringify({
+                    "guid": guid
+                }),
+                contentType: 'application/json',
+                success: function (response) {
+                    console.log("Request successful:", response);
+
+                    if (response.code === 200) {
+                        $("#approve-btn-" + guid + ", #reject-btn-" + guid).remove();
+                        $("#status-" + guid).text(needSubmission);
+                    } else {
+                        Swal.fire(
+                            'Approve Failed',
+                            'Error ' + response.code + '! ' + response.message,
+                            'error'
+                        );
+                        $("#approve-btn-" + guid + ", #reject-btn-" + guid).prop("disabled", false);
+                    }
+
+                        $("#reject-btn-" + guid).html(innerHTML).prop("disabled", false);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("Error:", textStatus, errorThrown);
+                }
+            });
+        }
+    </script>
+}
