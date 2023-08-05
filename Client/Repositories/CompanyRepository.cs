@@ -7,16 +7,8 @@ namespace Client.Repositories
 {
     public class CompanyRepository : GeneralRepository<GetCompanyDto, Guid>, ICompanyRepository
     {
-        private readonly HttpClient httpClient;
-        private readonly string request;
-
         public CompanyRepository(string request = "companies/") : base(request)
         {
-            httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7249/api/")
-            };
-            this.request = request;
         }
 
         public async Task<ResponseListDto<GetCompanyDto>> GetCompany()
