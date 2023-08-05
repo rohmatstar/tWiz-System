@@ -121,26 +121,24 @@ public class EventController : ControllerBase
     }
 
     [HttpPut]
-    public IActionResult Update(EventsDto eventsDto)
+    public async Task<IActionResult> Update(UpdateEventDto eventsDto)
     {
         var updated = _eventService.UpdateEvent(eventsDto);
         if (updated is not null)
         {
-            return Ok(new ResponseHandler<EventsDto>
+            return Ok(new ResponseHandler<string>
             {
                 Code = StatusCodes.Status200OK,
                 Status = HttpStatusCode.OK.ToString(),
-                Message = "Success",
-                Data = updated
+                Message = "Successfully updated event"
             });
         }
 
-        return NotFound(new ResponseHandler<EventsDto>
+        return NotFound(new ResponseHandler<string>
         {
             Code = StatusCodes.Status404NotFound,
             Status = HttpStatusCode.NotFound.ToString(),
             Message = "Failed to Update",
-            Data = null
         });
     }
 
