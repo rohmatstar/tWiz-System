@@ -4,7 +4,7 @@
 @{
     var toast = TempData["toast"] as dynamic;
 
-    ViewData["Title"] = "Register Payment List";
+    ViewData["Title"] = "Register Payment Need Approvals";
     Layout = "_LayoutUser";
 }
 
@@ -109,6 +109,14 @@
                     }
                 ]
             });
+
+            const needApprovalData = [];
+            for (let i = 0; i < dataSource.length; i++) {
+                if (dataSource[i].StatusPayment === checking) {
+                    needApprovalData.push(dataSource[i]);
+                }
+            }
+            dataTable.clear().rows.add(needApprovalData).draw();
         });
 
         const dataTableDetail = $('#dataDetail').DataTable({

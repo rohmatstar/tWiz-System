@@ -71,6 +71,16 @@ public class AuthController : ControllerBase
             });
         }
 
+        if (login is "-4")
+        {
+            return StatusCode(StatusCodes.Status406NotAcceptable, new ResponseHandler<LoginDto>
+            {
+                Code = StatusCodes.Status406NotAcceptable,
+                Status = HttpStatusCode.NotAcceptable.ToString(),
+                Message = "Account Deactivated"
+            });
+        }
+
         if (login is "-3")
         {
             var payment = _paymentService.GetPaymentSummary(loginDto.Email);

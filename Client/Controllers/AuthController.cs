@@ -161,6 +161,18 @@ namespace Client.Controllers
             {
                 return RedirectToAction("PaymentRequired", "Payment", new { email = signInDto.Email });
             }
+            else if (result.Code == 406)
+            {
+                TempData["toast"] = new ToastDto
+                {
+                    Color = "danger",
+                    Title = "Account Deactivated",
+                    Subtitle = "Your Account Temporarily Unavailable. Try Again Later!"
+                };
+
+                TempData["type"] = type;
+                return View("SignIn");
+            }
             else
             {
                 TempData["toast"] = new ToastDto

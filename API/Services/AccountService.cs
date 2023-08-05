@@ -131,6 +131,38 @@ public class AccountService
         return 1;
     }
 
+    public int ActivateDeactivate(Guid guid)
+    {
+        var isExist = _accountRepository.IsExist(guid);
+        if (!isExist)
+        {
+            return -1; // Account not found
+        }
+
+        var getAccount = _accountRepository.GetByGuid(guid);
+
+        var account = new Account
+        {
+            Guid = getAccount!.Guid,
+            Email = getAccount.Email,
+            Password = getAccount.Password,
+            IsActive = !getAccount.IsActive,
+            Token = getAccount.Token ?? null,
+            TokenIsUsed = getAccount.TokenIsUsed ?? null,
+            TokenExpiration = getAccount.TokenExpiration ?? null,
+            ModifiedDate = DateTime.Now,
+            CreatedDate = getAccount!.CreatedDate,
+        };
+
+        var isUpdate = _accountRepository.Update(account);
+        if (!isUpdate)
+        {
+            return 0; // Account not updated
+        }
+
+        return 1;
+    }
+
     public int DeleteAccount(Guid guid)
     {
         var isExist = _accountRepository.IsExist(guid);

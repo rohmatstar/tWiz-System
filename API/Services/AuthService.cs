@@ -163,6 +163,11 @@ public class AuthService
             return "0"; // account not found
         }
 
+        if (!account.IsActive)
+        {
+            return "-4"; // account deactivate (is_active = 0)
+        }
+
         var isPasswordValid = HashingHandler.ValidatePassword(loginDto.Password, account.Password);
         if (!isPasswordValid)
         {
@@ -187,7 +192,7 @@ public class AuthService
 
             if (payment == null || payment.StatusPayment != StatusPayment.Paid)
             {
-                return "-3";
+                return "-3"; // register payment not paid
             }
         }
         else if (employee is not null)

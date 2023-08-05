@@ -20,5 +20,10 @@ public class AccountRepository : GeneralRepository<Account>, IAccountRepository
         return _context.Set<Account>().FirstOrDefault(e => e.Email == email);
     }
 
+    public Account? ActivateDeactivate(Guid guid)
+    {
+        return _context.Set<Account>().FirstOrDefault(e => e.Guid == guid);
+    }
+
 
 }

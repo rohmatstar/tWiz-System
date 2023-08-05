@@ -31,10 +31,22 @@ namespace Client.Controllers
             return View();
         }
 
+
+
         [HttpGet]
         public async Task<IActionResult> RegisterPayment()
         {
             var active = "register_payment";
+            ViewBag.Active = active;
+
+            var payment = await _paymentRepository.GetRegisterPayments();
+            return View(payment.Data);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> NeedApproval()
+        {
+            var active = "need_approval";
             ViewBag.Active = active;
 
             var payment = await _paymentRepository.GetRegisterPayments();
