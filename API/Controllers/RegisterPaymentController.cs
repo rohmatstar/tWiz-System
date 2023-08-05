@@ -296,7 +296,7 @@ public class RegisterPaymentController : ControllerBase
     }
 
     [HttpPut("aprove")]
-    [Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}")]
+    /*[Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}")]*/
     public IActionResult Aprove(AproveRegisterPaymentDto aproveRegisterPaymentDto)
     {
         var aprovedRegisterPaymentStatus = _service.AproveRegisterPayment(aproveRegisterPaymentDto);
@@ -321,7 +321,7 @@ public class RegisterPaymentController : ControllerBase
     }
 
     [HttpPut("reject")]
-    [Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}")]
+    /*[Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}")]*/
     public IActionResult Reject(AproveRegisterPaymentDto aproveRegisterPaymentDto)
     {
         var rejectedRegisterPaymentStatus = _service.RejectRegisterPayment(aproveRegisterPaymentDto);
