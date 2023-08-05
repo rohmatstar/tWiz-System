@@ -192,7 +192,7 @@ public class EventController : ControllerBase
             {
                 Code = StatusCodes.Status200OK,
                 Status = HttpStatusCode.OK.ToString(),
-                Message = "Success",
+                Message = "Successfully to deleted event",
                 Data = deleted
             });
         }

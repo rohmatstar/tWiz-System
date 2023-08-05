@@ -644,34 +644,65 @@ public class EventService
 
     public EventsDto? DeleteEvent(Guid guid)
     {
-        var singleEvent = _eventRepository.GetByGuid(guid);
-        if (singleEvent == null)
+        var getEvent = _eventRepository.GetByGuid(guid);
+        if (getEvent == null)
         {
             return null;
         }
 
-        var isDelete = _eventRepository.Delete(singleEvent!);
+
+        var transaction = _twizDbContext.Database.BeginTransaction();
+        // 1 delete all event payment if exist       
+        if (getEvent.IsPaid)
+        {
+            var eventPayments = _eventPaymentRepository.GetAll().Where(ep => ep.EventGuid == getEvent.Guid).ToList();
+
+            var deletedEventPayments = _eventPaymentRepository.Deletes(eventPayments);
+
+            if (deletedEventPayments is false)
+            {
+                transaction.Rollback();
+                return null;
+            }
+        }
+
+        var companyParticipantsEvent = _companyParticipantRepository.GetAll().Where(cp => cp.EventGuid == getEvent.Guid).ToList();
+        var employeeParticipantsEvent = _employeeParticipantRepository.GetAll().Where(ep => ep.EventGuid == getEvent.Guid).ToList();
+
+
+        var deletedCompanyParticipants = _companyParticipantRepository.Deletes(companyParticipantsEvent);
+        var deletedEmployeeParticipants = _employeeParticipantRepository.Deletes(employeeParticipantsEvent);
+
+        if (deletedCompanyParticipants is false || deletedEmployeeParticipants is false)
+        {
+            transaction.Rollback();
+            return null;
+        }
+
+
+        var isDelete = _eventRepository.Delete(getEvent!);
         if (!isDelete)
         {
+            transaction.Rollback();
             return null;
         }
 
         var deletedEvent = new EventsDto
         {
-            Guid = singleEvent.Guid,
-            Name = singleEvent.Name!,
-            Thumbnail = singleEvent.Thumbnail,
-            Description = singleEvent.Description!,
-            IsPublished = (bool)singleEvent.IsPublished!,
-            IsPaid = (bool)singleEvent.IsPaid!,
-            Price = singleEvent.Price,
-            Category = singleEvent.Category!,
-            Status = singleEvent.Status,
-            StartDate = singleEvent.StartDate,
-            EndDate = singleEvent.EndDate,
-            Quota = (int)singleEvent.Quota!,
-            Place = singleEvent.Place!,
-            CreatedBy = singleEvent.CreatedBy
+            Guid = getEvent.Guid,
+            Name = getEvent.Name!,
+            Thumbnail = getEvent.Thumbnail,
+            Description = getEvent.Description!,
+            IsPublished = (bool)getEvent.IsPublished!,
+            IsPaid = (bool)getEvent.IsPaid!,
+            Price = getEvent.Price,
+            Category = getEvent.Category!,
+            Status = getEvent.Status,
+            StartDate = getEvent.StartDate,
+            EndDate = getEvent.EndDate,
+            Quota = (int)getEvent.Quota!,
+            Place = getEvent.Place!,
+            CreatedBy = getEvent.CreatedBy
         };
 
         return deletedEvent;
