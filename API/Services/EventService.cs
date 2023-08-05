@@ -1,4 +1,5 @@
 ﻿using API.Contracts;
+using API.Data;
 using API.DTOs.CompanyParticipants;
 using API.DTOs.EmployeeParticipants;
 using API.DTOs.Events;
@@ -20,7 +21,8 @@ public class EventService
     private readonly IEventPaymentRepository _eventPaymentRepository;
     private readonly ICompanyRepository _companyRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    public EventService(IEventRepository eventRepository, IHttpContextAccessor httpContextAccessor, IEmployeeParticipantRepository employeeParticipantRepository, ICompanyParticipantRepository companyParticipantRepository, IEventPaymentRepository eventPaymentRepository, ICompanyRepository companyRepository, IEmployeeRepository employeeRepository)
+    private readonly TwizDbContext _twizDbContext;
+    public EventService(IEventRepository eventRepository, IHttpContextAccessor httpContextAccessor, IEmployeeParticipantRepository employeeParticipantRepository, ICompanyParticipantRepository companyParticipantRepository, IEventPaymentRepository eventPaymentRepository, ICompanyRepository companyRepository, IEmployeeRepository employeeRepository, TwizDbContext twizDbContext)
     {
         _eventRepository = eventRepository;
         _companyRepository = companyRepository;
@@ -28,8 +30,8 @@ public class EventService
         _employeeParticipantRepository = employeeParticipantRepository;
         _companyParticipantRepository = companyParticipantRepository;
         _eventPaymentRepository = eventPaymentRepository;
-
         _httpContextAccessor = httpContextAccessor;
+        _twizDbContext = twizDbContext;
     }
 
     public List<GetEventDto>? GetEvents(QueryParamGetEventDto queryParams)
@@ -660,9 +662,110 @@ public class EventService
         {
             return null;
         }
+    }
+
+
+    public int UpdateParticipantsEvent(UpdateParticipantsEventDto updateParticipantsEventDto)
+    {
+        var eventGuid = updateParticipantsEventDto.EventGuid;
+        var companyParticipantsGuids = updateParticipantsEventDto.CompanyParticipantsGuids;
+        var employeeParticipantsGuids = updateParticipantsEventDto.EmployeeParticipantsGuids;
+
+        var getEvent = _eventRepository.GetByGuid(eventGuid);
+        var makerEvent = _companyRepository.GetByGuid(getEvent.CreatedBy);
+
+        if (getEvent == null)
+        {
+            return 0;
+        }
+
+        var previousCompanyParticipantEvent = _companyParticipantRepository.GetAll().Where(cp => cp.EventGuid == eventGuid && cp.CompanyGuid != getEvent.CreatedBy).ToList();
+
+        var employees = _employeeRepository.GetAll();
+
+        // hanya karyawan perusahaan pembuat eventnya
+        var previousEmployeeParticipants = _employeeParticipantRepository.GetAll().Where(ep =>
+        {
+            var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
+            return ep.EventGuid == eventGuid && employee.CompanyGuid == makerEvent.Guid;
+        }).ToList();
+
+        var transaction = _twizDbContext.Database.BeginTransaction();
+
+        try
+        {
+            var deletedPreviousCompanyParticipantsEvent = _companyParticipantRepository.Deletes(previousCompanyParticipantEvent);
+            var deletedPreviousEmployeeParticipantsEvevnt = _employeeParticipantRepository.Deletes(previousEmployeeParticipants);
+            if (deletedPreviousCompanyParticipantsEvent is false || deletedPreviousEmployeeParticipantsEvevnt is false)
+            {
+                transaction.Rollback();
+                return 0;
+            }
+
+
+            var newCompanyParticipantsEvent = new List<CompanyParticipant>();
+            var newEmployeeParticipantsEvent = new List<EmployeeParticipant>();
+
+            if (companyParticipantsGuids is not null)
+            {
+                foreach (var companyParticipantGuid in companyParticipantsGuids)
+                {
+                    var companyParticipant = new CompanyParticipant
+                    {
+                        Guid = new Guid(),
+                        CompanyGuid = companyParticipantGuid,
+                        EventGuid = eventGuid,
+                        Status = InviteStatusLevel.Pending,
+                        IsPresent = false,
+                        CreatedDate = DateTime.Now,
+                        ModifiedDate = DateTime.Now,
+                    };
+
+                    newCompanyParticipantsEvent.Add(companyParticipant);
+                }
+            }
+
+            if (employeeParticipantsGuids is not null)
+            {
+                foreach (var employeeParticipantGuid in employeeParticipantsGuids)
+                {
+                    var employeeParticipant = new EmployeeParticipant
+                    {
+                        Guid = new Guid(),
+                        EmployeeGuid = employeeParticipantGuid,
+                        EventGuid = eventGuid,
+                        Status = InviteStatusLevel.Pending,
+                        IsPresent = false,
+                        CreatedDate = DateTime.Now,
+                        ModifiedDate = DateTime.Now,
+                    };
+
+                    newEmployeeParticipantsEvent.Add(employeeParticipant);
+                }
+            }
+
+            var createdCompanyParticipants = _companyParticipantRepository.Creates(newCompanyParticipantsEvent);
+            var createdEmployeeParticipants = _employeeParticipantRepository.Creates(newEmployeeParticipantsEvent);
+
+            if (createdCompanyParticipants is false || createdEmployeeParticipants is false)
+            {
+                transaction.Rollback();
+                return 0;
+            }
+
+            transaction.Commit();
+
+        }
+        catch
+        {
+            transaction.Rollback();
+            return 0;
+        }
 
 
 
+
+        return 1;
     }
 
     //public List<EventsDto>? GetExternalEvents(string type = "")

@@ -193,6 +193,28 @@ public class EventController : ControllerBase
         });
     }
 
+    [HttpPut("participants")]
+    public IActionResult UpdateParticipantsEvent(UpdateParticipantsEventDto updateParticipantsEventDto)
+    {
+        var internalEvents = _eventService.UpdateParticipantsEvent(updateParticipantsEventDto);
+        if (internalEvents != 0)
+        {
+            return Ok(new ResponseHandler<List<GetEventDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success",
+            });
+        }
+
+        return StatusCode(StatusCodes.Status403Forbidden, new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status400BadRequest,
+            Status = HttpStatusCode.BadRequest.ToString(),
+            Message = "Check your data"
+        });
+    }
+
     //[HttpGet("external")]
     //[Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
     //public IActionResult GetExternalEvents([FromQuery] string? type)
