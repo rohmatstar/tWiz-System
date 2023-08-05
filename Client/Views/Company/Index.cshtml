@@ -37,6 +37,12 @@
 }
 
 <div class="col-12">
+    <div class="alert alert-warning border border-warning" role="alert">
+        Deactivate the account as the associated user is unable to log in.
+    </div>
+</div>
+
+<div class="col-12">
     <div class="card">
         <div class="p-3">
             <div class="table-responsive">
@@ -46,14 +52,39 @@
     </div>
 </div>
 
-@section Scripts {
-    <script>
-        const dataSource = @Html.Raw(JsonConvert.SerializeObject(Model));
-        var role = "@role";
-        var sysAdmin = "@RoleLevel.SysAdmin.ToString()";
 
-        $(document).ready(function () {
-            if(role == sysAdmin){
+
+@if(role != RoleLevel.SysAdmin.ToString()){
+    @section Scripts {
+        <script>
+            const dataSource = @Html.Raw(JsonConvert.SerializeObject(Model));
+
+            $(document).ready(function () {
+                var dataTable = $('#data').DataTable({
+                    data: dataSource,
+                    columns: [
+                        { title: 'Company Name', data: 'Name' },
+                        { title: 'Phone', data: 'PhoneNumber' },
+                        { title: 'Address', data: 'Address' },
+                        { title: 'Email', data: 'Email' }
+                    ]
+                });
+            });
+        </script>
+    }
+}
+else
+{
+    @section Scripts {
+        <script>
+            const dataSource = @Html.Raw(JsonConvert.SerializeObject(Model));
+
+            $(document).ready(function () {
+                
+                var state = 'Activate';
+                var icon = 'check';
+                var color = 'success';
+
                 var dataTable = $('#data').DataTable({
                     data: dataSource,
                     columns: [
@@ -65,29 +96,58 @@
                             title: 'Action',
                             data: null,
                             render: function (data, type, row) {
-                                console.log(data.IsActive);
                                 if (data.IsActive) {
-                                    return '<div class="text-center"><button id="deactive-btn-' + data.AccountGuid + '" class="btn btn-sm btn-danger me-2" onclick="deactivateCompany(this, \'' + data.AccountGuid + '\')"><i class="bx bx-x-circle"></i> Deactivate </button></div>';
+                                    state = 'Deactivate';
+                                    icon = 'x-circle';
+                                    color = 'danger';
                                 }
-                                else {
-                                    return '<div class="text-center"><button id="activate-btn-' + data.AccountGuid + '" class="btn btn-sm btn-success me-2" onclick="activateCompany(this, \'' + data.AccountGuid + '\')"><i class="bx bx-check"></i> Activate </button></div>';
+                                else{
+                                    state = 'Activate';
+                                    icon = 'check';
+                                    color = 'success';
                                 }
+
+                            return '<div class="text-center" id="activate-deactive-wrapper-' + data.AccountGuid + '"><button id="activate-deactive-btn-' + data.AccountGuid + '" class="btn btn-sm btn-' + color + ' me-2" onclick="activateDeactivateCompany(this, \'' + data.AccountGuid + '\', ' + !data.IsActive + ')"><i class="bx bx-' + icon + '"></i> ' + state + ' </button></div>';
                             }
                         }
                     ]
                 });
-            }
-            else{
-                var dataTable = $('#data').DataTable({
-                    data: dataSource,
-                    columns: [
-                        { title: 'Company Name', data: 'Name' },
-                        { title: 'Phone', data: 'PhoneNumber' },
-                        { title: 'Address', data: 'Address' },
-                        { title: 'Email', data: 'Email' }
-                    ]
+            });
+
+            function activateDeactivateCompany(obj, guid, init) {
+                var innerHTML = obj.innerHTML;
+                var activate = '<button id="activate-deactive-btn-' + guid + '" class="btn btn-sm btn-success me-2" onclick="activateDeactivateCompany(this, \'' + guid + '\', true)"><i class="bx bx-check"></i> Activate </button>';
+                var deactivate = '<button id="activate-deactive-btn-' + guid + '" class="btn btn-sm btn-danger me-2" onclick="activateDeactivateCompany(this, \'' + guid + '\', false)"><i class="bx bx-x-circle"></i> Deactivate </button>';
+
+                var state = deactivate;
+                if(!init){
+                    state = activate;
+                }
+
+                $("#activate-deactive-btn-" + guid).html('<i class="bx bx-loader-alt animate__loading"></i>').prop("disabled", true);
+
+                $.ajax({
+                url: 'https://localhost:7249/api/accounts/activate_deactivate/' + guid,
+                    method: 'PUT',
+                    contentType: 'application/json',
+                    success: function (response) {
+                        if (response.code === 200) {
+                            $("#activate-deactive-wrapper-" + guid).html(state);
+                            $("#activate-deactive-btn-" + guid).prop("disabled", false);
+                        } else {
+                            Swal.fire(
+                                'Failed to Changes',
+                                'Error ' + response.code + '! ' + response.message,
+                                'error'
+                            );
+                            $("#activate-deactive-btn-" + guid).prop("disabled", false);
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error("Error:", textStatus, errorThrown);
+                    }
                 });
             }
-        });
-    </script>
+        </script>
+    }
 }
