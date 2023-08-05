@@ -188,6 +188,8 @@ public class AuthService
         if (company is not null)
         {
             claims.Add(new Claim(ClaimTypes.Name, company.Name));
+            claims.Add(new Claim("companyGuid", company.Guid.ToString()));
+
             var payment = _registerPaymentRepository.GetAll().FirstOrDefault(c => c.CompanyGuid == company.Guid);
 
             if (payment == null || payment.StatusPayment != StatusPayment.Paid)
