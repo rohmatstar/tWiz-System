@@ -1,7 +1,13 @@
 ﻿@using Client.Utilities.Enums;
 @using Newtonsoft.Json;
+@using System.Security.Claims;
+
 @model List<Client.DTOs.Companies.GetCompanyMasterDto>
+
 @{
+    // JWT Parse
+    var role = User!.Claims!.FirstOrDefault(c => c.Type == ClaimTypes.Role)!.Value;
+
     var toast = TempData["toast"] as dynamic;
 
     ViewData["Title"] = "Company List";
@@ -34,7 +40,7 @@
     <div class="card">
         <div class="p-3">
             <div class="table-responsive">
-                <table id="data" class="table table-hover"></table>
+                <table id="data" class="table w-100 table-hover"></table>
             </div>
         </div>
     </div>
@@ -43,30 +49,45 @@
 @section Scripts {
     <script>
         const dataSource = @Html.Raw(JsonConvert.SerializeObject(Model));
+        var role = "@role";
+        var sysAdmin = "@RoleLevel.SysAdmin.ToString()";
 
         $(document).ready(function () {
-            var dataTable = $('#data').DataTable({
-                data: dataSource,
-                columns: [
-                    { title: 'Company Name', data: 'Name' },
-                    { title: 'Phone', data: 'PhoneNumber' },
-                    { title: 'Address', data: 'Address' },
-                    { title: 'Email', data: 'Email' },
-                    {
-                        title: 'Action',
-                        data: null,
-                        render: function (data, type, row) {
-                            console.log(data.IsActive);
-                            if(data.IsActive){
+            if(role == sysAdmin){
+                var dataTable = $('#data').DataTable({
+                    data: dataSource,
+                    columns: [
+                        { title: 'Company Name', data: 'Name' },
+                        { title: 'Phone', data: 'PhoneNumber' },
+                        { title: 'Address', data: 'Address' },
+                        { title: 'Email', data: 'Email' },
+                        {
+                            title: 'Action',
+                            data: null,
+                            render: function (data, type, row) {
+                                console.log(data.IsActive);
+                                if (data.IsActive) {
                                     return '<div class="text-center"><button id="deactive-btn-' + data.AccountGuid + '" class="btn btn-sm btn-danger me-2" onclick="deactivateCompany(this, \'' + data.AccountGuid + '\')"><i class="bx bx-x-circle"></i> Deactivate </button></div>';
-                            }
-                            else{
-                                return '<div class="text-center"><button id="activate-btn-' + data.AccountGuid + '" class="btn btn-sm btn-success me-2" onclick="activateCompany(this, \'' + data.AccountGuid + '\')"><i class="bx bx-check"></i> Activate </button></div>';
+                                }
+                                else {
+                                    return '<div class="text-center"><button id="activate-btn-' + data.AccountGuid + '" class="btn btn-sm btn-success me-2" onclick="activateCompany(this, \'' + data.AccountGuid + '\')"><i class="bx bx-check"></i> Activate </button></div>';
+                                }
                             }
                         }
-                    }
-                ]
-            });
+                    ]
+                });
+            }
+            else{
+                var dataTable = $('#data').DataTable({
+                    data: dataSource,
+                    columns: [
+                        { title: 'Company Name', data: 'Name' },
+                        { title: 'Phone', data: 'PhoneNumber' },
+                        { title: 'Address', data: 'Address' },
+                        { title: 'Email', data: 'Email' }
+                    ]
+                });
+            }
         });
     </script>
 }
