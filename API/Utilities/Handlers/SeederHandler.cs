@@ -1,8 +1,6 @@
 ﻿using API.Data;
 using API.Models;
 using API.Utilities.Enums;
-using DocumentFormat.OpenXml.InkML;
-using Microsoft.Extensions.Logging;
 
 namespace API.Utilities.Handlers;
 
@@ -1242,7 +1240,7 @@ public class SeederHandler
                 CreatedBy = company1.Guid,
                 IsPaid = false,
                 Price = 0,
-                IsActive = true,
+                IsActive = false,
                 Status = EventStatus.Online,
                 IsPublished = true,
                 Place = "www.zoom.com",
@@ -1284,7 +1282,7 @@ public class SeederHandler
                 CreatedBy = company1.Guid,
                 IsPaid = false,
                 Price = 0,
-                IsActive = true,
+                IsActive = false,
                 Status = EventStatus.Offline,
                 IsPublished = true,
                 Place = "jl. pramuka keren 3",
@@ -6777,7 +6775,7 @@ public class SeederHandler
             return Guid.Empty;
         }
 
-        var randomIndex = random.Next(0, banks.Count-1);
+        var randomIndex = random.Next(0, banks.Count - 1);
         return banks[randomIndex].Guid;
     }
 
@@ -6944,4 +6942,3 @@ public class SeederHandler
         return randomBank ?? null;
     }
 }
-

@@ -91,15 +91,15 @@ builder.Services.AddTransient<IEmailHandler, EmailHandler>(_ => new EmailHandler
 
 
 // CORS
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(policy =>
-    {
-        policy.AllowAnyOrigin();
-        policy.AllowAnyHeader();
-        policy.AllowAnyMethod();
-    });
-});
+//builder.Services.AddCors(options =>
+//{
+//    options.AddDefaultPolicy(policy =>
+//    {
+//        policy.AllowAnyOrigin();
+//        policy.AllowAnyHeader();
+//        policy.AllowAnyMethod();
+//    });
+//});
 
 // Swager Configuration
 builder.Services.AddEndpointsApiExplorer();
@@ -161,7 +161,7 @@ void SeedData(IHost app)
         service.GenerateBanks();
         service.GenerateEventMaster();
         service.GeneratePayments();
-          
+
     }
 }
 

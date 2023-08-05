@@ -1,5 +1,4 @@
-﻿using API.Utilities.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace API.DTOs.Events;
 
@@ -7,16 +6,16 @@ public class CreateEventDto
 {
     [Required]
     public string Name { get; set; }
-    public string? Thumbnail { get; set; }
+    public IFormFile? ThumbnailFile { get; set; }
 
     [Required]
     public string Description { get; set; }
 
     [Required]
-    public bool IsPublished { get; set; }
+    public string Visibility { get; set; }
 
     [Required]
-    public bool IsPaid { get; set; }
+    public string Payment { get; set; }
 
     [Required]
     public decimal Price { get; set; }
@@ -25,7 +24,7 @@ public class CreateEventDto
     public string Category { get; set; }
 
     [Required]
-    public EventStatus Status { get; set; }
+    public string PlaceType { get; set; }
 
     [Required]
     public DateTime StartDate { get; set; }
@@ -39,6 +38,4 @@ public class CreateEventDto
     [Required]
     public string Place { get; set; }
 
-    [Required]
-    public Guid CreatedBy { get; set; }
 }

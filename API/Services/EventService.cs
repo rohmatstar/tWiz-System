@@ -4,6 +4,8 @@ using API.DTOs.EmployeeParticipants;
 using API.DTOs.Events;
 using API.Models;
 using API.Utilities.Enums;
+using API.Utilities.Handlers;
+using API.Utilities.Validations;
 using System.Globalization;
 using System.Security.Claims;
 
@@ -265,6 +267,8 @@ public class EventService
                 {
                     var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
 
+
+                    // jika event maker mengedit event, maka hanya bisa mengedit employeenya saja
                     if (usedfor == "edit")
                     {
                         var isEmployeeCompany = employee?.CompanyGuid == company.Guid;
@@ -365,52 +369,103 @@ public class EventService
         return detailsEvent;
     }
 
-    public EventsDto? CreateEvent(CreateEventDto createEventDto)
+    public async Task<int> CreateEvent(CreateEventDto createEventDto)
     {
+        var imageUrl = "";
+        if (createEventDto.ThumbnailFile != null)
+        {
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\events\thumbnails");
+
+            if (!Directory.Exists(folderPath))
+            {
+                try
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+                catch (Exception ex)
+                {
+                    return -1;
+                }
+            }
+
+            var size = createEventDto.ThumbnailFile.Length;
+
+            // jika ukuran gambar lebih dari 2mb
+            if (size > 2000000)
+            {
+                return -2;
+            }
+
+            bool isImage = FileValidation.IsValidImageExtension(createEventDto.ThumbnailFile);
+
+            if (!isImage)
+            {
+                return -3;
+            }
+
+            var randomName = GenerateHandler.GenerateRandomString();
+            var fileName = randomName + createEventDto.ThumbnailFile.FileName;
+            imageUrl = $"images/events/thumbnails/{fileName}";
+
+            var filePath = $"{folderPath}\\{fileName}";
+
+            try
+            {
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await createEventDto.ThumbnailFile.CopyToAsync(stream);
+                }
+            }
+            catch
+            {
+                return -3;
+            }
+        }
+
+
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+        Console.WriteLine("Hello World 1");
+        if (accountGuid is null)
+        {
+            return 0;
+        }
+
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid));
+        Console.WriteLine("Hello World 2");
+
+        if (company is null)
+        {
+            return 0;
+        }
+
         var eventModel = new Event
         {
             Guid = new Guid(),
-            Name = createEventDto.Name!,
-            Thumbnail = createEventDto.Thumbnail,
-            Description = createEventDto.Description!,
-            IsPublished = (bool)createEventDto.IsPublished!,
-            IsPaid = (bool)createEventDto.IsPaid!,
+            Name = createEventDto.Name,
+            Thumbnail = imageUrl,
+            Description = createEventDto.Description,
+            IsPublished = createEventDto.Visibility == "public" ? true : false,
+            IsPaid = createEventDto.Payment == "paid" ? true : false,
             Price = createEventDto.Price,
             Category = createEventDto.Category!,
-            Status = createEventDto.Status,
+            Status = createEventDto.PlaceType == "offline" ? EventStatus.Offline : EventStatus.Online,
             StartDate = createEventDto.StartDate,
             EndDate = createEventDto.EndDate,
-            Quota = (int)createEventDto.Quota!,
-            Place = createEventDto.Place!,
-            CreatedBy = createEventDto.CreatedBy
+            Quota = createEventDto.Quota,
+            Place = createEventDto.Place,
+            CreatedBy = company.Guid
         };
 
         var created = _eventRepository.Create(eventModel);
         if (created is null)
         {
-            return null;
+            return 0;
         }
 
-
-        var createdEvent = new EventsDto
-        {
-            Guid = eventModel.Guid,
-            Name = eventModel.Name!,
-            Thumbnail = eventModel.Thumbnail,
-            Description = eventModel.Description!,
-            IsPublished = (bool)eventModel.IsPublished!,
-            IsPaid = (bool)eventModel.IsPaid!,
-            Price = eventModel.Price,
-            Category = eventModel.Category!,
-            Status = eventModel.Status,
-            StartDate = eventModel.StartDate,
-            EndDate = eventModel.EndDate,
-            Quota = (int)eventModel.Quota!,
-            Place = eventModel.Place!,
-            CreatedBy = eventModel.CreatedBy
-        };
-
-        return createdEvent;
+        return 1;
     }
 
     public EventsDto? UpdateEvent(EventsDto eventsDto)
@@ -502,123 +557,113 @@ public class EventService
     }
 
 
-    //public List<EventsDto>? GetInternalEvents(string type = "")
-    //{
-    //    var claimUser = _httpContextAccessor.HttpContext?.User;
+    public List<GetEventDto>? GetInternalEvents(QueryParamGetEventDto queryParams)
+    {
+        var claimUser = _httpContextAccessor.HttpContext?.User;
 
-    //    var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
-    //    var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
 
-    //    var internalEvents = new List<EventsDto>();
+        if (userRole == nameof(RoleLevel.Company))
+        {
+            var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
 
-    //    if (userRole == nameof(RoleLevel.Company))
-    //    {
-    //        var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
+            if (company == null)
+            {
+                return null;
+            }
 
-    //        if (company != null)
-    //        {
-    //            var getInternalEvents = new List<Event>();
+            var internalEvents = new List<GetEventDto>();
 
-    //            if (string.Equals(type, nameof(EventTypeEnum.Public), StringComparison.OrdinalIgnoreCase))
-    //            {
-    //                getInternalEvents = _eventRepository.GetEventsByCreatedBy(company.Guid).Where(ev => ev.IsPublished is true).ToList();
+            var filterEvents = (from e in _eventRepository.GetAll()
+                                join c in _companyRepository.GetAll()
+                                on e.CreatedBy equals c.Guid
+                                where e.CreatedBy == company.Guid
+                                select new GetEventDto
+                                {
+                                    Guid = e.Guid,
+                                    Name = e.Name,
+                                    Description = e.Description,
+                                    Thumbnail = e.Thumbnail,
+                                    Visibility = e.IsPublished == true ? "public" : "private",
+                                    Category = e.Category,
+                                    PlaceType = e.Status == EventStatus.Offline ? "offline" : "online",
+                                    Payment = e.IsPaid == true ? "paid" : "free",
+                                    Price = e.Price,
+                                    Quota = e.Quota,
+                                    Joined = e.UsedQuota,
+                                    StartDate = e.StartDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+                                    EndDate = e.EndDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+                                    Organizer = c.Name,
+                                    Place = e.Place,
+                                    PublicationStatus = e.IsActive == true ? "published" : "draft"
+                                }).ToList();
 
-    //            }
-    //            else if (string.Equals(type, nameof(EventTypeEnum.Personal), StringComparison.OrdinalIgnoreCase))
-    //            {
-    //                getInternalEvents = _eventRepository.GetEventsByCreatedBy(company.Guid).Where(ev => ev.IsPublished is false).ToList();
-    //            }
-    //            else
-    //            {
-    //                getInternalEvents = _eventRepository.GetEventsByCreatedBy(company.Guid).ToList();
-    //            }
 
-    //            internalEvents = getInternalEvents.Select(ev => new EventsDto
-    //            {
-    //                Guid = ev.Guid,
-    //                Name = ev.Name,
-    //                Description = ev.Description,
-    //                Category = ev.Category,
-    //                CreatedBy = ev.CreatedBy,
-    //                StartDate = ev.StartDate,
-    //                EndDate = ev.EndDate,
-    //                IsActive = ev.IsActive,
-    //                IsPaid = ev.IsPaid,
-    //                IsPublished = ev.IsPublished,
-    //                Status = ev.Status,
-    //                Place = ev.Place,
-    //                Price = ev.Price,
-    //                Quota = ev.Quota,
-    //                Thumbnail = ev.Thumbnail,
-    //                UsedQuota = ev.UsedQuota,
-    //            }).ToList();
-    //        }
-    //        else
-    //        {
-    //            return null;
-    //        }
-    //    }
-    //    else if (userRole == nameof(RoleLevel.Employee))
-    //    {
-    //        var employee = _employeeRepository.GetAll().FirstOrDefault(e => e.AccountGuid == Guid.Parse(accountGuid!));
+            if (filterEvents is null)
+            {
+                return null;
+            }
 
-    //        if (employee is not null)
-    //        {
-    //            var getInternalEvents = new List<Event>();
+            var publicationStatus = queryParams.publication_status?.ToLower() ?? "";
+            var visibility = queryParams.visibility?.ToLower() ?? "";
+            var placeType = queryParams.place_type?.ToLower() ?? "";
+            var sortBy = queryParams.sort_by?.ToLower() ?? "";
 
-    //            if (string.Equals(type, nameof(EventTypeEnum.Public), StringComparison.OrdinalIgnoreCase))
-    //            {
-    //                getInternalEvents = _eventRepository.GetEventsByCreatedBy(employee.CompanyGuid).Where(ev => ev.IsPublished is true && ev.IsActive is true).ToList();
+            var publicationStatusValues = new List<string>() { "all", "published", "draft" };
+            var visibilityValues = new List<string>() { "all", "public", "private" };
+            var placeTypeValues = new List<string>() { "all", "offline", "online" };
 
-    //            }
-    //            else if (string.Equals(type, nameof(EventTypeEnum.Personal), StringComparison.OrdinalIgnoreCase))
-    //            {
-    //                getInternalEvents = _eventRepository.GetEventsByCreatedBy(employee.CompanyGuid).Where(ev => ev.IsPublished is false && ev.IsActive is true).ToList();
-    //            }
-    //            else
-    //            {
-    //                getInternalEvents = _eventRepository.GetEventsByCreatedBy(employee.CompanyGuid).Where(ev => ev.IsActive is true).ToList();
-    //            }
+            if (publicationStatusValues.Contains(publicationStatus))
+            {
+                if (publicationStatus != "all")
+                {
+                    filterEvents = filterEvents.Where(e => e.PublicationStatus == publicationStatus).ToList();
+                }
+            }
 
-    //            var internalEventsIsActive = getInternalEvents.Select(ev => new EventsDto
-    //            {
-    //                Guid = ev.Guid,
-    //                Name = ev.Name,
-    //                Description = ev.Description,
-    //                Category = ev.Category,
-    //                CreatedBy = ev.CreatedBy,
-    //                StartDate = ev.StartDate,
-    //                EndDate = ev.EndDate,
-    //                IsActive = ev.IsActive,
-    //                IsPaid = ev.IsPaid,
-    //                IsPublished = ev.IsPublished,
-    //                Status = ev.Status,
-    //                Place = ev.Place,
-    //                Price = ev.Price,
-    //                Quota = ev.Quota,
-    //                Thumbnail = ev.Thumbnail,
-    //                UsedQuota = ev.UsedQuota,
-    //            }).ToList();
+            if (visibilityValues.Contains(visibility))
+            {
+                if (visibility != "all")
+                {
+                    filterEvents = filterEvents.Where(e => e.Visibility == visibility).ToList();
+                }
+            }
 
-    //            var employeeParticipants = _employeeParticipantRepository.GetAll();
+            if (placeTypeValues.Contains(placeType))
+            {
+                if (placeType != "all")
+                {
+                    filterEvents = filterEvents.Where(e => e.PlaceType == placeType).ToList();
+                }
+            }
 
-    //            foreach (var internalEvent in internalEventsIsActive)
-    //            {
-    //                if (employeeParticipants.FirstOrDefault(ep => ep.EmployeeGuid == employee.Guid && ep.EventGuid == internalEvent.Guid) is not null)
-    //                {
-    //                    internalEvents.Add(internalEvent);
-    //                }
-    //            }
-    //        }
-    //        else
-    //        {
-    //            return null;
-    //        }
+            var companyParticipants = _companyParticipantRepository.GetAll();
+            var employeeParticipants = _employeeParticipantRepository.GetAll();
 
-    //    }
+            string format = "dd MMMM yyyy, HH:mm 'WIB'";
+            if (sortBy == "older")
+            {
+                filterEvents = filterEvents.OrderByDescending(e => DateTime.ParseExact(e.StartDate, format, CultureInfo.InvariantCulture)).ToList();
+            }
 
-    //    return internalEvents;
-    //}
+            if (sortBy == "newest")
+            {
+                filterEvents = filterEvents.OrderBy(e => DateTime.ParseExact(e.StartDate, format, CultureInfo.InvariantCulture)).ToList();
+            }
+
+            internalEvents = filterEvents;
+
+            return internalEvents;
+        }
+        else
+        {
+            return null;
+        }
+
+
+
+    }
 
     //public List<EventsDto>? GetExternalEvents(string type = "")
     //{

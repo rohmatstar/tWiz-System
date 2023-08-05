@@ -19,6 +19,7 @@ builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IEventRepository, EventRepository>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -84,7 +85,7 @@ app.UseSession();
 
 //Add JWToken to all incoming HTTP Request Header
 app.Use(async (context, next) =>
-{   
+{
     // Disable cache to prevent reaccess page after sign out
     context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
     context.Response.Headers["Pragma"] = "no-cache";
