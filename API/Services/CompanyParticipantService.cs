@@ -8,10 +8,14 @@ namespace API.Services;
 public class CompanyParticipantService
 {
     private readonly ICompanyParticipantRepository _companyParticipantRepository;
+    private readonly IEventRepository _eventRepository;
+    private readonly ICompanyRepository _companyRepository;
 
-    public CompanyParticipantService(ICompanyParticipantRepository repository)
+    public CompanyParticipantService(ICompanyParticipantRepository repository, IEventRepository eventRepository, ICompanyRepository companyRepository)
     {
         _companyParticipantRepository = repository;
+        _eventRepository = eventRepository;
+        _companyRepository = companyRepository;
     }
 
     public IEnumerable<CompanyParticipantsDto>? GetCompanyParticipants()
@@ -187,6 +191,48 @@ public class CompanyParticipantService
         }
 
         return 1;
+    }
+
+    public List<GetCompanyParticipantDto>? GetCompanyParticipantsByEvent(Guid eventGuid)
+    {
+        var getEvent = _eventRepository.GetByGuid(eventGuid);
+
+        if (getEvent == null)
+        {
+            return null;
+        }
+
+        var companies = _companyRepository.GetAll();
+
+        var companyParticipants = _companyParticipantRepository.GetAll().Where(cp => cp.EventGuid == eventGuid && cp.CompanyGuid != getEvent.CreatedBy).Select(cp =>
+        {
+            var company = companies.FirstOrDefault(c => c.Guid == cp.CompanyGuid);
+
+            var invitationStatus = "";
+
+            if (cp.Status == InviteStatusLevel.Pending) invitationStatus = "pending";
+            if (cp.Status == InviteStatusLevel.Checking) invitationStatus = "checking";
+            if (cp.Status == InviteStatusLevel.Accepted) invitationStatus = "accepted";
+            if (cp.Status == InviteStatusLevel.Rejected) invitationStatus = "rejected";
+
+
+            return new GetCompanyParticipantDto
+            {
+                Guid = cp.Guid,
+                EventName = getEvent.Name,
+                CompanyGuid = cp.CompanyGuid,
+                CompanyName = company.Name,
+                InvitationStatus = invitationStatus ?? "",
+                IsPresent = cp.IsPresent
+            };
+        }).ToList();
+
+        if (companyParticipants is null)
+        {
+            return null;
+        }
+
+        return companyParticipants;
     }
 }
 

@@ -199,7 +199,7 @@ public class AuthService
             claims.Add(new Claim(ClaimTypes.Name, company.Name));
             var payment = _registerPaymentRepository.GetAll().FirstOrDefault(c => c.CompanyGuid == company.Guid);
 
-            if (payment == null || payment.StatusPayment == 0)
+            if (payment == null || payment.StatusPayment != StatusPayment.Paid)
             {
                 return "-3";
             }
@@ -215,9 +215,6 @@ public class AuthService
         else
         {
             return "0";
-
-            claims.Add(new Claim(ClaimTypes.Name, company.Name));
-            claims.Add(new Claim("UserGuid", company.Guid.ToString())); // Add Company Guid to Check Register Payment when signed in
         }
 
         var getAccountRole = _accountRoleRepository.GetByGuidCompany(account.Guid);
