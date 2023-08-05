@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\images\events\thumbnails\" />
     <Folder Include="wwwroot\images\event_payments\" />
     <Folder Include="wwwroot\images\register_payments\" />
     <Folder Include="wwwroot\tmp\excel\" />

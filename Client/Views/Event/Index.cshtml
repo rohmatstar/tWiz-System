@@ -1,13 +1,22 @@
-﻿@using Client.Utilities.Enums;
+﻿@model IEnumerable<Client.DTOs.Events.GetEventDto>;
+@using Client.Utilities.Enums;
 @using System.Security.Claims
 @{
     var role = User!.Claims!.FirstOrDefault(c => c.Type == ClaimTypes.Role)!.Value;
+
+    var sortByQuery = Context.Request.Query["sort_by"];
+    var visibilityQuery = Context.Request.Query["visibility"];
+    var placeTypeQuery = Context.Request.Query["place_type"];
+    var publicationStatusQuery = Context.Request.Query["publication_status"];
+
+    var IMAGE_URL = "https://localhost:7249/";
 
     var toast = TempData["toast"] as dynamic;
 
     ViewData["Title"] = "Events List";
     Layout = "_LayoutUser";
 }
+
 
 @section Filter{
     <div class="col-auto">
@@ -24,15 +33,15 @@
                     <div class="mb-3">
                         <label for="publication" class="form-label">Publication</label>
                         <div class="form-check">
-                            <input checked type="radio" class="form-check-input" id="publication-all" name="publication" value="all">
+                            <input checked type="radio" class="form-check-input" id="publication-all" name="publication_status" value="all" @(publicationStatusQuery == "all" ? "checked" : "")>
                             <label class="form-check-label" for="publication-all">All</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="publication-published" name="publication" value="published">
+                            <input type="radio" class="form-check-input" id="publication-published" name="publication_status" value="published" @(publicationStatusQuery == "published" ? "checked" : "")>
                             <label class="form-check-label" for="publication-published">Published</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="publication-draft" name="publication" value="draft">
+                            <input type="radio" class="form-check-input" id="publication-draft" name="publication_status" value="draft" @(publicationStatusQuery == "draft" ? "checked" : "")>
                             <label class="form-check-label" for="publication-draft">Draft</label>
                         </div>
                     </div>
@@ -40,15 +49,15 @@
                     <div class="mb-3">
                         <label for="visibility" class="form-label">Visibility</label>
                         <div class="form-check">
-                            <input checked type="radio" class="form-check-input" id="visibility-all" name="visibility" value="all">
+                            <input checked type="radio" class="form-check-input" id="visibility-all" name="visibility" value="all" @(visibilityQuery == "all" ? "checked" : "")>
                             <label class="form-check-label" for="visibility-all">All</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="visibility-public" name="visibility" value="public">
+                            <input type="radio" class="form-check-input" id="visibility-public" name="visibility" value="public" @(visibilityQuery == "public" ? "checked" : "")>
                             <label class="form-check-label" for="visibility-public">Public</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="visibility-private" name="visibility" value="private">
+                            <input type="radio" class="form-check-input" id="visibility-private" name="visibility" value="private" @(visibilityQuery == "private" ? "checked" : "")>
                             <label class="form-check-label" for="visibility-private">Private</label>
                         </div>
                     </div>
@@ -56,33 +65,37 @@
                     <div class="mb-3">
                         <label for="type" class="form-label">Type</label>
                         <div class="form-check">
-                            <input checked type="radio" class="form-check-input" id="type-all" name="type" value="all">
+                            <input checked type="radio" class="form-check-input" id="type-all" name="place_type" value="all" @(placeTypeQuery == "all"?"checked" : "")>
                             <label class="form-check-label" for="type-all">All</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="type-online" name="type" value="online">
+                            <input type="radio" class="form-check-input" id="type-online" name="place_type" value="online" @(placeTypeQuery == "online" ? "checked" : "")>
                             <label class="form-check-label" for="type-online">Online</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="type-offline" name="type" value="offline">
-                            <label class="form-check-label" for="type-offline">Offline</label>
+                            <input type="radio" class="form-check-input" id="type-offline" name="place_type" value="offline">
+                            <label class="form-check-label" for="type-offline" @(placeTypeQuery == "offline" ? "checked" : "")>Offline</label>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="sort-by" class="form-label">Sort by</label>
-                        <select class="form-select" id="sort-by" name="sort-by">
-                            <option selected value="newest">Newest</option>
-                            <option value="oldest">Oldest</option>
+                        <select class="form-select" id="sort-by" name="sort_by">
+                            <option  value="newest">Newest</option>
+                            <option  value="older">Oldest</option>
                         </select>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Apply</button>
+                    
+
+                    <button type="submit" class="btn btn-primary" id="btn-apply">Apply</button>
                     <button type="reset" class="btn btn-text bg-white text-primary">Use Default</button>
                 </form>
             </div>
         </div>
     </div>
+
+    
 }
 
 @section Toast{
@@ -103,11 +116,112 @@
     }
 }
 
-@if(role == RoleLevel.Company.ToString()){
-    <div class="col-12">
-        <div class="alert alert-warning border border-warning" role="alert">The <strong>Published Event</strong> cannot be changed at all, even deletion. Once an event is published, all its details and content are considered final and cannot be change any way.</div>
-    </div>
+@if(role == RoleLevel.Company.ToString()){    
+        <div class="col-12">
+            <div class="alert alert-warning border border-warning" role="alert">The <strong>Published Event</strong> cannot be changed at all, even deletion. Once an event is published, all its details and content are considered final and cannot be change any way.</div>
+        </div>        
 }
+
+<div id="event-list" class="row">
+@if (Model is not null)
+{
+        var i = -1;
+        foreach (var getEvent in Model)
+    {
+            i++;
+            var imageUrl = "";
+            @if(getEvent.Thumbnail is null || getEvent.Thumbnail == "")
+            {
+                imageUrl = "../assets/img/elements/12.jpg";
+            }
+            else
+            {
+                imageUrl = $"{IMAGE_URL}{getEvent.Thumbnail}";
+            }
+
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card h-100">
+                <img class="card-img-obj card-img-top" src="@(imageUrl)" alt="@(getEvent.Name) by @(getEvent.Organizer)" />
+                <div class="card-body">
+                    <div class="mb-3">
+                        <span class="badge bg-danger text-capitalize">@(getEvent.Visibility)</span>
+                        <span class="badge bg-warning text-capitalize">@(getEvent.Category)</span>
+                        <span class="badge bg-success text-capitalize">@(getEvent.PlaceType)</span>
+                        <span class="badge bg-info text-capitalize">@(getEvent.Payment)</span>
+                    </div>
+                    @if (getEvent.PublicationStatus == "published")
+                    {
+                        <h5 class="card-title">@(getEvent.Name)<button type="button" class="badge ms-2 badge-center rounded-pill bg-info border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true" title="Published"> <i class="bx bx-check"></i> </button></h5>
+                    }
+                    else
+                    {
+                        <h5 class="card-title">@(getEvent.Name)</h5>
+                    }
+
+                    <h6 class="small">@(getEvent.StartDate)</h6>
+                    <p class="card-text">@(getEvent.Description)</p>
+                    <div class="row align-items-center justify-content-center align-self-auto">
+                        <div class="col">
+                            <div class="h6 mb-1"><del>Rp. @(getEvent.Price + 100000),-</del></div>
+                            <div class="h5 text-danger mb-0">Rp. @(getEvent.Price),-</div>
+                        </div>
+                        <div class="col-auto">
+
+                            @if (getEvent.PublicationStatus != "published")
+                            {
+                                <div class="btn-group" id="modify-btn">
+                                    <button type="button" class="btn btn-outline-primary bg-white text-primary">Options</button>
+                                    <button
+                                    type="button"
+                                    class="btn btn-outline-primary text-primary bg-white dropdown-toggle dropdown-toggle-split"
+                                    id="dropdownMenuReference"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    data-bs-reference="parent"
+                                    >
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuReference">
+                                        <li><a class="dropdown-item" href="#" onclick="showEvent(@(i))">
+                                                <i class="bx bx-detail me-2"></i> See Details</a></li>
+                                        <li><a class="dropdown-item" href="#">
+                                                <i class="bx bx-pencil me-2"></i> Edit Event</a></li>
+                                        <li><a href="#" class="dropdown-item" onclick="showParticipants(${index})"><i class="bx bx-group me-2"></i> Edit Participant</a></li>
+                                        <li>
+                                            <div class="dropdown-item">
+                                                <a class="btn btn-primary text-white btn-block w-100">Publish</a>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider" />
+                                        </li>
+                                        <li><a class="dropdown-item text-danger" href="javascript:void(0)"><i class="bx bx-trash me-2"></i>Delete Event</a></li>
+                                    </ul>
+                                </div>
+
+                            }
+                            else
+                            {
+                                    <a href="#" onclick="showEvent(@(i))" class="btn btn-primary">Details</a>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+</div>
+
+
+
+
+
+
+
+
+
 
 <div class="modal fade" id="event-detail" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -176,14 +290,14 @@
                     <input type="text"
                            class="form-control"
                            placeholder="Type company or your employee name" />
-                    <button class="btn btn-outline-primary" type="button" id="">Add</button>
+                    <button class="btn btn-outline-primary" type="button" id="">Search</button>
                 </div>
 
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="fw-semibold text-primary">Companies</div>
                         <div class="demo-inline-spacing mt-3">
-                            <div class="list-group">
+                            <div class="list-group" style="height: 400px; overflow: auto;">
                                 <label class="list-group-item">
                                     <input class="form-check-input me-1" type="checkbox" value="" />
                                     Apple Inc.
@@ -224,6 +338,18 @@
                                     <input class="form-check-input me-1" type="checkbox" value="" />
                                     Visa Inc.
                                 </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Visa Inc.
+                                </label>
+                                 <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Visa Inc.
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="checkbox" value="" />
+                                    Visa Inc.
+                                </label>
                             </div>
 
                         </div>
@@ -231,7 +357,7 @@
                     <div class="col-lg-6">
                         <div class="fw-semibold text-primary">Employees</div>
                         <div class="demo-inline-spacing mt-3">
-                            <div class="list-group">
+                            <div class="list-group" style="height: 400px; overflow: auto;">
                                 <label class="list-group-item">
                                     <input class="form-check-input me-1" type="checkbox" value="" />
                                     John Doe
@@ -290,8 +416,17 @@
     </div>
 </div>
 
+
+
 @section Scripts {
     <script type="text/javascript">
+        const eventsJson = @Html.Raw(ViewData["eventsJson"]);
+        const companiesJson = @Html.Raw(ViewData["companiesJson"]);
+        const employeesJson = @Html.Raw(ViewData["employeesJson"]);
+
+        console.log(eventsJson);
+        console.log(companiesJson);
+        console.log(employeesJson);
         const eventData = [
             {
                 "name": "Annual Gala Dinner",
@@ -391,18 +526,20 @@
                                         <li><a class="dropdown-item text-danger" href="javascript:void(0)"><i class="bx bx-trash me-2"></i>Delete Event</a></li>
                                       </ul>
                                     </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+                                  
                     `;
                 }
                 else{
                 eventElement += `<a href="#" onclick="showEvent(${index})" class="btn btn-primary">Details</a>`;
                 }
 
-            $("#render-body").append(eventElement);
+            eventElement += `</div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>`;
+
+            $("#event-list").append(eventElement);
         }
 
         function renderEvents() {
@@ -414,37 +551,45 @@
         renderEvents();
 
         function showEvent(index) {
-            const event = eventData[index];
+            const event = eventsJson.Data[index];
 
-            let eventName = event.name;
+            let eventName = event.Name;
 
-            if (event.published) {
-                eventName = event.name + `<button type="button" class="badge ms-2 badge-center rounded-pill bg-info border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true" title="Published"> <i class="bx bx-check"></i> </button>`;
+            if (event.PublicationStatus) {
+                eventName = event.Name + `<button type="button" class="badge ms-2 badge-center rounded-pill bg-info border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true" title="Published"> <i class="bx bx-check"></i> </button>`;
+            }
+
+            let imageUrl = "";
+
+            if (event.Thumbnail == null || event.Thumbnail == ""){
+                imageUrl = "../assets/img/elements/12.jpg";
+            }else{
+                imageUrl = `@(IMAGE_URL)${event.Thumbnail}`;
             }
 
             $("#event-detail-name").html(eventName);
-            $("#event-detail-thumbnail").attr("src", event.thumbnail).attr("alt", event.name + " by " + event.organizer);
-            $("#event-detail-description").text(event.description);
-            $("#event-detail-startdate").text(event.startDate);
-            $("#event-detail-enddate").text(event.endDate);
-            $("#event-detail-organizer").text(event.organizer);
-            $("#event-detail-place").text(event.place);
-            $("#event-detail-joined").text(event.joined);
-            $("#event-detail-promo").text(event.price + upperPrice);
-            $("#event-detail-price").text(event.price);
+            $("#event-detail-thumbnail").attr("src", imageUrl).attr("alt", event.Name + " by " + event.Organizer);
+            $("#event-detail-description").text(event.Description);
+            $("#event-detail-startdate").text(event.StartDate);
+            $("#event-detail-enddate").text(event.EndDate);
+            $("#event-detail-organizer").text(event.Organizer);
+            $("#event-detail-place").text(event.Place);
+            $("#event-detail-joined").text(event.Joined);
+            $("#event-detail-promo").text(event.Price + upperPrice);
+            $("#event-detail-price").text(event.Price);
 
-            $("#event-detail-type").text(event.type);
-            $("#event-detail-category").text(event.category);
-            $("#event-detail-status").text(event.status);
-            $("#event-detail-payment").text(event.payment);
+            $("#event-detail-type").text(event.Visibility);
+            $("#event-detail-category").text(event.Category);
+            $("#event-detail-status").text(event.PlaceType);
+            $("#event-detail-payment").text(event.Payment);
 
-            if(event.published){
+            if(event.PublicationStatus == "published"){
                 $("#event-detail-joined").parent().hide();
-                $("#event-detail-quota").text(event.quota);
+                $("#event-detail-quota").text(event.Quota);
             }
             else{
                 $("#event-detail-joined").parent().show();
-                $("#event-detail-quota").text(event.quota - event.joined);
+                $("#event-detail-quota").text(event.Quota - event.Joined);
             }
 
             $("#event-detail").modal('show');
@@ -453,6 +598,11 @@
         function showParticipants(index) {
             $("#edit-participants").modal('show');
         }
+     
 
+    </script>
+
+    <script>
+        $("#sort-by").val("@sortByQuery")
     </script>
 }

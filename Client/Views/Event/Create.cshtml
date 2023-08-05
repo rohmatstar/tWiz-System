@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Client.DTOs.Events.CreateEventDto;
+
+@{
     var toast = TempData["toast"] as dynamic;
 
     ViewData["Title"] = "Create Event";
@@ -55,9 +57,9 @@
                     </div>
 
                     <div class="mb-3 row">
-                        <label for="event-type" class="col-md-4 col-form-label">Event Type</label>
+                        <label for="visibility" class="col-md-4 col-form-label">Event Type</label>
                         <div class="col-md-8">
-                            <select class="form-select" id="event-type">
+                            <select class="form-select" id="visibility">
                                 <option value="public">Public</option>
                                 <option value="private">Private</option>
                             </select>
@@ -87,14 +89,14 @@
                     <div class="mb-3 row">
                         <label for="start-date" class="col-md-4 col-form-label">Start Date</label>
                         <div class="col-md-8">
-                            <input class="form-control" type="date" id="start-date" />
+                            <input class="form-control" type="datetime-local" id="start-date" />
                         </div>
                     </div>
 
                     <div class="mb-5 row">
                         <label for="end-date" class="col-md-4 col-form-label">End Date</label>
                         <div class="col-md-8">
-                            <input class="form-control" type="date" id="end-date" />
+                            <input class="form-control" type="datetime-local" id="end-date" />
                         </div>
                     </div>
 
@@ -116,14 +118,14 @@
                     <div class="mb-3 row">
                         <label for="price" class="col-md-4 col-form-label">Price</label>
                         <div class="col-md-8">
-                            <input class="form-control" type="number" min="0" value="0" id="price" />
+                            <input class="form-control" type="number" min="0" value="0" id="price" disabled />
                         </div>
                     </div>
 
                     <div class="mb-3 row">
-                        <label for="status" class="col-md-4 col-form-label">Status</label>
+                        <label for="place-type" class="col-md-4 col-form-label">Place Type</label>
                         <div class="col-md-8">
-                            <select class="form-select" id="status">
+                            <select class="form-select" id="place-type">
                                 <option value="online">Online</option>
                                 <option value="offline">Offline</option>
                             </select>
@@ -141,21 +143,23 @@
             </div>
             <div class="card-footer border-top p-0 pt-3 text-end">
                 <div class="btn-group">
-                    <button type="submit" class="btn btn-outline-primary bg-white text-primary">Save as Draft</button>
-                    <button type="button"
+                    <button type="submit" class="btn btn-outline-primary bg-white text-primary" id="btn-submit">Save as Draft</button>
+                    <!--
+                        <button type="button"
                             class="btn btn-outline-primary bg-white text-primary dropdown-toggle dropdown-toggle-split"
                             id="dropdownMenuReference"
                             data-bs-toggle="dropdown"
                             aria-expanded="false"
                             data-bs-reference="parent">
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuReference">
-                        <li>
-                            <div class="dropdown-item">
-                                <button type="submit" class="btn btn-primary">Save and Add Participant</button>
-                            </div>
-                        </li>
-                    </ul>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuReference">
+                            <li>
+                                <div class="dropdown-item">
+                                    <button type="submit" class="btn btn-primary">Save and Add Participant</button>
+                                </div>
+                            </li>
+                        </ul>
+                    -->
                 </div>
             </div>
 
@@ -163,6 +167,104 @@
     </div>
 </div>
 
-@section Scripts{
 
+@section Scripts{
+    <script>
+        const btnSubmitElem = document.getElementById("btn-submit");
+
+        console.log("@(ViewData["token"])");
+
+        
+
+        $('input[type="radio"][name="event-pay"]').on('change', function () {
+            // Get the value of the selected radio button
+            const selectedValue = $(this).val();
+
+            // Get the target input element
+            const textInput = $('#price');
+
+            // Toggle the disabled attribute based on the selected radio button value
+            if (selectedValue === 'free') {
+                textInput.prop('disabled', true); 
+            } else {
+                textInput.prop('disabled', false); 
+            }
+        });
+        btnSubmitElem.addEventListener("click", function (e) {
+
+            e.preventDefault();
+            console.log($('input[type=file]').val());
+
+            const fileElem = document.getElementById("thumbnail");
+            const file = fileElem.files[0];
+            //const file2 = $('input[type=file]').files[0];
+
+            //console.log("name : ", $("#Name").val());
+            //console.log("description : ", $("#Description").val());
+            //console.log("visibility : ", $("#Visibility").val());
+            //console.log("payment : ", $("input[name='payment']:checked").val());
+            //console.log("price : ", $("#Price").val());
+            //console.log("category : ", $("#Category").val());
+            //console.log("place type : ", $("#PlaceType").val());
+            //console.log("startdate : ", $("#StartDate").val());
+            //console.log("enddate : ", $("#EndDate").val());
+            //console.log("quota : ", $("#Quota").val());
+            //console.log("place : ", $("#Place").val());
+
+            const formData = new FormData();
+            formData.append('ThumbnailFile', file);
+            formData.append("Name", $("#event-name").val());
+            formData.append("Description", $("#description").val());
+            formData.append("Visibility", $("#visibility").val());
+            formData.append("Payment", $("#input[name='event-pay']:checked").val());
+            formData.append("Price", $("#price").val() ?? "0");
+            formData.append("Category", $("#category").val());
+            formData.append("PlaceType", $("#place-type").val());
+            formData.append("StartDate", $("#start-date").val());
+            formData.append("EndDate", $("#end-date").val());
+            formData.append("Quota", $("#quota").val());
+            formData.append("Place", $("#place").val());
+            //formData.append("Name", "asdasd");
+            //formData.append("Age", "123");
+            //formData.append("Times", "10/02/2000");
+
+            fetch('https://localhost:7249/api/events', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer @(ViewData["token"])`,
+                },
+                body: formData,
+            })
+                .then(response => response.json())
+                .then(responseJson => {
+                    console.log("berhasil");
+                    console.log(responseJson)
+                    if (responseJson.status == 400) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Create Event Failed',
+                            text: "Please check your data" ?? "",
+                        })
+                    }
+
+                    if(responseJson.code == 200){
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Event Created',
+                            text: "Now you can modify event participant at event controls menu",
+                        })
+                    }
+                    
+                    
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Create Event Failed',
+                        text: "Please check your data" ?? "",
+                    })
+                });
+        })
+    </script>
 }

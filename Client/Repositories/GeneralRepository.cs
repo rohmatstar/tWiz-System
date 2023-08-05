@@ -9,9 +9,9 @@ namespace Client.Repositories
     public class GeneralRepository<Entity, TId> : IRepository<Entity, TId>
         where Entity : class
     {
-        private readonly string request;
-        private readonly HttpClient httpClient;
-        private readonly IHttpContextAccessor contextAccessor;
+        protected readonly string request;
+        protected readonly HttpClient httpClient;
+        protected readonly IHttpContextAccessor contextAccessor;
 
         public GeneralRepository(string request)
         {
@@ -21,7 +21,7 @@ namespace Client.Repositories
             {
                 BaseAddress = new Uri("https://localhost:7249/api/")
             };
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", contextAccessor.HttpContext?.Session.GetString("JWToken"));
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", contextAccessor.HttpContext?.Session.GetString("JWTToken"));
         }
 
         public async Task<ResponseMessageDto> Delete(TId guid)
