@@ -118,6 +118,36 @@ public class AccountController : ControllerBase
         });
     }
 
+    [HttpPut("activate_deactivate/{guid}")]
+    public IActionResult ActivateDeactivate(Guid guid)
+    {
+        var update = _service.ActivateDeactivate(guid);
+        if (update is -1)
+        {
+            return NotFound(new ResponseHandler<UpdateAccountDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Id not found"
+            });
+        }
+        if (update is 0)
+        {
+            return BadRequest(new ResponseHandler<UpdateAccountDto>
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Check your data"
+            });
+        }
+        return Ok(new ResponseHandler<UpdateAccountDto>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Successfully updated"
+        });
+    }
+
     [HttpDelete]
     public IActionResult Delete(Guid guid)
     {
