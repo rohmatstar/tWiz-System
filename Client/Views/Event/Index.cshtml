@@ -285,7 +285,7 @@
                 
                 <h4 class="mb-0">Edit Participants</h4>
 
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; right: 30px; top: 40px;"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; right: 30px; top: 40px;" id="btn-close-participants"></button>
             </div>
             <div class="modal-body">
 
@@ -413,7 +413,7 @@
                     <button type="button" class="btn btn-text text-danger bg-light">Delete selected</button>
                 </div>
                 <div class="col text-end">
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-primary" id="btn-update-participants">Save changes</button>
                 </div>
             </div>
         </div>
@@ -599,6 +599,13 @@
             $("#event-detail").modal('show');
         }
 
+        
+
+        $("#btn-close-participants").on("click", function(){
+            $("#select-all-company").prop("checked", false);
+            $("#select-all-employee").prop("checked", false);
+        })
+
         async function showParticipants(eventGuid, indexEvent) {
             console.log(eventGuid);
             const event = eventsJson.Data[indexEvent];
@@ -668,8 +675,45 @@
                 }
             })
 
-
             $("#edit-participants").modal('show');
+
+            const btnUpdateParticipants = document.getElementById("btn-update-participants");
+            console.log("btn update participants : ", btnUpdateParticipants)
+
+            btnUpdateParticipants.onclick = async function(e){
+                let companyParticipantsGuids = [];
+                let employeeParticipantsGuids = [];
+
+                $(".company-item").each(function (index, element) {
+                    if($(this).prop("checked")){
+                    companyParticipantsGuids.push($(this).val());
+
+                    }
+                })
+
+                $(".employee-item").each(function (index, element) {
+                    if ($(this).prop("checked")) {
+                        employeeParticipantsGuids.push($(this).val());
+                    }
+                    
+                })
+
+                console.log(companyParticipantsGuids)
+                console.log(employeeParticipantsGuids)
+
+                const updateParticipantsEventDto = {
+                    EventGuid: eventGuid,
+                    CompanyParticipantsGuids: companyParticipantsGuids,
+                    EmployeeParticipantsGuids: employeeParticipantsGuids,
+                };
+
+                const response = await UpdateParticipantsEvent(updateParticipantsEventDto);
+                console.log(response);
+            }
+            //$("#btn-update-participants").on("click", async function(){
+                
+            //})
+
         }
 
         const API_URL = "https://localhost:7249/api";
@@ -692,6 +736,22 @@
                 },
             }).then(response => response.json())
                 .catch(err => { message: "something error" });
+        }
+
+        function UpdateParticipantsEvent(updateParticipantsEventDto) {
+            console.log(updateParticipantsEventDto)
+            return fetch(`${API_URL}/events/participants`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer @(ViewData["token"])`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updateParticipantsEventDto),
+            }).then(response => response.json())
+                .catch(err => {
+                    console.log(err)
+                    return { message: "something error" }
+                });
         }
      
 

@@ -690,7 +690,7 @@ public class EventService
             return ep.EventGuid == eventGuid && employee.CompanyGuid == makerEvent.Guid;
         }).ToList();
 
-        var transaction = _twizDbContext.Database.BeginTransaction();
+        //var transaction = _twizDbContext.Database.BeginTransaction();
 
         try
         {
@@ -698,7 +698,7 @@ public class EventService
             var deletedPreviousEmployeeParticipantsEvevnt = _employeeParticipantRepository.Deletes(previousEmployeeParticipants);
             if (deletedPreviousCompanyParticipantsEvent is false || deletedPreviousEmployeeParticipantsEvevnt is false)
             {
-                transaction.Rollback();
+                //transaction.Rollback();
                 return 0;
             }
 
@@ -749,16 +749,16 @@ public class EventService
 
             if (createdCompanyParticipants is false || createdEmployeeParticipants is false)
             {
-                transaction.Rollback();
+                //transaction.Rollback();
                 return 0;
             }
 
-            transaction.Commit();
+            //transaction.Commit();
 
         }
         catch
         {
-            transaction.Rollback();
+            //transaction.Rollback();
             return 0;
         }
 
