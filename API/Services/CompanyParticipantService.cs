@@ -1,151 +1,192 @@
 ﻿using API.Contracts;
 using API.DTOs.CompanyParticipants;
 using API.Models;
+using API.Utilities.Enums;
 
-namespace API.Services
+namespace API.Services;
+
+public class CompanyParticipantService
 {
-    public class CompanyParticipantService
+    private readonly ICompanyParticipantRepository _companyParticipantRepository;
+
+    public CompanyParticipantService(ICompanyParticipantRepository repository)
     {
-        private readonly ICompanyParticipantRepository _repository;
+        _companyParticipantRepository = repository;
+    }
 
-        public CompanyParticipantService(ICompanyParticipantRepository repository)
+    public IEnumerable<CompanyParticipantsDto>? GetCompanyParticipants()
+    {
+        var model = _companyParticipantRepository.GetAll();
+
+        if (model is null)
         {
-            _repository = repository;
+            return null;
         }
 
-        public IEnumerable<CompanyParticipantsDto>? GetCompanyParticipants()
+        var data = model.Select(e => new CompanyParticipantsDto
         {
-            var model = _repository.GetAll();
+            Guid = e.Guid,
+            EventGuid = e.EventGuid,
+            CompanyGuid = e.CompanyGuid,
+            Status = e.Status,
+            IsPresent = e.IsPresent
+        }).ToList();
 
-            if (model is null)
-            {
-                return null;
-            }
+        return data;
+    }
 
-            var data = model.Select(e => new CompanyParticipantsDto
-            {
-                Guid = e.Guid,
-                EventGuid = e.EventGuid,
-                CompanyGuid = e.CompanyGuid,
-                Status = e.Status,
-                IsPresent = e.IsPresent
-            }).ToList();
+    public CompanyParticipantsDto? GetCompanyParticipant(Guid guid)
+    {
+        var model = _companyParticipantRepository.GetByGuid(guid);
 
-            return data;
+        if (model is null)
+        {
+            return null;
         }
 
-        public CompanyParticipantsDto? GetCompanyParticipant(Guid guid)
+        var e = model;
+
+        var data = new CompanyParticipantsDto
         {
-            var model = _repository.GetByGuid(guid);
+            Guid = e.Guid,
+            EventGuid = e.EventGuid,
+            CompanyGuid = e.CompanyGuid,
+            Status = e.Status,
+            IsPresent = e.IsPresent
+        };
 
-            if (model is null)
-            {
-                return null;
-            }
+        return data;
+    }
 
-            var e = model;
+    public CompanyParticipantsDto? CreateCompanyParticipant(CreateCompanyParticipantDto create)
+    {
+        var model = new CompanyParticipant
+        {
+            Guid = new Guid(),
+            EventGuid = create.EventGuid,
+            CompanyGuid = create.CompanyGuid,
+            Status = create.Status,
+            IsPresent = create.IsPresent
+        };
 
-            var data = new CompanyParticipantsDto
-            {
-                Guid = e.Guid,
-                EventGuid = e.EventGuid,
-                CompanyGuid = e.CompanyGuid,
-                Status = e.Status,
-                IsPresent = e.IsPresent
-            };
-
-            return data;
+        var created = _companyParticipantRepository.Create(model);
+        if (created is null)
+        {
+            return null;
         }
 
-        public CompanyParticipantsDto? CreateCompanyParticipant(CreateCompanyParticipantDto create)
+
+        var data = new CompanyParticipantsDto
         {
-            var model = new CompanyParticipant
+            Guid = model.Guid,
+            EventGuid = model.EventGuid,
+            CompanyGuid = model.CompanyGuid,
+            Status = model.Status,
+            IsPresent = model.IsPresent
+        };
+
+        return data;
+    }
+
+    public CompanyParticipantsDto? UpdateCompanyParticipant(CompanyParticipantsDto update)
+    {
+        var single = _companyParticipantRepository.GetByGuid(update.Guid);
+        if (single == null)
+        {
+            return null;
+        }
+
+        var model = new CompanyParticipant
+        {
+            Guid = update!.Guid,
+            EventGuid = update!.EventGuid,
+            CompanyGuid = update!.CompanyGuid,
+            Status = update!.Status,
+            IsPresent = update!.IsPresent
+        };
+
+        var isUpdate = _companyParticipantRepository.Update(model);
+        if (!isUpdate)
+        {
+            return null;
+        }
+
+        var data = new CompanyParticipantsDto
+        {
+            Guid = model!.Guid,
+            EventGuid = model!.EventGuid,
+            CompanyGuid = model!.CompanyGuid,
+            Status = model!.Status,
+            IsPresent = model!.IsPresent
+        };
+
+        return data;
+    }
+
+    public CompanyParticipantsDto? DeleteCompanyParticipant(Guid guid)
+    {
+        var model = _companyParticipantRepository.GetByGuid(guid);
+        if (model == null)
+        {
+            return null;
+        }
+
+        var isDelete = _companyParticipantRepository.Delete(model!);
+        if (!isDelete)
+        {
+            return null;
+        }
+
+        var deleted = new CompanyParticipantsDto
+        {
+            Guid = model!.Guid,
+            EventGuid = model!.EventGuid,
+            CompanyGuid = model!.CompanyGuid,
+            Status = model!.Status,
+            IsPresent = model!.IsPresent
+        };
+
+        return deleted;
+    }
+
+    public int RemoveThenCreateCompanyParticipant(GetCompanyParticipantsDto companyParticipantsDto)
+    {
+        var companyParticipantsInEvent = _companyParticipantRepository.GetAll().Where(cp => cp.EventGuid == companyParticipantsDto.EventGuid).ToList();
+
+        if (companyParticipantsInEvent.Count() == 0)
+        {
+            return 0;
+        }
+
+        var deletedCompanyParticipants = _companyParticipantRepository.Deletes(companyParticipantsInEvent);
+
+        if (deletedCompanyParticipants == false)
+        {
+            return 0;
+        }
+
+        var companyParticipants = companyParticipantsDto.CompanyParticipantGuids.Select(cp =>
+        {
+            return new CompanyParticipant
             {
                 Guid = new Guid(),
-                EventGuid = create.EventGuid,
-                CompanyGuid = create.CompanyGuid,
-                Status = create.Status,
-                IsPresent = create.IsPresent
+                EventGuid = companyParticipantsDto.EventGuid,
+                CompanyGuid = cp,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now,
+                IsPresent = false,
+                Status = InviteStatusLevel.Pending
             };
+        }).ToList();
 
-            var created = _repository.Create(model);
-            if (created is null)
-            {
-                return null;
-            }
+        var createdCompanyParticipants = _companyParticipantRepository.Creates(companyParticipants);
 
-
-            var data = new CompanyParticipantsDto
-            {
-                Guid = model.Guid,
-                EventGuid = model.EventGuid,
-                CompanyGuid = model.CompanyGuid,
-                Status = model.Status,
-                IsPresent = model.IsPresent
-            };
-
-            return data;
-        }
-
-        public CompanyParticipantsDto? UpdateCompanyParticipant(CompanyParticipantsDto update)
+        if (createdCompanyParticipants == false)
         {
-            var single = _repository.GetByGuid(update.Guid);
-            if (single == null)
-            {
-                return null;
-            }
-
-            var model = new CompanyParticipant
-            {
-                Guid = update!.Guid,
-                EventGuid = update!.EventGuid,
-                CompanyGuid = update!.CompanyGuid,
-                Status = update!.Status,
-                IsPresent = update!.IsPresent
-            };
-
-            var isUpdate = _repository.Update(model);
-            if (!isUpdate)
-            {
-                return null;
-            }
-
-            var data = new CompanyParticipantsDto
-            {
-                Guid = model!.Guid,
-                EventGuid = model!.EventGuid,
-                CompanyGuid = model!.CompanyGuid,
-                Status = model!.Status,
-                IsPresent = model!.IsPresent
-            };
-
-            return data;
+            return 0;
         }
 
-        public CompanyParticipantsDto? DeleteCompanyParticipant(Guid guid)
-        {
-            var model = _repository.GetByGuid(guid);
-            if (model == null)
-            {
-                return null;
-            }
-
-            var isDelete = _repository.Delete(model!);
-            if (!isDelete)
-            {
-                return null;
-            }
-
-            var deleted = new CompanyParticipantsDto
-            {
-                Guid = model!.Guid,
-                EventGuid = model!.EventGuid,
-                CompanyGuid = model!.CompanyGuid,
-                Status = model!.Status,
-                IsPresent = model!.IsPresent
-            };
-
-            return deleted;
-        }
+        return 1;
     }
 }
+

@@ -1,6 +1,5 @@
 ﻿using API.DTOs.EventPayments;
 using API.Services;
-using API.Utilities.Enums;
 using API.Utilities.Handlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -46,7 +45,7 @@ public class EventPaymentController : ControllerBase
     }
 
     [HttpGet("{guid}")]
-    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
+    //[Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
     public IActionResult GetByGuid(Guid guid)
     {
         var eventpayment = _service.GetEventPayment(guid);
@@ -244,15 +243,16 @@ public class EventPaymentController : ControllerBase
         {
             Code = StatusCodes.Status200OK,
             Status = HttpStatusCode.OK.ToString(),
-            Message = "Successfully update data"
+            Message = "Successfully upload event payment submission"
         });
 
     }
 
-    [HttpPut("aprove")]
-    public IActionResult Aprove(AproveEventPaymentDto aproveEventPaymentDto)
+    [HttpPut("validation")]
+    public IActionResult Aprove(AproveEventPaymentDto aproveEventPaymentDto, [FromQuery] string status)
     {
-        var aprovedEventPaymentStatus = _service.AproveEventPayment(aproveEventPaymentDto);
+        // status = "approve" or "reject"
+        var aprovedEventPaymentStatus = _service.ValidationEventPayment(aproveEventPaymentDto, status);
 
         if (aprovedEventPaymentStatus is 0)
         {

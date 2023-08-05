@@ -171,6 +171,7 @@ public class RegisterPaymentService
 
         var toDto = new PaymentSummaryDto
         {
+            Guid = payment.Guid,
             VaNumber = payment.VaNumber,
             Price = payment.Price,
             BankCode = bank.Code,
@@ -263,9 +264,14 @@ public class RegisterPaymentService
 
         return 1; // RegisterPayment Deleted
     }
-
+    
     public async Task<int> UploadPaymentSubmission(PaymentSubmissionDto paymentSubmissionDto)
     {
+        if(paymentSubmissionDto.PaymentImage is null)
+        {
+            return -1;
+        }
+
         var folderPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images\register_payments");
 
         if (!Directory.Exists(folderPath))

@@ -10,8 +10,6 @@ public class PaymentSubmissionDto
     [Required]
     public IFormFile PaymentImage { get; set; }
 
-    [Required]
-    public string CompanyName { get; set; }
 
 }
 

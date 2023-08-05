@@ -59,7 +59,7 @@ public class EmployeeService
                 CompanyName = company?.Name ?? "",
                 Email = account?.Email ?? "",
             };
-        }).ToList();
+        }).OrderBy(e => e.FullName).ToList();
 
         var claimUser = _httpContextAccessor.HttpContext?.User;
 
