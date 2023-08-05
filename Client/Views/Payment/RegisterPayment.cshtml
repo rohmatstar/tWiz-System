@@ -157,6 +157,7 @@
         function approveRegisterPayment(obj, guid){
             var innerHTML = obj.innerHTML;
             $("#approve-btn-" + guid).html('<i class="bx bx-loader-alt animate__loading"></i>');
+            $("#approve-btn-" + guid + ", #reject-btn-" + guid).prop("disabled", true);
 
             $.ajax({
                 url: 'https://localhost:7249/api/register-payments/aprove',
@@ -166,16 +167,19 @@
                 }),
                 contentType: 'application/json',
                 success: function (response) {
-                    console.log("Request successful:", response);
-
                     if (response.code === 200) {
                         $("#approve-btn-" + guid + ", #reject-btn-" + guid).remove();
                         $("#status-" + guid).text(paid);
                     } else {
-                        console.log(response.message);
+                        Swal.fire(
+                            'Approve Failed',
+                            'Error ' + response.code + '! ' + response.message,
+                            'error'
+                        );
+                        $("#approve-btn-" + guid + ", #reject-btn-" + guid).prop("disabled", false);
                     }
 
-                    $("#approve-btn-" + guid).html(innerHTML);
+                    $("#approve-btn-" + guid).html(innerHTML).prop("disabled", false);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.error("Error:", textStatus, errorThrown);
@@ -186,6 +190,7 @@
         function rejectRegisterPayment(obj, guid) {
             var innerHTML = obj.innerHTML;
             $("#reject-btn-" + guid).html('<i class="bx bx-loader-alt animate__loading"></i>');
+            $("#approve-btn-" + guid + ", #reject-btn-" + guid).prop("disabled", true);
 
             $.ajax({
                 url: 'https://localhost:7249/api/register-payments/reject',
@@ -201,10 +206,15 @@
                         $("#approve-btn-" + guid + ", #reject-btn-" + guid).remove();
                         $("#status-" + guid).text(needSubmission);
                     } else {
-                        console.log(response.message);
+                        Swal.fire(
+                            'Approve Failed',
+                            'Error ' + response.code + '! ' + response.message,
+                            'error'
+                        );
+                        $("#approve-btn-" + guid + ", #reject-btn-" + guid).prop("disabled", false);
                     }
 
-                    $("#reject-btn-" + guid).html(innerHTML);
+                        $("#reject-btn-" + guid).html(innerHTML).prop("disabled", false);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.error("Error:", textStatus, errorThrown);
