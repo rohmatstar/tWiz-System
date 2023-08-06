@@ -9,16 +9,19 @@
 }
 
 
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item "><a asp-action="Index" class="text-primary">Events Control</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Participants</li>
-    </ol>
-</nav>
 
 @if(Model.MakerEventGuid == Guid.Parse(companyGuid))
 {
     var i = 0;
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item "><a asp-action="Index" class="text-primary">Events Control</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Participants</li>
+        </ol>
+    </nav>
+
+
     <h4 class="mb-3 mt-5">Company Participants</h4>
 
     <table class="table table-responsive" id="company-table" >
@@ -77,6 +80,14 @@
 else
 {
     var i = 0;
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item "><a asp-action="Invited" class="text-primary">Invited Event</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Participants</li>
+        </ol>
+    </nav>
+
     <h4 class="mb-3 mt-5">Employee Participants</h4>
 
     <table class="table table-responsive" id="employee-table">

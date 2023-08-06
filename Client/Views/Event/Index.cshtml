@@ -265,6 +265,9 @@
                                         <del>Rp. <span id="event-detail-promo">0</span>,-</del>
                                         <span class="text-danger">Rp. <span id="event-detail-price">0</span>,-</span>
                                     </div>
+
+                                    
+                                    <a class="btn btn-light shadow-sm" id="btn-show-participants">show participants</a>
                                 </div>
                             </div>
                         </div>
@@ -597,6 +600,12 @@
                 $("#event-detail-joined").parent().show();
                 $("#event-detail-quota").text(event.Quota - event.Joined);
             }
+
+            // asp-controller="Event" asp-action="Participants" participants?eventGuid=
+            //$("#btn-show-participants").attr("asp-controller", "Event");
+            //$("#btn-show-participants").attr("asp-action", "Participants");
+            //$("#btn-show-participants").attr("asp-route-eventGuid", event.Guid);
+            $("#btn-show-participants").attr("href", `/participants?eventGuid=${event.Guid}`);
 
             $("#event-detail").modal('show');
         }
