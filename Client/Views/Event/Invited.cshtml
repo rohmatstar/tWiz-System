@@ -346,85 +346,7 @@
         const employeesJson = @Html.Raw(ViewData["employeesJson"]);
 
         console.log(eventsJson);
-        console.log(employeesJson);
-
-        const eventData = [
-            {
-                "name": "Annual Gala Dinner",
-                "thumbnail": "../assets/img/elements/4.jpg",
-                "description": "Event Description is a comprehensive and detailed narrative that provides essential information about an upcoming event. This description serves as a means to inform potential attendees, participants, or interested parties about the event's purpose, content, and key features.",
-                "type": "Public",
-                "category": "MoU",
-                "status": "Online",
-                "payment": "Free",
-                "price": 0,
-                "quota": 100,
-                "joined": 88,
-                "startDate": "21 Agustus 2023, 16.00 WIB",
-                "endDate": "21 Agustus 2023, 18.00 WIB",
-                "organizer": "PT Metrodata Electronics Tbk.",
-                "place": "Google Meet",
-                "published": true
-            },
-            {
-                "name": "MII Stars",
-                "thumbnail": "../assets/img/elements/3.jpg",
-                "description": "Join us for an exciting and memorable event that celebrates art and culture! This event, titled 'Colors of Creativity,' will showcase a diverse array of artists from various disciplines, including painting, sculpture, photography, and more. Attendees will have the opportunity to immerse themselves in a vibrant atmosphere, surrounded by inspiring works of art. The event will also feature live performances, interactive workshops, and engaging discussions with the artists. Whether you're an art enthusiast or just curious about different forms of creativity, 'Colors of Creativity' promises to be an enriching experience for all. Come and be a part of this extraordinary celebration of artistic expression!",
-                "type": "Public",
-                "category": "Party",
-                "status": "Offline",
-                "payment": "Paid",
-                "price": 250000,
-                "quota": 1000,
-                "joined": 0,
-                "startDate": "22 Agustus 2023, 16.00 WIB",
-                "endDate": "22 Agustus 2023, 18.00 WIB",
-                "organizer": "PT Metrodata Electronics Tbk.",
-                "place": "Aston Villa",
-                "published": false
-            }
-        ];
-
-        function renderEvent(index, event) {
-            let eventDescription = event.description.length > 100 ? event.description.substr(0,100) + "..." : event.description;
-
-            const eventElement = `
-                          <div class="col-md-6 col-lg-4 mb-3 border border-4 border-success">
-                            <div class="card h-100">
-                              <img class="card-img-obj card-img-top" src="${event.thumbnail}" alt="${event.name} by ${event.organizer}" />
-                              <div class="card-body">
-                                <div class="mb-3">
-                                  <span class="badge bg-danger text-capitalize">${event.type}</span>
-                                  <span class="badge bg-warning text-capitalize">${event.category}</span>
-                                  <span class="badge bg-success text-capitalize">${event.status}</span>
-                                  <span class="badge bg-info text-capitalize">${event.payment}</span>
-                                </div>
-                                <h5 class="card-title">${event.name}</h5>
-                                <h6 class="small">${event.startDate}</h6>
-                                                        <p class="card-text">${eventDescription}</p>
-                                <div class="row align-items-center justify-content-center">
-                                  <div class="col">
-                                            <div class="h6 mb-1"><del>${event.price + 100000},-</del></div>
-                                    <div class="h5 text-danger mb-0">Rp. ${event.price},-</div>
-                                  </div>
-                                  <div class="col-auto">
-                                    <a href="#" onclick="showEvent(${index})" class="btn btn-outline-primary">Details</a>
-                                  </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                        `;
-
-            $("#render-body").append(eventElement);
-        }
-
-        function renderEvents() {
-            $.each(eventData, function (index, data) {
-                renderEvent(index, data);
-            });
-        }
-        renderEvents();
+        console.log(employeesJson);        
 
         const upperPrice = 100000;
         const API_URL = "https://localhost:7249/api";
@@ -494,16 +416,17 @@
                     console.log("approve")
                 }
 
-                btnReject.onclick = function(){
-                    rejectEvent(event.Guid);
-                    console.log("reject")
-                }
+                
             }else if(event.PaymentGuid != null){
                 btnJoin.onclick = function (){
                     console.log("hello 2")
                 }
             }
 
+            btnReject.onclick = function () {
+                rejectEvent(event.Guid);
+                console.log("reject")
+            }
 
             $("#event-detail").modal('show');
         }
