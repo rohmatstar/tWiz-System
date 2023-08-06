@@ -2,10 +2,13 @@
 using Client.DTOs;
 using Client.DTOs.Auths;
 using Client.DTOs.Companies;
+using Client.Utilities.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Client.Controllers;
 
+[Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}")]
 public class CompanyController : Controller
 {
     private readonly ICompanyRepository _companyRepository;

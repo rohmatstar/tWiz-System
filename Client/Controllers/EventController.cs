@@ -1,6 +1,8 @@
 ﻿using Client.Contracts;
 using Client.DTOs.Events;
 using Client.Models;
+using Client.Utilities.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Globalization;
@@ -8,6 +10,7 @@ using System.Text.Json;
 
 namespace Client.Controllers;
 
+[Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}, {nameof(RoleLevel.Employee)}")]
 public class EventController : Controller
 {
 
@@ -45,7 +48,7 @@ public class EventController : Controller
         return View(events.Result.Data);
     }
 
-    /*[Authorize]*/
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}")]
     public IActionResult Create()
     {
         var active = "create_event";
@@ -56,7 +59,7 @@ public class EventController : Controller
 
         return View();
     }
-
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}")]
     [HttpGet("Edit/{guid}")]
     public async Task<IActionResult> Edit(Guid guid)
     {

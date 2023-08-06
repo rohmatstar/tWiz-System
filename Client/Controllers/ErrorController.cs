@@ -4,6 +4,7 @@ using System.Diagnostics;
 
 namespace Client.Controllers
 {
+    
     public class ErrorController : Controller
     {
 

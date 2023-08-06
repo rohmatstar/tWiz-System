@@ -1,10 +1,13 @@
 ﻿using Client.Contracts;
 using Client.Models;
+using Client.Utilities.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace Client.Controllers
 {
+    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}")]
     public class PaymentController : Controller
     {
 
