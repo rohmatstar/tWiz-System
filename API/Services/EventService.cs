@@ -1510,6 +1510,54 @@ public class EventService
 
         return userTickets;
     }
+
+    public int ApproveParticipantEvent(Guid eventGuid)
+    {
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
+        var employee = _employeeRepository.GetAll().FirstOrDefault(e => e.AccountGuid == Guid.Parse(accountGuid!));
+
+        if (company is not null)
+        {
+            var eventPayment = _eventPaymentRepository.GetAll().Where(evp => evp.AccountGuid == Guid.Parse(accountGuid) && evp.EventGuid == eventGuid);
+
+            if (eventPayment is not null)
+            {
+                var companyParticipant = _companyParticipantRepository.GetAll().FirstOrDefault(cp => cp.CompanyGuid == company.Guid && cp.EventGuid == eventGuid);
+
+                companyParticipant.Status = InviteStatusLevel.Accepted;
+
+                var updatedCompanyParticipant = _companyParticipantRepository.Update(companyParticipant);
+                if (updatedCompanyParticipant is false)
+                {
+                    return 0;
+                }
+            }
+        }
+        else if (employee is not null)
+        {
+            var eventPayment = _eventPaymentRepository.GetAll().Where(evp => evp.AccountGuid == Guid.Parse(accountGuid) && evp.EventGuid == eventGuid);
+
+            if (eventPayment is not null)
+            {
+                var employeeParticipant = _employeeParticipantRepository.GetAll().FirstOrDefault(cp => cp.EmployeeGuid == employee.Guid && cp.EventGuid == eventGuid);
+
+                employeeParticipant.Status = InviteStatusLevel.Accepted;
+
+                var updatedCompanyParticipant = _employeeParticipantRepository.Update(employeeParticipant);
+                if (updatedCompanyParticipant is false)
+                {
+                    return 0;
+                }
+            }
+        }
+
+        return 1;
+    }
 }
 
 

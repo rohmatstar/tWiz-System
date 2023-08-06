@@ -347,5 +347,27 @@ public class EventController : ControllerBase
             Message = "You cannot access!!"
         });
     }
+
+    [HttpPut("approve-participant")]
+    public IActionResult ApproveParticipantEvent(Guid eventGuid)
+    {
+        var personalEvents = _eventService.ApproveParticipantEvent(eventGuid);
+        if (personalEvents is not 0)
+        {
+            return Ok(new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success",
+            });
+        }
+
+        return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status400BadRequest,
+            Status = HttpStatusCode.Forbidden.ToString(),
+            Message = "You cannot access!!"
+        });
+    }
 }
 

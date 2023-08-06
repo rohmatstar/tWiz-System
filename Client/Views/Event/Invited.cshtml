@@ -422,6 +422,7 @@
         renderEvents();
 
         const upperPrice = 100000;
+        const API_URL = "https://localhost:7249/api";
 
         function showEvent(index) {
             const event = eventsJson.Data[index];
@@ -458,10 +459,15 @@
             const btnJoin = document.getElementById("btn-join");
             const btnReject = document.getElementById("btn-reject");
 
-            if (event.PaymentGuid == null){
-                $("#btn-join").prop("asp-action", "Index")
+            if (event.PaymentGuid == null && event.InvitationStatus != "accepted"){
+                btnJoin.onclick = async function (){
+                    await approveParticipant(event.Guid);
+                    console.log("hello 1")
+                }
             }else{
-                $("#btn-join").prop("asp-action", "Create")
+                btnJoin.onclick = function (){
+                    console.log("hello 2")
+                }
             }
 
 
@@ -470,6 +476,42 @@
 
         function showParticipants(index) {
             $("#event-detail").modal('show');
+        }
+
+        async function approveParticipant(eventGuid){
+            fetch(`${API_URL}/events/approve-participant?eventGuid=${eventGuid}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer @(ViewData["token"])`,
+                },
+            }).then(response => response.json())
+                .then(responseJson => {
+                    console.log(responseJson)
+                    if (responseJson.code == 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: `Successfully approve participant`,
+                        }).then(result => location.reload(true))
+
+
+                    }
+
+                    if (responseJson.code == 400) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Approve event Failed',
+                            text: "Please check your data",
+                        })
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Approve event Failed',
+                        text: "Please check your data",
+                    })
+                });
         }
 
     </script>

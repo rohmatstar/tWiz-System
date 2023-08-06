@@ -5,7 +5,8 @@ public enum InviteStatusLevel
 {
     Pending,
     Accepted,
-    Rejected
+    Rejected,
+    Checking
 }
 
 
