@@ -29,7 +29,7 @@ public static class GenerateHandler
     {
         Random random = new Random();
         HashSet<int> uniqueDigits = new HashSet<int>();
-        while (uniqueDigits.Count < 9)
+        while (uniqueDigits.Count < 6)
         {
             int digit = random.Next(0, 9);
             uniqueDigits.Add(digit);
