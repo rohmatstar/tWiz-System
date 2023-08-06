@@ -1,5 +1,15 @@
-﻿@{
+﻿@model List<Client.DTOs.Events.GetInvitationEventDto>;
+@using System.Security.Claims;
+
+@{
     var toast = TempData["toast"] as dynamic;
+
+    var role = User!.Claims!.FirstOrDefault(c => c.Type == ClaimTypes.Role)!.Value;
+
+    var sortByQuery = Context.Request.Query["sort_by"];
+    var visibilityQuery = Context.Request.Query["visibility"];
+    var placeTypeQuery = Context.Request.Query["place_type"];
+    var publicationStatusQuery = Context.Request.Query["publication_status"];
 
     ViewData["Title"] = "Invited Events";
     Layout = "_LayoutUser";
@@ -20,15 +30,15 @@
                     <div class="mb-3">
                         <label for="publication" class="form-label">Publication</label>
                         <div class="form-check">
-                            <input checked type="radio" class="form-check-input" id="publication-all" name="publication" value="all">
+                            <input checked type="radio" class="form-check-input" id="publication-all" name="publication_status" value="all" @(publicationStatusQuery == "all" ? "checked" : "")>
                             <label class="form-check-label" for="publication-all">All</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="publication-published" name="publication" value="published">
+                            <input type="radio" class="form-check-input" id="publication-published" name="publication_status" value="published" @(publicationStatusQuery == "published" ? "checked" : "")>
                             <label class="form-check-label" for="publication-published">Published</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="publication-draft" name="publication" value="draft">
+                            <input type="radio" class="form-check-input" id="publication-draft" name="publication_status" value="draft" @(publicationStatusQuery == "draft" ? "checked" : "")>
                             <label class="form-check-label" for="publication-draft">Draft</label>
                         </div>
                     </div>
@@ -36,15 +46,15 @@
                     <div class="mb-3">
                         <label for="visibility" class="form-label">Visibility</label>
                         <div class="form-check">
-                            <input checked type="radio" class="form-check-input" id="visibility-all" name="visibility" value="all">
+                            <input checked type="radio" class="form-check-input" id="visibility-all" name="visibility" value="all" @(visibilityQuery == "all" ? "checked" : "")>
                             <label class="form-check-label" for="visibility-all">All</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="visibility-public" name="visibility" value="public">
+                            <input type="radio" class="form-check-input" id="visibility-public" name="visibility" value="public" @(visibilityQuery == "public" ? "checked" : "")>
                             <label class="form-check-label" for="visibility-public">Public</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="visibility-private" name="visibility" value="private">
+                            <input type="radio" class="form-check-input" id="visibility-private" name="visibility" value="private" @(visibilityQuery == "private" ? "checked" : "")>
                             <label class="form-check-label" for="visibility-private">Private</label>
                         </div>
                     </div>
@@ -52,33 +62,35 @@
                     <div class="mb-3">
                         <label for="type" class="form-label">Type</label>
                         <div class="form-check">
-                            <input checked type="radio" class="form-check-input" id="type-all" name="type" value="all">
+                            <input checked type="radio" class="form-check-input" id="type-all" name="place_type" value="all" @(placeTypeQuery == "all" ? "checked" : "")>
                             <label class="form-check-label" for="type-all">All</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="type-online" name="type" value="online">
+                            <input type="radio" class="form-check-input" id="type-online" name="place_type" value="online" @(placeTypeQuery == "online" ? "checked" : "")>
                             <label class="form-check-label" for="type-online">Online</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="type-offline" name="type" value="offline">
+                            <input type="radio" class="form-check-input" id="type-offline" name="place_type" value="offline" @(placeTypeQuery == "offline" ? "checked" : "")>
                             <label class="form-check-label" for="type-offline">Offline</label>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="sort-by" class="form-label">Sort by</label>
-                        <select class="form-select" id="sort-by" name="sort-by">
-                            <option selected value="newest">Newest</option>
-                            <option value="oldest">Oldest</option>
+                        <select class="form-select" id="sort-by" name="sort_by">
+                            <option value="newest">Newest</option>
+                            <option value="older">Oldest</option>
                         </select>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Apply</button>
-                    <button type="reset" class="btn btn-text bg-white text-primary">Use Default</button>
+
+
+                    <button type="submit" class="btn btn-primary" id="btn-apply">Apply</button>
                 </form>
             </div>
         </div>
     </div>
+
 }
 
 @section Toast{
@@ -378,6 +390,11 @@
         function showParticipants(index) {
             $("#event-detail").modal('show');
         }
+
+    </script>
+
+    <script>
+        $("#sort-by").val("@sortByQuery")
 
     </script>
 }
