@@ -1,5 +1,6 @@
 ﻿@using System.Globalization;
 @{
+    var jwtToken = Context.Session.GetString("JWTToken")!.ToString();
     var payment = TempData["payment"] as dynamic;
     var toast = TempData["toast"] as dynamic;
     ViewData["Title"] = "Event Payment";
@@ -54,7 +55,7 @@
                         </div>
 
                         <div class="col-auto ps-0">
-                            <button type="submit" class="btn btn-primary" id="submitBtnrp">Send</button>
+                            <button type="submit" class="btn btn-primary" id="btn-submit-payment">Send</button>
                         </div>
                     </div>
                 </form>
@@ -63,4 +64,69 @@
         </div>
     </div>
 </div>
-    
+
+
+
+@section Scripts
+    {
+    <script>
+        document.getElementById("btn-submit-payment").addEventListener("click", function (e) {
+            e.preventDefault();
+            const fileInput = document.getElementById("fileInput");
+            const file = fileInput.files[0];
+
+            if (file) {
+                const formData = new FormData();
+                formData.append("PaymentImageFile", file);
+                formData.append("Guid", "@payment.Guid");
+
+                // Ganti "http://example.com/upload" dengan URL API Anda
+                const apiUrl = "https://localhost:7249/api/event-payments/payment-submission";
+
+                fetch(apiUrl, {
+                    method: "PUT",
+                    headers: {
+                        'Authorization': `Bearer @jwtToken`,
+                    },
+                    body: formData,
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        // Lakukan sesuatu dengan data respons dari API jika diperlukan
+                        console.log(data);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Wait For The Admin Checked Your Payment',
+                            text: 'File Success To Uploaded!',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                redirectToInvitedEvent();
+                            }
+                        });
+                        function redirectToInvitedEvent() {
+                            location.href = 'https://localhost:7153/Event/Invited';
+                        }
+                    })
+
+
+                    .catch((error) => {
+                        // Tangani kesalahan jika terjadi
+                        console.error("Error:", error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something error, check your data',
+                        })
+                    });
+            } else {
+                // Tampilkan pesan kesalahan jika file belum dipilih
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please Upload Your File!',
+                })
+            }
+        });
+    </script>
+
+}

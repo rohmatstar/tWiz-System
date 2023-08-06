@@ -226,6 +226,11 @@ public class EventPaymentService
         var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
         var accountName = "";
 
+        if (paymentSubmissionDto.PaymentImageFile is null)
+        {
+            return -8;
+        }
+
         if (accountGuid == null)
         {
             return 0;
@@ -612,6 +617,7 @@ public class EventPaymentService
         {
             var paid = new EventPaymentSummaryDto
             {
+                Guid = eventPayment.Guid,
                 VaNumber = 0,
                 Price = 0,
                 BankCode = null,

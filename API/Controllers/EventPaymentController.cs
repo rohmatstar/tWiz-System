@@ -215,7 +215,7 @@ public class EventPaymentController : ControllerBase
             {
                 Code = StatusCodes.Status500InternalServerError,
                 Status = HttpStatusCode.InternalServerError.ToString(),
-                Message = "Check your internet connection"
+                Message = "Check your internet connection or your email is not found"
             });
         }
 
@@ -224,8 +224,18 @@ public class EventPaymentController : ControllerBase
             return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
             {
                 Code = StatusCodes.Status400BadRequest,
-                Status = HttpStatusCode.InternalServerError.ToString(),
+                Status = HttpStatusCode.BadRequest.ToString(),
                 Message = "Check your data"
+            });
+        }
+
+        if (paymentSubmissionStatus is -8)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "Image file is required"
             });
         }
 
