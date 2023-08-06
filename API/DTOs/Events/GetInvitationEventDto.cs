@@ -48,5 +48,7 @@ public class GetInvitationEventDto
     public string PublicationStatus { get; set; }
 
     public Guid? PaymentGuid { get; set; }
+
+    public string InvitationStatus { get; set; }
 }
 

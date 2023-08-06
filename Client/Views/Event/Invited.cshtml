@@ -11,6 +11,8 @@
     var placeTypeQuery = Context.Request.Query["place_type"];
     var publicationStatusQuery = Context.Request.Query["publication_status"];
 
+    var IMAGE_URL = "https://localhost:7249/";
+
     ViewData["Title"] = "Invited Events";
     Layout = "_LayoutUser";
 }
@@ -111,6 +113,91 @@
     }
 }
 
+
+<div class="row" id="event-list">
+
+@if (Model is not null)
+{
+    var i = -1;
+    foreach (var getEvent in Model)
+    {
+        i++;
+        var imageUrl = "";
+        @if (getEvent.Thumbnail is null || getEvent.Thumbnail == "")
+        {
+            imageUrl = "../assets/img/elements/12.jpg";
+        }
+        else
+        {
+            imageUrl = $"{IMAGE_URL}{getEvent.Thumbnail}";
+        }
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card h-100">
+                <img class="card-img-obj card-img-top" src="@(imageUrl)" alt="@(getEvent.Name) by @(getEvent.Organizer)" />
+                <div class="card-body">
+                    <div class="mb-3">
+                        <span class="badge bg-danger text-capitalize">@(getEvent.Visibility)</span>
+                        <span class="badge bg-warning text-capitalize">@(getEvent.Category)</span>
+                        <span class="badge bg-success text-capitalize">@(getEvent.PlaceType)</span>
+                        <span class="badge bg-info text-capitalize">@(getEvent.Payment)</span>
+                    </div>
+                    @if (getEvent.InvitationStatus == "accepted")
+                    {
+                            <h5 class="card-title">@(getEvent.Name)<button title="joined" type="button" class="badge ms-2 badge-center rounded-pill bg-success border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true" > <i class="bx bx-check"></i> </button></h5>
+                    }
+                    else
+                    {
+                        <h5 class="card-title">@(getEvent.Name)</h5>
+                    }
+
+                    <h6 class="small">@(getEvent.StartDate)</h6>
+                    <p class="card-text">@(getEvent.Description)</p>
+                    <div class="row align-items-center justify-content-center align-self-auto">
+                        <div class="col">
+                            <div class="h6 mb-1"><del>Rp. @(getEvent.Price + 100000),-</del></div>
+                            <div class="h5 text-danger mb-0">Rp. @(getEvent.Price),-</div>
+                        </div>
+                        <div class="col-auto">
+
+                            @if (getEvent.InvitationStatus == "accepted" && role == "Company")
+                            {
+                                <div class="btn-group" id="modify-btn">
+                                    <button type="button" class="btn btn-outline-primary bg-white text-primary">Options</button>
+                                    <button type="button"
+                                            class="btn btn-outline-primary text-primary bg-white dropdown-toggle dropdown-toggle-split"
+                                            id="dropdownMenuReference"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                            data-bs-reference="parent">
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuReference">
+                                        <li>
+                                            <a class="dropdown-item" href="#" onclick="showEvent(@(i))">
+                                                <i class="bx bx-detail me-2"></i> See Details
+                                            </a>
+                                        </li>
+                                        <li><a class="dropdown-item" asp-controller="Event" asp-action="Participants" asp-route-eventGuid="@getEvent.Guid"><i class="bx bx-group me-2"></i> Show Participant</a></li>
+                                        <li><a href="#" class="dropdown-item" onclick="showParticipants('@(getEvent.Guid)', '@(i)')"><i class="bx bx-group me-2"></i> Edit Participant</a></li>
+                                    </ul>
+                                </div>
+
+                            }
+                            else
+                            {
+                                <a href="#" onclick="showEvent(@(i))" class="btn btn-outline-primary">Details</a>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    }
+}
+</div>
+
+
 <!-- Modals -->
 <div class="modal fade" id="event-detail" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -185,56 +272,8 @@
                     <button class="btn btn-outline-primary" type="button" id="">Add</button>
                 </div>
 
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="fw-semibold text-primary">Companies</div>
-                        <div class="demo-inline-spacing mt-3">
-                            <div class="list-group">
-                                <label class="list-group-item">
-                                    <input class="form-check-input me-1" type="checkbox" value="" />
-                                    Apple Inc.
-                                </label>
-                                <label class="list-group-item">
-                                    <input class="form-check-input me-1" type="checkbox" value="" />
-                                    Microsoft Corporation
-                                </label>
-                                <label class="list-group-item">
-                                    <input class="form-check-input me-1" type="checkbox" value="" />
-                                    Amazon.com Inc.
-                                </label>
-                                <label class="list-group-item">
-                                    <input class="form-check-input me-1" type="checkbox" value="" />
-                                    Alphabet Inc. (Google)
-                                </label>
-                                <label class="list-group-item">
-                                    <input class="form-check-input me-1" type="checkbox" value="" />
-                                    Facebook, Inc.
-                                </label>
-                                <label class="list-group-item">
-                                    <input class="form-check-input me-1" type="checkbox" value="" />
-                                    Tencent Holdings Limited
-                                </label>
-                                <label class="list-group-item">
-                                    <input class="form-check-input me-1" type="checkbox" value="" />
-                                    Tesla, Inc.
-                                </label>
-                                <label class="list-group-item">
-                                    <input class="form-check-input me-1" type="checkbox" value="" />
-                                    Samsung Electronics Co., Ltd.
-                                </label>
-                                <label class="list-group-item">
-                                    <input class="form-check-input me-1" type="checkbox" value="" />
-                                    Walmart Inc.
-                                </label>
-                                <label class="list-group-item">
-                                    <input class="form-check-input me-1" type="checkbox" value="" />
-                                    Visa Inc.
-                                </label>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
+                <div class="row">                   
+                    <div class="col-lg-12">
                         <div class="fw-semibold text-primary">Employees</div>
                         <div class="demo-inline-spacing mt-3">
                             <div class="list-group">
@@ -285,9 +324,6 @@
             </div>
 
             <div class="modal-footer justify-content-between border-top py-3">
-                <div class="col">
-                    <button type="button" class="btn btn-text text-danger bg-light">Delete selected</button>
-                </div>
                 <div class="col text-end">
                     <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
@@ -298,6 +334,12 @@
 
 @section Scripts {
     <script type="text/javascript">
+        const eventsJson = @Html.Raw(ViewData["eventsJson"]);
+        const employeesJson = @Html.Raw(ViewData["employeesJson"]);
+
+        console.log(eventsJson);
+        console.log(employeesJson);
+
         const eventData = [
             {
                 "name": "Annual Gala Dinner",
@@ -339,7 +381,7 @@
             let eventDescription = event.description.length > 100 ? event.description.substr(0,100) + "..." : event.description;
 
             const eventElement = `
-                          <div class="col-md-6 col-lg-4 mb-3">
+                          <div class="col-md-6 col-lg-4 mb-3 border border-4 border-success">
                             <div class="card h-100">
                               <img class="card-img-obj card-img-top" src="${event.thumbnail}" alt="${event.name} by ${event.organizer}" />
                               <div class="card-body">
@@ -359,6 +401,11 @@
                                   </div>
                                   <div class="col-auto">
                                     <a href="#" onclick="showEvent(${index})" class="btn btn-outline-primary">Details</a>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                         `;
 
             $("#render-body").append(eventElement);
@@ -371,19 +418,41 @@
         }
         renderEvents();
 
+        const upperPrice = 100000;
+
         function showEvent(index) {
-            const event = eventData[index];
-            $("#event-detail-name").text(event.name);
-            $("#event-detail-thumbnail").attr("src", event.thumbnail).attr("alt", event.name + " by " + event.organizer);
-            $("#event-detail-description").text(event.description);
-            $("#event-detail-startdate").text(event.startDate);
-            $("#event-detail-enddate").text(event.endDate);
-            $("#event-detail-organizer").text(event.organizer);
-            $("#event-detail-place").text(event.place);
-            $("#event-detail-joined").text(event.joined);
-            $("#event-detail-quota").text(event.quota - event.joined);
-            $("#event-detail-promo").text(event.price + 100000);
-            $("#event-detail-price").text(event.price);
+            const event = eventsJson.Data[index];
+            console.log(event);
+
+
+            let imageUrl = "";
+
+            if (event.Thumbnail == null || event.Thumbnail == "") {
+                imageUrl = "../assets/img/elements/12.jpg";
+            } else {
+                imageUrl = `@(IMAGE_URL)${event.Thumbnail}`;
+            }
+
+            $("#event-detail-name").html(event.Name);
+            $("#event-detail-thumbnail").attr("src", imageUrl).attr("alt", event.Name + " by " + event.Organizer);
+            $("#event-detail-description").text(event.Description);
+            $("#event-detail-startdate").text(event.StartDate);
+            $("#event-detail-enddate").text(event.EndDate);
+            $("#event-detail-organizer").text(event.Organizer);
+            $("#event-detail-place").text(event.Place);
+            $("#event-detail-joined").text(event.Joined);
+            $("#event-detail-promo").text(event.Price + upperPrice);
+            $("#event-detail-price").text(event.Price);
+
+            $("#event-detail-type").text(event.Visibility);
+            $("#event-detail-category").text(event.Category);
+            $("#event-detail-status").text(event.PlaceType);
+            $("#event-detail-payment").text(event.Payment);
+
+            $("#event-detail-joined").parent().show();
+            $("#event-detail-quota").text(event.Quota - event.Joined);
+
+
             $("#event-detail").modal('show');
         }
 

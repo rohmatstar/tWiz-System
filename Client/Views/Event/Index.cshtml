@@ -561,7 +561,7 @@
 
             let eventName = event.Name;
 
-            if (event.PublicationStatus) {
+            if (event.PublicationStatus == "published") {
                 eventName = event.Name + `<button type="button" class="badge ms-2 badge-center rounded-pill bg-info border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true" title="Published"> <i class="bx bx-check"></i> </button>`;
             }
 

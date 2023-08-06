@@ -116,13 +116,12 @@ public class EventController : Controller
 
         var events = _eventRepository.GetInvitationEvents(queryParams);
         var employees = _employeeRepository.Get();
-        Console.WriteLine("invited controller");
-        Console.WriteLine(events);
+
 
         string eventsJson = JsonSerializer.Serialize(events.Result);
         string employeesJson = JsonSerializer.Serialize(employees.Result);
 
-        Console.WriteLine(eventsJson);
+
 
         ViewData["eventsJson"] = eventsJson;
         ViewData["employeesJson"] = employeesJson;

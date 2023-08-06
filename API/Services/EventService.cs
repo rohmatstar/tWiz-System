@@ -882,8 +882,19 @@ public class EventService
             // filter event berdasarkan participant
             foreach (var filterEvent in filterEvents)
             {
-                if (companyParticipants.FirstOrDefault(cp => cp.EventGuid == filterEvent.Guid && cp.CompanyGuid == company.Guid) is not null)
+                var companyParticipant = companyParticipants.FirstOrDefault(cp => cp.EventGuid == filterEvent.Guid && cp.CompanyGuid == company.Guid);
+                if (companyParticipant is not null)
                 {
+                    var invitationStatus = "";
+
+                    if (companyParticipant.Status == InviteStatusLevel.Pending) invitationStatus = "pending";
+                    if (companyParticipant.Status == InviteStatusLevel.Checking) invitationStatus = "checking";
+                    if (companyParticipant.Status == InviteStatusLevel.Accepted) invitationStatus = "accepted";
+                    if (companyParticipant.Status == InviteStatusLevel.Rejected) invitationStatus = "rejected";
+
+                    filterEvent.InvitationStatus = invitationStatus;
+
+
                     invitationEvents.Add(filterEvent);
                 }
             }
@@ -941,8 +952,17 @@ public class EventService
             // filter event berdasarkan participant
             foreach (var filterEvent in filterEvents)
             {
-                if (employeeParticipants.FirstOrDefault(ep => ep.EventGuid == filterEvent.Guid && ep.EmployeeGuid == employee.Guid) is not null)
+                var employeeParticipant = employeeParticipants.FirstOrDefault(ep => ep.EventGuid == filterEvent.Guid && ep.EmployeeGuid == employee.Guid);
+                if (employeeParticipant is not null)
                 {
+                    var invitationStatus = "";
+
+                    if (employeeParticipant.Status == InviteStatusLevel.Pending) invitationStatus = "pending";
+                    if (employeeParticipant.Status == InviteStatusLevel.Checking) invitationStatus = "checking";
+                    if (employeeParticipant.Status == InviteStatusLevel.Accepted) invitationStatus = "accepted";
+                    if (employeeParticipant.Status == InviteStatusLevel.Rejected) invitationStatus = "rejected";
+
+                    filterEvent.InvitationStatus = invitationStatus;
                     invitationEvents.Add(filterEvent);
                 }
             }
