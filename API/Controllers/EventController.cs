@@ -391,5 +391,29 @@ public class EventController : ControllerBase
             Message = "You cannot access!!"
         });
     }
+
+    [HttpGet("company-published-paid-event")]
+    public IActionResult GetCompanyPaidEvent()
+    {
+        var companyPaidEvents = _eventService.GetCompanyPaidEvent();
+        if (companyPaidEvents is not null)
+        {
+            return Ok(new ResponseHandler<List<GetEventDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success",
+                Data = companyPaidEvents
+            });
+        }
+
+        return StatusCode(StatusCodes.Status404NotFound, new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status404NotFound,
+            Status = HttpStatusCode.NotFound.ToString(),
+            Message = "Data Not Found!",
+            Data = null
+        });
+    }
 }
 
