@@ -1,7 +1,6 @@
 ﻿using API.Contracts;
 using API.Data;
 using API.DTOs.EventPayments;
-using API.DTOs.RegisterPayments;
 using API.Models;
 using API.Utilities.Enums;
 using API.Utilities.Handlers;
@@ -574,7 +573,7 @@ public class EventPaymentService
         return 1;
     }
 
-    public PaymentSummaryDto? GetPaymentSummary(Guid guid)
+    public EventPaymentSummaryDto? GetPaymentSummary(Guid guid)
     {
 
         var eventPayment = _eventPaymentRepository.GetAll().FirstOrDefault(ep => ep.Guid == guid);
@@ -595,25 +594,34 @@ public class EventPaymentService
             return null;
         }
 
+        var getEventMaker = _companyRepository.GetByGuid(getEvent.CreatedBy);
+
+        if (getEventMaker is null)
+        {
+            return null;
+        }
+
         if (eventPayment.StatusPayment == StatusPayment.Paid)
         {
-            var paid = new PaymentSummaryDto
+            var paid = new EventPaymentSummaryDto
             {
                 VaNumber = 0,
                 Price = 0,
                 BankCode = null,
-                BankName = null
+                BankName = null,
+                CompanyName = getEventMaker.Name
             };
             return paid;
         }
 
-        var toDto = new PaymentSummaryDto
+        var toDto = new EventPaymentSummaryDto
         {
             Guid = eventPayment.Guid,
             VaNumber = eventPayment.VaNumber,
             Price = getEvent.Price,
             BankCode = bank.Code,
-            BankName = bank.Name
+            BankName = bank.Name,
+            CompanyName = getEventMaker.Name
         };
         return toDto;
     }

@@ -272,4 +272,41 @@ public class EventPaymentController : ControllerBase
             Message = "Successfully aprove event payment submission"
         });
     }
+
+    [HttpGet("summary")]
+    public IActionResult GetEventPaymentSummary(Guid guid)
+    {
+        var payment = _service.GetPaymentSummary(guid);
+
+        if (payment == null)
+        {
+            return StatusCode(StatusCodes.Status404NotFound, new ResponseHandler<EventPaymentSummaryDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Event payment of this account is not found",
+            });
+        }
+        else
+        {
+            if (payment.VaNumber == 0)
+            {
+                return StatusCode(StatusCodes.Status200OK, new ResponseHandler<EventPaymentSummaryDto>
+                {
+                    Code = StatusCodes.Status200OK,
+                    Status = HttpStatusCode.OK.ToString(),
+                    Message = "Event Payment of this account is Paid",
+                    Data = null
+                });
+            }
+
+            return StatusCode(StatusCodes.Status200OK, new ResponseHandler<EventPaymentSummaryDto>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.PaymentRequired.ToString(),
+                Message = "Successfully get event payment",
+                Data = payment
+            });
+        }
+    }
 }
