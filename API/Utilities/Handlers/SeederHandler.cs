@@ -743,9 +743,9 @@ public class SeederHandler
             var company1 = new Company
             {
                 Guid = new Guid(),
-                Name = "PT.ABC",
-                Address = "Jl. ABC",
-                PhoneNumber = "34567111",
+                Name = "PT. DIGITAL KARYA INFORMATIKA",
+                Address = "Jl.Jati Bening Mekar",
+                PhoneNumber = "08123445677",
                 AccountGuid = account1.Guid,
                 BankAccountNumber = "3333999227872",
                 CreatedDate = DateTime.Now,
@@ -755,9 +755,9 @@ public class SeederHandler
             var company2 = new Company
             {
                 Guid = new Guid(),
-                Name = "PT.XYZ",
-                Address = "Jl.XYZ",
-                PhoneNumber = "4533111",
+                Name = "PT. MITRA INTEGRASI INFORMATIKA",
+                Address = "APL Tower, Jl. Letjen S. Parman No.28, Daerah Khusus Ibukota Jakarta 11470",
+                PhoneNumber = "622129345777",
                 AccountGuid = account2.Guid,
                 BankAccountNumber = "333391127872",
                 CreatedDate = DateTime.Now,
@@ -767,9 +767,9 @@ public class SeederHandler
             var company3 = new Company
             {
                 Guid = new Guid(),
-                Name = "PT.RAY",
-                Address = "JL.Bojong Koneng",
-                PhoneNumber = "085555867777",
+                Name = "PT. Tiara Karunia Sentosa",
+                Address = " Grogol petamburan, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11470",
+                PhoneNumber = "02131110503",
                 AccountGuid = account12.Guid,
                 BankAccountNumber = "55555726656",
                 CreatedDate = DateTime.Now,
@@ -1272,7 +1272,7 @@ public class SeederHandler
             var event4 = new Event
             {
                 Guid = new Guid(),
-                Name = "Interview PT. JKI",
+                Name = "Interview PT.Jaya Konsultan Informatika",
                 Quota = 5,
                 UsedQuota = 1,
                 StartDate = new DateTime(2023, 8, 15, 8, 30, 0),
@@ -1294,7 +1294,7 @@ public class SeederHandler
             var event5 = new Event
             {
                 Guid = new Guid(),
-                Name = "Interview PT. KLM",
+                Name = "Interview PT. Karya Lintas Medika",
                 Quota = 5,
                 UsedQuota = 1,
                 StartDate = new DateTime(2023, 8, 15, 8, 30, 0),
@@ -1328,7 +1328,7 @@ public class SeederHandler
                 IsActive = true,
                 Status = EventStatus.Offline,
                 IsPublished = true,
-                Place = "PT.ABC",
+                Place = " PT.DIGTAL KARYA INFORMATIKA",
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
             };
@@ -1363,7 +1363,7 @@ public class SeederHandler
                 UsedQuota = 0,
                 StartDate = new DateTime(2023, 07, 07, 8, 30, 0),
                 EndDate = new DateTime(2023, 07, 08, 17, 0, 0),
-                Description = "Recruitment Karyawan PT.ABC Untuk Bagian Developer IT",
+                Description = "Recruitment Karyawan PT . DIGITAL KARYA INFORMATIKA Untuk Bagian Developer IT",
                 Category = "Interview",
                 CreatedBy = company1.Guid,
                 IsPaid = false,
@@ -1371,7 +1371,7 @@ public class SeederHandler
                 IsActive = true,
                 Status = EventStatus.Offline,
                 IsPublished = true,
-                Place = "PT.ABC",
+                Place = "PT. DIGITAL KARYA INFORMATIKA",
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now
             };
@@ -1506,7 +1506,7 @@ public class SeederHandler
             var event15 = new Event
             {
                 Guid = new Guid(),
-                Name = "Interview PT. VBN",
+                Name = "Interview PT. Viva Belgia Neurotics",
                 Quota = 5,
                 UsedQuota = 1,
                 StartDate = new DateTime(2023, 8, 15, 8, 30, 0),
@@ -6877,7 +6877,7 @@ public class SeederHandler
             var registerpayment1 = new RegisterPayment
             {
                 Guid = new Guid(),
-                CompanyGuid = _context.Set<Company>().FirstOrDefault(c => c.Name == "PT.ABC").Guid,
+                CompanyGuid = _context.Set<Company>().FirstOrDefault(c => c.Name == "PT. DIGITAL KARYA INFORMATIKA").Guid,
                 VaNumber = GenerateHandler.GenerateVa(),
                 Price = 500000,
                 PaymentImage = "",
@@ -6891,7 +6891,7 @@ public class SeederHandler
             var registerpayment2 = new RegisterPayment
             {
                 Guid = new Guid(),
-                CompanyGuid = _context.Set<Company>().FirstOrDefault(c => c.Name == "PT.XYZ").Guid,
+                CompanyGuid = _context.Set<Company>().FirstOrDefault(c => c.Name == "PT. MITRA INTEGRASI INFORMATIKA").Guid,
                 VaNumber = GenerateHandler.GenerateVa(),
                 Price = 500000,
                 PaymentImage = "",
@@ -6903,7 +6903,7 @@ public class SeederHandler
             var registerpayment3 = new RegisterPayment
             {
                 Guid = new Guid(),
-                CompanyGuid = _context.Set<Company>().FirstOrDefault(c => c.Name == "PT.RAY").Guid,
+                CompanyGuid = _context.Set<Company>().FirstOrDefault(c => c.Name == "PT. Tiara Karunia Sentosa").Guid,
                 VaNumber = GenerateHandler.GenerateVa(),
                 Price = 500000,
                 PaymentImage = "",

@@ -3,6 +3,7 @@ using Client.DTOs;
 using Client.DTOs.Auths;
 using Client.Models;
 using Client.Utilities.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
@@ -10,6 +11,7 @@ using System.Security.Claims;
 
 namespace Client.Controllers
 {
+    [AllowAnonymous]
     public class AuthController : Controller
     {
 
@@ -41,14 +43,91 @@ namespace Client.Controllers
             TempData["type"] = RoleLevel.Company.ToString();
             return View("SignIn");
         }
+
+        [HttpGet]
         public IActionResult ForgetPassword()
         {
             return View();
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgetPassword(ForgotPasswordDto forgotPasswordDto)
+        {
+            var result = await _authRepository.ForgetPassword(forgotPasswordDto);
+            if (result.Code == 200)
+            {
+                
+                TempData["email"] = result.Data.Email;
+                TempData["role"] = result.Data.Role;
+                return RedirectToAction("ResetPassword");
+            }
+            else
+            {
+                TempData["toast"] = new ToastDto
+                {
+                    Color = "danger",
+                    Title = "Failed to Send OTP",
+                    Subtitle = "So sorry, there is some mistake when sent otp to your email"
+                };
+
+                return View();
+            }
+        }
+
+        [HttpGet]
         public IActionResult ResetPassword()
         {
+            if (TempData["email"] != null)
+            {
+                TempData["toast"] = new ToastDto
+                {
+                    Color = "success",
+                    Title = "OTP Sent!",
+                    Subtitle = "Reset your password by filling this form below"
+                };
+            }
             return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ChangePasswordDto changePasswordDto)
+        {
+            var type = Request.Form["type"].ToString();
+
+            var result = await _authRepository.ResetPassword(changePasswordDto);
+            if (result.Code == 200)
+            {
+                TempData["toast"] = new ToastDto
+                {
+                    Color = "success",
+                    Title = "Password Changed!",
+                    Subtitle = "Sign in with your new password"
+                };
+
+                if (type == RoleLevel.Company.ToString())
+                {
+                    TempData["type"] = RoleLevel.Company.ToString();
+                    return View("SignIn");
+                }
+                else
+                {
+                    TempData["type"] = RoleLevel.Employee.ToString();
+                    return View("SignIn");
+                }
+            }
+            else
+            {
+                TempData["toast"] = new ToastDto
+                {
+                    Color = "danger",
+                    Title = "Failed to Send OTP",
+                    Subtitle = "So sorry, there is some mistake when sent otp to your email"
+                };
+
+                return View();
+            }
         }
 
         /* ===== Company =======*/

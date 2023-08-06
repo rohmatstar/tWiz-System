@@ -9,5 +9,7 @@ namespace Client.Contracts
         public Task<ResponseDto<string>> SignIn(SignInDto loginDto);
 
         public Task<ResponseDto<SignUpDto>> SignUp(SignUpDto signUpDto);
+        public Task<ResponseDto<ForgotPasswordDto>> ForgetPassword(ForgotPasswordDto forgotPasswordDto);
+        public Task<ResponseDto<ChangePasswordDto>> ResetPassword(ChangePasswordDto changePasswordDto);
     }
 }

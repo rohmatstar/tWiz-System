@@ -1,9 +1,9 @@
-﻿@model Client.DTOs.Employees.CreateEmployeeDto
+﻿@model Client.DTOs.Employees.GetMasterEmployeeDto
 @{
     var jwtToken = Context.Session.GetString("JWTToken")!.ToString();
     var toast = TempData["toast"] as dynamic;
 
-    ViewData["Title"] = "Create Employee";
+    ViewData["Title"] = "Update Employee";
     Layout = "_LayoutUser";
 }
 
@@ -34,12 +34,13 @@
         <div class="card-body">
             <div class="row align-items-center">
                 <div class="col-6 border-end">
-                    <form id="employeeForm" method="post" action="api/employees">
+                    <form id="employeeForm">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <div class="form-floating mb-3">
                             <input type="text"
                                    class="form-control"
                                    id="nik"
+                                   value="@Model.Nik"
                                    asp-for="Nik"
                                    placeholder="Enter NIK" />
                             <label asp-for="Nik">NIK</label>
@@ -50,6 +51,7 @@
                             <input type="text"
                                    class="form-control"
                                    id="fullName"
+                                   value="@Model.FullName"
                                    asp-for="FullName"
                                    placeholder="Enter Full Name" />
                             <label asp-for="FullName">Full Name</label>
@@ -61,6 +63,7 @@
                             <input type="date"
                                    class="form-control"
                                    id="birthDate"
+                                   value="@Model.BirthDate"
                                    asp-for="BirthDate"
                                    value="" />
                             <span asp-validation-for="BirthDate" class="text-danger"></span>
@@ -68,21 +71,49 @@
 
                         <small class="text-light fw-semibold">Gender</small>
                         <div class="form-check">
-                            <input name="gender"
-                                   class="form-check-input"
-                                   type="radio"
-                                   value="Male"
-                                   asp-for="Gender"
-                                   id="gender_male" />
+                            @if (Model.Gender == "male")
+                            {
+                                <input name="gender"
+                                       class="form-check-input"
+                                       type="radio"
+                                       value="Male"
+                                       checked
+                                       asp-for="Gender"
+                                       id="gender_male" />
+                            }
+                            else
+                            {
+                                <input name="gender"
+                                       class="form-check-input"
+                                       type="radio"
+                                       value="Male"
+                                       asp-for="Gender"
+                                       id="gender_male" />
+                            }
+
                             <label class="form-check-label" for="gender_male"> Male </label>
                         </div>
                         <div class="form-check mb-3">
-                            <input name="gender"
-                                   class="form-check-input"
-                                   type="radio"
-                                   value="Female"
-                                   asp-for="Gender"
-                                   id="gender_female" />
+                            @if (Model.Gender == "female")
+                            {
+                                <input name="gender"
+                                       class="form-check-input"
+                                       type="radio"
+                                       checked
+                                       value="Female"
+                                       asp-for="Gender"
+                                id="gender_female" />
+                            }
+                            else
+                            {
+                                <input name="gender"
+                                       class="form-check-input"
+                                       type="radio"
+                                       value="Female"
+                                       asp-for="Gender"
+                                       id="gender_female" />
+                            }
+
                             <label class="form-check-label" for="gender_female"> Female </label>
 
                             <span asp-validation-for="Gender" class="text-danger"></span>
@@ -93,6 +124,7 @@
                             <input type="date"
                                    class="form-control"
                                    id="hiringDate"
+                                   value="@Model.HiringDate"
                                    asp-for="HiringDate"
                                    value="" />
                             <span asp-validation-for="HiringDate" class="text-danger"></span>
@@ -102,6 +134,7 @@
                             <input type="number"
                                    class="form-control"
                                    id="phoneNumber"
+                                   value="@Model.PhoneNumber"
                                    asp-for="PhoneNumber"
                                    placeholder="Enter Phone Number"
                                    maxlength="15" />
@@ -113,6 +146,7 @@
                             <input type="email"
                                    class="form-control"
                                    id="email"
+                                   value="@Model.Email"
                                    asp-for="Email"
                                    placeholder="Enter Email Address" />
                             <label asp-for="Email">Email</label>
@@ -161,7 +195,7 @@
 
         $.ajax({
             url: 'https://localhost:7249/api/employees',
-            method: 'POST',
+            method: 'PUT',
             contentType: 'application/json',
             data: jsonData,
             headers: {

@@ -45,4 +45,28 @@ public class AuthRepository : GeneralRepository<Account, string>, IAuthRepositor
         }
         return entity;
     }
+
+    public async Task<ResponseDto<ForgotPasswordDto>> ForgetPassword(ForgotPasswordDto forgotPasswordDto)
+    {
+        ResponseDto<ForgotPasswordDto> entity = null!;
+        StringContent content = new StringContent(JsonConvert.SerializeObject(forgotPasswordDto), Encoding.UTF8, "application/json");
+        using (var response = httpClient.PostAsync(request + "forgot-password?email=" + Uri.EscapeDataString(forgotPasswordDto.Email), content).Result)
+        {
+            string apiResponse = await response.Content.ReadAsStringAsync();
+            entity = JsonConvert.DeserializeObject<ResponseDto<ForgotPasswordDto>>(apiResponse)!;
+        }
+        return entity;
+    }
+
+    public async Task<ResponseDto<ChangePasswordDto>> ResetPassword(ChangePasswordDto changePasswordDto)
+    {
+        ResponseDto<ChangePasswordDto> entity = null!;
+        StringContent content = new StringContent(JsonConvert.SerializeObject(changePasswordDto), Encoding.UTF8, "application/json");
+        using (var response = httpClient.PutAsync(request + "change-password", content).Result)
+        {
+            string apiResponse = await response.Content.ReadAsStringAsync();
+            entity = JsonConvert.DeserializeObject<ResponseDto<ChangePasswordDto>>(apiResponse)!;
+        }
+        return entity;
+    }
 }

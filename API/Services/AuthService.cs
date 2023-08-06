@@ -163,11 +163,6 @@ public class AuthService
             return "0"; // account not found
         }
 
-        if (!account.IsActive)
-        {
-            return "-4"; // account deactivate (is_active = 0)
-        }
-
         var isPasswordValid = HashingHandler.ValidatePassword(loginDto.Password, account.Password);
         if (!isPasswordValid)
         {
@@ -195,6 +190,13 @@ public class AuthService
             if (payment == null || payment.StatusPayment != StatusPayment.Paid)
             {
                 return "-3"; // register payment not paid
+            }
+            else
+            {
+                if (!account.IsActive)
+                {
+                    return "-4"; // account deactivate (is_active = 0)
+                }
             }
         }
         else if (employee is not null)
@@ -277,13 +279,33 @@ public class AuthService
     public ForgotPasswordDto ForgotPassword(string email)
     {
         var account = _accountRepository.GetByEmail(email);
+        var accountRole = _accountRoleRepository.GetAll();
+        var role = _roleRepository.GetAll();
+
         if (account is null)
         {
-            return null;
+            return null!;
+        }
+
+        var data = from ar in accountRole
+                   join r in role on ar.RoleGuid equals r.Guid
+                   where ar.AccountGuid == account.Guid
+                   select new
+                   {
+                       AccountRole = ar,
+                       Role = r
+                   };
+
+        var matchedData = data.FirstOrDefault();
+
+        if (matchedData is null)
+        {
+            return null!;
         }
 
         var toDto = new ForgotPasswordDto
         {
+            Role = matchedData.Role.Name,
             Email = account.Email,
             Token = GenerateHandler.GenerateToken(),
             TokenExpiration = DateTime.Now.AddMinutes(5)
@@ -293,7 +315,7 @@ public class AuthService
 
         var update = new Account
         {
-            Guid = relatedAccount.Guid,
+            Guid = relatedAccount!.Guid,
             Email = relatedAccount.Email,
             Password = relatedAccount.Password,
             Token = toDto.Token,
@@ -307,7 +329,7 @@ public class AuthService
 
         if (!updateResult)
         {
-            return null;
+            return null!;
         }
 
         _emailHandler.SendEmail(toDto.Email,
