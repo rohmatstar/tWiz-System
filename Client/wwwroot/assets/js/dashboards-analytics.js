@@ -2,7 +2,7 @@
 
 (function () {
   const data = {
-    "year": "2022",
+        "year": "2022",
         "revenue" : {
           "employee": [23, 19, 15, 34, 91, 92, 34],
           "event": [89, 85, 38, 75, 67, 28, 39],

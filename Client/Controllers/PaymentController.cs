@@ -7,7 +7,6 @@ using System.Diagnostics;
 
 namespace Client.Controllers
 {
-    [Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}")]
     public class PaymentController : Controller
     {
 
@@ -37,16 +36,18 @@ namespace Client.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}")]
         public async Task<IActionResult> RegisterPayment()
         {
-            var active = "register_payment";
-            ViewBag.Active = active;
+            /*var active = "register_payment";*/
+            ViewBag.Active = "register_payment";
 
             var payment = await _paymentRepository.GetRegisterPayments();
             return View(payment.Data);
         }
 
         [HttpGet]
+        [Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}")]
         public async Task<IActionResult> NeedApproval()
         {
             var active = "need_approval";

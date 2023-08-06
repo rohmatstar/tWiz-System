@@ -49,5 +49,33 @@ public class CompanyController : Controller
 
         return View(mergedData);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Deactivated()
+    {
+        var active = "deactivated_company";
+        ViewBag.Active = active;
+
+        var company = await _companyRepository.GetCompany();
+        var account = await _accountRepository.GetAccount();
+
+        var mergedData = company.Data
+        .Join(account.Data,
+            companyData => companyData.AccountGuid,
+            accountData => accountData.Guid,
+            (companyData, accountData) => new GetCompanyMasterDto
+            {
+                Guid = companyData.Guid,
+                Name = companyData.Name,
+                PhoneNumber = companyData.PhoneNumber,
+                Address = companyData.Address,
+                Email = accountData.Email,
+                IsActive = accountData.IsActive,
+                AccountGuid = accountData.Guid
+            }).Where(data => data.IsActive == false)
+        .ToList();
+
+        return View(mergedData);
+    }
 }
 
