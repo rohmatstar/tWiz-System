@@ -91,13 +91,45 @@ public class EventController : Controller
         return View(singleEvent);
     }
 
+    [HttpGet("participants")]
+    public async Task<IActionResult> Participants(Guid eventGuid)
+    {
+
+        var participantsEvent = new GetParticipantsEventDto();
+
+        var getParticipantsEvent = await _eventRepository.GetParticipantsEvent(eventGuid);
+
+        if (getParticipantsEvent.Data != null)
+        {
+            participantsEvent = getParticipantsEvent.Data;
+        }
+
+        return View(participantsEvent);
+    }
+
     /*[Authorize]*/
     // invitation events
-    public IActionResult Invited()
+    public IActionResult Invited([FromQuery] QueryParamGetEventDto queryParams)
     {
         var active = "invited_event";
         ViewBag.Active = active;
-        return View();
+
+        var token = HttpContext?.Session.GetString("JWTToken") ?? "";
+        ViewData["token"] = token;
+
+        var events = _eventRepository.GetInvitationEvents(queryParams);
+        var employees = _employeeRepository.Get();
+
+
+        string eventsJson = JsonSerializer.Serialize(events.Result);
+        string employeesJson = JsonSerializer.Serialize(employees.Result);
+
+
+
+        ViewData["eventsJson"] = eventsJson;
+        ViewData["employeesJson"] = employeesJson;
+
+        return View(events.Result.Data);
     }
 
     /*[Authorize]*/

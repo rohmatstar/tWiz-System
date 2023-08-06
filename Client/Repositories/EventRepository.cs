@@ -86,5 +86,59 @@ public class EventRepository : GeneralRepository<EventsDto, Guid>, IEventReposit
         }
         return entityVM;
     }
+
+    public async Task<ResponseDto<GetParticipantsEventDto>> GetParticipantsEvent(Guid guid)
+    {
+        Console.WriteLine("in repository client");
+        Console.WriteLine(guid);
+
+        ResponseDto<GetParticipantsEventDto> entityVM = null;
+        using (var response = await httpClient.GetAsync(request + $"/participants?eventGuid={guid}"))
+        {
+            Console.WriteLine($"response : {response}");
+            Console.WriteLine($"response isSuccess : {response.IsSuccessStatusCode}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+
+                entityVM = JsonConvert.DeserializeObject<ResponseDto<GetParticipantsEventDto>>(apiResponse);
+
+            }
+            else
+            {
+                entityVM = new ResponseDto<GetParticipantsEventDto> { Code = (int)response.StatusCode, Message = response.ReasonPhrase, Data = null };
+            }
+
+
+        }
+        return entityVM;
+    }
+
+    public async Task<ResponseListDto<GetInvitationEventDto>> GetInvitationEvents(QueryParamGetEventDto queryParams)
+    {
+
+        ResponseListDto<GetInvitationEventDto> entityVM = null;
+        using (var response = await httpClient.GetAsync(request + $"/invitation?visibility={queryParams.visibility}&publication_status={queryParams.publication_status}&place_type={queryParams.place_type}&sort_by={queryParams.sort_by}"))
+        {
+            Console.WriteLine($"response : {response}");
+            Console.WriteLine($"response isSuccess : {response.IsSuccessStatusCode}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+
+                entityVM = JsonConvert.DeserializeObject<ResponseListDto<GetInvitationEventDto>>(apiResponse);
+
+            }
+            else
+            {
+                entityVM = new ResponseListDto<GetInvitationEventDto> { Code = (int)response.StatusCode, Message = response.ReasonPhrase, Data = null };
+            }
+
+
+        }
+        return entityVM;
+    }
 }
 

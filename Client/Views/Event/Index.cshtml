@@ -73,8 +73,8 @@
                             <label class="form-check-label" for="type-online">Online</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="type-offline" name="place_type" value="offline">
-                            <label class="form-check-label" for="type-offline" @(placeTypeQuery == "offline" ? "checked" : "")>Offline</label>
+                            <input type="radio" class="form-check-input" id="type-offline" name="place_type" value="offline" @(placeTypeQuery == "offline" ? "checked" : "")>
+                            <label class="form-check-label" for="type-offline" >Offline</label>
                         </div>
                     </div>
 
@@ -183,8 +183,9 @@
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuReference">
                                         <li><a class="dropdown-item" href="#" onclick="showEvent(@(i))">
                                                 <i class="bx bx-detail me-2"></i> See Details</a></li>
-                                        <li><a class="dropdown-item" asp-action="Edit" asp-route-guid="@getEvent.Guid">
+                                        <li><a class="dropdown-item" asp-controller="Event" asp-action="Edit" asp-route-guid="@getEvent.Guid">
                                                 <i class="bx bx-pencil me-2"></i> Edit Event</a></li>
+                                            <li><a class="dropdown-item" asp-controller="Event" asp-action="Participants" asp-route-eventGuid="@getEvent.Guid"><i class="bx bx-group me-2"></i> Show Participant</a></li>
                                         <li><a href="#" class="dropdown-item" onclick="showParticipants('@(getEvent.Guid)', '@(i)')"><i class="bx bx-group me-2"></i> Edit Participant</a></li>
                                         <li>
                                             <div class="dropdown-item">
@@ -264,6 +265,9 @@
                                         <del>Rp. <span id="event-detail-promo">0</span>,-</del>
                                         <span class="text-danger">Rp. <span id="event-detail-price">0</span>,-</span>
                                     </div>
+
+                                    
+                                    <a class="btn btn-light shadow-sm" id="btn-show-participants">show participants</a>
                                 </div>
                             </div>
                         </div>
@@ -432,135 +436,15 @@
         console.log(eventsJson);
         console.log(companiesJson);
         console.log(employeesJson);
-        const eventData = [
-            {
-                "name": "Annual Gala Dinner",
-                "thumbnail": "../assets/img/elements/4.jpg",
-                "description": "Event Description is a comprehensive and detailed narrative that provides essential information about an upcoming event. This description serves as a means to inform potential attendees, participants, or interested parties about the event's purpose, content, and key features.",
-                "type": "Public",
-                "category": "MoU",
-                "status": "Online",
-                "payment": "Free",
-                "price": 0,
-                "quota": 100,
-                "joined": 88,
-                "startDate": "21 Agustus 2023, 16.00 WIB",
-                "endDate": "21 Agustus 2023, 18.00 WIB",
-                "organizer": "PT Metrodata Electronics Tbk.",
-                "place": "Google Meet",
-                "published" : true
-            },
-            {
-                "name": "MII Stars",
-                "thumbnail": "../assets/img/elements/3.jpg",
-                "description": "Join us for an exciting and memorable event that celebrates art and culture! This event, titled 'Colors of Creativity,' will showcase a diverse array of artists from various disciplines, including painting, sculpture, photography, and more. Attendees will have the opportunity to immerse themselves in a vibrant atmosphere, surrounded by inspiring works of art. The event will also feature live performances, interactive workshops, and engaging discussions with the artists. Whether you're an art enthusiast or just curious about different forms of creativity, 'Colors of Creativity' promises to be an enriching experience for all. Come and be a part of this extraordinary celebration of artistic expression!",
-                "type": "Public",
-                "category": "Party",
-                "status": "Offline",
-                "payment": "Paid",
-                "price": 250000,
-                "quota": 1000,
-                "joined": 124,
-                "startDate": "22 Agustus 2023, 16.00 WIB",
-                "endDate": "22 Agustus 2023, 18.00 WIB",
-                "organizer": "PT Metrodata Electronics Tbk.",
-                "place": "Aston Villa",
-                "published": false
-            }
-        ];
-        const upperPrice = 100000;
 
-        function renderEvent(index, event) {
-            let eventDescription = event.description.length > 100 ? event.description.substr(0,100) + "..." : event.description;
-
-            let eventElement = `
-                  <div class="col-md-6 col-lg-4 mb-3">
-                    <div class="card h-100">
-                      <img class="card-img-obj card-img-top" src="${event.thumbnail}" alt="${event.name} by ${event.organizer}" />
-                      <div class="card-body">
-                        <div class="mb-3">
-                          <span class="badge bg-danger text-capitalize">${event.type}</span>
-                          <span class="badge bg-warning text-capitalize">${event.category}</span>
-                          <span class="badge bg-success text-capitalize">${event.status}</span>
-                          <span class="badge bg-info text-capitalize">${event.payment}</span>
-                        </div>`;
-
-            if (event.published) {
-                eventElement += `<h5 class="card-title">${event.name}<button type="button" class="badge ms-2 badge-center rounded-pill bg-info border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true" title="Published"> <i class="bx bx-check"></i> </button></h5>`;
-            }
-            else{
-                eventElement += `<h5 class="card-title">${event.name}</h5>`;
-            }
-
-            eventElement += ` <h6 class="small">${event.startDate}</h6>
-                                                <p class="card-text">${eventDescription}</p>
-                                <div class="row align-items-center justify-content-center">
-                                  <div class="col">
-                                                    <div class="h6 mb-1"><del>Rp. ${event.price + upperPrice},-</del></div>
-                                    <div class="h5 text-danger mb-0">Rp. ${event.price},-</div>
-                                  </div>
-                                  <div class="col-auto">`;
-
-                if(!event.published){
-                    eventElement += `
-                                <div class="btn-group" id="modify-btn">
-                                      <button type="button" class="btn btn-outline-primary bg-white text-primary">Options</button>
-                                      <button
-                                        type="button"
-                                        class="btn btn-outline-primary text-primary bg-white dropdown-toggle dropdown-toggle-split"
-                                        id="dropdownMenuReference"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false"
-                                        data-bs-reference="parent"
-                                      >
-                                      </button>
-                                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuReference">
-                                                <li><a class="dropdown-item" href="#" onclick="showEvent(${index})">
-                                            <i class="bx bx-detail me-2"></i> See Details</a></li>
-                                        <li><a class="dropdown-item" href="#">
-                                            <i class="bx bx-pencil me-2"></i> Edit Event</a></li>
-                                        <li><a href="#" class="dropdown-item" onclick="showParticipants(${index})"><i class="bx bx-group me-2"></i> Edit Participant</a></li>
-                                        <li>
-                                          <div class="dropdown-item">
-                                            <a class="btn btn-primary text-white btn-block w-100">Publish</a>
-                                          </div>
-                                        </li>
-                                        <li>
-                                          <hr class="dropdown-divider" />
-                                        </li>
-                                        <li><a class="dropdown-item text-danger" href="javascript:void(0)"><i class="bx bx-trash me-2"></i>Delete Event</a></li>
-                                      </ul>
-                                    </div>
-                                  
-                    `;
-                }
-                else{
-                eventElement += `<a href="#" onclick="showEvent(${index})" class="btn btn-primary">Details</a>`;
-                }
-
-            eventElement += `</div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>`;
-
-            $("#event-list").append(eventElement);
-        }
-
-        function renderEvents() {
-            $.each(eventData, function (index, data) {
-                console.log(data[index])
-                renderEvent(index, data);
-            });
-        }
-        renderEvents();
+        const upperPrice = 100000;        
 
         function showEvent(index) {
             const event = eventsJson.Data[index];
 
             let eventName = event.Name;
 
-            if (event.PublicationStatus) {
+            if (event.PublicationStatus == "published") {
                 eventName = event.Name + `<button type="button" class="badge ms-2 badge-center rounded-pill bg-info border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true" title="Published"> <i class="bx bx-check"></i> </button>`;
             }
 
@@ -596,6 +480,12 @@
                 $("#event-detail-joined").parent().show();
                 $("#event-detail-quota").text(event.Quota - event.Joined);
             }
+
+            // asp-controller="Event" asp-action="Participants" participants?eventGuid=
+            //$("#btn-show-participants").attr("asp-controller", "Event");
+            //$("#btn-show-participants").attr("asp-action", "Participants");
+            //$("#btn-show-participants").attr("asp-route-eventGuid", event.Guid);
+            $("#btn-show-participants").attr("href", `/participants?eventGuid=${event.Guid}`);
 
             $("#event-detail").modal('show');
         }

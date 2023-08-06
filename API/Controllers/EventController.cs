@@ -277,80 +277,53 @@ public class EventController : ControllerBase
         });
     }
 
-    //[HttpGet("external")]
-    //[Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
-    //public IActionResult GetExternalEvents([FromQuery] string? type)
-    //{
-    //    // type = 'public' or 'personal'
-    //    var internalEvents = _eventService.GetExternalEvents(type);
-    //    if (internalEvents is not null)
-    //    {
-    //        return Ok(new ResponseHandler<List<EventsDto>>
-    //        {
-    //            Code = StatusCodes.Status200OK,
-    //            Status = HttpStatusCode.OK.ToString(),
-    //            Message = "Success",
-    //            Data = internalEvents
-    //        });
-    //    }
+    [HttpGet("participants")]
+    public IActionResult GetParticipantsEvent(Guid eventGuid)
+    {
+        var result = _eventService.GetParticipantsEvent(eventGuid);
+        if (result != null)
+        {
+            return Ok(new ResponseHandler<GetParticipantsEventDto>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success",
+                Data = result // result = nama event
+            });
+        }
 
-    //    return StatusCode(StatusCodes.Status403Forbidden, new ResponseHandler<string>
-    //    {
-    //        Code = StatusCodes.Status403Forbidden,
-    //        Status = HttpStatusCode.Forbidden.ToString(),
-    //        Message = "You cannot access!!"
-    //    });
-    //}
+        return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status400BadRequest,
+            Status = HttpStatusCode.BadRequest.ToString(),
+            Message = "Check your data",
+            Data = null
+        });
+    }
 
-    //[HttpGet("public")]
-    //[Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
-    //public IActionResult GetPublicEvents()
-    //{
+    [HttpGet("invitation")]
+    public IActionResult GetInvitationEvent([FromQuery] QueryParamGetEventDto queryParams)
+    {
+        var result = _eventService.GetInvitationEvents(queryParams);
+        if (result != null)
+        {
+            return Ok(new ResponseHandler<List<GetInvitationEventDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success",
+                Data = result
+            });
+        }
 
-    //    var publicEvents = _eventService.GetPublicEvents();
-    //    if (publicEvents is not null)
-    //    {
-    //        return Ok(new ResponseHandler<List<EventsDto>>
-    //        {
-    //            Code = StatusCodes.Status200OK,
-    //            Status = HttpStatusCode.OK.ToString(),
-    //            Message = "Success",
-    //            Data = publicEvents
-    //        });
-    //    }
-
-    //    return StatusCode(StatusCodes.Status403Forbidden, new ResponseHandler<string>
-    //    {
-    //        Code = StatusCodes.Status403Forbidden,
-    //        Status = HttpStatusCode.Forbidden.ToString(),
-    //        Message = "You cannot access!!"
-    //    });
-    //}
-
-    //[HttpGet("personal")]
-    //[Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
-    //public IActionResult GetPersonalEvents()
-    //{
-
-    //    var personalEvents = _eventService.GetPersonalEvents();
-    //    if (personalEvents is not null)
-    //    {
-    //        return Ok(new ResponseHandler<List<EventsDto>>
-    //        {
-    //            Code = StatusCodes.Status200OK,
-    //            Status = HttpStatusCode.OK.ToString(),
-    //            Message = "Success",
-    //            Data = personalEvents
-    //        });
-    //    }
-
-    //    return StatusCode(StatusCodes.Status403Forbidden, new ResponseHandler<string>
-    //    {
-    //        Code = StatusCodes.Status403Forbidden,
-    //        Status = HttpStatusCode.Forbidden.ToString(),
-    //        Message = "You cannot access!!"
-    //    });
-    //}
+        return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status400BadRequest,
+            Status = HttpStatusCode.BadRequest.ToString(),
+            Message = "Check your data",
+            Data = null
+        });
+    }
 
     [HttpGet("tickets")]
     public IActionResult GetTickets([FromQuery] QueryParamGetTicketDto queryParams)
@@ -371,6 +344,50 @@ public class EventController : ControllerBase
         {
             Code = StatusCodes.Status403Forbidden,
             Status = HttpStatusCode.Forbidden.ToString(),
+            Message = "You cannot access!!"
+        });
+    }
+
+    [HttpPut("approve-event")]
+    public IActionResult ApproveParticipantEvent(Guid eventGuid)
+    {
+        var personalEvents = _eventService.ApproveEvent(eventGuid);
+        if (personalEvents is not 0)
+        {
+            return Ok(new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success",
+            });
+        }
+
+        return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status400BadRequest,
+            Status = HttpStatusCode.BadRequest.ToString(),
+            Message = "You cannot access!!"
+        });
+    }
+
+    [HttpPut("reject-event")]
+    public IActionResult RejectEvent(Guid eventGuid)
+    {
+        var personalEvents = _eventService.RejectEvent(eventGuid);
+        if (personalEvents is not 0)
+        {
+            return Ok(new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success",
+            });
+        }
+
+        return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status400BadRequest,
+            Status = HttpStatusCode.BadRequest.ToString(),
             Message = "You cannot access!!"
         });
     }

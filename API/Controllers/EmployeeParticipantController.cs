@@ -166,5 +166,27 @@ public class EmployeeParticipantController : ControllerBase
         });
     }
 
+    [HttpPut("company-employee")]
+    public IActionResult UpdateCompanyEmployeeParticipants(UpdateEmployeParticipantsDto updateEmployeParticipantsDto)
+    {
+        var created = _service.UpdateCompanyEmployeeParticipantsEvent(updateEmployeParticipantsDto);
+        if (created != 0)
+        {
+            return Ok(new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success",
+            });
+        }
+
+        return NotFound(new ResponseHandler<EmployeeParticipantsDto>
+        {
+            Code = StatusCodes.Status404NotFound,
+            Status = HttpStatusCode.NotFound.ToString(),
+            Message = "Failed to create",
+        });
+    }
+
 }
 

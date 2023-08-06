@@ -504,7 +504,7 @@ public class EventPaymentService
             }
             else
             {
-                employeeParticipant.Status = InviteStatusLevel.Accepted;
+                employeeParticipant.Status = InviteStatusLevel.Rejected;
             }
 
             var updatedCompanyParticipant = _employeeParticipantRepository.Update(employeeParticipant);
