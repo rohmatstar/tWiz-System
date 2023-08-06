@@ -45,12 +45,12 @@ public class EventController : ControllerBase
     }
 
     [HttpGet("{guid}")]
-    public IActionResult GetEvent(Guid guid, [FromQuery] string? usedfor)
+    public IActionResult GetEvent(Guid guid)
     {
-        var eventsData = _eventService.GetEvent(guid, usedfor);
+        var eventsData = _eventService.GetEvent(guid);
         if (eventsData != null)
         {
-            return Ok(new ResponseHandler<GetEventMasterDto>
+            return Ok(new ResponseHandler<GetEventDto>
             {
                 Code = StatusCodes.Status200OK,
                 Status = HttpStatusCode.OK.ToString(),
@@ -61,8 +61,8 @@ public class EventController : ControllerBase
 
         return NotFound(new ResponseHandler<EventsDto>
         {
-            Code = StatusCodes.Status403Forbidden,
-            Status = HttpStatusCode.Forbidden.ToString(),
+            Code = StatusCodes.Status404NotFound,
+            Status = HttpStatusCode.NotFound.ToString(),
             Message = "You cannot access it",
             Data = null
         });
@@ -121,26 +121,64 @@ public class EventController : ControllerBase
     }
 
     [HttpPut]
-    public IActionResult Update(EventsDto eventsDto)
+    public async Task<IActionResult> Update([FromForm] UpdateEventDto updateEventDto)
     {
-        var updated = _eventService.UpdateEvent(eventsDto);
-        if (updated is not null)
+        var updatedEvent = await _eventService.UpdateEvent(updateEventDto);
+        if (updatedEvent is -1)
         {
-            return Ok(new ResponseHandler<EventsDto>
+            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseHandler<string>
             {
-                Code = StatusCodes.Status200OK,
-                Status = HttpStatusCode.OK.ToString(),
-                Message = "Success",
-                Data = updated
+                Code = StatusCodes.Status500InternalServerError,
+                Status = HttpStatusCode.InternalServerError.ToString(),
+                Message = "Failed create folder image"
             });
         }
 
-        return NotFound(new ResponseHandler<EventsDto>
+        if (updatedEvent is -2)
         {
-            Code = StatusCodes.Status404NotFound,
-            Status = HttpStatusCode.NotFound.ToString(),
-            Message = "Failed to Update",
-            Data = null
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "File size cannot be more than 2mb"
+            });
+        }
+
+        if (updatedEvent is -3)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "your uploaded file is not image file"
+            });
+        }
+
+        if (updatedEvent is -4)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "failed to delete old event image"
+            });
+        }
+
+        if (updatedEvent is 0)
+        {
+            return StatusCode(StatusCodes.Status401Unauthorized, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.Unauthorized.ToString(),
+                Message = "Not Authenticated"
+            });
+        }
+
+        return Ok(new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Successfully created event"
         });
     }
 
@@ -154,7 +192,7 @@ public class EventController : ControllerBase
             {
                 Code = StatusCodes.Status200OK,
                 Status = HttpStatusCode.OK.ToString(),
-                Message = "Success",
+                Message = "Successfully to deleted event",
                 Data = deleted
             });
         }
@@ -190,6 +228,52 @@ public class EventController : ControllerBase
             Code = StatusCodes.Status403Forbidden,
             Status = HttpStatusCode.Forbidden.ToString(),
             Message = "You cannot access!!"
+        });
+    }
+
+    [HttpPut("participants")]
+    public IActionResult UpdateParticipantsEvent(UpdateParticipantsEventDto updateParticipantsEventDto)
+    {
+        var internalEvents = _eventService.UpdateParticipantsEvent(updateParticipantsEventDto);
+        if (internalEvents != 0)
+        {
+            return Ok(new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success",
+            });
+        }
+
+        return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status400BadRequest,
+            Status = HttpStatusCode.BadRequest.ToString(),
+            Message = "Check your data"
+        });
+    }
+
+    [HttpPut("publish")]
+    public IActionResult PublishEvent(Guid guid)
+    {
+        var result = _eventService.PublishEvent(guid);
+        if (result != "0")
+        {
+            return Ok(new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success",
+                Data = result // result = nama event
+            });
+        }
+
+        return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status400BadRequest,
+            Status = HttpStatusCode.BadRequest.ToString(),
+            Message = "Check your data",
+            Data = null
         });
     }
 

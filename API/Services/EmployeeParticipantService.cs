@@ -1,6 +1,7 @@
 ﻿using API.Contracts;
 using API.DTOs.EmployeeParticipants;
 using API.Models;
+using API.Utilities.Enums;
 using System.Security.Claims;
 
 namespace API.Services;
@@ -188,6 +189,72 @@ public class EmployeeParticipantService
 
 
         return 1;
+    }
+
+
+    public List<GetEmployeeParticipantDto>? GetEmployeeParticipantsByEvent(Guid eventGuid)
+    {
+        var getEvent = _eventRepository.GetByGuid(eventGuid);
+
+        if (getEvent == null)
+        {
+            return null;
+        }
+        var employees = _employeeRepository.GetAll();
+        var companies = _companyRepository.GetAll();
+
+        var employeeParticipants = _employeeParticipantRepository.GetAll().Where(ep => ep.EventGuid == eventGuid).Select(ep =>
+        {
+            var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
+            var company = companies.FirstOrDefault(e => e.Guid == employee.CompanyGuid);
+
+            var invitationStatus = "";
+
+            if (ep.Status == InviteStatusLevel.Pending) invitationStatus = "pending";
+            if (ep.Status == InviteStatusLevel.Checking) invitationStatus = "checking";
+            if (ep.Status == InviteStatusLevel.Accepted) invitationStatus = "accepted";
+            if (ep.Status == InviteStatusLevel.Rejected) invitationStatus = "rejected";
+
+
+            return new GetEmployeeParticipantDto
+            {
+                Guid = ep.Guid,
+                EventName = getEvent.Name,
+                EmployeeGuid = ep.EmployeeGuid,
+                EmployeeName = employee.FullName,
+                CompanyName = company.Name,
+                InvitationStatus = invitationStatus ?? "",
+                IsPresent = ep.IsPresent
+            };
+        }).ToList();
+
+        if (employeeParticipants is null)
+        {
+            return null;
+        }
+
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+
+
+        if (userRole == nameof(RoleLevel.Company))
+        {
+            var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
+
+            if (company is null)
+            {
+                return null;
+            }
+
+            employeeParticipants = employeeParticipants.Where(ep => ep.CompanyName == company.Name).ToList();
+        }
+
+
+
+        return employeeParticipants;
     }
 }
 
