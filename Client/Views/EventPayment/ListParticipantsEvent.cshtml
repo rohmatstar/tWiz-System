@@ -1,0 +1,94 @@
+﻿@model Client.DTOs.Events.GetParticipantsEventDto;
+
+@{
+    var companyGuid = User!.Claims!.FirstOrDefault(c => c.Type == "companyGuid")!.Value;
+
+    ViewData["Title"] = "Paid Events";
+    Layout = "_LayoutUser";
+}
+
+
+
+@if(Model is not null){
+    var i = 1;
+    var j = 1;
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item "><a asp-action="PaidEvent" class="text-primary">Event Payment</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@(Model.EventName)</li>
+        </ol>
+    </nav>
+
+    <h4 class="mb-3 mt-5">Company Participants</h4>
+
+    <table class="table table-responsive table-striped table-hover" id="company-table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Presence</th>
+                <th scope="col">Invitation Status</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var companyParticipant in Model.CompanyParticipants)
+            {
+                <tr>
+                    <th scope="row">@(i++)</th>
+                    <td>@companyParticipant.CompanyName</td>
+                    <td>@(companyParticipant.IsPresent == true ? "present" : "not present")</td>
+                    <td>@companyParticipant.InvitationStatus</td>
+                    <td>
+                        @if(companyParticipant.InvitationStatus != "accepted")
+                        {
+                            <button class="btn btn-primary btn-sm" id="btn-approve-company">Approve</button>
+                        }
+
+                        <button class="btn btn-danger btn-sm" id="btn-reject-company">Reject</button>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+
+    <h4 class="mb-3 mt-5">Employee Participants</h4>
+
+    <table class="table table-responsive table-striped table-hover" id="employee-table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Employee Name</th>
+                <th scope="col">Company Name</th>
+                <th scope="col">Presence</th>
+                <th scope="col">Invitation Status</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var companyParticipant in Model.EmployeeParticipants)
+            {
+                <tr>
+                    <th scope="row">@(j++)</th>
+                    <td>@companyParticipant.EmployeeName</td>
+                    <td>@companyParticipant.CompanyName</td>
+                    <td>@(companyParticipant.IsPresent == true ? "present" : "not present")</td>
+                    <td>@companyParticipant.InvitationStatus</td>
+                    <td>
+                        @if (companyParticipant.InvitationStatus != "accepted")
+                        {
+                            <button class="btn btn-primary btn-sm" id="btn-approve-company">Approve</button>
+                        }
+
+                        <button class="btn btn-danger btn-sm" id="btn-reject-company">Reject</button>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}

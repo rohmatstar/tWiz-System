@@ -56,5 +56,25 @@ public class EventPaymentController : Controller
 
         return View(companyPaidEvents);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> ListParticipantsEvent(Guid eventGuid)
+    {
+        var active = "event_payment";
+        ViewBag.Active = active;
+
+        var paidEventParticipants = new GetParticipantsEventDto();
+        var response = await _eventRepository.GetParticipantsEvent(eventGuid);
+
+        if (response.Data != null)
+        {
+            paidEventParticipants = response.Data;
+        }
+
+        //TempData["paid_events"] = paidEventParticipants;
+
+
+        return View(paidEventParticipants);
+    }
 }
 

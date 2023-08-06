@@ -20,6 +20,7 @@
                 <th scope="col">Place</th>
                 <th scope="col">Place Type</th>
                 <th scope="col">Visibility</th>
+                <th scope="col">Price</th>
                 <th scope="col">Action</th>
             </tr>
         </thead>
@@ -36,8 +37,9 @@
                     <td>@(paidEvent.Place)</td>
                     <td>@(paidEvent.PlaceType)</td>
                     <td>@(paidEvent.Visibility)</td>
+                    <td>@(paidEvent.Price)</td>
                     <td>
-                        <a href="#" class="btn btn-gray btn-sm" title="detail participants"><i class="bx bx-search-alt-2"></i></a>
+                        <a asp-controller="EventPayment" asp-action="ListParticipantsEvent" asp-route-eventGuid="@(paidEvent.Guid)" class="btn btn-gray btn-sm" title="list participants"><i class="bx bx-search-alt-2"></i></a>
                     </td>
                 </tr>
             }
