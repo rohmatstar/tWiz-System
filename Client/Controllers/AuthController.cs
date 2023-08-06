@@ -3,6 +3,7 @@ using Client.DTOs;
 using Client.DTOs.Auths;
 using Client.Models;
 using Client.Utilities.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
@@ -10,6 +11,7 @@ using System.Security.Claims;
 
 namespace Client.Controllers
 {
+    [AllowAnonymous]
     public class AuthController : Controller
     {
 

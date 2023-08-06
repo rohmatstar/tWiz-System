@@ -4,6 +4,7 @@ using Client.DTOs.Auths;
 using Client.DTOs.Employees;
 using Client.Models;
 using Client.Repositories;
+using Client.Utilities.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,7 +13,7 @@ using System.Diagnostics;
 
 namespace Client.Controllers;
 
-
+[Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.SysAdmin)}")]
 public class EmployeeController : Controller
 {
     private readonly IEmployeeRepository _employeeRepository;
@@ -25,6 +26,7 @@ public class EmployeeController : Controller
     }
 
     /* =========== View ============== */
+
     [HttpGet]
     public IActionResult Index()
     {
