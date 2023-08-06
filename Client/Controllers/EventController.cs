@@ -91,8 +91,7 @@ public class EventController : Controller
     [HttpGet("participants")]
     public async Task<IActionResult> Participants(Guid eventGuid)
     {
-        Console.WriteLine("controller");
-        Console.WriteLine(eventGuid);
+
         var participantsEvent = new GetParticipantsEventDto();
 
         var getParticipantsEvent = await _eventRepository.GetParticipantsEvent(eventGuid);
@@ -116,14 +115,16 @@ public class EventController : Controller
         ViewData["token"] = token;
 
         var events = _eventRepository.GetInvitationEvents(queryParams);
-        var companies = _companyRepository.Get();
         var employees = _employeeRepository.Get();
+        Console.WriteLine("invited controller");
+        Console.WriteLine(events);
 
         string eventsJson = JsonSerializer.Serialize(events.Result);
-        string companiesJson = JsonSerializer.Serialize(companies.Result);
         string employeesJson = JsonSerializer.Serialize(employees.Result);
+
+        Console.WriteLine(eventsJson);
+
         ViewData["eventsJson"] = eventsJson;
-        ViewData["companiesJson"] = companiesJson;
         ViewData["employeesJson"] = employeesJson;
 
         return View(events.Result.Data);

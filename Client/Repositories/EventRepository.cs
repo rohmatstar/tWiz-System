@@ -119,7 +119,7 @@ public class EventRepository : GeneralRepository<EventsDto, Guid>, IEventReposit
     {
 
         ResponseListDto<GetInvitationEventDto> entityVM = null;
-        using (var response = await httpClient.GetAsync(request + $"/participants?eventGuid="))
+        using (var response = await httpClient.GetAsync(request + $"/invitation?visibility={queryParams.visibility}&publication_status={queryParams.publication_status}&place_type={queryParams.place_type}&sort_by={queryParams.sort_by}"))
         {
             Console.WriteLine($"response : {response}");
             Console.WriteLine($"response isSuccess : {response.IsSuccessStatusCode}");
