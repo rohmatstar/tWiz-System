@@ -348,10 +348,10 @@ public class EventController : ControllerBase
         });
     }
 
-    [HttpPut("approve-participant")]
+    [HttpPut("approve-event")]
     public IActionResult ApproveParticipantEvent(Guid eventGuid)
     {
-        var personalEvents = _eventService.ApproveParticipantEvent(eventGuid);
+        var personalEvents = _eventService.ApproveEvent(eventGuid);
         if (personalEvents is not 0)
         {
             return Ok(new ResponseHandler<string>
@@ -365,7 +365,29 @@ public class EventController : ControllerBase
         return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
         {
             Code = StatusCodes.Status400BadRequest,
-            Status = HttpStatusCode.Forbidden.ToString(),
+            Status = HttpStatusCode.BadRequest.ToString(),
+            Message = "You cannot access!!"
+        });
+    }
+
+    [HttpPut("reject-event")]
+    public IActionResult RejectEvent(Guid eventGuid)
+    {
+        var personalEvents = _eventService.RejectEvent(eventGuid);
+        if (personalEvents is not 0)
+        {
+            return Ok(new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success",
+            });
+        }
+
+        return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status400BadRequest,
+            Status = HttpStatusCode.BadRequest.ToString(),
             Message = "You cannot access!!"
         });
     }

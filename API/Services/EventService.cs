@@ -1511,7 +1511,7 @@ public class EventService
         return userTickets;
     }
 
-    public int ApproveParticipantEvent(Guid eventGuid)
+    public int ApproveEvent(Guid eventGuid)
     {
         var claimUser = _httpContextAccessor.HttpContext?.User;
 
@@ -1520,42 +1520,154 @@ public class EventService
 
         var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
         var employee = _employeeRepository.GetAll().FirstOrDefault(e => e.AccountGuid == Guid.Parse(accountGuid!));
+        var getEvent = _eventRepository.GetByGuid(eventGuid);
 
+        var transaction = _twizDbContext.Database.BeginTransaction();
         if (company is not null)
         {
-            var eventPayment = _eventPaymentRepository.GetAll().Where(evp => evp.AccountGuid == Guid.Parse(accountGuid) && evp.EventGuid == eventGuid);
 
-            if (eventPayment is not null)
+            var companyParticipant = _companyParticipantRepository.GetAll().FirstOrDefault(cp => cp.CompanyGuid == company.Guid && cp.EventGuid == eventGuid);
+
+            companyParticipant.Status = InviteStatusLevel.Accepted;
+
+            var updatedCompanyParticipant = _companyParticipantRepository.Update(companyParticipant);
+            if (updatedCompanyParticipant is false)
             {
-                var companyParticipant = _companyParticipantRepository.GetAll().FirstOrDefault(cp => cp.CompanyGuid == company.Guid && cp.EventGuid == eventGuid);
+                return 0;
+            }
 
-                companyParticipant.Status = InviteStatusLevel.Accepted;
 
-                var updatedCompanyParticipant = _companyParticipantRepository.Update(companyParticipant);
-                if (updatedCompanyParticipant is false)
+            if (getEvent.IsPaid)
+            {
+                var eventPayment = _eventPaymentRepository.GetAll().FirstOrDefault(ep => ep.EventGuid == eventGuid && ep.AccountGuid == company.AccountGuid);
+
+                eventPayment.StatusPayment = StatusPayment.Paid;
+
+                var updatedEventPayment = _eventPaymentRepository.Update(eventPayment);
+
+                if (updatedEventPayment is false)
                 {
+                    transaction.Rollback();
                     return 0;
                 }
             }
+
         }
         else if (employee is not null)
         {
-            var eventPayment = _eventPaymentRepository.GetAll().Where(evp => evp.AccountGuid == Guid.Parse(accountGuid) && evp.EventGuid == eventGuid);
+            var employeeParticipant = _employeeParticipantRepository.GetAll().FirstOrDefault(cp => cp.EmployeeGuid == employee.Guid && cp.EventGuid == eventGuid);
 
-            if (eventPayment is not null)
+            employeeParticipant.Status = InviteStatusLevel.Accepted;
+
+            var updatedCompanyParticipant = _employeeParticipantRepository.Update(employeeParticipant);
+            if (updatedCompanyParticipant is false)
             {
-                var employeeParticipant = _employeeParticipantRepository.GetAll().FirstOrDefault(cp => cp.EmployeeGuid == employee.Guid && cp.EventGuid == eventGuid);
+                return 0;
+            }
 
-                employeeParticipant.Status = InviteStatusLevel.Accepted;
+            if (getEvent.IsPaid)
+            {
+                var eventPayment = _eventPaymentRepository.GetAll().FirstOrDefault(ep => ep.EventGuid == eventGuid && ep.AccountGuid == employee.AccountGuid);
 
-                var updatedCompanyParticipant = _employeeParticipantRepository.Update(employeeParticipant);
-                if (updatedCompanyParticipant is false)
+                eventPayment.StatusPayment = StatusPayment.Paid;
+
+                var updatedEventPayment = _eventPaymentRepository.Update(eventPayment);
+
+                if (updatedEventPayment is false)
                 {
+                    transaction.Rollback();
                     return 0;
                 }
             }
+
         }
 
+        getEvent.UsedQuota += 1;
+
+        var updatedEventQuota = _eventRepository.Update(getEvent);
+        if (updatedEventQuota is false)
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
+        transaction.Commit();
+        return 1;
+    }
+
+    public int RejectEvent(Guid eventGuid)
+    {
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        var getEvent = _eventRepository.GetByGuid(eventGuid);
+
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
+        var employee = _employeeRepository.GetAll().FirstOrDefault(e => e.AccountGuid == Guid.Parse(accountGuid!));
+
+        var transaction = _twizDbContext.Database.BeginTransaction();
+
+        if (company is not null)
+        {
+
+            var companyParticipant = _companyParticipantRepository.GetAll().FirstOrDefault(cp => cp.CompanyGuid == company.Guid && cp.EventGuid == eventGuid);
+
+            companyParticipant.Status = InviteStatusLevel.Rejected;
+
+            var updatedCompanyParticipant = _companyParticipantRepository.Update(companyParticipant);
+            if (updatedCompanyParticipant is false)
+            {
+                transaction.Rollback();
+                return 0;
+            }
+
+            if (getEvent.IsPaid)
+            {
+                var eventPayment = _eventPaymentRepository.GetAll().FirstOrDefault(ep => ep.EventGuid == eventGuid && ep.AccountGuid == company.AccountGuid);
+
+                eventPayment.StatusPayment = StatusPayment.Rejected;
+                var updatedEventPayment = _eventPaymentRepository.Update(eventPayment);
+                if (updatedEventPayment is false)
+                {
+                    transaction.Rollback();
+                    return 0;
+                }
+            }
+
+        }
+        else if (employee is not null)
+        {
+
+            var employeeParticipant = _employeeParticipantRepository.GetAll().FirstOrDefault(cp => cp.EmployeeGuid == employee.Guid && cp.EventGuid == eventGuid);
+
+            employeeParticipant.Status = InviteStatusLevel.Rejected;
+
+            var updatedCompanyParticipant = _employeeParticipantRepository.Update(employeeParticipant);
+            if (updatedCompanyParticipant is false)
+            {
+                transaction.Rollback();
+                return 0;
+            }
+
+            if (getEvent.IsPaid)
+            {
+                var eventPayment = _eventPaymentRepository.GetAll().FirstOrDefault(evp => evp.AccountGuid == Guid.Parse(accountGuid) && evp.EventGuid == eventGuid);
+
+                eventPayment.StatusPayment = StatusPayment.Rejected;
+
+                var updatedEventPayment = _eventPaymentRepository.Update(eventPayment);
+                if (updatedEventPayment is false)
+                {
+                    transaction.Rollback();
+                    return 0;
+                }
+            }
+
+        }
+
+        transaction.Commit();
         return 1;
     }
 }

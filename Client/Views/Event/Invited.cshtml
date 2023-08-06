@@ -459,12 +459,17 @@
             const btnJoin = document.getElementById("btn-join");
             const btnReject = document.getElementById("btn-reject");
 
+            if (event.InvitationStatus == "accepted"){
+                btnJoin.style.display = "none";
+                btnReject.style.display = "none";
+            }
+
             if (event.PaymentGuid == null && event.InvitationStatus != "accepted"){
                 btnJoin.onclick = async function (){
                     await approveParticipant(event.Guid);
                     console.log("hello 1")
                 }
-            }else{
+            }else if(event.PaymentGuid != null){
                 btnJoin.onclick = function (){
                     console.log("hello 2")
                 }
