@@ -144,6 +144,8 @@
                     @if (getEvent.InvitationStatus == "accepted")
                     {
                             <h5 class="card-title">@(getEvent.Name)<button title="joined" type="button" class="badge ms-2 badge-center rounded-pill bg-success border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true" > <i class="bx bx-check"></i> </button></h5>
+                    }else if (getEvent.InvitationStatus == "rejected"){
+                        <h5 class="card-title">@(getEvent.Name)<button title="rejected" type="button" class="badge ms-2 badge-center rounded-pill bg-danger border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true" > <i class="bx bx-x"></i> </button></h5>
                     }
                     else
                     {
@@ -244,8 +246,9 @@
                                         <span class="text-danger">Rp. <span id="event-detail-price">0</span>,-</span>
                                     </div>
 
-                                    <a href="javascript:void(0)" class="btn btn-primary">Join</a>
-                                    <a href="javascript:void(0)" class="btn btn-outline-danger">Not Now</a>
+                                    
+                                    <a href="#" class="btn btn-primary" id="btn-join">Join</a>
+                                    <a href="#" class="btn btn-outline-danger" id="btn-reject">Not Now</a>
                                 </div>
                             </div>
                         </div>
@@ -451,6 +454,15 @@
 
             $("#event-detail-joined").parent().show();
             $("#event-detail-quota").text(event.Quota - event.Joined);
+
+            const btnJoin = document.getElementById("btn-join");
+            const btnReject = document.getElementById("btn-reject");
+
+            if (event.PaymentGuid == null){
+                $("#btn-join").prop("asp-action", "Index")
+            }else{
+                $("#btn-join").prop("asp-action", "Create")
+            }
 
 
             $("#event-detail").modal('show');
