@@ -145,7 +145,10 @@
                     {
                             <h5 class="card-title">@(getEvent.Name)<button title="joined" type="button" class="badge ms-2 badge-center rounded-pill bg-success border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true" > <i class="bx bx-check"></i> </button></h5>
                     }else if (getEvent.InvitationStatus == "rejected"){
-                        <h5 class="card-title">@(getEvent.Name)<button title="rejected" type="button" class="badge ms-2 badge-center rounded-pill bg-danger border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true" > <i class="bx bx-x"></i> </button></h5>
+                            <h5 class="card-title">@(getEvent.Name)<button title="rejected" type="button" class="badge ms-2 badge-center rounded-pill bg-danger border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true" > <i class="bx bx-x"></i> </button></h5>
+                    }else if(getEvent.InvitationStatus == "checking")
+                    {
+                        <h5 class="card-title">@(getEvent.Name)<button title="checking" type="button" class="badge ms-2 badge-center rounded-pill bg-warning border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true"> <i class="bx bx-search-alt-2"></i> </button></h5>
                     }
                     else
                     {
@@ -441,6 +444,10 @@
 
             if (event.InvitationStatus == "accepted"){
                 eventName = event.Name + `<button type="button" class="badge ms-2 badge-center rounded-pill bg-success border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true" title="Joined"> <i class="bx bx-check"></i> </button>`;
+            }else if(event.InvitationStatus == "rejected"){
+                eventName = event.Name + `<button type="button" class="badge ms-2 badge-center rounded-pill bg-danger border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true" title="Rejected"> <i class="bx bx-x"></i> </button>`;
+            }else if (event.InvitationStatus == "checking"){
+                eventName = event.Name + `<button type="button" class="badge ms-2 badge-center rounded-pill bg-warning border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true" title="Checking"> <i class="bx bx-search-alt-w"></i> </button>`;
             }
 
             let imageUrl = "";
