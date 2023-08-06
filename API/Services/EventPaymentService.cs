@@ -1,6 +1,7 @@
 ﻿using API.Contracts;
 using API.Data;
 using API.DTOs.EventPayments;
+using API.DTOs.RegisterPayments;
 using API.Models;
 using API.Utilities.Enums;
 using API.Utilities.Handlers;
@@ -571,5 +572,49 @@ public class EventPaymentService
         }
 
         return 1;
+    }
+
+    public PaymentSummaryDto? GetPaymentSummary(Guid guid)
+    {
+
+        var eventPayment = _eventPaymentRepository.GetAll().FirstOrDefault(ep => ep.Guid == guid);
+        if (eventPayment is null)
+        {
+            return null;
+        }
+        var bank = _bankRepository.GetAll().FirstOrDefault(b => b.Guid == eventPayment.BankGuid);
+        if (bank is null)
+        {
+            return null;
+        }
+
+        var getEvent = _eventRepository.GetByGuid(eventPayment.EventGuid);
+
+        if (getEvent is null)
+        {
+            return null;
+        }
+
+        if (eventPayment.StatusPayment == StatusPayment.Paid)
+        {
+            var paid = new PaymentSummaryDto
+            {
+                VaNumber = 0,
+                Price = 0,
+                BankCode = null,
+                BankName = null
+            };
+            return paid;
+        }
+
+        var toDto = new PaymentSummaryDto
+        {
+            Guid = eventPayment.Guid,
+            VaNumber = eventPayment.VaNumber,
+            Price = getEvent.Price,
+            BankCode = bank.Code,
+            BankName = bank.Name
+        };
+        return toDto;
     }
 }
