@@ -601,6 +601,13 @@ public class EventPaymentService
             return null;
         }
 
+        var paymentStatus = "";
+
+        if (eventPayment.StatusPayment == StatusPayment.Pending) paymentStatus = "pending";
+        if (eventPayment.StatusPayment == StatusPayment.Checking) paymentStatus = "checking";
+        if (eventPayment.StatusPayment == StatusPayment.Rejected) paymentStatus = "rejected";
+        if (eventPayment.StatusPayment == StatusPayment.Paid) paymentStatus = "paid";
+
         if (eventPayment.StatusPayment == StatusPayment.Paid)
         {
             var paid = new EventPaymentSummaryDto
@@ -609,7 +616,8 @@ public class EventPaymentService
                 Price = 0,
                 BankCode = null,
                 BankName = null,
-                CompanyName = getEventMaker.Name
+                CompanyName = getEventMaker.Name,
+                PaymentStatus = paymentStatus,
             };
             return paid;
         }
@@ -621,7 +629,9 @@ public class EventPaymentService
             Price = getEvent.Price,
             BankCode = bank.Code,
             BankName = bank.Name,
-            CompanyName = getEventMaker.Name
+            CompanyName = getEventMaker.Name,
+            PaymentStatus = paymentStatus,
+
         };
         return toDto;
     }
