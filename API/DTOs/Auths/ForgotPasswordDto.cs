@@ -4,6 +4,8 @@ namespace API.DTOs.Auths
 {
     public class ForgotPasswordDto
     {
+        public string Role { get; set; }
+
         [Required]
         [EmailAddress]
         public string Email { get; set; }
