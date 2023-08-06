@@ -277,6 +277,30 @@ public class EventController : ControllerBase
         });
     }
 
+    [HttpGet("participants")]
+    public IActionResult GetParticipantsEvent(Guid guid)
+    {
+        var result = _eventService.GetParticipantsEvent(guid);
+        if (result != null)
+        {
+            return Ok(new ResponseHandler<GetParticipantsEventDto>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success",
+                Data = result // result = nama event
+            });
+        }
+
+        return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status400BadRequest,
+            Status = HttpStatusCode.BadRequest.ToString(),
+            Message = "Check your data",
+            Data = null
+        });
+    }
+
     //[HttpGet("external")]
     //[Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
     //public IActionResult GetExternalEvents([FromQuery] string? type)
