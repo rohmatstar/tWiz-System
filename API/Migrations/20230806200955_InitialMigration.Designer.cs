@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(TwizDbContext))]
-    [Migration("20230731032033_InitialMigration")]
+    [Migration("20230806200955_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -277,7 +277,7 @@ namespace API.Migrations
 
                     b.Property<string>("Nik")
                         .IsRequired()
-                        .HasColumnType("nchar(12)")
+                        .HasColumnType("nvarchar(20)")
                         .HasColumnName("nik");
 
                     b.Property<string>("PhoneNumber")

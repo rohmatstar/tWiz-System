@@ -275,7 +275,7 @@ namespace API.Migrations
 
                     b.Property<string>("Nik")
                         .IsRequired()
-                        .HasColumnType("nchar(12)")
+                        .HasColumnType("nvarchar(20)")
                         .HasColumnName("nik");
 
                     b.Property<string>("PhoneNumber")
