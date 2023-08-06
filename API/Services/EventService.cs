@@ -826,6 +826,111 @@ public class EventService
         }
     }
 
+    public List<GetExternalEventDto>? GetExternalEvents(QueryParamGetEventDto queryParams)
+    {
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        var externalEvents = new List<GetEventDto>();
+
+        if (userRole == nameof(RoleLevel.Company))
+        {
+            var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
+
+            if (company == null)
+            {
+                return null;
+            }
+
+            var filterEvents = (from e in _eventRepository.GetAll()
+                                join c in _companyRepository.GetAll()
+                                on e.CreatedBy equals c.Guid
+                                where e.CreatedBy == company.Guid
+                                select new GetEventDto
+                                {
+                                    Guid = e.Guid,
+                                    Name = e.Name,
+                                    Description = e.Description,
+                                    Thumbnail = e.Thumbnail,
+                                    Visibility = e.IsPublished == true ? "public" : "private",
+                                    Category = e.Category,
+                                    PlaceType = e.Status == EventStatus.Offline ? "offline" : "online",
+                                    Payment = e.IsPaid == true ? "paid" : "free",
+                                    Price = e.Price,
+                                    Quota = e.Quota,
+                                    Joined = e.UsedQuota,
+                                    StartDate = e.StartDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+                                    EndDate = e.EndDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+                                    Organizer = c.Name,
+                                    Place = e.Place,
+                                    PublicationStatus = e.IsActive == true ? "published" : "draft"
+                                }).ToList();
+
+
+            if (filterEvents is null)
+            {
+                return null;
+            }
+
+            var publicationStatus = queryParams.publication_status?.ToLower() ?? "";
+            var visibility = queryParams.visibility?.ToLower() ?? "";
+            var placeType = queryParams.place_type?.ToLower() ?? "";
+            var sortBy = queryParams.sort_by?.ToLower() ?? "";
+
+            var publicationStatusValues = new List<string>() { "all", "published", "draft" };
+            var visibilityValues = new List<string>() { "all", "public", "private" };
+            var placeTypeValues = new List<string>() { "all", "offline", "online" };
+
+            if (publicationStatusValues.Contains(publicationStatus))
+            {
+                if (publicationStatus != "all")
+                {
+                    filterEvents = filterEvents.Where(e => e.PublicationStatus == publicationStatus).ToList();
+                }
+            }
+
+            if (visibilityValues.Contains(visibility))
+            {
+                if (visibility != "all")
+                {
+                    filterEvents = filterEvents.Where(e => e.Visibility == visibility).ToList();
+                }
+            }
+
+            if (placeTypeValues.Contains(placeType))
+            {
+                if (placeType != "all")
+                {
+                    filterEvents = filterEvents.Where(e => e.PlaceType == placeType).ToList();
+                }
+            }
+
+            var companyParticipants = _companyParticipantRepository.GetAll();
+            var employeeParticipants = _employeeParticipantRepository.GetAll();
+
+            string format = "dd MMMM yyyy, HH:mm 'WIB'";
+            if (sortBy == "older")
+            {
+                filterEvents = filterEvents.OrderByDescending(e => DateTime.ParseExact(e.StartDate, format, CultureInfo.InvariantCulture)).ToList();
+            }
+
+            if (sortBy == "newest")
+            {
+                filterEvents = filterEvents.OrderBy(e => DateTime.ParseExact(e.StartDate, format, CultureInfo.InvariantCulture)).ToList();
+            }
+
+            externalEvents = filterEvents;
+
+            return externalEvents;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
 
     public int UpdateParticipantsEvent(UpdateParticipantsEventDto updateParticipantsEventDto)
     {
