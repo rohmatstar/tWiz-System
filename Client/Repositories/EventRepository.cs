@@ -114,5 +114,31 @@ public class EventRepository : GeneralRepository<EventsDto, Guid>, IEventReposit
         }
         return entityVM;
     }
+
+    public async Task<ResponseListDto<GetInvitationEventDto>> GetInvitationEvents(QueryParamGetEventDto queryParams)
+    {
+
+        ResponseListDto<GetInvitationEventDto> entityVM = null;
+        using (var response = await httpClient.GetAsync(request + $"/participants?eventGuid="))
+        {
+            Console.WriteLine($"response : {response}");
+            Console.WriteLine($"response isSuccess : {response.IsSuccessStatusCode}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+
+                entityVM = JsonConvert.DeserializeObject<ResponseListDto<GetInvitationEventDto>>(apiResponse);
+
+            }
+            else
+            {
+                entityVM = new ResponseListDto<GetInvitationEventDto> { Code = (int)response.StatusCode, Message = response.ReasonPhrase, Data = null };
+            }
+
+
+        }
+        return entityVM;
+    }
 }
 

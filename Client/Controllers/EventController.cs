@@ -107,11 +107,26 @@ public class EventController : Controller
 
     /*[Authorize]*/
     // invitation events
-    public IActionResult Invited()
+    public IActionResult Invited([FromQuery] QueryParamGetEventDto queryParams)
     {
         var active = "invited_event";
         ViewBag.Active = active;
-        return View();
+
+        var token = HttpContext?.Session.GetString("JWTToken") ?? "";
+        ViewData["token"] = token;
+
+        var events = _eventRepository.GetInvitationEvents(queryParams);
+        var companies = _companyRepository.Get();
+        var employees = _employeeRepository.Get();
+
+        string eventsJson = JsonSerializer.Serialize(events.Result);
+        string companiesJson = JsonSerializer.Serialize(companies.Result);
+        string employeesJson = JsonSerializer.Serialize(employees.Result);
+        ViewData["eventsJson"] = eventsJson;
+        ViewData["companiesJson"] = companiesJson;
+        ViewData["employeesJson"] = employeesJson;
+
+        return View(events.Result.Data);
     }
 
     /*[Authorize]*/

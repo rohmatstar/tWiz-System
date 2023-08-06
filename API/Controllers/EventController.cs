@@ -301,7 +301,7 @@ public class EventController : ControllerBase
         });
     }
 
-    [HttpGet("Invitation")]
+    [HttpGet("invitation")]
     public IActionResult GetInvitationEvent([FromQuery] QueryParamGetEventDto queryParams)
     {
         var result = _eventService.GetInvitationEvents(queryParams);
