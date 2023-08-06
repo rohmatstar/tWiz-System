@@ -87,10 +87,10 @@ public class EventRepository : GeneralRepository<EventsDto, Guid>, IEventReposit
         return entityVM;
     }
 
-    public async Task<ResponseDto<GetEventDto>> GetParticipantsEvent(Guid guid)
+    public async Task<ResponseDto<GetParticipantsEventDto>> GetParticipantsEvent(Guid guid)
     {
-        ResponseDto<GetEventDto> entityVM = null;
-        using (var response = await httpClient.GetAsync(request + $"/{guid}"))
+        ResponseDto<GetParticipantsEventDto> entityVM = null;
+        using (var response = await httpClient.GetAsync(request + $"/participants?eventGuid={guid}"))
         {
             Console.WriteLine($"response : {response}");
             Console.WriteLine($"response isSuccess : {response.IsSuccessStatusCode}");
@@ -99,12 +99,12 @@ public class EventRepository : GeneralRepository<EventsDto, Guid>, IEventReposit
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
 
-                entityVM = JsonConvert.DeserializeObject<ResponseDto<GetEventDto>>(apiResponse);
+                entityVM = JsonConvert.DeserializeObject<ResponseDto<GetParticipantsEventDto>>(apiResponse);
 
             }
             else
             {
-                entityVM = new ResponseDto<GetEventDto> { Code = (int)response.StatusCode, Message = response.ReasonPhrase, Data = null };
+                entityVM = new ResponseDto<GetParticipantsEventDto> { Code = (int)response.StatusCode, Message = response.ReasonPhrase, Data = null };
             }
 
 

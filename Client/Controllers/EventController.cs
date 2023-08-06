@@ -88,6 +88,20 @@ public class EventController : Controller
         return View(singleEvent);
     }
 
+    public async Task<IActionResult> Participants(Guid eventGuid)
+    {
+        var participantsEvent = new GetParticipantsEventDto();
+
+        var getParticipantsEvent = await _eventRepository.GetParticipantsEvent(eventGuid);
+
+        if (getParticipantsEvent.Data != null)
+        {
+            participantsEvent = getParticipantsEvent.Data;
+        }
+
+        return View(participantsEvent);
+    }
+
     /*[Authorize]*/
     // invitation events
     public IActionResult Invited()
