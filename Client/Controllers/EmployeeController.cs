@@ -50,6 +50,33 @@ public class EmployeeController : Controller
         return View();
     }
 
+    [HttpGet]
+    public async Task<IActionResult> Update(Guid guid)
+    {
+        var active = "update_employee";
+        ViewBag.Active = active;
+
+        var result = await _employeeRepository.Get(guid);
+
+        if (result.Data?.Guid is null)
+        {
+            return RedirectToAction(nameof(Index));
+        }
+        var employee = new GetMasterEmployeeDtoClient
+        {
+            Guid = result.Data.Guid,
+            Nik = result.Data.Nik,
+            FullName = result.Data.FullName,
+            BirthDate = result.Data.BirthDate,
+            Gender = result.Data.Gender,
+            HiringDate = result.Data.HiringDate,
+            PhoneNumber = result.Data.PhoneNumber,
+            Email = result.Data.Email
+        };
+
+        return View(employee);
+    }
+
     /* =========== Crud ============== */
     /*public async Task<IActionResult> Index()
     {
