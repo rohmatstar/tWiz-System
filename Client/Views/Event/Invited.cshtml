@@ -428,6 +428,20 @@
             const event = eventsJson.Data[index];
             console.log(event);
 
+            const btnJoin = document.getElementById("btn-join");
+            const btnReject = document.getElementById("btn-reject");
+
+            //btnJoin.style.display = "inherit";
+            //btnReject.style.display = "inherit";
+
+            $("#btn-join").show();
+            $("#btn-reject").show();
+
+            let eventName = event.Name;
+
+            if (event.InvitationStatus == "accepted"){
+                eventName = event.Name + `<button type="button" class="badge ms-2 badge-center rounded-pill bg-success border-0" data-bs-toggle="popover" data-bs-offset="0,4" data-bs-placement="right" data-bs-html="true" title="Joined"> <i class="bx bx-check"></i> </button>`;
+            }
 
             let imageUrl = "";
 
@@ -437,7 +451,7 @@
                 imageUrl = `@(IMAGE_URL)${event.Thumbnail}`;
             }
 
-            $("#event-detail-name").html(event.Name);
+            $("#event-detail-name").html(eventName);
             $("#event-detail-thumbnail").attr("src", imageUrl).attr("alt", event.Name + " by " + event.Organizer);
             $("#event-detail-description").text(event.Description);
             $("#event-detail-startdate").text(event.StartDate);
@@ -456,18 +470,24 @@
             $("#event-detail-joined").parent().show();
             $("#event-detail-quota").text(event.Quota - event.Joined);
 
-            const btnJoin = document.getElementById("btn-join");
-            const btnReject = document.getElementById("btn-reject");
+            
 
             if (event.InvitationStatus == "accepted"){
-                btnJoin.style.display = "none";
-                btnReject.style.display = "none";
+                //btnJoin.style.display = "none";
+                //btnReject.style.display = "none";
+                $("#btn-join").hide();
+                $("#btn-reject").hide();
             }
 
             if (event.PaymentGuid == null && event.InvitationStatus != "accepted"){
                 btnJoin.onclick = async function (){
-                    await approveParticipant(event.Guid);
-                    console.log("hello 1")
+                    approveEvent(event.Guid);
+                    console.log("approve")
+                }
+
+                btnReject.onclick = function(){
+                    rejectEvent(event.Guid);
+                    console.log("reject")
                 }
             }else if(event.PaymentGuid != null){
                 btnJoin.onclick = function (){
@@ -483,8 +503,8 @@
             $("#event-detail").modal('show');
         }
 
-        async function approveParticipant(eventGuid){
-            fetch(`${API_URL}/events/approve-participant?eventGuid=${eventGuid}`, {
+        function approveEvent(eventGuid){
+            fetch(`${API_URL}/events/approve-event?eventGuid=${eventGuid}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer @(ViewData["token"])`,
@@ -495,7 +515,43 @@
                     if (responseJson.code == 200) {
                         Swal.fire({
                             icon: 'success',
-                            title: `Successfully approve participant`,
+                            title: `Successfully approve event`,
+                        }).then(result => location.reload(true))
+
+
+                    }
+
+                    if (responseJson.code == 400) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Approve event Failed',
+                            text: "Please check your data",
+                        })
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Approve event Failed',
+                        text: "Please check your data",
+                    })
+                });
+        }
+
+        function rejectEvent(eventGuid) {
+            fetch(`${API_URL}/events/reject-event?eventGuid=${eventGuid}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer @(ViewData["token"])`,
+                },
+            }).then(response => response.json())
+                .then(responseJson => {
+                    console.log(responseJson)
+                    if (responseJson.code == 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: `Successfully reject event`,
                         }).then(result => location.reload(true))
 
 
