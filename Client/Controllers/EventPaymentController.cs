@@ -1,4 +1,5 @@
 ﻿using Client.Contracts;
+using Client.DTOs.EventPayments;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Client.Controllers;
@@ -13,9 +14,22 @@ public class EventPaymentController : Controller
     {
         _eventPaymentRepository = eventPaymentRepository;
     }
-    public IActionResult Index()
+
+    [HttpGet]
+    public async Task<IActionResult> Index(Guid guid)
     {
-        return View();
+        var eventPaymentSummary = new EventPaymentSummaryDto();
+        var response = await _eventPaymentRepository.GetSummary(guid);
+
+        if (response.Data != null)
+        {
+            eventPaymentSummary = response.Data;
+        }
+
+        TempData["payment"] = eventPaymentSummary;
+
+
+        return View(eventPaymentSummary);
     }
 }
 

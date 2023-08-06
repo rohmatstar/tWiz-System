@@ -419,7 +419,7 @@
                 
             }else if(event.PaymentGuid != null){
                 btnJoin.onclick = function (){
-                    console.log("hello 2")
+                    location.href = `/EventPayment/Index?guid=${event.PaymentGuid}`
                 }
             }
 

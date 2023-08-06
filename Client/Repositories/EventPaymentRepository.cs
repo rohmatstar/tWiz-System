@@ -11,9 +11,9 @@ public class EventPaymentRepository : GeneralRepository<GetEventPaymentDto, Guid
     {
     }
 
-    public async Task<ResponseListDto<EventPaymentSummaryDto>> GetSummary(Guid guid)
+    public async Task<ResponseDto<EventPaymentSummaryDto>> GetSummary(Guid guid)
     {
-        ResponseListDto<EventPaymentSummaryDto> entityVM = null;
+        ResponseDto<EventPaymentSummaryDto> entityVM = null;
         using (var response = await httpClient.GetAsync(request + $"/summary?guid={guid}"))
         {
             Console.WriteLine($"response : {response}");
@@ -23,12 +23,12 @@ public class EventPaymentRepository : GeneralRepository<GetEventPaymentDto, Guid
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
 
-                entityVM = JsonConvert.DeserializeObject<ResponseListDto<EventPaymentSummaryDto>>(apiResponse);
+                entityVM = JsonConvert.DeserializeObject<ResponseDto<EventPaymentSummaryDto>>(apiResponse);
 
             }
             else
             {
-                entityVM = new ResponseListDto<EventPaymentSummaryDto> { Code = (int)response.StatusCode, Message = response.ReasonPhrase, Data = null };
+                entityVM = new ResponseDto<EventPaymentSummaryDto> { Code = (int)response.StatusCode, Message = response.ReasonPhrase, Data = null };
             }
 
 
