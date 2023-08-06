@@ -88,8 +88,11 @@ public class EventController : Controller
         return View(singleEvent);
     }
 
+    [HttpGet("participants")]
     public async Task<IActionResult> Participants(Guid eventGuid)
     {
+        Console.WriteLine("controller");
+        Console.WriteLine(eventGuid);
         var participantsEvent = new GetParticipantsEventDto();
 
         var getParticipantsEvent = await _eventRepository.GetParticipantsEvent(eventGuid);

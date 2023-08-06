@@ -1,6 +1,9 @@
 ﻿@model Client.DTOs.Events.GetParticipantsEventDto;
 
 @{
+    var companyGuid = User!.Claims!.FirstOrDefault(c => c.Type == "companyGuid")!.Value;
+    Console.WriteLine(companyGuid);
+    Console.WriteLine(Model.MakerEventGuid);
     ViewData["Title"] = "Participants Event";
     Layout = "_LayoutUser";
 }
@@ -12,3 +15,110 @@
         <li class="breadcrumb-item active" aria-current="page">Participants</li>
     </ol>
 </nav>
+
+@if(Model.MakerEventGuid == Guid.Parse(companyGuid))
+{
+    var i = 0;
+    <h4 class="mb-3 mt-5">Company Participants</h4>
+
+    <table class="table table-responsive" id="company-table" >
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Presence</th>
+                <th scope="col">Invitation Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            @foreach(var companyParticipant in Model.CompanyParticipants)
+            {
+                <tr>
+                    <th scope="row">@(i++)</th>
+                    <td>@companyParticipant.CompanyName</td>
+                    <td>@(companyParticipant.IsPresent == true ? "present" : "not present")</td>
+                    <td>@companyParticipant.InvitationStatus</td>
+                </tr>
+            }
+                      
+        </tbody>
+    </table>
+
+
+    <h4 class="mb-3 mt-5">Employee Participants</h4>
+
+    <table class="table table-responsive" id="employee-table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Employee Name</th>
+                <th scope="col">Company Name</th>
+                <th scope="col">Presence</th>
+                <th scope="col">Invitation Status</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var companyParticipant in Model.EmployeeParticipants)
+            {
+                <tr>
+                    <th scope="row">@(i++)</th>
+                    <td>@companyParticipant.EmployeeName</td>
+                    <td>@companyParticipant.CompanyName</td>
+                    <td>@(companyParticipant.IsPresent == true ? "present" : "not present")</td>
+                    <td>@companyParticipant.InvitationStatus</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}
+else
+{
+    var i = 0;
+    <h4 class="mb-3 mt-5">Employee Participants</h4>
+
+    <table class="table table-responsive" id="employee-table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Employee Name</th>
+                <th scope="col">Company Name</th>
+                <th scope="col">Presence</th>
+                <th scope="col">Invitation Status</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var companyParticipant in Model.EmployeeParticipants)
+            {
+                <tr>
+                    <th scope="row">@(i++)</th>
+                    <td>@companyParticipant.EmployeeName</td>
+                    <td>@companyParticipant.CompanyName</td>
+                    <td>@(companyParticipant.IsPresent == true ? "present" : "not present")</td>
+                    <td>@companyParticipant.InvitationStatus</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}
+
+
+@section Scripts {
+
+    <script>
+        let companyTable = new DataTable('#company-table', {
+            responsive: true
+        });
+
+        let employeeTable = new DataTable('#employee-table', {
+            responsive: true
+        });
+
+        
+    </script>
+    
+}

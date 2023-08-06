@@ -278,9 +278,9 @@ public class EventController : ControllerBase
     }
 
     [HttpGet("participants")]
-    public IActionResult GetParticipantsEvent(Guid evetGuid)
+    public IActionResult GetParticipantsEvent(Guid eventGuid)
     {
-        var result = _eventService.GetParticipantsEvent(evetGuid);
+        var result = _eventService.GetParticipantsEvent(eventGuid);
         if (result != null)
         {
             return Ok(new ResponseHandler<GetParticipantsEventDto>

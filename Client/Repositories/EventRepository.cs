@@ -89,6 +89,9 @@ public class EventRepository : GeneralRepository<EventsDto, Guid>, IEventReposit
 
     public async Task<ResponseDto<GetParticipantsEventDto>> GetParticipantsEvent(Guid guid)
     {
+        Console.WriteLine("in repository client");
+        Console.WriteLine(guid);
+
         ResponseDto<GetParticipantsEventDto> entityVM = null;
         using (var response = await httpClient.GetAsync(request + $"/participants?eventGuid={guid}"))
         {
