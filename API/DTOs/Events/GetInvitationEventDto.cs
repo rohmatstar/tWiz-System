@@ -2,7 +2,7 @@
 
 namespace API.DTOs.Events;
 
-public class GetExternalEventDto
+public class GetInvitationEventDto
 {
     public Guid Guid { get; set; }
 

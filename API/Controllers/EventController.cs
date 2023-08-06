@@ -301,6 +301,30 @@ public class EventController : ControllerBase
         });
     }
 
+    [HttpGet("Invitation")]
+    public IActionResult GetInvitationEvent([FromQuery] QueryParamGetEventDto queryParams)
+    {
+        var result = _eventService.GetInvitationEvents(queryParams);
+        if (result != null)
+        {
+            return Ok(new ResponseHandler<List<GetInvitationEventDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success",
+                Data = result
+            });
+        }
+
+        return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+        {
+            Code = StatusCodes.Status400BadRequest,
+            Status = HttpStatusCode.BadRequest.ToString(),
+            Message = "Check your data",
+            Data = null
+        });
+    }
+
     //[HttpGet("external")]
     //[Authorize(Roles = $"{nameof(RoleLevel.Company)}, {nameof(RoleLevel.Employee)}")]
     //public IActionResult GetExternalEvents([FromQuery] string? type)
