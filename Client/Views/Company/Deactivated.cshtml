@@ -36,11 +36,14 @@
     }
 }
 
-<div class="col-12">
-    <div class="alert alert-warning border border-warning" role="alert">
-        Deactivate the account as the associated user is unable to log in.
+@if (role == RoleLevel.SysAdmin.ToString())
+{
+    <div class="col-12">
+        <div class="alert alert-warning border border-warning" role="alert">
+            Deactivate the account as the associated user is unable to log in.
+        </div>
     </div>
-</div>
+}
 
 <div class="col-12">
     <div class="card">

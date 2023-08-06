@@ -20,6 +20,16 @@ namespace Client.Controllers
             return View();
         }
 
+        public IActionResult TNC()
+        {
+            return View();
+        }
+
+        public IActionResult FAQ()
+        {
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
