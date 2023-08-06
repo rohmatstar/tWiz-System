@@ -35,15 +35,139 @@
     <div class="card">
         <div class="p-3">
             <div class="table-responsive">
-                <table id="data" class="table w-100 table-hover"></table>
+                <table id="data" class="table w-100 table-hover">
+                    <tr class="border-0"><td align="center" class="border-0"><i class="bx bx-loader-alt animate__loading"></i> Loading...</td></tr>
+                </table>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="employeeUpdateForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title">Update Employee</h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="hidden" id="rowId" />
+                                <input type="hidden" id="guid" name="Guid" />
+
+                                <input type="text"
+                                       class="form-control"
+                                       id="nik"
+                                       name="Nik"
+                                       placeholder="Enter NIK" />
+                                <label for="nik">NIK</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text"
+                                       class="form-control"
+                                       id="fullName"
+                                       name="FullName"
+                                       placeholder="Enter Full Name" />
+                                <label for="fullName">Full Name</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="birthDate">Birth Date</label>
+                                <input type="date"
+                                       class="form-control"
+                                       id="birthDate"
+                                       name="BirthDate"
+                                       value="" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="hiringDate">Hired Date</label>
+                                <input type="date"
+                                       class="form-control"
+                                       id="hiringDate"
+                                       name="HiringDate"
+                                       value="" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <small class="text-light fw-semibold">Gender</small>
+                            <div class="form-check">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       value="Male"
+                                       name="Gender"
+                                       id="gender_male" />
+
+                                <label class="form-check-label" for="gender_male"> Male </label>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       value="Female"
+                                       name="Gender"
+                                       id="gender_female" />
+
+                                <label class="form-check-label" for="gender_female"> Female </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="number"
+                                       class="form-control"
+                                       id="phoneNumber"
+                                       name="PhoneNumber"
+                                       placeholder="Enter Phone Number"
+                                       maxlength="15" />
+                                <label for="PhoneNumber">Phone Number</label>
+                            </div>
+                        </div>
+
+                        @*<div class="col-12">
+                            <div class="form-floating">
+                                <input type="email"
+                                       class="form-control"
+                                       id="email"
+                                       name="Email"
+                                       placeholder="Enter Email Address" />
+                                <label for="Email">Email</label>
+                            </div>
+                        </div>*@
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between align-items-center">
+                    <div id="invalid" class="text-danger"></div>
+                    <button id="update-btn" type="button" onclick="updateData(this)" class="btn btn-primary">Update</button>
+                    <button id="delete-btn" type="button" onclick="deleteData(this)" class="btn btn-danger" style="display: none">Confirm Delete</button>
+                </div>
+             </form>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
+        function convertDateFormat(dateString) {
+            var parts = dateString.split('-');
+            if (parts.length !== 3) return null;
+            return parts[2] + '-' + parts[1] + '-' + parts[0];
+        }
+
+        //$(document).ready(function () {
             var companyGuid = "@companyGuid";
             $.ajax({
                 url: 'https://localhost:7249/api/employees/company/' + companyGuid,
@@ -53,7 +177,8 @@
                     'Authorization': 'Bearer ' + "@jwtToken"
                 },
                 success: function(response) {
-                    $('#data').DataTable({
+                    console.log("table", response)
+                    var dataTable = $('#data').DataTable({
                         data: response.data,
                         columns: [
                             { title: 'NIK', data: 'nik' },
@@ -64,7 +189,13 @@
                                     return '<div class="text-capitalize">' +data.fullName+ '</div>';
                                 }
                             },
-                            //{ title: 'Birth Date', data: 'birthDate' },
+                            {
+                                title: 'Birth Date',
+                                data: null,
+                                render: function (data, type, row) {
+                                    return data.birthDate.split(",")[0];
+                                }
+                            },
                             {
                                 title: 'Gender',
                                 data: null,
@@ -79,19 +210,18 @@
                                     return data.hiringDate.split(",")[0];
                                 }
                             },
-                            //{ title: 'Phone Number', data: 'phoneNumber' },
                             {
                                 title: 'Contact',
                                 data: null,
                                 render: function (data, type, row){
-                                    return '<div><i class="bx bx-phone"></i> <a href="tel:' + data.phoneNumber +
+                                    return '<div><i class="bx bx-phone"></i> <a href="tel:+' + data.phoneNumber +
                                         '">+' +data.phoneNumber+ '</a></div><div><i class="bx bx-envelope"></i> <a href="mailto:' + data.email + '">'+data.email+'</a></div>';
                                 }
                             },
                             {
                                 title: 'Action',
                                 data: null,
-                                render: function (data, type, row) {
+                                render: function (data, type, row, meta) {
                                     return `<div class="btn-group">
                               <button
                                 type="button"
@@ -102,23 +232,173 @@
                                 Options
                               </button>
                               <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt"></i> Edit</a></li>
-                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash"></i> Delete</a></li>
-                                <li>
-                                  <hr class="dropdown-divider" />
-                                </li>
-                                        <li><a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-dots-horizontal"></i> Details</a></li>
+                                        <li><a class="dropdown-item text-dark" href="#" onclick="detailsData('edit', '`+ data.guid + `', 'row_` + meta.row + `')"><i class="bx bx-edit-alt"></i> Edit</a></li>
+                                                <li><a class="dropdown-item text-danger" href="#" onclick="detailsData('delete', '`+data.guid+`', 'row_`+meta.row+`')"><i class="bx bx-trash"></i> Delete</a></li>
                               </ul>
                             </div>`;
                                 }
                             }
-                        ]
+                        ],
+                        createdRow: function (row, data, dataIndex) {
+                            $(row).attr('id', 'row_' + (dataIndex));
+                        }
                     });
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     console.error("Error:", textStatus, errorThrown);
                 }
             });
-        });
+
+            function detailsData(param, guid, rowId) {
+                $.ajax({
+                    url: 'https://localhost:7249/api/employees/' + guid,
+                    method: 'GET',
+                    contentType: 'application/json',
+                    headers: {
+                        'Authorization': 'Bearer ' + "@jwtToken"
+                    },
+                    success: function (response) {
+                        if(response.code == 200){
+                            console.log(response.data.birthDate, response.data.hiringDate);
+                            var birthDateVal = response.data.birthDate.split(", ")[2] + "-" + response.data.birthDate.split(", ")[1] + "-" + response.data.birthDate.split(", ")[0];
+                            var hiringDateVal = response.data.hiringDate.split(", ")[2] + "-" + response.data.hiringDate.split(", ")[1] + "-" + response.data.hiringDate.split(", ")[0];
+
+                            $("#employeeUpdateForm #rowId").val(rowId);
+
+                            $("#employeeUpdateForm #guid").val(response.data.guid);
+                            $("#employeeUpdateForm #nik").val(response.data.nik.trim());
+                            $("#employeeUpdateForm #fullName").val(response.data.fullName);
+                            $("#employeeUpdateForm #birthDate").val(birthDateVal);
+                            if (response.data.gender == 'male') {
+                                $("#employeeUpdateForm #gender_male").prop("checked", true);
+                            }
+                            else {
+                                $("#employeeUpdateForm #gender_female").prop("checked", true);
+                            }
+                            $("#employeeUpdateForm #hiringDate").val(hiringDateVal);
+                            $("#employeeUpdateForm #phoneNumber").val(response.data.phoneNumber);
+                            //$("#employeeUpdateForm #email").val(response.data.email);
+
+                            if (param == 'delete') {
+                                $("#employeeUpdateForm input:not([type=hidden]), #employeeUpdateForm select, #employeeUpdateForm textarea").prop("disabled", true);
+                                $("#employeeUpdateForm #title").text("Delete Employee");
+                                $("#update-btn").hide();
+                                $("#delete-btn").show();
+                            }
+                            else {
+                            $("#employeeUpdateForm input:not([type=hidden]), #employeeUpdateForm select, #employeeUpdateForm textarea").prop("disabled", false);
+                                $("#employeeUpdateForm #title").text("Update Employee");
+                                $("#delete-btn").hide();
+                                $("#update-btn").show();
+                            }
+
+                            $("#detailModal").modal("show");
+                        }
+                        else{
+                            Swal.fire(
+                                'Something went wrong',
+                                'Please try again later',
+                                'error'
+                            )
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error("Error:", textStatus, errorThrown);
+                    }
+                });
+            }
+
+            function deleteData(obj){
+                let innerHTML = $(obj).html();
+                $(obj).html('<i class="bx bx-loader-alt animate__loading"></i>').prop("disabled", true);
+                
+                $.ajax({
+                url: 'https://localhost:7249/api/employees?guid=' + $("#employeeUpdateForm #guid").val(),
+                    method: 'DELETE',
+                    contentType: 'application/json',
+                    headers: {
+                        'Authorization': 'Bearer ' + "@jwtToken"
+                    },
+                    success: function (response) {
+                        let rowId = $("#employeeUpdateForm #rowId").val();
+                        if(response.code == 200){
+                            $("#" + rowId).remove();
+                            $("#detailModal").modal("hide");
+
+                            $("#render-body").append(`<div id="toast" class="bs-toast toast show toast-placement-ex m-2 fade bg-warning top-0 start-50 translate-middle-x" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000"><div class="toast-header"><i class="bx bx-bell me-2"></i><div class="me-auto fw-semibold">Deletion Success</div></div><div class="toast-body">Related Employee Data Disappear from Screen and Database</div></div>`);
+
+                            $(obj).html(innerHTML).prop("disabled", false);
+
+                            setTimeout(function () {
+                                $("#toast").removeClass('show').remove();
+                            }, 5000);
+                        }
+                        else{
+                            Swal.fire(
+                                'Something went wrong',
+                                'Please try again later',
+                                'error'
+                            );
+                            $(obj).html(innerHTML).prop("disabled", false);
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error("Error:", textStatus, errorThrown);
+                    }
+                });
+            }
+
+            function updateData(obj){
+                $("#invalid").text("");
+                let innerHTML = $(obj).html();
+                $(obj).html('<i class="bx bx-loader-alt animate__loading"></i>').prop("disabled", true);
+
+                var formData = {};
+                $.each($("#employeeUpdateForm").serializeArray(), function (index, field) {
+                    formData[field.name] = field.value;
+                });
+                var jsonData = JSON.stringify(formData);
+
+                $.ajax({
+                    url: 'https://localhost:7249/api/employees/',
+                    method: 'PUT',
+                    contentType: 'application/json',
+                    data: jsonData,
+                    headers: {
+                        'Authorization': 'Bearer ' + "@jwtToken"
+                    },
+                    success: function (response) {
+                        if(response.code == 200){
+                            //$('table #data').DataTable().ajax.reload();
+
+                            $("#detailModal").modal("hide");
+
+                            $("#render-body").append(`<div id="toast" class="bs-toast toast show toast-placement-ex m-2 fade bg-success top-0 start-50 translate-middle-x" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000"><div class="toast-header"><i class="bx bx-bell me-2"></i><div class="me-auto fw-semibold">Update Success</div></div><div class="toast-body">Related Employee Data Refreshed from Screen</div></div>`);
+
+                            $(obj).html(innerHTML).prop("disabled", false);
+
+                            setTimeout(function () {
+                                $("#toast").removeClass('show').remove();
+                            }, 5000);
+
+                            window.location.reload();
+                        }
+                        else{
+                            Swal.fire(
+                                'Something went wrong',
+                                'Please try again later',
+                                'error'
+                            );
+                            $(obj).html(innerHTML).prop("disabled", false);
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error("Error:", jqXHR, textStatus, errorThrown);
+                        $("#invalid").text("Failed to udpate, check your input and try again");
+                        $(obj).html(innerHTML).prop("disabled", false);
+                    }
+                });
+            }
+        //});
     </script>
 }
