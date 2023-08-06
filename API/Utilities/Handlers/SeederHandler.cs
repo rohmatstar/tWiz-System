@@ -6877,7 +6877,7 @@ public class SeederHandler
             var registerpayment1 = new RegisterPayment
             {
                 Guid = new Guid(),
-                CompanyGuid = _context.Set<Company>().FirstOrDefault(c => c.Name == "PT.ABC").Guid,
+                CompanyGuid = _context.Set<Company>().FirstOrDefault(c => c.Name == "PT. DIGITAL KARYA INFORMATIKA").Guid,
                 VaNumber = GenerateHandler.GenerateVa(),
                 Price = 500000,
                 PaymentImage = "",
@@ -6891,7 +6891,7 @@ public class SeederHandler
             var registerpayment2 = new RegisterPayment
             {
                 Guid = new Guid(),
-                CompanyGuid = _context.Set<Company>().FirstOrDefault(c => c.Name == "PT.XYZ").Guid,
+                CompanyGuid = _context.Set<Company>().FirstOrDefault(c => c.Name == "PT. MITRA INTEGRASI INFORMATIKA").Guid,
                 VaNumber = GenerateHandler.GenerateVa(),
                 Price = 500000,
                 PaymentImage = "",
@@ -6903,7 +6903,7 @@ public class SeederHandler
             var registerpayment3 = new RegisterPayment
             {
                 Guid = new Guid(),
-                CompanyGuid = _context.Set<Company>().FirstOrDefault(c => c.Name == "PT.RAY").Guid,
+                CompanyGuid = _context.Set<Company>().FirstOrDefault(c => c.Name == "PT. Tiara Karunia Sentosa").Guid,
                 VaNumber = GenerateHandler.GenerateVa(),
                 Price = 500000,
                 PaymentImage = "",

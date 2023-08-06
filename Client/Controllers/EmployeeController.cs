@@ -26,7 +26,6 @@ public class EmployeeController : Controller
     }
 
     /* =========== View ============== */
-
     [HttpGet]
     public IActionResult Index()
     {
