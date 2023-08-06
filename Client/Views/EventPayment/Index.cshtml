@@ -70,8 +70,16 @@
 @section Scripts
     {
     <script>
-        document.getElementById("btn-submit-payment").addEventListener("click", function (e) {
+        const btnSubmitPayment = document.getElementById("btn-submit-payment");
+        btnSubmitPayment.addEventListener("click", function (e) {
             e.preventDefault();
+
+            this.innerHTML = `
+                        <div class="spinner-border text-info" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    `;
+
             const fileInput = document.getElementById("fileInput");
             const file = fileInput.files[0];
 
@@ -117,6 +125,11 @@
                             title: 'Oops...',
                             text: 'Something error, check your data',
                         })
+
+                        btnImport.innerHTML = `
+                                    <span>Import</span>
+                                    <i class="bx bx-arrow-from-left"></i>
+                                `;
                     });
             } else {
                 // Tampilkan pesan kesalahan jika file belum dipilih
@@ -125,6 +138,10 @@
                     title: 'Oops...',
                     text: 'Please Upload Your File!',
                 })
+                btnImport.innerHTML = `
+                                    <span>Import</span>
+                                    <i class="bx bx-arrow-from-left"></i>
+                                `;
             }
         });
     </script>
