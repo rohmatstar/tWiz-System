@@ -1,0 +1,230 @@
+﻿@model Client.DTOs.Employees.GetMasterEmployeeDto
+@{
+    var jwtToken = Context.Session.GetString("JWTToken")!.ToString();
+    var toast = TempData["toast"] as dynamic;
+
+    ViewData["Title"] = "Update Employee";
+    Layout = "_LayoutUser";
+}
+
+@section Filter{
+    
+}
+
+@section Toast{
+    @if (toast != null)
+    {
+        var toastColor = toast.Color ?? "secondary";
+        var toastClass = $"bs-toast toast toast-placement-ex m-2 fade bg-{toastColor} top-0 start-50 translate-middle-x";
+
+        <div class="@toastClass" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+            <div class="toast-header">
+                <i class="bx bx-bell me-2"></i>
+                <div class="me-auto fw-semibold">@toast.Title</div>
+            </div>
+            <div class="toast-body">
+                @toast.Subtitle
+            </div>
+        </div>
+    }
+}
+
+<div class="col-12">
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-6 border-end">
+                    <form id="employeeForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-floating mb-3">
+                            <input type="text"
+                                   class="form-control"
+                                   id="nik"
+                                   value="@Model.Nik"
+                                   asp-for="Nik"
+                                   placeholder="Enter NIK" />
+                            <label asp-for="Nik">NIK</label>
+                            <span asp-validation-for="Nik" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text"
+                                   class="form-control"
+                                   id="fullName"
+                                   value="@Model.FullName"
+                                   asp-for="FullName"
+                                   placeholder="Enter Full Name" />
+                            <label asp-for="FullName">Full Name</label>
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="BirthDate">Birth Date</label>
+                            <input type="date"
+                                   class="form-control"
+                                   id="birthDate"
+                                   value="@Model.BirthDate"
+                                   asp-for="BirthDate"
+                                   value="" />
+                            <span asp-validation-for="BirthDate" class="text-danger"></span>
+                        </div>
+
+                        <small class="text-light fw-semibold">Gender</small>
+                        <div class="form-check">
+                            @if (Model.Gender == "male")
+                            {
+                                <input name="gender"
+                                       class="form-check-input"
+                                       type="radio"
+                                       value="Male"
+                                       checked
+                                       asp-for="Gender"
+                                       id="gender_male" />
+                            }
+                            else
+                            {
+                                <input name="gender"
+                                       class="form-check-input"
+                                       type="radio"
+                                       value="Male"
+                                       asp-for="Gender"
+                                       id="gender_male" />
+                            }
+
+                            <label class="form-check-label" for="gender_male"> Male </label>
+                        </div>
+                        <div class="form-check mb-3">
+                            @if (Model.Gender == "female")
+                            {
+                                <input name="gender"
+                                       class="form-check-input"
+                                       type="radio"
+                                       checked
+                                       value="Female"
+                                       asp-for="Gender"
+                                id="gender_female" />
+                            }
+                            else
+                            {
+                                <input name="gender"
+                                       class="form-check-input"
+                                       type="radio"
+                                       value="Female"
+                                       asp-for="Gender"
+                                       id="gender_female" />
+                            }
+
+                            <label class="form-check-label" for="gender_female"> Female </label>
+
+                            <span asp-validation-for="Gender" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="HiringDate">Hired Date</label>
+                            <input type="date"
+                                   class="form-control"
+                                   id="hiringDate"
+                                   value="@Model.HiringDate"
+                                   asp-for="HiringDate"
+                                   value="" />
+                            <span asp-validation-for="HiringDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="number"
+                                   class="form-control"
+                                   id="phoneNumber"
+                                   value="@Model.PhoneNumber"
+                                   asp-for="PhoneNumber"
+                                   placeholder="Enter Phone Number"
+                                   maxlength="15" />
+                            <label asp-for="PhoneNumber">Phone Number</label>
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="email"
+                                   class="form-control"
+                                   id="email"
+                                   value="@Model.Email"
+                                   asp-for="Email"
+                                   placeholder="Enter Email Address" />
+                            <label asp-for="Email">Email</label>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div id="invalid" class="text-danger"></div>
+                            <button id="save-btn" type="submit" class="btn btn-primary">Save</button>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="col-6 px-5 text-center">
+                    <div class="mb-2">
+                        <i class="bx bx-rocket display-1 animate__animated animate__shakeY animate__slower animate__infinite"></i>
+                    </div>
+
+                    <p><strong>Skip the manual data entry and save time by using the 'Import' feature</strong>. Easily upload multiple records at once in the correct format to populate the database effortlessly.</p>
+
+                    <div class="mt-3">
+                        <a asp-asp-controller="Employee" asp-action="Import" class="btn btn-outline-warning bg-white text-warning">
+                            Use import instead
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+    $("#employeeForm").submit(function(e){
+        e.preventDefault();
+        $("#invalid").text("");
+        var innerHTML = $("#save-btn").html();
+        $("#save-btn").html('<i class="bx bx-loader-alt animate__loading"></i>').prop("disabled", true);
+
+        var formData = {};
+        $.each($(this).serializeArray(), function (index, field) {
+            formData[field.name] = field.value;
+        });
+        var jsonData = JSON.stringify(formData);
+
+        $.ajax({
+            url: 'https://localhost:7249/api/employees',
+            method: 'PUT',
+            contentType: 'application/json',
+            data: jsonData,
+            headers: {
+                'Authorization': 'Bearer ' + "@jwtToken"
+            },
+            success: function (response) {
+                if (response.code === 200) {
+                    Swal.fire(
+                        'Changes Saved!',
+                        'Employee Data with NIK ' + $("#nik").val() + ' Successfully Store into Database',
+                        'success'
+                    );
+                        $("#employeeForm").trigger("reset");
+                } else {
+                    Swal.fire(
+                        'Failed to Save',
+                        'Error ' + response.code + '! ' + response.message,
+                        'error'
+                    );
+                }
+
+                    $("#save-btn").html(innerHTML).prop("disabled", false);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error:", jqXHR, textStatus, errorThrown);
+                $("#invalid").text("Failed to save, check your input and try again");
+                $("#save-btn").html(innerHTML).prop("disabled", false);
+            }
+        });
+    });
+    </script>
+}
