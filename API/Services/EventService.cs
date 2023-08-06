@@ -1116,6 +1116,7 @@ public class EventService
                         var getBanks = _bankRepository.GetAll().ToList();
                         if (getBanks is null || getBanks.Count == 0)
                         {
+                            transaction.Rollback();
                             return 0; // Atau tindakan lain jika daftar kosong.
                         }
 

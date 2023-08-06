@@ -265,24 +265,25 @@
 <div class="modal fade" id="edit-participants" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
+            <h3 id="event-name" class="mb-0 text-center mt-4">Event Name</h3>
             <div class="modal-header align-items-center">
-                <h5 class="mb-0">Edit Participants</h5>
 
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h4 class="mb-0">Edit Participants</h4>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; right: 30px; top: 40px;" id="btn-close-participants"></button>
             </div>
             <div class="modal-body">
-                <div class="input-group mb-3">
-                    <input type="text"
-                           class="form-control"
-                           placeholder="Type company or your employee name" />
-                    <button class="btn btn-outline-primary" type="button" id="">Add</button>
-                </div>
 
-                <div class="row">                   
+                <div class="row">
+                    
                     <div class="col-lg-12">
-                        <div class="fw-semibold text-primary">Employees</div>
+                        <h5 class="fw-semibold text-primary">Employees</h5>
+                        <label class="">
+                            <input class="form-check-input me-1" type="checkbox" value="" id="select-all-employee" />
+                            Select all
+                        </label>
                         <div class="demo-inline-spacing mt-3">
-                            <div class="list-group">
+                            <div class="list-group" style="height: 400px; overflow: auto;" id="employee-list">
                                 <label class="list-group-item">
                                     <input class="form-check-input me-1" type="checkbox" value="" />
                                     John Doe
@@ -330,8 +331,9 @@
             </div>
 
             <div class="modal-footer justify-content-between border-top py-3">
+
                 <div class="col text-end">
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-primary" id="btn-update-participants">Save changes</button>
                 </div>
             </div>
         </div>
@@ -506,8 +508,98 @@
             $("#event-detail").modal('show');
         }
 
-        function showParticipants(index) {
-            $("#event-detail").modal('show');
+        async function showParticipants(eventGuid, indexEvent) {
+            console.log(eventGuid);
+            const event = eventsJson.Data[indexEvent];
+
+            $("#event-name").html(`<h3>${event.Name}</h3>`)
+
+            const responseEmployeeParticipants = await GetEmployeeParticipantEvent(eventGuid);
+            let employeeParticipantsEvent = responseEmployeeParticipants.data;
+
+            let employeeParticipantEventGuids = employeeParticipantsEvent.map(epe => epe.employeeGuid);
+
+            console.log(employeeParticipantEventGuids);
+
+            const employees = employeesJson.Data;
+            
+            let listEmployeeElems = "";
+
+            employees.forEach(employee => {
+
+                listEmployeeElems += `
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1 employee-item" type="checkbox" value="${employee.Guid}" ${employeeParticipantEventGuids.includes(employee.Guid) ? "checked" : ""} />
+                                    ${employee.FullName}
+                                </label>
+                        `
+            })
+
+            $("#employee-list").html(listEmployeeElems);
+
+
+            $("#select-all-employee").on("click", function () {
+                if ($(this).prop("checked")) {
+                    $(".employee-item").prop("checked", true)
+                } else {
+                    $(".employee-item").prop("checked", false)
+                }
+            })
+
+            $("#edit-participants").modal('show');
+
+            const btnUpdateParticipants = document.getElementById("btn-update-participants");
+            console.log("btn update participants : ", btnUpdateParticipants)
+
+            btnUpdateParticipants.onclick = async function (e) {
+                this.innerHTML = `
+                            <div class="spinner-border text-info" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        `;
+
+                let employeeParticipantsGuids = [];
+
+                $(".employee-item").each(function (index, element) {
+                    if ($(this).prop("checked")) {
+                        employeeParticipantsGuids.push($(this).val());
+                    }
+
+                })
+
+ 
+                console.log(employeeParticipantsGuids)
+
+                const updateEmployeeParticipantsEventDto = {
+                    EventGuid: eventGuid,
+                    EmployeesGuids: employeeParticipantsGuids,
+                };
+
+                const response = await UpdateCompanyEmployeeParticipantsEvent(updateEmployeeParticipantsEventDto);
+                console.log(response);
+
+                if (response.code == 200) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Successfully update company employee participants event',
+                    })
+
+                }
+
+                if (response.code == 400) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Update company employee participants event Failed',
+                        text: "Please check your data",
+                    })
+                }
+
+                this.innerHTML = "Save Changes";
+            }
+            //$("#btn-update-participants").on("click", async function(){
+
+            //})
+
         }
 
         function approveEvent(eventGuid){
@@ -579,6 +671,32 @@
                         title: 'Approve event Failed',
                         text: "Please check your data",
                     })
+                });
+        }
+
+        function GetEmployeeParticipantEvent(eventGuid) {
+            return fetch(`${API_URL}/events/participants/employees/event?guid=${eventGuid}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer @(ViewData["token"])`,
+                },
+            }).then(response => response.json())
+                .catch(err => { message: "something error" });
+        }
+
+        function UpdateCompanyEmployeeParticipantsEvent(updateEmployeeParticipantsDto) {
+            console.log(updateEmployeeParticipantsDto)
+            return fetch(`${API_URL}/events/participants/employees/company-employee`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer @(ViewData["token"])`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updateEmployeeParticipantsDto),
+            }).then(response => response.json())
+                .catch(err => {
+                    console.log(err)
+                    return { message: "something error" }
                 });
         }
 

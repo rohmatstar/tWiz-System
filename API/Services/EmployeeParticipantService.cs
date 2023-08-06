@@ -1,7 +1,9 @@
 ﻿using API.Contracts;
+using API.Data;
 using API.DTOs.EmployeeParticipants;
 using API.Models;
 using API.Utilities.Enums;
+using API.Utilities.Handlers;
 using System.Security.Claims;
 
 namespace API.Services;
@@ -13,9 +15,11 @@ public class EmployeeParticipantService
     private readonly IEventRepository _eventRepository;
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IEventPaymentRepository _eventPaymentRepository;
+    private readonly IBankRepository _bankRepository;
+    private readonly TwizDbContext _twizDbContext;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public EmployeeParticipantService(IEmployeeParticipantRepository employeeParticipant, IHttpContextAccessor httpContextAccessor, IEventRepository eventRepository, IEmployeeRepository employeeRepository, IEventPaymentRepository eventPaymentRepository, ICompanyRepository companyRepository)
+    public EmployeeParticipantService(IEmployeeParticipantRepository employeeParticipant, IHttpContextAccessor httpContextAccessor, IEventRepository eventRepository, IEmployeeRepository employeeRepository, IEventPaymentRepository eventPaymentRepository, ICompanyRepository companyRepository, TwizDbContext twizDbContext, IBankRepository bankRepository)
     {
         _employeeParticipantRepository = employeeParticipant;
         _httpContextAccessor = httpContextAccessor;
@@ -23,6 +27,8 @@ public class EmployeeParticipantService
         _employeeRepository = employeeRepository;
         _eventPaymentRepository = eventPaymentRepository;
         _companyRepository = companyRepository;
+        _twizDbContext = twizDbContext;
+        _bankRepository = bankRepository;
     }
 
     public IEnumerable<EmployeeParticipantsDto>? GetEmployeeParticipants()
@@ -255,6 +261,149 @@ public class EmployeeParticipantService
 
 
         return employeeParticipants;
+    }
+
+    public int UpdateCompanyEmployeeParticipantsEvent(UpdateEmployeParticipantsDto updateEmployeParticipantsDto)
+    {
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid!));
+
+        var getEvent = _eventRepository.GetByGuid(updateEmployeParticipantsDto.EventGuid);
+
+        if (company is null)
+        {
+            return 0;
+        }
+
+        var employees = _employeeRepository.GetAll();
+        var previousEmployeeCompanyParticipantsEvent = _employeeParticipantRepository.GetAll().Where(ep =>
+        {
+            var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
+
+            bool isCompanyEmployee = employee.CompanyGuid == company.Guid;
+
+            return ep.EventGuid == getEvent.Guid && isCompanyEmployee;
+        }).ToList();
+
+        var previousEventPayments = new List<EventPayment>();
+
+        if (getEvent.IsPaid)
+        {
+            previousEventPayments = _eventPaymentRepository.GetAll().Where(ep =>
+            {
+                var employee = employees.FirstOrDefault(e => e.AccountGuid == ep.AccountGuid);
+
+                if (employee is null)
+                {
+                    // bukan employee
+                    return false;
+                }
+
+                var isCompanyEmployee = employee.CompanyGuid == company.Guid;
+
+                return ep.EventGuid == getEvent.Guid && isCompanyEmployee;
+            }).ToList();
+        }
+
+        var transaction = _twizDbContext.Database.BeginTransaction();
+
+        var deletedEmployeeParticipants = _employeeParticipantRepository.Deletes(previousEmployeeCompanyParticipantsEvent);
+
+        if (deletedEmployeeParticipants is false)
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
+        if (getEvent.IsPaid)
+        {
+            var deletedPreviousEventPaymets = _eventPaymentRepository.Deletes(previousEventPayments);
+
+            if (deletedPreviousEventPaymets == false)
+            {
+                transaction.Rollback();
+                return 0;
+            }
+        }
+
+        var newEmployeeParticipants = new List<EmployeeParticipant>();
+        var newEventPaymentsEvent = new List<EventPayment>();
+
+        foreach (var newEmployeeParticipantGuid in updateEmployeParticipantsDto.EmployeesGuids)
+        {
+            var newEmployeeParticipant = new EmployeeParticipant
+            {
+                Guid = new Guid(),
+                EventGuid = getEvent.Guid,
+                EmployeeGuid = newEmployeeParticipantGuid,
+                IsPresent = false,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now,
+
+            };
+
+            if (getEvent.IsPaid)
+            {
+                var employee = _employeeRepository.GetByGuid(newEmployeeParticipantGuid);
+
+                var getBanks = _bankRepository.GetAll().ToList();
+                if (getBanks is null || getBanks.Count == 0)
+                {
+                    transaction.Rollback();
+                    return 0; // Atau tindakan lain jika daftar kosong.
+                }
+
+                Random random = new Random();
+                int randomIndex = random.Next(0, getBanks.Count - 1); // Mendapatkan indeks acak dalam rentang [0, count-1].
+                var randomBank = getBanks[randomIndex]; // Mendapatkan bank secara acak.
+
+                var eventPayment = new EventPayment
+                {
+                    Guid = new Guid(),
+                    EventGuid = getEvent.Guid,
+                    AccountGuid = employee.AccountGuid,
+                    BankGuid = randomBank.Guid,
+                    IsValid = false,
+                    PaymentImage = "",
+                    StatusPayment = StatusPayment.Pending,
+                    VaNumber = GenerateHandler.GenerateVa(),
+                    CreatedDate = DateTime.Now,
+                    ModifiedDate = DateTime.Now
+                };
+
+
+                newEventPaymentsEvent.Add(eventPayment);
+            }
+
+            newEmployeeParticipants.Add(newEmployeeParticipant);
+        }
+
+        var createdEmployeeParticipants = _employeeParticipantRepository.Creates(newEmployeeParticipants);
+
+        if (createdEmployeeParticipants is false)
+        {
+            transaction.Rollback();
+            return 0;
+        }
+
+        if (getEvent.IsPaid)
+        {
+            var createdEventPayments = _eventPaymentRepository.Creates(newEventPaymentsEvent);
+
+            if (createdEventPayments == false)
+            {
+                transaction.Rollback();
+                return 0;
+            }
+        }
+
+        transaction.Commit();
+
+        return 1;
     }
 }
 
