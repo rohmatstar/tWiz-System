@@ -1,0 +1,47 @@
+﻿@model List<Client.DTOs.Events.GetEventDto>;
+
+@{
+    var companyGuid = User!.Claims!.FirstOrDefault(c => c.Type == "companyGuid")!.Value;
+
+    ViewData["Title"] = "Paid Events";
+    Layout = "_LayoutUser";
+}
+
+
+@if (Model is not null){
+    var i = 1;
+    <table class="table table-responsive table-striped table-hover" id="company-table">
+        <thead>
+            <tr>
+                <th scope="col">No</th>
+                <th scope="col">Name</th>
+                <th scope="col">Start Date</th>
+                <th scope="col">End Date</th>
+                <th scope="col">Place</th>
+                <th scope="col">Place Type</th>
+                <th scope="col">Visibility</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var paidEvent in Model)
+            {
+                
+                <tr>
+                    <th scope="row">@(i++)</th>
+                    <td>@paidEvent.Name</td>
+                    <td>@(paidEvent.StartDate)</td>
+                    <td>@(paidEvent.EndDate)</td>
+                    <td>@(paidEvent.Place)</td>
+                    <td>@(paidEvent.PlaceType)</td>
+                    <td>@(paidEvent.Visibility)</td>
+                    <td>
+                        <a href="#" class="btn btn-gray btn-sm" title="detail participants"><i class="bx bx-search-alt-2"></i></a>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}

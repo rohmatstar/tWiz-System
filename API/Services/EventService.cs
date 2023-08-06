@@ -1281,6 +1281,7 @@ public class EventService
             return null;
         }
 
+        participantsEvent.EventName = getEvent.Name;
         participantsEvent.MakerEventGuid = getEvent.CreatedBy;
 
         var companies = _companyRepository.GetAll();

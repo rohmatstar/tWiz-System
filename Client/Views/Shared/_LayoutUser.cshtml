@@ -199,8 +199,8 @@
                             </a>
 
                             <ul class="menu-sub">
-                                <li class="menu-item">
-                                    <a href="#" class="menu-link">
+                                <li class="menu-item @(active == "event_payment" ? "active" : "")">
+                                    <a asp-controller="EventPayment" asp-action="PaidEvent" class="menu-link">
                                         <div>Event Payment</div>
                                     </a>
                                 </li>

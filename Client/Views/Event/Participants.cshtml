@@ -2,8 +2,7 @@
 
 @{
     var companyGuid = User!.Claims!.FirstOrDefault(c => c.Type == "companyGuid")!.Value;
-    Console.WriteLine(companyGuid);
-    Console.WriteLine(Model.MakerEventGuid);
+   
     ViewData["Title"] = "Participants Event";
     Layout = "_LayoutUser";
 }
