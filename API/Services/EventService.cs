@@ -1,5 +1,7 @@
 ﻿using API.Contracts;
 using API.Data;
+using API.DTOs.CompanyParticipants;
+using API.DTOs.EmployeeParticipants;
 using API.DTOs.Events;
 using API.Models;
 using API.Utilities.Enums;
@@ -1042,6 +1044,149 @@ public class EventService
         }
 
         return getEvent.Name;
+    }
+
+    public GetParticipantsEventDto? GetParticipantsEvent(Guid eventGuid)
+    {
+        var participantsEvent = new GetParticipantsEventDto();
+        participantsEvent.EventGuid = eventGuid;
+
+        // authorization
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        if (accountGuid is null)
+        {
+            return null;
+        }
+
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid));
+
+        if (company is null)
+        {
+            return null;
+        }
+
+        var getEvent = _eventRepository.GetByGuid(eventGuid);
+
+        if (getEvent is null)
+        {
+            return null;
+        }
+
+        var companies = _companyRepository.GetAll();
+        var employees = _employeeRepository.GetAll();
+
+        if (company.Guid == getEvent.CreatedBy)
+        {
+            var companyParticipants = _companyParticipantRepository.GetAll().Where(cp => cp.EventGuid == eventGuid && cp.CompanyGuid != getEvent.CreatedBy).Select(cp =>
+            {
+                var companyAsParticipant = companies.FirstOrDefault(c => c.Guid == cp.CompanyGuid);
+
+                var invitationStatus = "";
+
+                if (cp.Status == InviteStatusLevel.Pending) invitationStatus = "pending";
+                if (cp.Status == InviteStatusLevel.Checking) invitationStatus = "checking";
+                if (cp.Status == InviteStatusLevel.Accepted) invitationStatus = "accepted";
+                if (cp.Status == InviteStatusLevel.Rejected) invitationStatus = "rejected";
+
+                return new GetCompanyParticipantDto
+                {
+                    Guid = cp.Guid,
+                    CompanyGuid = cp.CompanyGuid,
+                    CompanyName = companyAsParticipant.Name,
+                    EventName = getEvent.Name,
+                    InvitationStatus = invitationStatus,
+                    IsPresent = cp.IsPresent
+                };
+            }).ToList();
+
+            if (companyParticipants is null)
+            {
+                return null;
+            }
+
+            participantsEvent.CompanyParticipants = companyParticipants;
+
+            // Employee Participants
+            var employeeParticipants = _employeeParticipantRepository.GetAll().Where(ep => ep.EventGuid == eventGuid).Select(ep =>
+            {
+                var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
+
+                var companyEmployee = companies.FirstOrDefault(c => c.Guid == employee.CompanyGuid);
+
+                var invitationStatus = "";
+
+                if (ep.Status == InviteStatusLevel.Pending) invitationStatus = "pending";
+                if (ep.Status == InviteStatusLevel.Checking) invitationStatus = "checking";
+                if (ep.Status == InviteStatusLevel.Accepted) invitationStatus = "accepted";
+                if (ep.Status == InviteStatusLevel.Rejected) invitationStatus = "rejected";
+
+                return new GetEmployeeParticipantDto
+                {
+                    Guid = ep.Guid,
+                    EmployeeGuid = ep.EmployeeGuid,
+                    EmployeeName = employee?.FullName ?? "",
+                    CompanyName = companyEmployee?.Name ?? "",
+                    EventName = getEvent.Name,
+                    InvitationStatus = invitationStatus,
+                    IsPresent = ep.IsPresent
+                };
+            }).ToList();
+
+            if (employeeParticipants is null)
+            {
+                return null;
+            }
+
+            participantsEvent.EmployeeParticipants = employeeParticipants;
+        }
+        else
+        {
+            // Employee Participants
+            var employeeParticipants = _employeeParticipantRepository.GetAll().Where(ep =>
+            {
+                var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
+
+                bool isCompanyEmployee = employee?.CompanyGuid == company.Guid;
+
+                return ep.EventGuid == eventGuid && isCompanyEmployee;
+            }).Select(ep =>
+            {
+                var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
+
+                var employeeCompany = companies.FirstOrDefault(c => c.Guid == employee.CompanyGuid);
+
+                var invitationStatus = "";
+
+                if (ep.Status == InviteStatusLevel.Pending) invitationStatus = "pending";
+                if (ep.Status == InviteStatusLevel.Checking) invitationStatus = "checking";
+                if (ep.Status == InviteStatusLevel.Accepted) invitationStatus = "accepted";
+                if (ep.Status == InviteStatusLevel.Rejected) invitationStatus = "rejected";
+
+                return new GetEmployeeParticipantDto
+                {
+                    Guid = ep.Guid,
+                    EmployeeGuid = ep.EmployeeGuid,
+                    EmployeeName = employee?.FullName ?? "",
+                    CompanyName = employeeCompany?.Name ?? "",
+                    EventName = getEvent.Name,
+                    InvitationStatus = invitationStatus,
+                    IsPresent = ep.IsPresent
+                };
+            }).ToList();
+
+            if (employeeParticipants is null)
+            {
+                return null;
+            }
+
+            participantsEvent.EmployeeParticipants = employeeParticipants;
+        }
+
+        return participantsEvent;
     }
 
     //public List<EventsDto>? GetExternalEvents(string type = "")
