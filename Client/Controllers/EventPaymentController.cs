@@ -63,8 +63,8 @@ public class EventPaymentController : Controller
         var active = "event_payment";
         ViewBag.Active = active;
 
-        var paidEventParticipants = new GetParticipantsEventDto();
-        var response = await _eventRepository.GetParticipantsEvent(eventGuid);
+        var paidEventParticipants = new GetParticipantsPaidEventDto();
+        var response = await _eventPaymentRepository.GetParticipantsPaidEvent(eventGuid);
 
         if (response.Data != null)
         {

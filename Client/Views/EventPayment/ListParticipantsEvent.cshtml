@@ -1,4 +1,4 @@
-﻿@model Client.DTOs.Events.GetParticipantsEventDto;
+﻿@model Client.DTOs.EventPayments.GetParticipantsPaidEventDto;
 
 @{
     var companyGuid = User!.Claims!.FirstOrDefault(c => c.Type == "companyGuid")!.Value;
@@ -33,7 +33,7 @@
         </thead>
         <tbody>
 
-            @foreach (var companyParticipant in Model.CompanyParticipants)
+            @foreach (var companyParticipant in Model.CompanyParticipantsPaidEvent)
             {
                 <tr>
                     <th scope="row">@(i++)</th>
@@ -70,7 +70,7 @@
         </thead>
         <tbody>
 
-            @foreach (var companyParticipant in Model.EmployeeParticipants)
+            @foreach (var companyParticipant in Model.EmployeeParticipantsPaidEvent)
             {
                 <tr>
                     <th scope="row">@(j++)</th>

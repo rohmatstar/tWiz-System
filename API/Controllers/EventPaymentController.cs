@@ -322,10 +322,10 @@ public class EventPaymentController : ControllerBase
 
 
 
-    [HttpPut("participants-paid-event")]
+    [HttpGet("participants-paid-event")]
     public IActionResult GetParticipantsPaidEvent(Guid eventGuid)
     {
-        // status = "approve" or "reject"
+
         var participantsPaidEvent = _service.GetParticipantsPaidEvent(eventGuid);
 
         if (participantsPaidEvent is null)
