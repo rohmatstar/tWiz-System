@@ -93,22 +93,20 @@ public class EmployeeService
         }
     }
 
-    public IEnumerable<GetMasterEmployeeDto>? GetByCompany(Guid guid)
+    public IEnumerable<GetMasterEmployeeDto>? GetByCompany(Guid companyGuid)
     {
-        var employees = _employeeRepository.GetAll();
-        if (employees is null)
+        var employeesByCompany = _employeeRepository.GetAll().Where(e => e.CompanyGuid == companyGuid);
+
+        if (employeesByCompany is null)
         {
-            return null; // No Employee Found
+            return null;
         }
 
-        var companies = _companyRepository.GetAll();
-        var accounts = _accountRepository.GetAll();
-
-        var toDto = employees.Select(e =>
+        var tdo = employeesByCompany.Select(e =>
         {
-            e.CompanyGuid = guid;
-            var account = accounts.FirstOrDefault(acc => acc.Guid == e.AccountGuid);
-            var company = companies.FirstOrDefault(c => c.Guid == e.CompanyGuid);
+            var accountEmployee = _accountRepository.GetAll().FirstOrDefault(acc => acc.Guid == e.AccountGuid);
+            var company = _companyRepository.GetAll().FirstOrDefault(c => c.Guid == e.CompanyGuid);
+
             return new GetMasterEmployeeDto
             {
                 Guid = e.Guid,
@@ -119,41 +117,13 @@ public class EmployeeService
                 HiringDate = e.HiringDate.ToString("dd-MM-yyyy"),
                 PhoneNumber = e.PhoneNumber,
                 CompanyName = company?.Name ?? "",
-                Email = account?.Email ?? "",
+                Email = accountEmployee?.Email ?? "",
             };
         }).OrderBy(e => e.FullName).ToList();
 
-        var claimUser = _httpContextAccessor.HttpContext?.User;
-
-        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
-        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
-
-        if (accountGuid == null)
-        {
-            return null;
-        }
-
-        if (userRole == nameof(RoleLevel.Company))
-        {
-            var company = companies.FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid));
-
-            if (company is null)
-            {
-                return null;
-            }
-
-            toDto = toDto.Where(e => e.CompanyName == company.Name).ToList();
-            return toDto;
-        }
-        else if (userRole == nameof(RoleLevel.SysAdmin))
-        {
-            return toDto;
-        }
-        else
-        {
-            return null;
-        }
+        return tdo;
     }
+
 
     public GetMasterEmployeeDto? GetEmployee(Guid guid)
     {
