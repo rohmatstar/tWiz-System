@@ -546,35 +546,35 @@ public class EventPaymentService
             return 0;
         }
 
-        try
-        {
-            var contentEmail = "";
+        //try
+        //{
+        //    var contentEmail = "";
 
-            if (status == "approve")
-            {
-                contentEmail = $"<h1>Congratulation Your Event Payment Submission Has Been Verified</h1>" +
-                                $"<h2>{getEvent.Name.ToUpper()}</h2>" +
-                                $"<p>{getEvent.Description}</p>" +
-                                $"<p>{getEvent.StartDate}</p>" +
-                                $"<p>{getEvent.EndDate} </p>"
-                                ;
-            }
-            else
-            {
-                contentEmail = "<h1>Your Event Payment Submission is Not Valid</h1>" +
-                                $"<p>please re-upload the correct proof of payment</p>";
-            }
+        //    if (status == "approve")
+        //    {
+        //        contentEmail = $"<h1>Congratulation Your Event Payment Submission Has Been Verified</h1>" +
+        //                        $"<h2>{getEvent.Name.ToUpper()}</h2>" +
+        //                        $"<p>{getEvent.Description}</p>" +
+        //                        $"<p>{getEvent.StartDate}</p>" +
+        //                        $"<p>{getEvent.EndDate} </p>"
+        //                        ;
+        //    }
+        //    else
+        //    {
+        //        contentEmail = "<h1>Your Event Payment Submission is Not Valid</h1>" +
+        //                        $"<p>please re-upload the correct proof of payment</p>";
+        //    }
 
-            _emailHandler.SendEmail(account.Email, "Aproved event payment submission", contentEmail);
+        //    _emailHandler.SendEmail(account.Email, "Aproved event payment submission", contentEmail);
 
-            transaction.Commit();
-        }
-        catch
-        {
-            transaction.Rollback();
-            return 0;
-        }
-
+        //    transaction.Commit();
+        //}
+        //catch
+        //{
+        //    transaction.Rollback();
+        //    return 0;
+        //}
+        transaction.Commit();
         return 1;
     }
 
