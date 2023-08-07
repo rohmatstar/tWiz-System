@@ -74,14 +74,14 @@
                 data: dataSource,
                 columns: [
                     { title: 'Company', data: 'CompanyName' },
-                    { title: 'Email', data: 'CompanyEmail' },
-                    {
-                        title: 'Attachment',
-                        data: null,
-                        render: function (data, type, row) {
-                            return '<a target="_blank" href="https://localhost:7249/api/register-payments/img/' + data.PaymentImage + '">' + data.PaymentImage + '</a>';
-                        }
-                    },
+                        { title: 'Email', data: 'CompanyEmail' },
+                        {
+                            title: 'Attachment',
+                            data: null,
+                            render: function (data, type, row) {
+                                return '<a target="_blank" href="https://localhost:7249/api/register-payments/img/' + data.PaymentImage + '">' + data.PaymentImage + '</a>';
+                            }
+                        },
                     {
                         title: 'Status',
                         data: null,
