@@ -184,6 +184,39 @@ public class EventService
         return userEvents;
     }
 
+    public List<GetEventDto>? GetEventsStatistic()
+    {
+        var filterEvents = (from e in _eventRepository.GetAll()
+                            select new GetEventDto
+                            {
+                                Guid = e.Guid,
+                                Name = e.Name,
+                                Description = e.Description,
+                                Thumbnail = e.Thumbnail,
+                                Visibility = e.IsPublished == true ? "public" : "private",
+                                Category = e.Category,
+                                PlaceType = e.Status == EventStatus.Offline ? "offline" : "online",
+                                Payment = e.IsPaid == true ? "paid" : "free",
+                                Price = e.Price,
+                                Quota = e.Quota,
+                                Joined = e.UsedQuota,
+                                StartDate = e.StartDate.ToString("MM"),
+                                EndDate = e.EndDate.ToString("MM"),
+                                Organizer = null,
+                                Place = e.Place,
+                                PublicationStatus = e.IsActive == true ? "published" : "draft"
+                            }).ToList();
+
+        if (filterEvents is null)
+        {
+            return null;
+        }
+
+        
+
+        return filterEvents;
+    }
+
     public GetEventDto? GetEvent(Guid guid)
     {
         var singleEvent = _eventRepository.GetByGuid(guid);
