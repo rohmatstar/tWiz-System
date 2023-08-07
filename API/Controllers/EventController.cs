@@ -44,6 +44,30 @@ public class EventController : ControllerBase
         });
     }
 
+    [HttpGet("statistic")]
+    public IActionResult GetEventsStatistic()
+    {
+        var eventsData = _eventService.GetEventsStatistic();
+        if (eventsData != null)
+        {
+            return Ok(new ResponseHandler<IEnumerable<GetEventDto>>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.OK.ToString(),
+                Message = "Success",
+                Data = eventsData
+            });
+        }
+
+        return NotFound(new ResponseHandler<EventsDto>
+        {
+            Code = StatusCodes.Status404NotFound,
+            Status = HttpStatusCode.NotFound.ToString(),
+            Message = "Not Found",
+            Data = null
+        });
+    }
+
     [HttpGet("{guid}")]
     public IActionResult GetEvent(Guid guid)
     {
