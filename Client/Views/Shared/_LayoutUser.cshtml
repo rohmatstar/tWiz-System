@@ -232,12 +232,7 @@
                             </ul>
                         </li>
 
-                        <li class="menu-item @(active == "purchase" ? "active" : "")">
-                            <a asp-controller="Employee" asp-action="Purchase" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-credit-card-alt"></i>
-                                <div>Purchase</div>
-                            </a>
-                        </li>
+                        
                     </ul>
                 }
                 else if (role == RoleLevel.SysAdmin.ToString())
