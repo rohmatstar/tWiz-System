@@ -51,6 +51,17 @@ public class RegisterPaymentController : ControllerBase
         });
     }
 
+    [HttpGet("img/{imageName}")]
+    public IActionResult GetImage(string imageName)
+    {
+        var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/register_payments", imageName);
+        if (System.IO.File.Exists(imagePath))
+        {
+            return PhysicalFile(imagePath, "image/png");
+        }
+        return NotFound();
+    }
+
     [HttpGet("{guid}")]
     /*[Authorize(Roles = $"{nameof(RoleLevel.SysAdmin)}, {nameof(RoleLevel.Company)}")]*/
     public IActionResult GetByGuid(Guid guid)

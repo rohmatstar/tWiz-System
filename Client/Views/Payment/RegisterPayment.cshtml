@@ -75,7 +75,13 @@
                 columns: [
                     { title: 'Company', data: 'CompanyName' },
                     { title: 'Email', data: 'CompanyEmail' },
-                    { title: 'Attachment', data: 'PaymentImage' },
+                    {
+                        title: 'Attachment',
+                        data: null,
+                        render: function (data, type, row) {
+                            return '<a target="_blank" href="https://localhost:7249/api/register-payments/img/' + data.PaymentImage + '">' + data.PaymentImage + '</a>';
+                        }
+                    },
                     {
                         title: 'Status',
                         data: null,
@@ -119,7 +125,13 @@
                 { title: 'VA Number', data: 'VaNumber' },
                 { title: 'Bank', data: 'BankName' },
                 { title: 'Price', data: 'Price' },
-                { title: 'Attachment', data: 'PaymentImage' },
+                {
+                    title: 'Attachment',
+                    data: null,
+                    render: function (data, type, row){
+                        return '<a target="_blank" href="https://localhost:7249/api/register-payments/img/' + data.PaymentImage + '">' + data.PaymentImage + '</a>';
+                    }
+                },
                 { title: 'Validation', data: 'ValidationStatus' },
                 {
                     title: 'Status',

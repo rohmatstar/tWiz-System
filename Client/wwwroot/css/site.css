@@ -1,7 +1,9 @@
 img.logo {
     height: 45px;
     margin-right: 0px;
-    margin-top: -10px;
+}
+.app-brand-text {
+    color: #0f37ff !important;
 }
 
 .animate__loading {
