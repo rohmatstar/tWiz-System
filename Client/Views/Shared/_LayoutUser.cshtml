@@ -14,13 +14,13 @@
     }
     var avatar = $"../assets/img/avatars/{role}.png";
 
-    var signout = "Auth/SignoutCompany";
+    var signout = "https://localhost:7153/Auth/SignoutCompany";
     if(role == RoleLevel.Employee.ToString()){
-        signout = "Auth/SignoutEmployee";
+        signout = "https://localhost:7153/Auth/SignoutEmployee";
     }
     if (role == RoleLevel.SysAdmin.ToString())
     {
-        signout = "Auth/SignoutSysAdmin";
+        signout = "https://localhost:7153/Auth/SignoutSysAdmin";
     }
 
     var active = ViewBag.Active as string;
@@ -150,11 +150,6 @@
                                 <li class="menu-item @(active == "invited_event" ? "active" : "")">
                                     <a asp-controller="Event" asp-action="Invited" class="menu-link">
                                         <div>Invitations</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item @(active == "ticket" ? "active" : "")">
-                                    <a asp-controller="Event" asp-action="Ticket" class="menu-link">
-                                        <div>Ticket</div>
                                     </a>
                                 </li>
                             </ul>
