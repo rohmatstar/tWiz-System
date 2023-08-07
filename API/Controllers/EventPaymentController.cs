@@ -319,4 +319,33 @@ public class EventPaymentController : ControllerBase
             });
         }
     }
+
+
+
+    [HttpPut("participants-paid-event")]
+    public IActionResult GetParticipantsPaidEvent(Guid eventGuid)
+    {
+        // status = "approve" or "reject"
+        var participantsPaidEvent = _service.GetParticipantsPaidEvent(eventGuid);
+
+        if (participantsPaidEvent is null)
+        {
+            return BadRequest(new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "Check your data",
+                Data = null
+            });
+        }
+
+
+        return Ok(new ResponseHandler<GetParticipantsPaidEventDto>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Successfully aprove event payment submission",
+            Data = participantsPaidEvent
+        });
+    }
 }

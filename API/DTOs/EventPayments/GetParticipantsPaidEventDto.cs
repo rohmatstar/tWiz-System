@@ -2,7 +2,7 @@
 
 namespace API.DTOs.EventPayments;
 
-public class GetParticipantsPaidEvent
+public class GetParticipantsPaidEventDto
 {
     public Guid EventGuid { get; set; }
     public string EventName { get; set; }

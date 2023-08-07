@@ -19,7 +19,7 @@ public class GetEmployeeParticipantsPaidEventDto
 
     public bool IsPresent { get; set; }
 
-    public Guid EventPayment { get; set; }
-    public string PaymentImageUrl { get; set; }
+    public Guid? EventPaymentGuid { get; set; }
+    public string? PaymentImageUrl { get; set; }
 }
 

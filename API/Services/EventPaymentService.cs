@@ -5,6 +5,7 @@ using API.Models;
 using API.Utilities.Enums;
 using API.Utilities.Handlers;
 using API.Utilities.Validations;
+using Client.Views.EventPayment;
 using System.Security.Claims;
 
 namespace API.Services;
@@ -640,5 +641,117 @@ public class EventPaymentService
 
         };
         return toDto;
+    }
+
+    public GetParticipantsPaidEventDto? GetParticipantsPaidEvent(Guid eventGuid)
+    {
+        var getEvent = _eventRepository.GetByGuid(eventGuid);
+        if (getEvent.IsPaid == false)
+        {
+            return null;
+        }
+
+
+        var companies = _companyRepository.GetAll();
+        var employees = _employeeRepository.GetAll();
+        var eventPayments = _eventPaymentRepository.GetAll();
+
+        var participantsPaidEvent = new GetParticipantsPaidEventDto();
+
+        participantsPaidEvent.EventGuid = eventGuid;
+
+
+        if (getEvent is null)
+        {
+            return null;
+        }
+
+        participantsPaidEvent.EventName = getEvent.Name;
+
+        var makerEvent = companies.FirstOrDefault(c => c.Guid == getEvent.CreatedBy);
+
+        participantsPaidEvent.MakerGuid = makerEvent.Guid;
+        participantsPaidEvent.MakerName = makerEvent.Name;
+
+        // setup company participants paid event ==>
+        var filterCompanyParticipants = _companyParticipantRepository.GetAll().Where(cp => cp.EventGuid == eventGuid);
+
+        if (filterCompanyParticipants is null)
+        {
+            return null;
+        }
+
+        var companyParticipantsPaidEvent = filterCompanyParticipants.Select(cp =>
+        {
+            var company = companies.FirstOrDefault(c => c.Guid == cp.CompanyGuid);
+
+            var companyEventPayment = eventPayments.FirstOrDefault(evp => evp.EventGuid == eventGuid && evp.AccountGuid == company.AccountGuid);
+
+            var invitationStatus = "";
+
+            if (cp.Status == InviteStatusLevel.Pending) invitationStatus = "pending";
+            if (cp.Status == InviteStatusLevel.Accepted) invitationStatus = "accepted";
+            if (cp.Status == InviteStatusLevel.Rejected) invitationStatus = "rejected";
+            if (cp.Status == InviteStatusLevel.Checking) invitationStatus = "checking";
+
+            return new GetCompanyParticipantsPaidEventDto
+            {
+                ParticipantGuid = cp.Guid,
+                EventName = getEvent.Name,
+                CompanyGuid = company.Guid,
+                CompanyName = company.Name,
+                InvitationStatus = invitationStatus,
+                IsPresent = cp.IsPresent,
+                PaymentImageUrl = companyEventPayment?.PaymentImage ?? "",
+                EventPaymentGuid = companyEventPayment?.Guid
+            };
+        }).ToList();
+        // <==
+
+        participantsPaidEvent.CompanyParticipantsPaidEvent = companyParticipantsPaidEvent;
+
+        // setup employee participants paid event ==>
+        var filterEmployeeParticipants = _employeeParticipantRepository.GetAll().Where(cp => cp.EventGuid == eventGuid);
+
+        if (filterEmployeeParticipants is null)
+        {
+            return null;
+        }
+
+        var employeeParticipantsPaidEvent = filterEmployeeParticipants.Select(ep =>
+        {
+            var employee = employees.FirstOrDefault(e => e.Guid == ep.EmployeeGuid);
+
+            var companyEmployee = companies.FirstOrDefault(c => c.Guid == employee.CompanyGuid);
+
+            var employeeEventPayment = eventPayments.FirstOrDefault(evp => evp.EventGuid == eventGuid && evp.AccountGuid == employee.AccountGuid);
+
+            var invitationStatus = "";
+
+            if (ep.Status == InviteStatusLevel.Pending) invitationStatus = "pending";
+            if (ep.Status == InviteStatusLevel.Accepted) invitationStatus = "accepted";
+            if (ep.Status == InviteStatusLevel.Rejected) invitationStatus = "rejected";
+            if (ep.Status == InviteStatusLevel.Checking) invitationStatus = "checking";
+
+            return new GetEmployeeParticipantsPaidEventDto
+            {
+                ParticipantGuid = ep.Guid,
+                EventName = getEvent.Name,
+                EmployeeGuid = employee.Guid,
+                EmployeeName = employee.FullName,
+                InvitationStatus = invitationStatus,
+                IsPresent = ep.IsPresent,
+                PaymentImageUrl = employeeEventPayment?.PaymentImage ?? "",
+                EventPaymentGuid = employeeEventPayment?.Guid,
+                CompanyName = companyEmployee.Name,
+
+            };
+        }).ToList();
+
+        // <==
+
+        participantsPaidEvent.EmployeeParticipantsPaidEvent = employeeParticipantsPaidEvent;
+
+        return participantsPaidEvent;
     }
 }
