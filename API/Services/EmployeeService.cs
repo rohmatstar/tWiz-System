@@ -250,7 +250,7 @@ public class EmployeeService
         {
             Guid = new Guid(),
             Email = newEmployeeDto.Email,
-            Password = HashingHandler.HashPassword("s4n64tr4h45i4"),
+            Password = HashingHandler.HashPassword("S4n64tr4H45i4"),
             IsActive = true,
             Token = null,
             TokenIsUsed = null,

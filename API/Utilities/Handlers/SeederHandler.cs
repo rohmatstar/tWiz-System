@@ -12,6 +12,123 @@ public class SeederHandler
         _context = context;
     }
 
+    public void GenerateRoles()
+    {
+        using var transaction = _context.Database.BeginTransaction();
+
+        try
+        {
+            var companyRole = new Role
+            {
+                Guid = new Guid(),
+                Name = nameof(RoleLevel.Company),
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employeeRole = new Role
+            {
+                Guid = new Guid(),
+                Name = nameof(RoleLevel.Employee),
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var sysadminRole = new Role
+            {
+                Guid = new Guid(),
+                Name = nameof(RoleLevel.SysAdmin),
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+        }
+        catch
+        {
+            transaction.Rollback();
+        }
+
+
+        transaction.Commit();
+    }
+
+
+    public void GenerateDemo()
+    {
+        using var transaction = _context.Database.BeginTransaction();
+
+        try
+        {
+            // Role
+            var companyRole = new Role
+            {
+                Guid = new Guid(),
+                Name = nameof(RoleLevel.Company),
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var employeeRole = new Role
+            {
+                Guid = new Guid(),
+                Name = nameof(RoleLevel.Employee),
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var sysadminRole = new Role
+            {
+                Guid = new Guid(),
+                Name = nameof(RoleLevel.SysAdmin),
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            // <== Role
+
+            // SysAdmin ==>
+            var sysadminAccount = new Account
+            {
+                Guid = new Guid(),
+                Email = "febrianto18@mhs.ubharajaya.ac.id",
+                Password = HashingHandler.HashPassword("!Admin123"),
+                IsActive = true,
+                Token = null,
+                TokenIsUsed = null,
+                TokenExpiration = null,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var sysadmin = new SysAdmin
+            {
+                Guid = new Guid(),
+                AccountGuid = sysadminAccount.Guid,
+                BankAccountNumber = "11133322553232",
+                Name = "Febrianto",
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+
+            var sysadminAccountRole = new AccountRole
+            {
+                Guid = new Guid(),
+                AccountGuid = sysadminAccount.Guid,
+                RoleGuid = sysadminRole.Guid
+            };
+            transaction.Commit();
+            // <==
+        }
+        catch
+        {
+            transaction.Rollback();
+        }
+
+
+    }
+
+
+
+
     public void GenerateEventMaster()
     {
         using var transaction = _context.Database.BeginTransaction();

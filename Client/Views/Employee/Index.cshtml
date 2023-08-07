@@ -263,19 +263,25 @@
                             var birthDateVal = response.data.birthDate.split(", ")[2] + "-" + response.data.birthDate.split(", ")[1] + "-" + response.data.birthDate.split(", ")[0];
                             var hiringDateVal = response.data.hiringDate.split(", ")[2] + "-" + response.data.hiringDate.split(", ")[1] + "-" + response.data.hiringDate.split(", ")[0];
 
+                        const partsBirthDate = response.data.birthDate.split('/');
+                        const partsHiringDate = response.data.hiringDate.split('/');
+
+                        const isoBirthDate = `${partsBirthDate[2]}-${partsBirthDate[1].padStart(2, '0')}-${partsBirthDate[0].padStart(2, '0')}`;
+                        const isoHiringDate = `${partsHiringDate[2]}-${partsHiringDate[1].padStart(2, '0')}-${partsHiringDate[0].padStart(2, '0')}`;
+
                             $("#employeeUpdateForm #rowId").val(rowId);
 
                             $("#employeeUpdateForm #guid").val(response.data.guid);
                             $("#employeeUpdateForm #nik").val(response.data.nik.trim());
                             $("#employeeUpdateForm #fullName").val(response.data.fullName);
-                            $("#employeeUpdateForm #birthDate").val(birthDateVal);
+                        $("#employeeUpdateForm #birthDate").val(isoBirthDate);
                             if (response.data.gender == 'male') {
                                 $("#employeeUpdateForm #gender_male").prop("checked", true);
                             }
                             else {
                                 $("#employeeUpdateForm #gender_female").prop("checked", true);
                             }
-                            $("#employeeUpdateForm #hiringDate").val(hiringDateVal);
+                        $("#employeeUpdateForm #hiringDate").val(isoHiringDate);
                             $("#employeeUpdateForm #phoneNumber").val(response.data.phoneNumber);
                             //$("#employeeUpdateForm #email").val(response.data.email);
 

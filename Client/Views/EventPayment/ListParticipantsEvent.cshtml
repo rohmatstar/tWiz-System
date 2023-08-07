@@ -163,7 +163,7 @@
                     if (responseJson.code == 200) {
                         Swal.fire({
                             icon: 'success',
-                            title: `Successfully approve event`,
+                            title: `Successfully reject event`,
                         }).then(result => location.reload(true))
 
 
@@ -172,7 +172,7 @@
                     if (responseJson.code == 400) {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Approve event Failed',
+                            title: 'Reject event Failed',
                             text: "Please check your data",
                         })
                     }
@@ -180,7 +180,7 @@
                 .catch(err => {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Approve event Failed',
+                        title: 'Reject event Failed',
                         text: "Please check your data",
                     })
                 });

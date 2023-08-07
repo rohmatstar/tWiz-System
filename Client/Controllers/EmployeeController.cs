@@ -1,15 +1,8 @@
 ﻿using Client.Contracts;
-using Client.DTOs;
-using Client.DTOs.Auths;
 using Client.DTOs.Employees;
-using Client.Models;
-using Client.Repositories;
 using Client.Utilities.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Data;
-using System.Diagnostics;
 
 namespace Client.Controllers;
 
@@ -73,6 +66,8 @@ public class EmployeeController : Controller
             PhoneNumber = result.Data.PhoneNumber,
             Email = result.Data.Email
         };
+
+
 
         return View(employee);
     }
