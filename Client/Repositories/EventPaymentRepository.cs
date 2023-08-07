@@ -35,5 +35,7 @@ public class EventPaymentRepository : GeneralRepository<GetEventPaymentDto, Guid
         }
         return entityVM;
     }
+
+
 }
 

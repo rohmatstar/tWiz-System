@@ -5,7 +5,6 @@ using API.Models;
 using API.Utilities.Enums;
 using API.Utilities.Handlers;
 using API.Utilities.Validations;
-using Client.Views.EventPayment;
 using System.Security.Claims;
 
 namespace API.Services;

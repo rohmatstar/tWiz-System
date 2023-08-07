@@ -344,7 +344,7 @@ public class EventPaymentController : ControllerBase
         {
             Code = StatusCodes.Status200OK,
             Status = HttpStatusCode.OK.ToString(),
-            Message = "Successfully aprove event payment submission",
+            Message = "Success get participants paid event",
             Data = participantsPaidEvent
         });
     }

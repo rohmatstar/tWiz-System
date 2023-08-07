@@ -1,18 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace API.DTOs.EventPayments;
+namespace Client.DTOs.EventPayments;
 
-public class GetEmployeeParticipantsPaidEventDto
+public class GetCompanyParticipantsPaidEventDto
 {
     [Required]
     public Guid ParticipantGuid { get; set; }
 
-    public string EventName { get; set; }
+    public string? EventName { get; set; }
 
     [Required]
-    public Guid EmployeeGuid { get; set; }
+    public Guid CompanyGuid { get; set; }
 
-    public string EmployeeName { get; set; }
     public string CompanyName { get; set; }
 
     public string InvitationStatus { get; set; }

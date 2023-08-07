@@ -1,4 +1,4 @@
-﻿namespace API.DTOs.EventPayments;
+﻿namespace Client.DTOs.EventPayments;
 
 public class GetParticipantsPaidEventDto
 {
