@@ -1,5 +1,9 @@
-﻿@{
+﻿@using System.Security.Claims;
+@{
     var toast = TempData["toast"] as dynamic;
+
+    var jwtToken = Context.Session.GetString("JWTToken")!.ToString();
+    var companyGuid = User!.Claims!.FirstOrDefault(c => c.Type == "companyGuid")!.Value;
 
     ViewData["Title"] = "Import Employee";
     Layout = "_LayoutUser";
@@ -51,7 +55,7 @@
                     <div class="col">
                         <div class="bg-light small text-warning">
                         <i class="bx bx-error me-2"></i>
-                        Ensure the uploaded Excel file adheres to the provided format to avoid data failures. Download the template <a class="text-underlined" href="#"><u>here</u></a>.
+                            Ensure the uploaded Excel file adheres to the provided format to avoid data failures. Download the template <a class="text-underlined" href="https://localhost:7249/examples/import-employees-example.xlsx"><u>here</u></a>.
                         </div>
                     </div>
                     <div class="col-auto">
@@ -67,5 +71,88 @@
 </div>
 
 @section Scripts{
+    <script>
+        const btnImport = document.getElementById("import_btn");
+        btnImport.addEventListener("click", function (e) {
+            e.preventDefault();
 
+            this.innerHTML = `
+                <div class="spinner-border text-info" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            `;
+
+            const fileInput = document.getElementById("employee_excel");
+            const file = fileInput.files[0];
+
+            if (file) {
+                const formData = new FormData();
+                formData.append("CompanyGuid", "@companyGuid");
+                formData.append("File", file);
+
+                // Ganti "http://example.com/upload" dengan URL API Anda
+                const apiUrl = "https://localhost:7249/api/employees/import";
+
+                fetch(apiUrl, {
+                    method: "POST",
+                    headers: {
+                        'Authorization': `Bearer @jwtToken`,
+                    },
+                    body: formData,
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        // Lakukan sesuatu dengan data respons dari API jika diperlukan
+                        console.log(data);
+
+                        if (data.code == 201){
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Successfully created your employees',
+                                text: 'Now you can see your employees in employees control menu',
+                            });
+                        }else{
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Something error, check your data',
+                            })
+                        }
+                        
+
+                        btnImport.innerHTML = `
+                            <span>Import</span>
+                            <i class="bx bx-arrow-from-left"></i>
+                        `;
+                    })
+
+
+                    .catch((error) => {
+                        // Tangani kesalahan jika terjadi
+                        console.error("Error:", error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something error, check your data',
+                        })
+                        btnImport.innerHTML = `
+                            <span>Import</span>
+                            <i class="bx bx-arrow-from-left"></i>
+                        `;
+                    });
+            } else {
+                // Tampilkan pesan kesalahan jika file belum dipilih
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please Upload Your File!',
+                })
+
+                btnImport.innerHTML = `
+                    <span>Import</span>
+                    <i class="bx bx-arrow-from-left"></i>
+                `;
+            }
+        });
+    </script>
 }

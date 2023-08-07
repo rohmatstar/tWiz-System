@@ -215,7 +215,7 @@ public class EventPaymentController : ControllerBase
             {
                 Code = StatusCodes.Status500InternalServerError,
                 Status = HttpStatusCode.InternalServerError.ToString(),
-                Message = "Check your internet connection"
+                Message = "Check your internet connection or your email is not found"
             });
         }
 
@@ -224,8 +224,18 @@ public class EventPaymentController : ControllerBase
             return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
             {
                 Code = StatusCodes.Status400BadRequest,
-                Status = HttpStatusCode.InternalServerError.ToString(),
+                Status = HttpStatusCode.BadRequest.ToString(),
                 Message = "Check your data"
+            });
+        }
+
+        if (paymentSubmissionStatus is -8)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "Image file is required"
             });
         }
 
@@ -270,6 +280,72 @@ public class EventPaymentController : ControllerBase
             Code = StatusCodes.Status200OK,
             Status = HttpStatusCode.OK.ToString(),
             Message = "Successfully aprove event payment submission"
+        });
+    }
+
+    [HttpGet("summary")]
+    public IActionResult GetEventPaymentSummary(Guid guid)
+    {
+        var payment = _service.GetPaymentSummary(guid);
+
+        if (payment == null)
+        {
+            return StatusCode(StatusCodes.Status404NotFound, new ResponseHandler<EventPaymentSummaryDto>
+            {
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Message = "Event payment of this account is not found",
+            });
+        }
+        else
+        {
+            if (payment.VaNumber == 0)
+            {
+                return StatusCode(StatusCodes.Status200OK, new ResponseHandler<EventPaymentSummaryDto>
+                {
+                    Code = StatusCodes.Status200OK,
+                    Status = HttpStatusCode.OK.ToString(),
+                    Message = "Event Payment of this account is Paid",
+                    Data = null
+                });
+            }
+
+            return StatusCode(StatusCodes.Status200OK, new ResponseHandler<EventPaymentSummaryDto>
+            {
+                Code = StatusCodes.Status200OK,
+                Status = HttpStatusCode.PaymentRequired.ToString(),
+                Message = "Successfully get event payment",
+                Data = payment
+            });
+        }
+    }
+
+
+
+    [HttpGet("participants-paid-event")]
+    public IActionResult GetParticipantsPaidEvent(Guid eventGuid)
+    {
+
+        var participantsPaidEvent = _service.GetParticipantsPaidEvent(eventGuid);
+
+        if (participantsPaidEvent is null)
+        {
+            return BadRequest(new ResponseHandler<string>
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Status = HttpStatusCode.BadRequest.ToString(),
+                Message = "Check your data",
+                Data = null
+            });
+        }
+
+
+        return Ok(new ResponseHandler<GetParticipantsPaidEventDto>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Success get participants paid event",
+            Data = participantsPaidEvent
         });
     }
 }

@@ -1,8 +1,11 @@
-﻿using Client.DTOs.EventPayments;
+﻿using Client.DTOs;
+using Client.DTOs.EventPayments;
 
 namespace Client.Contracts;
 
 public interface IEventPaymentRepository : IRepository<GetEventPaymentDto, Guid>
 {
+    public Task<ResponseDto<EventPaymentSummaryDto>> GetSummary(Guid guid);
+    public Task<ResponseDto<GetParticipantsPaidEventDto>> GetParticipantsPaidEvent(Guid eventGuid);
 }
 

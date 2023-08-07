@@ -132,6 +132,11 @@ public class EventController : Controller
         return View(events.Result.Data);
     }
 
+    public IActionResult PaidEvents()
+    {
+        return View();
+    }
+
     /*[Authorize]*/
     public IActionResult Ticket()
     {

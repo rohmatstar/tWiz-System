@@ -140,5 +140,31 @@ public class EventRepository : GeneralRepository<EventsDto, Guid>, IEventReposit
         }
         return entityVM;
     }
+
+    public async Task<ResponseListDto<GetEventDto>> GetPublishedPaidEvents()
+    {
+
+        ResponseListDto<GetEventDto> entityVM = null;
+        using (var response = await httpClient.GetAsync(request + $"/company-published-paid-event"))
+        {
+            Console.WriteLine($"response : {response}");
+            Console.WriteLine($"response isSuccess : {response.IsSuccessStatusCode}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+
+                entityVM = JsonConvert.DeserializeObject<ResponseListDto<GetEventDto>>(apiResponse);
+
+            }
+            else
+            {
+                entityVM = new ResponseListDto<GetEventDto> { Code = (int)response.StatusCode, Message = response.ReasonPhrase, Data = null };
+            }
+
+
+        }
+        return entityVM;
+    }
 }
 

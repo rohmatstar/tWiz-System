@@ -135,7 +135,7 @@ namespace API.Migrations
                 columns: table => new
                 {
                     guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    nik = table.Column<string>(type: "nchar(12)", nullable: false),
+                    nik = table.Column<string>(type: "nvarchar(20)", nullable: false),
                     full_name = table.Column<string>(type: "nvarchar(100)", nullable: false),
                     birthdate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     gender = table.Column<int>(type: "int", nullable: false),

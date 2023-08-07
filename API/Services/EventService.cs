@@ -1281,6 +1281,7 @@ public class EventService
             return null;
         }
 
+        participantsEvent.EventName = getEvent.Name;
         participantsEvent.MakerEventGuid = getEvent.CreatedBy;
 
         var companies = _companyRepository.GetAll();
@@ -1670,6 +1671,62 @@ public class EventService
 
         transaction.Commit();
         return 1;
+    }
+
+    public List<GetEventDto>? GetCompanyPaidEvent()
+    {
+        var claimUser = _httpContextAccessor.HttpContext?.User;
+
+        var userRole = claimUser?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
+        var accountGuid = claimUser?.Claims?.FirstOrDefault(x => x.Type == "Guid")?.Value;
+
+        var companyPaidEvents = new List<GetEventDto>();
+
+        if (accountGuid is null)
+        {
+            return null;
+        }
+
+        var company = _companyRepository.GetAll().FirstOrDefault(c => c.AccountGuid == Guid.Parse(accountGuid));
+
+        if (company is null)
+        {
+            return null;
+        }
+
+        var filterEvents = _eventRepository.GetAll().Where(ev => ev.CreatedBy == company.Guid && ev.IsPaid == true && ev.IsActive == true);
+
+        if (filterEvents is null)
+        {
+            return null;
+        }
+
+        companyPaidEvents = filterEvents.Select(ev =>
+        {
+
+            return new GetEventDto
+            {
+                Guid = ev.Guid,
+                Name = ev.Name,
+                Description = ev.Description,
+                Thumbnail = ev.Thumbnail,
+                Category = ev.Category,
+                StartDate = ev.StartDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+                EndDate = ev.EndDate.ToString("dd MMMM yyyy, HH:mm WIB"),
+                Organizer = company.Name,
+                PlaceType = ev.Status == EventStatus.Offline ? "offline" : "online",
+                Place = ev.Place,
+                Quota = ev.Quota,
+                Joined = ev.UsedQuota,
+                Payment = ev.IsPaid == true ? "paid" : "free",
+                Visibility = ev.IsPublished == true ? "public" : "private",
+                Price = ev.Price,
+                PublicationStatus = ev.IsActive == true ? "published" : "draft"
+            };
+        }).ToList();
+
+
+        return companyPaidEvents;
     }
 }
 

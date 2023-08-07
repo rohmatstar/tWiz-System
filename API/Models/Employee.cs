@@ -7,7 +7,7 @@ namespace API.Models;
 [Table("pmdt_employees")]
 public class Employee : BaseEntity
 {
-    [Column("nik", TypeName = "nchar(12)")]
+    [Column("nik", TypeName = "nvarchar(20)")]
     public string Nik { get; set; }
 
     [Column("full_name", TypeName = "nvarchar(100)")]
