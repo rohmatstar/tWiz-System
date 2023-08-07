@@ -317,7 +317,7 @@ public class RegisterPaymentService
 
         var randomName = GenerateHandler.GenerateRandomString();
         var fileName = randomName + paymentSubmissionDto.PaymentImage.FileName;
-        var imageUrl = $"images/register_payments/{fileName}";
+        var imageUrl = $"{fileName}";
 
         var filePath = $"{folderPath}\\{fileName}";
         using var transaction = _twizDbContext.Database.BeginTransaction();
