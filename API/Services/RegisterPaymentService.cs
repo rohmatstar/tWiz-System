@@ -315,6 +315,7 @@ public class RegisterPaymentService
         }
 
 
+
         var randomName = GenerateHandler.GenerateRandomString();
         var fileName = randomName + paymentSubmissionDto.PaymentImage.FileName;
         var imageUrl = $"{fileName}";
