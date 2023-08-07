@@ -1,5 +1,10 @@
-﻿@{
+﻿@model List<Client.DTOs.Events.TicketDto>;
+
+@{
     var toast = TempData["toast"] as dynamic;
+
+    var sortByQuery = Context.Request.Query["sort_by"];
+    var timeQuery = Context.Request.Query["time"];
 
     ViewData["Title"] = "Tickets";
     Layout = "_LayoutUser";
@@ -20,15 +25,15 @@
                     <div class="mb-3">
                         <label for="time" class="form-label">Time</label>
                         <div class="form-check">
-                            <input checked type="radio" class="form-check-input" id="time-all" name="attendance" value="all">
+                            <input checked type="radio" class="form-check-input" id="time-all" name="attendance" value="all" @(timeQuery == "all" ? "checked" : "")>
                             <label class="form-check-label" for="time-all">All</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="time-coming-soon" name="time" value="coming-soon">
+                            <input type="radio" class="form-check-input" id="time-coming-soon" name="time" value="coming-soon" @(timeQuery == "coming-soon" ? "checked" : "")>
                             <label class="form-check-label" for="time-coming-soon">Coming Soon</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="time-past" name="time" value="past">
+                            <input type="radio" class="form-check-input" id="time-past" name="time" value="past" @(timeQuery == "past" ? "checked" : "")>
                             <label class="form-check-label" for="time-past">Past</label>
                         </div>
                     </div>
@@ -37,7 +42,7 @@
                         <label for="sort-by" class="form-label">Sort by</label>
                         <select class="form-select" id="sort-by" name="sort-by">
                             <option selected value="newest">Newest</option>
-                            <option value="oldest">Oldest</option>
+                            <option value="older">Oldest</option>
                         </select>
                     </div>
 
@@ -67,6 +72,9 @@
     }
 }
 
+
+
+
 <div class="modal fade"
      id="ticketModal"
      aria-labelledby="modalToggleLabel"
@@ -94,6 +102,8 @@
 
 @section Scripts{
     <script>
+        const ticketsJson = @Html.Raw(ViewData["ticketsJson"]);
+        console.log(ticketsJson)
         const ticketData = [
             {
                 "eventName": "Corporate Conferention",
@@ -111,16 +121,16 @@
             }
         ];
 
-        function renderTicket(index, ticketData) {
+        function renderTicket(index, ticketsJson) {
             const ticketContainer = $('<div>').addClass('col-md-4 mb-3');
             const card = $('<div>').addClass('card text-center');
             const cardBody = $('<div>').addClass('card-body');
-            cardBody.append($('<h5>').addClass('card-title').text(ticketData.eventName));
-            cardBody.append($('<p>').addClass('card-text text-primary').text(ticketData.participantName));
-            cardBody.append($('<p>').addClass('mb-0 small').text(ticketData.startDate));
-            cardBody.append($('<p>').addClass('small').text(ticketData.place));
-            cardBody.append($('<p>').addClass('card-text').append($('<small>').addClass('text-muted').text("#" + ticketData.ticketCode)));
-            cardBody.append($('<img>').attr('id', "barcode-" + ticketData.ticketCode).addClass('d-block w-100'));
+            cardBody.append($('<h5>').addClass('card-title').text(ticketsJson.EventName));
+            cardBody.append($('<p>').addClass('card-text text-primary').text(ticketsJson.ParticipantName));
+            cardBody.append($('<p>').addClass('mb-0 small').text(ticketsJson.StartDate));
+            cardBody.append($('<p>').addClass('small').text(ticketsJson.Place));
+            cardBody.append($('<p>').addClass('card-text').append($('<small>').addClass('text-muted').text("#" + ticketsJson.TicketCode)));
+            cardBody.append($('<img>').attr('id', "barcode-" + ticketsJson.TicketCode).addClass('d-block w-100'));
 
             const cardFooter = $('<div>').addClass('card-footer text-muted border-top');
             cardFooter.append($('<button>').attr('onclick', 'showTicket(' + index + ')').addClass('btn btn-primary').text('View Ticket'));
@@ -131,7 +141,7 @@
             ticketContainer.append(card);
 
             $('#render-body').append(ticketContainer);
-            $("#barcode-" + ticketData.ticketCode).JsBarcode(ticketData.ticketCode);
+            $("#barcode-" + ticketsJson.TicketCode).JsBarcode(ticketsJson.TicketCode);
         }
 
         function renderTickets() {
@@ -148,21 +158,27 @@
                 console.error('Error fetching ticket data:', errorThrown);
               }
             });*/
-            $.each(ticketData, function (index, ticket) {
+            $.each(ticketsJson, function (index, ticket) {
                 renderTicket(index, ticket);
             });
         }
         renderTickets();
 
         function showTicket(index) {
-            const ticket = ticketData[index];
-            $("#event-name-card").text(ticket.eventName);
-            $("#participant-name-card").text(ticket.participantName);
-            $("#date-card").text(ticket.startDate);
-            $("#place-card").text(ticket.place);
-            $("#ticket-code-card").text(ticket.ticketCode);
-            $("#barcode-card").JsBarcode(ticket.ticketCode);
+            const ticket = ticketsJson[index];
+            $("#event-name-card").text(ticket.EventName);
+            $("#participant-name-card").text(ticket.ParticipantName);
+            $("#date-card").text(ticket.StartDate);
+            $("#place-card").text(ticket.Place);
+            $("#ticket-code-card").text(ticket.TicketCode);
+            $("#barcode-card").JsBarcode(ticket.TicketCode);
             $("#ticketModal").modal('show');
         }
+    </script>
+
+    <script>
+        $("#sort-by").val("@sortByQuery")
+
+
     </script>
 }

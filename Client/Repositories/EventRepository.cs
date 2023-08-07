@@ -166,5 +166,31 @@ public class EventRepository : GeneralRepository<EventsDto, Guid>, IEventReposit
         }
         return entityVM;
     }
+
+    public async Task<ResponseListDto<TicketDto>> GetTickets(QueryParamGetTicketDto queryParams)
+    {
+
+        ResponseListDto<TicketDto> entityVM = null;
+        using (var response = await httpClient.GetAsync(request + $"/tickets?time={queryParams.time}&sort_by={queryParams.sort_by}"))
+        {
+            Console.WriteLine($"response : {response}");
+            Console.WriteLine($"response isSuccess : {response.IsSuccessStatusCode}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+
+                entityVM = JsonConvert.DeserializeObject<ResponseListDto<TicketDto>>(apiResponse);
+
+            }
+            else
+            {
+                entityVM = new ResponseListDto<TicketDto> { Code = (int)response.StatusCode, Message = response.ReasonPhrase, Data = null };
+            }
+
+
+        }
+        return entityVM;
+    }
 }
 
