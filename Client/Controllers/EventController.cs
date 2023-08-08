@@ -138,11 +138,22 @@ public class EventController : Controller
     }
 
     /*[Authorize]*/
-    public IActionResult Ticket()
+    public async Task<IActionResult> Ticket([FromQuery] QueryParamGetTicketDto queryParams)
     {
         var active = "ticket";
         ViewBag.Active = active;
-        return View();
+
+        var tickets = new List<TicketDto>();
+
+        var getTickets = await _eventRepository.GetTickets(queryParams);
+        string ticketsJson = "";
+        if (getTickets.Data != null)
+        {
+            ticketsJson = JsonSerializer.Serialize(getTickets.Data);
+            tickets = getTickets.Data;
+        }
+        ViewData["ticketsJson"] = ticketsJson;
+        return View(tickets);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

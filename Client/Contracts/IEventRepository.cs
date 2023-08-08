@@ -14,4 +14,6 @@ public interface IEventRepository : IRepository<EventsDto, Guid>
     public Task<ResponseListDto<GetInvitationEventDto>> GetInvitationEvents(QueryParamGetEventDto queryParams);
 
     public Task<ResponseListDto<GetEventDto>> GetPublishedPaidEvents();
+
+    public Task<ResponseListDto<TicketDto>> GetTickets(QueryParamGetTicketDto queryParams);
 }
