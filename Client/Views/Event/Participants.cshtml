@@ -40,8 +40,34 @@
                 <tr>
                     <th scope="row">@(i++)</th>
                     <td>@companyParticipant.CompanyName</td>
-                    <td>@(companyParticipant.IsPresent == true ? "present" : "not present")</td>
-                    <td>@companyParticipant.InvitationStatus</td>
+                    <td>
+                        @if (companyParticipant.IsPresent == true)
+                        {
+                            <span class="badge bg-success text-white">Present</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-gray text-white">Not Present</span>
+                        }
+                    </td>
+                    <td>
+                        @if (companyParticipant.InvitationStatus == "pending")
+                        {
+                            <span class="badge bg-gray text-white">Pending</span>
+                        }
+                        else if (companyParticipant.InvitationStatus == "checking")
+                        {
+                            <span class="badge bg-warning text-white">Checking</span>
+                        }
+                        else if (companyParticipant.InvitationStatus == "accepted")
+                        {
+                            <span class="badge bg-success text-white">Accepted</span>
+                        }
+                        else if (companyParticipant.InvitationStatus == "rejected")
+                        {
+                            <span class="badge bg-danger text-white">Rejected</span>
+                        }
+                    </td>
                 </tr>
             }
                       
@@ -63,14 +89,39 @@
         </thead>
         <tbody>
 
-            @foreach (var companyParticipant in Model.EmployeeParticipants)
+            @foreach (var employeeParticipant in Model.EmployeeParticipants)
             {
                 <tr>
                     <th scope="row">@(j++)</th>
-                    <td>@companyParticipant.EmployeeName</td>
-                    <td>@companyParticipant.CompanyName</td>
-                    <td>@(companyParticipant.IsPresent == true ? "present" : "not present")</td>
-                    <td>@companyParticipant.InvitationStatus</td>
+                    <td>@employeeParticipant.EmployeeName</td>
+                    <td>@employeeParticipant.CompanyName</td>
+                    <td>
+                        @if (employeeParticipant.IsPresent == true)
+                        {
+                            <span class="badge bg-success text-white">Present</span>
+                        }
+                        else{
+                            <span class="badge bg-gray text-white">Not Present</span>
+                         }
+                    </td>
+                    <td>
+                        @if (employeeParticipant.InvitationStatus == "pending")
+                        {
+                            <span class="badge bg-gray text-white">Pending</span>
+                        }
+                        else if (employeeParticipant.InvitationStatus == "checking")
+                        {
+                            <span class="badge bg-warning text-white">Checking</span>
+                        }
+                        else if (employeeParticipant.InvitationStatus == "accepted")
+                        {
+                            <span class="badge bg-success text-white">Accepted</span>
+                        }
+                        else if (employeeParticipant.InvitationStatus == "rejected")
+                        {
+                            <span class="badge bg-danger text-white">Rejected</span>
+                        }
+                    </td>
                 </tr>
             }
 
@@ -108,8 +159,34 @@ else
                     <th scope="row">@(i++)</th>
                     <td>@companyParticipant.EmployeeName</td>
                     <td>@companyParticipant.CompanyName</td>
-                    <td>@(companyParticipant.IsPresent == true ? "present" : "not present")</td>
-                    <td>@companyParticipant.InvitationStatus</td>
+                    <td>
+                        @if (companyParticipant.IsPresent == true)
+                        {
+                            <span class="badge bg-success text-white">Present</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-gray text-white">Not present</span>
+                        }
+                    </td>
+                    <td>
+                        @if (companyParticipant.InvitationStatus == "pending")
+                        {
+                            <span class="badge bg-gray text-white">Pending</span>
+                        }
+                        else if (companyParticipant.InvitationStatus == "checking")
+                        {
+                            <span class="badge bg-warning text-white">Checking</span>
+                        }
+                        else if (companyParticipant.InvitationStatus == "accepted")
+                        {
+                            <span class="badge bg-success text-white">Accepted</span>
+                        }
+                        else if (companyParticipant.InvitationStatus == "rejected")
+                        {
+                            <span class="badge bg-danger text-white">Rejected</span>
+                        }
+                    </td>
                 </tr>
             }
 
