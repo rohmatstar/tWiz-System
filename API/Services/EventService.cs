@@ -212,7 +212,7 @@ public class EventService
             return null;
         }
 
-        
+
 
         return filterEvents;
     }
@@ -776,6 +776,7 @@ public class EventService
                                 join c in _companyRepository.GetAll()
                                 on e.CreatedBy equals c.Guid
                                 where e.CreatedBy == company.Guid
+                                orderby e.StartDate
                                 select new GetEventDto
                                 {
                                     Guid = e.Guid,
