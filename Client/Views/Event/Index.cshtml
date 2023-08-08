@@ -159,7 +159,7 @@
                     }
 
                     <h6 class="small">@(getEvent.StartDate)</h6>
-                    <p class="card-text">@(getEvent.Description)</p>
+                        <p class="card-text line-clamp-custom">@(getEvent.Description)</p>
                     <div class="row align-items-center justify-content-center align-self-auto">
                         <div class="col">
                             <div class="h6 mb-1"><del>Rp. @(getEvent.Price + 100000),-</del></div>
@@ -245,7 +245,7 @@
                             </div>
                             <div class="col-md-8">
                                 <div class="card-body py-0">
-                                    <p class="card-text mb-3" id="event-detail-description"></p>
+                                    <p class="card-text mb-3 " id="event-detail-description"></p>
                                     <p class="card-text mb-3">
                                         <span id="event-detail-startdate"></span> - <span id="event-detail-enddate"></span>
                                     </p>

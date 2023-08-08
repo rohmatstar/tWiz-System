@@ -10,6 +10,14 @@ img.logo {
     animation: loading 1s infinite;
     animation-timing-function: linear;
 }
+
+.line-clamp-custom {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
 @keyframes loading {
     0% {
         transform: rotate(0deg);
