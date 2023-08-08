@@ -103,7 +103,7 @@
                         title: 'Action',
                         data: null,
                         render: function (data, type, row) {
-                            let actions = '<button class="btn btn-sm btn-secondary me-2" onclick="detailRegisterPayment(\'' + data.Guid + '\')"><i class="bx bx-dots-horizontal"></i></button>';
+                            let actions = '<button class="btn btn-sm btn-secondary me-2" onclick="detailRegisterPayment(\'' + data.Guid + '\')"><i class="bx bx-search-alt"></i></button>';
 
                             if(data.StatusPayment == checking){
                                 actions += '<button id="approve-btn-' + data.Guid + '" class="btn btn-sm btn-success me-2" onclick="approveRegisterPayment(this, \'' + data.Guid + '\')"><i class="bx bx-check"></i></button>' +
